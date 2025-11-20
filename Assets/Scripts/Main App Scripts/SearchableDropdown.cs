@@ -27,6 +27,7 @@ public class SearchableDropdown : MonoBehaviour
     private Dictionary<string, DropdownInfraItem> infraItems = new Dictionary<string, DropdownInfraItem>();
     private List<GameObject> allInstantiatedItems = new List<GameObject>();
     private bool isOpen = false;
+    private bool isManualOpen = false;
 
     private string selectedId = null;
     private string selectedType = null;
@@ -64,14 +65,10 @@ public class SearchableDropdown : MonoBehaviour
     {
         ClearDropdown();
 
-        if (infrastructureList == null || infrastructureList.infrastructures == null)
-        {
-            return;
-        }
-
         foreach (var infra in infrastructureList.infrastructures)
         {
-            bool hasRooms = infraToRoomsMap.ContainsKey(infra.infra_id) && 
+
+            bool hasRooms = infraToRoomsMap.ContainsKey(infra.infra_id) &&
                            infraToRoomsMap[infra.infra_id].Count > 0;
 
             GameObject infraItemObj = Instantiate(infraItemPrefab, contentContainer);
@@ -120,6 +117,7 @@ public class SearchableDropdown : MonoBehaviour
         }
         else
         {
+            isManualOpen = true;
             OpenDropdown();
         }
     }
@@ -136,14 +134,22 @@ public class SearchableDropdown : MonoBehaviour
                 dropdownArrow.transform.rotation = Quaternion.Euler(0, 0, 180);
             }
 
-            string currentSearch = searchField != null ? searchField.text : "";
-            if (string.IsNullOrWhiteSpace(currentSearch))
+            if (isManualOpen)
             {
                 ShowAllItems();
+                isManualOpen = false;
             }
             else
             {
-                OnSearchTextChanged(currentSearch);
+                string currentSearch = searchField != null ? searchField.text : "";
+                if (string.IsNullOrWhiteSpace(currentSearch))
+                {
+                    ShowAllItems();
+                }
+                else
+                {
+                    OnSearchTextChanged(currentSearch);
+                }
             }
         }
     }
@@ -154,6 +160,7 @@ public class SearchableDropdown : MonoBehaviour
         {
             dropdownPanel.SetActive(false);
             isOpen = false;
+            isManualOpen = false;
 
             if (dropdownArrow != null)
             {

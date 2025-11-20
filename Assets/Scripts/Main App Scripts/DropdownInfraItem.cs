@@ -9,12 +9,17 @@ public class DropdownInfraItem : MonoBehaviour
     [Header("UI References")]
     public Button infraButton;
     public TextMeshProUGUI infraNameText;
-    public GameObject expandArrow;
+    public Button expandArrowButton;
     public GameObject roomsContainer;
     public Transform roomsContent;
 
     [Header("Prefab")]
     public GameObject roomItemPrefab;
+
+    [Header("Height Settings")]
+    public float collapsedHeight = 50f;
+    public float roomItemHeight = 45f;
+    public float roomSpacing = 2f;
 
     private Infrastructure infrastructure;
     private List<IndoorInfrastructure> rooms;
@@ -22,16 +27,27 @@ public class DropdownInfraItem : MonoBehaviour
     private bool isExpanded = false;
 
     private Dictionary<string, GameObject> roomItems = new Dictionary<string, GameObject>();
+    private RectTransform rectTransform;
 
     public string InfrastructureName => infrastructure?.name ?? "";
     public bool HasRooms => rooms != null && rooms.Count > 0;
     public List<string> RoomNames => rooms?.Select(r => r.name).ToList() ?? new List<string>();
+
+    void Awake()
+    {
+        rectTransform = GetComponent<RectTransform>();
+    }
 
     public void Initialize(Infrastructure infra, List<IndoorInfrastructure> indoorRooms, SearchableDropdown dropdown)
     {
         infrastructure = infra;
         rooms = indoorRooms;
         parentDropdown = dropdown;
+
+        if (rectTransform == null)
+        {
+            rectTransform = GetComponent<RectTransform>();
+        }
 
         if (infraNameText != null)
         {
@@ -40,23 +56,24 @@ public class DropdownInfraItem : MonoBehaviour
 
         if (HasRooms)
         {
-            if (expandArrow != null)
+            if (expandArrowButton != null)
             {
-                expandArrow.SetActive(true);
+                expandArrowButton.gameObject.SetActive(true);
+                expandArrowButton.onClick.AddListener(ToggleRooms);
             }
 
             if (infraButton != null)
             {
-                infraButton.onClick.AddListener(ToggleRooms);
+                infraButton.onClick.AddListener(() => OnInfrastructureSelected());
             }
 
             SetupRoomItems();
         }
         else
         {
-            if (expandArrow != null)
+            if (expandArrowButton != null)
             {
-                expandArrow.SetActive(false);
+                expandArrowButton.gameObject.SetActive(false);
             }
 
             if (infraButton != null)
@@ -69,6 +86,8 @@ public class DropdownInfraItem : MonoBehaviour
                 roomsContainer.SetActive(false);
             }
         }
+
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, collapsedHeight);
     }
 
     private void SetupRoomItems()
@@ -116,19 +135,24 @@ public class DropdownInfraItem : MonoBehaviour
         isExpanded = true;
         roomsContainer.SetActive(true);
 
-        if (expandArrow != null)
+        if (expandArrowButton != null)
         {
-            TextMeshProUGUI arrowText = expandArrow.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI arrowText = expandArrowButton.GetComponentInChildren<TextMeshProUGUI>();
             if (arrowText != null)
             {
                 arrowText.text = "▼";
             }
         }
 
+        int visibleRoomCount = GetVisibleRoomCount();
+        float totalRoomHeight = (roomItemHeight * visibleRoomCount) + (roomSpacing * (visibleRoomCount - 1));
+        float targetHeight = collapsedHeight + totalRoomHeight;
+
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+
         if (!silent)
         {
-            Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(transform.parent as RectTransform);
+            ForceLayoutUpdate();
         }
     }
 
@@ -142,17 +166,31 @@ public class DropdownInfraItem : MonoBehaviour
         isExpanded = false;
         roomsContainer.SetActive(false);
 
-        if (expandArrow != null)
+        if (expandArrowButton != null)
         {
-            TextMeshProUGUI arrowText = expandArrow.GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI arrowText = expandArrowButton.GetComponentInChildren<TextMeshProUGUI>();
             if (arrowText != null)
             {
-                arrowText.text = "▶";
+                arrowText.text = "▲";
             }
         }
 
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(transform.parent as RectTransform);
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, collapsedHeight);
+
+        ForceLayoutUpdate();
+    }
+
+    private int GetVisibleRoomCount()
+    {
+        int count = 0;
+        foreach (var kvp in roomItems)
+        {
+            if (kvp.Value.activeSelf)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     public void FilterRooms(string searchText)
@@ -171,6 +209,15 @@ public class DropdownInfraItem : MonoBehaviour
                 kvp.Value.SetActive(matches);
             }
         }
+
+        if (isExpanded)
+        {
+            int visibleCount = GetVisibleRoomCount();
+            float totalRoomHeight = (roomItemHeight * visibleCount) + (roomSpacing * (visibleCount - 1));
+            float targetHeight = collapsedHeight + totalRoomHeight;
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+            ForceLayoutUpdate();
+        }
     }
 
     public void ShowAllRooms()
@@ -184,6 +231,15 @@ public class DropdownInfraItem : MonoBehaviour
         {
             kvp.Value.SetActive(true);
         }
+
+        if (isExpanded)
+        {
+            int visibleCount = GetVisibleRoomCount();
+            float totalRoomHeight = (roomItemHeight * visibleCount) + (roomSpacing * (visibleCount - 1));
+            float targetHeight = collapsedHeight + totalRoomHeight;
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+            ForceLayoutUpdate();
+        }
     }
 
     private void OnInfrastructureSelected()
@@ -194,11 +250,31 @@ public class DropdownInfraItem : MonoBehaviour
         }
     }
 
+    private void ForceLayoutUpdate()
+    {
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+
+        if (transform.parent != null)
+        {
+            RectTransform parentRect = transform.parent.GetComponent<RectTransform>();
+            if (parentRect != null)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
+            }
+        }
+    }
+
     void OnDestroy()
     {
         if (infraButton != null)
         {
             infraButton.onClick.RemoveAllListeners();
+        }
+
+        if (expandArrowButton != null)
+        {
+            expandArrowButton.onClick.RemoveAllListeners();
         }
     }
 }

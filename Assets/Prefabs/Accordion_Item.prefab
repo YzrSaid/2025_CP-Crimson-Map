@@ -788,6 +788,18 @@ MonoBehaviour:
   minHeight: 60
   itemHeight: 120
   padding: 20
+  emptyMessageHeight: 80
+  showEmptyMessage: 1
+  emptyMessageText: No infrastructures available
+  emptyMessageFont: {fileID: 0}
+  emptyMessageFontSize: 16
+  emptyMessageColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
+  emptyMessageAlignment: 514
+  emptyMessageFontStyle: 0
+  emptyMessagePaddingTop: 20
+  emptyMessagePaddingBottom: 20
+  emptyMessagePaddingLeft: 20
+  emptyMessagePaddingRight: 20
   manager: {fileID: 0}
 --- !u!114 &1147768428230280099
 MonoBehaviour:
