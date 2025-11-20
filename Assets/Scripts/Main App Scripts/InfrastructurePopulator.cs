@@ -9,7 +9,10 @@ using UnityEngine.UI;
 
 public class InfrastructurePopulator : MonoBehaviour
 {
-    [Header("UI References")]
+    [Header("UI References - New Searchable Dropdown")]
+    public SearchableDropdown searchableDropdownTo;
+
+    [Header("UI References - Legacy (Optional)")]
     public TMP_Dropdown dropdownTo;
     public ScrollRect destinationScrollView;
     public Transform destinationListContent;
@@ -19,6 +22,7 @@ public class InfrastructurePopulator : MonoBehaviour
     public IndoorInfrastructureList indoorList;
 
     [Header("Settings")]
+    public bool useSearchableDropdown = true;
     public bool useAccordionUI = false;
     public float maxWaitTime = 30f;
 
@@ -125,7 +129,11 @@ public class InfrastructurePopulator : MonoBehaviour
 
         BuildInfraToRoomsMapping();
 
-        if (useAccordionUI && destinationScrollView != null && destinationListContent != null)
+        if (useSearchableDropdown && searchableDropdownTo != null)
+        {
+            InitializeSearchableDropdown();
+        }
+        else if (useAccordionUI && destinationScrollView != null && destinationListContent != null)
         {
             PopulateAccordionUI();
         }
@@ -183,6 +191,28 @@ public class InfrastructurePopulator : MonoBehaviour
 
             infraToRoomsMap[indoor.infra_id].Add(indoor);
         }
+    }
+
+    private void InitializeSearchableDropdown()
+    {
+        if (searchableDropdownTo == null)
+        {
+            return;
+        }
+
+        searchableDropdownTo.Initialize(infrastructureList, infraToRoomsMap);
+
+        searchableDropdownTo.OnDestinationSelected += (id, type, displayName) =>
+        {
+            selectedDestinationId = id;
+            selectedDestinationType = type;
+
+            PathfindingController pathfinding = FindObjectOfType<PathfindingController>();
+            if (pathfinding != null)
+            {
+                pathfinding.SetDestination(id, type);
+            }
+        };
     }
 
     private void PopulateAccordionUI()
@@ -497,6 +527,12 @@ public class InfrastructurePopulator : MonoBehaviour
 
     public (string id, string type) GetSelectedDestination()
     {
+        if (useSearchableDropdown && searchableDropdownTo != null)
+        {
+            var selection = searchableDropdownTo.GetSelectedDestination();
+            return (selection.id, selection.type);
+        }
+
         return (selectedDestinationId, selectedDestinationType);
     }
 }

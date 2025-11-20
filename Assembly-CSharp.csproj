@@ -257,6 +257,7 @@
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ISubLayerTexturing.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Platform/TileJSON/TileJSON.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/ARModeHelper.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/SearchableDropdown.cs" />
     <Compile Include="Assets/Mapbox/Unity/LayerProperties/LayerProperties.cs" />
     <Compile Include="Assets/Mapbox/Unity/Telemetry/TelemetryEditor.cs" />
     <Compile Include="Assets/Scripts/App Managers/ARMapManager.cs" />
@@ -270,6 +271,7 @@
     <Compile Include="Assets/Mapbox/Examples/Scripts/ReverseGeocodeUserInput.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Platform/Resource.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/PolylineUtils.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/DropdownInfraItem.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/ImageryRasterOptions.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ISubLayerDarkStyle.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Map/Map.cs" />
@@ -474,6 +476,7 @@
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Directions/Directions.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/RangeAroundTransformTileProviderOptions.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/MapMatching/MapMatchingResponse.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/DropdownRoomItem.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Platform/Cache/SQLiteCache/Tilesets.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ISubLayerCustomStyleOptions.cs" />
     <Compile Include="Assets/Mapbox/Examples/Scripts/TrafficUvAnimator.cs" />
