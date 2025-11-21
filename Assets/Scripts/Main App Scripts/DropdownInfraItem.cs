@@ -140,7 +140,7 @@ public class DropdownInfraItem : MonoBehaviour
             TextMeshProUGUI arrowText = expandArrowButton.GetComponentInChildren<TextMeshProUGUI>();
             if (arrowText != null)
             {
-                arrowText.text = "▼";
+                arrowText.text = "▲";
             }
         }
 
@@ -171,7 +171,7 @@ public class DropdownInfraItem : MonoBehaviour
             TextMeshProUGUI arrowText = expandArrowButton.GetComponentInChildren<TextMeshProUGUI>();
             if (arrowText != null)
             {
-                arrowText.text = "▲";
+                arrowText.text = "▼";
             }
         }
 
