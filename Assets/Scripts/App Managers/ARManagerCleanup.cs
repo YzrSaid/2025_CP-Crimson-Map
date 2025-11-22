@@ -57,19 +57,36 @@ public class ARManagerCleanup : MonoBehaviour
         StartCoroutine(CleanupAndLoadAR());
     }
 
+    public void LoadARNavigationWithScene(string sceneName)
+    {
+        PlayerPrefs.SetString("ARMode", "Navigation");
+        PlayerPrefs.Save();
+        StartCoroutine(CleanupAndLoadAR(sceneName));
+    }
+
     public void LoadReadQRCode()
     {
         StartCoroutine(CleanupAndLoadAR());
     }
 
-    public IEnumerator CleanupAndLoadAR()
+    public IEnumerator CleanupAndLoadAR(string targetSceneName = "")
     {
+        Debug.Log("=============== CLEANUP AND LOAD AR START ===============");
+        Debug.Log($"ARMode: {PlayerPrefs.GetString("ARMode", "NOT SET")}");
+        Debug.Log($"PathNodeCount BEFORE cleanup: {PlayerPrefs.GetInt("ARNavigation_PathNodeCount", -1)}");
+
         RecordManagerStates();
         DestroyNonEssentialManagers();
 
         yield return new WaitForEndOfFrame();
 
-        SceneManager.LoadScene(arSceneName, LoadSceneMode.Single);
+        Debug.Log($"PathNodeCount AFTER cleanup: {PlayerPrefs.GetInt("ARNavigation_PathNodeCount", -1)}");
+        Debug.Log("=============== LOADING AR SCENE ===============");
+
+        string sceneToLoad = string.IsNullOrEmpty(targetSceneName) ? arSceneName : targetSceneName;
+        Debug.Log($"Loading scene: {sceneToLoad}");
+        
+        SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
     }
 
     private void RecordManagerStates()

@@ -4445,7 +4445,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &431635587
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8537,7 +8537,6 @@ GameObject:
   - component: {fileID: 767062752}
   - component: {fileID: 767062751}
   - component: {fileID: 767062750}
-  - component: {fileID: 767062753}
   m_Layer: 5
   m_Name: ConfirmBtn
   m_TagString: Untagged
@@ -8647,24 +8646,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 767062747}
   m_CullTransparentMesh: 1
---- !u!114 &767062753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 767062747}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e063aa738a83e7c679c081e39928d51e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  arSceneName: ARScene
-  directARButton: {fileID: 0}
-  arNavigationButton: {fileID: 767062750}
-  pathFindingPanel: {fileID: 1177314504}
-  readQRCodeButton: {fileID: 0}
-  localizationPanel: {fileID: 0}
 --- !u!1 &774204441
 GameObject:
   m_ObjectHideFlags: 0

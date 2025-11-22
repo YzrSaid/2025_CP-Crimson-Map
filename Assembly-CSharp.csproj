@@ -212,6 +212,7 @@
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/SubLayerRealisticStyle.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Data/UnityTile.cs" />
     <Compile Include="Assets/Mapbox/Examples/2_AstronautGame/AstronautGame/Astronaut/AstronautDirections.cs" />
+    <Compile Include="Assets/Scripts/ARSCene/ReportIssueController.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/Compression.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/MeshModifiers/ReplaceFeatureCollectionModifier.cs" />
     <Compile Include="Assets/Mapbox/Unity/Map/AbstractMap.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/SceneTransitionWithoutLoading.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/MeshModifier.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Tokens/MapboxTokenApi.cs" />
+    <Compile Include="Assets/Scripts/ARSCene/ReportAffectedItemPopulator.cs" />
     <Compile Include="Assets/Mapbox/Unity/Utilities/SingletonScriptableObject.cs" />
     <Compile Include="Assets/Mapbox/Unity/Utilities/PolygonUtils.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/SubLayerCustomStyleTiled.cs" />

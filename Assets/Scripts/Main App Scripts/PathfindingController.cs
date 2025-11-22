@@ -1212,12 +1212,14 @@ public class PathfindingController : MonoBehaviour
         ARManagerCleanup arCleanup = FindObjectOfType<ARManagerCleanup>();
         if (arCleanup != null)
         {
-            arCleanup.LoadARNavigation();
+            arCleanup.LoadARNavigationWithScene("ARScene");  
         }
     }
 
     private void SaveRouteDataForAR(RouteData route, List<NavigationDirection> directions)
     {
+        Debug.Log("=============== SAVE ROUTE DATA START ===============");
+
         int oldDirectionCount = PlayerPrefs.GetInt("ARNavigation_DirectionCount", 0);
 
         for (int i = 0; i < oldDirectionCount; i++)
@@ -1240,7 +1242,10 @@ public class PathfindingController : MonoBehaviour
         PlayerPrefs.SetString("ARNavigation_WalkingTime", route.walkingTime);
         PlayerPrefs.SetString("ARNavigation_ViaMode", route.viaMode);
 
-        // This is for saving the nodes and edges part of the route and will be highlighted in the map
+        Debug.Log($"✅ Saved route metadata:");
+        Debug.Log($"  Start: {route.startNode.node_id} ({route.startNode.name})");
+        Debug.Log($"  End: {route.endNode.node_id} ({route.endNode.name})");
+        Debug.Log($"  Distance: {route.formattedDistance}");
 
         PlayerPrefs.SetInt("ARNavigation_PathNodeCount", route.path.Count);
 
@@ -1248,6 +1253,8 @@ public class PathfindingController : MonoBehaviour
         {
             PlayerPrefs.SetString($"ARNavigation_PathNode_{i}", route.path[i].node.node_id);
         }
+
+        Debug.Log($"✅ Saved {route.path.Count} path nodes");
 
         int edgeCount = route.path.Count - 1;
         PlayerPrefs.SetInt("ARNavigation_EdgeCount", edgeCount);
@@ -1261,7 +1268,8 @@ public class PathfindingController : MonoBehaviour
             PlayerPrefs.SetString($"ARNavigation_Edge_{i}_To", toNode);
         }
 
-        // This is for saving the directions
+        Debug.Log($"✅ Saved {edgeCount} edges");
+
         PlayerPrefs.SetInt("ARNavigation_DirectionCount", directions.Count);
 
         for (int i = 0; i < directions.Count; i++)
@@ -1278,12 +1286,23 @@ public class PathfindingController : MonoBehaviour
             PlayerPrefs.SetInt($"ARNavigation_Direction_{i}_IsIndoorDirection", dir.isIndoorDirection ? 1 : 0);
         }
 
-        // This is to save/update the AR Mode 
+        Debug.Log($"✅ Saved {directions.Count} directions");
+
         PlayerPrefs.SetString("ARMode", "Navigation");
 
         PlayerPrefs.Save();
-    }
 
+        Debug.Log("✅ PlayerPrefs.Save() called!");
+
+        // VERIFY DATA WAS SAVED
+        Debug.Log("=============== VERIFICATION ===============");
+        Debug.Log($"PathNodeCount: {PlayerPrefs.GetInt("ARNavigation_PathNodeCount", -1)}");
+        Debug.Log($"EdgeCount: {PlayerPrefs.GetInt("ARNavigation_EdgeCount", -1)}");
+        Debug.Log($"DirectionCount: {PlayerPrefs.GetInt("ARNavigation_DirectionCount", -1)}");
+        Debug.Log($"StartNodeId: {PlayerPrefs.GetString("ARNavigation_StartNodeId", "NOT FOUND")}");
+        Debug.Log($"ARMode: {PlayerPrefs.GetString("ARMode", "NOT FOUND")}");
+        Debug.Log("=============== SAVE ROUTE DATA END ===============");
+    }
     public void HideResults()
     {
         if (resultPanel != null)
