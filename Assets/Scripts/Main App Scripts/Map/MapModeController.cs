@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,10 @@ public class MapModeController : MonoBehaviour
     public GameObject floorButtonPanel;
     public Button floorUpButton;
     public Button floorDownButton;
+
+    [Header("Floor Indicator")]
+    public GameObject floorIndicator;
+    public TextMeshProUGUI floorIndicatorText;
 
     [Header("Managers")]
     public IndoorMapManager indoorMapManager;
@@ -66,6 +71,9 @@ public class MapModeController : MonoBehaviour
         if (floorDownButton != null)
             floorDownButton.onClick.AddListener(OnFloorDownClicked);
 
+        if (floorIndicator != null)
+            floorIndicator.SetActive(false);
+
         SetOutdoorMode();
 
         StartCoroutine(LoadAllData());
@@ -81,17 +89,10 @@ public class MapModeController : MonoBehaviour
         if (mapManager.GetCurrentMap() != null)
         {
             string mapId = mapManager.GetCurrentMap().map_id;
-            Debug.Log($"[MapModeController] Loading nodes for map: {mapId}");
             yield return StartCoroutine(LoadNodes(mapId));
-        }
-        else
-        {
-            Debug.LogError("[MapModeController] No current map found!");
         }
 
         yield return StartCoroutine(LoadIndoorData());
-
-        Debug.Log($"[MapModeController] Loaded {allNodes.Count} nodes and {indoorInfrastructures.Count} indoor infrastructures");
 
         UpdateGoInsideButtonVisibility();
     }
@@ -188,25 +189,13 @@ public class MapModeController : MonoBehaviour
         }
 
         string currentLocationName = pathfindingController.GetCurrentFromLocationName();
-        Debug.Log($"[MapModeController] Current location: {currentLocationName}");
 
         Node currentNode = allNodes.Values.FirstOrDefault(n => n.name == currentLocationName);
-
-        if (currentNode != null)
-        {
-            Debug.Log($"[MapModeController] Found node: {currentNode.node_id}, type: {currentNode.type}, related_infra_id: {currentNode.related_infra_id}");
-        }
-        else
-        {
-            Debug.Log($"[MapModeController] No node found matching name: {currentLocationName}");
-        }
 
         if (currentNode != null && currentNode.type == "infrastructure" && !string.IsNullOrEmpty(currentNode.related_infra_id))
         {
             string infraId = currentNode.related_infra_id;
             bool hasIndoor = indoorInfrastructures.Values.Any(ind => ind.infra_id == infraId);
-
-            Debug.Log($"[MapModeController] Infrastructure {infraId} has indoor: {hasIndoor}");
 
             goInsideButton.gameObject.SetActive(hasIndoor);
 
@@ -253,6 +242,14 @@ public class MapModeController : MonoBehaviour
         if (indoorMapManager != null)
         {
             indoorMapManager.ChangeFloor(-1);
+        }
+    }
+
+    public void UpdateFloorIndicator(int floor)
+    {
+        if (floorIndicatorText != null)
+        {
+            floorIndicatorText.text = floor.ToString();
         }
     }
 
@@ -307,6 +304,9 @@ public class MapModeController : MonoBehaviour
         if (floorDownButton != null)
             floorDownButton.gameObject.SetActive(false);
 
+        if (floorIndicator != null)
+            floorIndicator.SetActive(false);
+
         UpdateGoInsideButtonVisibility();
     }
 
@@ -360,6 +360,9 @@ public class MapModeController : MonoBehaviour
 
         if (floorDownButton != null)
             floorDownButton.gameObject.SetActive(true);
+
+        if (floorIndicator != null)
+            floorIndicator.SetActive(true);
 
         if (indoorMapManager != null)
         {

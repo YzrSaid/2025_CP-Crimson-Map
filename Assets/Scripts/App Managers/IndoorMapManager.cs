@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,11 @@ public class IndoorMapManager : MonoBehaviour
         }
 
         SpawnMarkersForCurrentFloor();
+
+        if (MapModeController.Instance != null)
+        {
+            MapModeController.Instance.UpdateFloorIndicator(currentFloor);
+        }
     }
 
     private IEnumerator LoadNodes(string mapId)
@@ -185,15 +191,25 @@ public class IndoorMapManager : MonoBehaviour
     {
         ClearAllMarkers();
 
-        Node infraNode = allNodes.Values.FirstOrDefault(n => 
-            n.type == "infrastructure" && n.related_infra_id == currentInfraId);
-
-        if (infraNode != null && entranceMarkerPrefab != null)
+        if (currentFloor == 1)
         {
-            GameObject entranceMarker = Instantiate(entranceMarkerPrefab, markersContainer);
-            Vector2 entrancePos = WorldToMapPosition(0f, 0f);
-            entranceMarker.GetComponent<RectTransform>().anchoredPosition = entrancePos;
-            spawnedMarkers["entrance"] = entranceMarker;
+            Node infraNode = allNodes.Values.FirstOrDefault(n => 
+                n.type == "infrastructure" && n.related_infra_id == currentInfraId);
+
+            if (infraNode != null && entranceMarkerPrefab != null)
+            {
+                GameObject entranceMarker = Instantiate(entranceMarkerPrefab, markersContainer);
+                Vector2 entrancePos = WorldToMapPosition(0f, 0f);
+                entranceMarker.GetComponent<RectTransform>().anchoredPosition = entrancePos;
+                
+                TextMeshProUGUI nameText = entranceMarker.GetComponentInChildren<TextMeshProUGUI>();
+                if (nameText != null)
+                {
+                    nameText.text = "Entrance";
+                }
+                
+                spawnedMarkers["entrance"] = entranceMarker;
+            }
         }
 
         var indoorNodes = allNodes.Values.Where(n => 
@@ -227,6 +243,12 @@ public class IndoorMapManager : MonoBehaviour
 
         Vector2 mapPos = WorldToMapPosition(node.indoor.x, node.indoor.y);
         marker.GetComponent<RectTransform>().anchoredPosition = mapPos;
+
+        TextMeshProUGUI nameText = marker.GetComponentInChildren<TextMeshProUGUI>();
+        if (nameText != null)
+        {
+            nameText.text = node.name;
+        }
 
         spawnedMarkers[node.node_id] = marker;
     }
@@ -272,6 +294,11 @@ public class IndoorMapManager : MonoBehaviour
         currentFloor = availableFloors[newIndex];
 
         SpawnMarkersForCurrentFloor();
+
+        if (MapModeController.Instance != null)
+        {
+            MapModeController.Instance.UpdateFloorIndicator(currentFloor);
+        }
     }
 
     private void ClearAllMarkers()
