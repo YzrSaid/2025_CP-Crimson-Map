@@ -71,21 +71,12 @@ public class ARManagerCleanup : MonoBehaviour
 
     public IEnumerator CleanupAndLoadAR(string targetSceneName = "")
     {
-        Debug.Log("=============== CLEANUP AND LOAD AR START ===============");
-        Debug.Log($"ARMode: {PlayerPrefs.GetString("ARMode", "NOT SET")}");
-        Debug.Log($"PathNodeCount BEFORE cleanup: {PlayerPrefs.GetInt("ARNavigation_PathNodeCount", -1)}");
-
         RecordManagerStates();
         DestroyNonEssentialManagers();
 
         yield return new WaitForEndOfFrame();
 
-        Debug.Log($"PathNodeCount AFTER cleanup: {PlayerPrefs.GetInt("ARNavigation_PathNodeCount", -1)}");
-        Debug.Log("=============== LOADING AR SCENE ===============");
-
         string sceneToLoad = string.IsNullOrEmpty(targetSceneName) ? arSceneName : targetSceneName;
-        Debug.Log($"Loading scene: {sceneToLoad}");
-        
         SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Single);
     }
 
@@ -94,8 +85,6 @@ public class ARManagerCleanup : MonoBehaviour
         hadJSONManager = JSONFileManager.Instance != null;
         hadFirestoreManager = FirestoreManager.Instance != null;
         hadMapboxManager = FindObjectOfType<MapboxOfflineManager>() != null;
-
-        Debug.Log($"📝 Manager States - JSON: {hadJSONManager}, Firestore: {hadFirestoreManager}, Mapbox: {hadMapboxManager}");
     }
 
     private void DestroyNonEssentialManagers()
@@ -103,14 +92,12 @@ public class ARManagerCleanup : MonoBehaviour
         MainAppLoader mainAppLoader = FindObjectOfType<MainAppLoader>();
         if (mainAppLoader != null)
         {
-            Debug.Log("🗑️ Destroying MainAppLoader");
             Destroy(mainAppLoader.gameObject);
         }
 
         if (GlobalManager.Instance != null)
         {
             GlobalManager.Instance.isInARMode = true;
-            Debug.Log("✅ GlobalManager: AR Mode enabled");
         }
     }
 

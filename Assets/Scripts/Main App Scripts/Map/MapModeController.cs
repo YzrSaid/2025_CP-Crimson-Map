@@ -28,6 +28,10 @@ public class MapModeController : MonoBehaviour
     public MapManager mapManager;
     public PathfindingController pathfindingController;
 
+    [Header("Other Related Buttons and Panels")]
+    public Button changeMapButton;
+    public GameObject downloadMapPanel;
+
     private bool isIndoorMode = false;
     private string currentInfraId;
     private Dictionary<string, Node> allNodes = new Dictionary<string, Node>();
@@ -222,7 +226,7 @@ public class MapModeController : MonoBehaviour
         if (string.IsNullOrEmpty(currentInfraId))
             return;
 
-        Node infraNode = allNodes.Values.FirstOrDefault(n => 
+        Node infraNode = allNodes.Values.FirstOrDefault(n =>
             n.type == "infrastructure" && n.related_infra_id == currentInfraId);
 
         if (infraNode == null)
@@ -255,6 +259,16 @@ public class MapModeController : MonoBehaviour
     private void SetOutdoorMode()
     {
         isIndoorMode = false;
+
+        if (changeMapButton != null)
+        {
+            changeMapButton.gameObject.SetActive(true);
+        }
+
+        if (downloadMapPanel != null)
+        {
+            downloadMapPanel.SetActive(true);
+        }
 
         if (outdoorMapContainer != null)
             outdoorMapContainer.SetActive(true);
@@ -299,6 +313,16 @@ public class MapModeController : MonoBehaviour
     private void SetIndoorMode(string infraId, Node infraNode)
     {
         isIndoorMode = true;
+
+        if (changeMapButton != null)
+        {
+            changeMapButton.gameObject.SetActive(false);
+        }
+
+        if (downloadMapPanel != null)
+        {
+            downloadMapPanel.SetActive(false);
+        }
 
         if (outdoorMapContainer != null)
             outdoorMapContainer.SetActive(false);
