@@ -385,10 +385,10 @@ public class ARSceneQRRecalibration : MonoBehaviour
         string coordinateInfo = $"GPS: {scannedNodeInfo.latitude:F6}, {scannedNodeInfo.longitude:F6}";
 
         string titleText = "<b>Recalibrate GPS Position</b>";
-        
+
         string bodyText = $"<b>{scannedNodeInfo.name}</b>\n\n" +
             $"{coordinateInfo}";
-        
+
         string noteText = "Your GPS position will be updated to this location.";
 
         if (confirmationTitle != null)
@@ -430,6 +430,12 @@ public class ARSceneQRRecalibration : MonoBehaviour
         if (unifiedARManager != null)
         {
             unifiedARManager.OnQRCodeScanned(scannedNodeInfo);
+        }
+
+        DirectionDisplayManager directionManager = FindObjectOfType<DirectionDisplayManager>();
+        if (directionManager != null)
+        {
+            directionManager.OnNodeReached(scannedNodeInfo.node_id);
         }
 
         UserIndicator arUserIndicator = FindObjectOfType<UserIndicator>();

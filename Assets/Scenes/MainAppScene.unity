@@ -17865,6 +17865,8 @@ MonoBehaviour:
   floorButtonPanel: {fileID: 1525500135}
   floorUpButton: {fileID: 1477156720}
   floorDownButton: {fileID: 1780055334}
+  floorIndicator: {fileID: 1144728763}
+  floorIndicatorText: {fileID: 179053751}
   indoorMapManager: {fileID: 1465186298}
   mapManager: {fileID: 1465186286}
   pathfindingController: {fileID: 1465186292}

@@ -421,6 +421,40 @@ public class DirectionDisplayManager : MonoBehaviour
         }
     }
 
+    public void OnNodeReached(string nodeId)
+    {
+        int targetIndex = FindDirectionIndexByNodeId(nodeId);
+
+        if (targetIndex == -1)
+            return;
+
+        if (targetIndex < currentDirectionIndex)
+            return;
+
+        if (targetIndex > currentDirectionIndex)
+        {
+            currentDirectionIndex = targetIndex;
+            DisplayCurrentDirection();
+        }
+        else
+        {
+            MoveToNextDirection();
+        }
+    }
+
+    private int FindDirectionIndexByNodeId(string nodeId)
+    {
+        for (int i = 0; i < allDirections.Count; i++)
+        {
+            if (allDirections[i].destinationNode != null &&
+                allDirections[i].destinationNode.node_id == nodeId)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private void UpdateDirectionItemsStatus()
     {
         for (int i = 0; i < directionItemInstances.Count; i++)

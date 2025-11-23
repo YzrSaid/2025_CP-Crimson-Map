@@ -150,6 +150,7 @@
     <Compile Include="Assets/Mapbox/Core/Plugins/Android/UniAndroidPermission/UniAndroidPermission.cs" />
     <Compile Include="Assets/Mapbox/Examples/8_VoxelMap/Scripts/VoxelTile.cs" />
     <Compile Include="Assets/MobileARTemplateAssets/Scripts/ARTemplateMenuManager.cs" />
+    <Compile Include="Assets/Scripts/ARSCene/ARMapModeController.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/UnityLocationWrappers/MapboxLocationServiceUnityWrapper.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Factories/TerrainStrategies/ElevatedTerrainStrategy.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/GameObjectModifiers/TextureModifier.cs" />
@@ -438,6 +439,7 @@
     <Compile Include="Assets/Mapbox/Unity/DataContainers/LayerSourceOptions.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/SceneUtility.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ISubLayerStyle.cs" />
+    <Compile Include="Assets/Scripts/ARSCene/ARIndoorMapManager.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/MeshModifiers/SnapTerrainRaycastModifier.cs" />
     <Compile Include="Assets/Mapbox/Examples/Scripts/UpdateMapWithLocationProvider.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/AbstractLayer.cs" />
