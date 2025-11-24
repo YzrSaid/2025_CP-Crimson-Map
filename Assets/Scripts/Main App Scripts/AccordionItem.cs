@@ -68,7 +68,7 @@ public class AccordionItem : MonoBehaviour
         }
 
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, minHeight);
-        
+
         if (contentPanel != null)
             contentPanel.gameObject.SetActive(false);
     }
@@ -104,7 +104,7 @@ public class AccordionItem : MonoBehaviour
         if (string.IsNullOrEmpty(categoryId))
         {
             infrastructuresLoaded = true;
-            
+
             if (isExpanded)
             {
                 yield return new WaitForEndOfFrame();
@@ -147,7 +147,7 @@ public class AccordionItem : MonoBehaviour
         catch (System.Exception)
         {
             infrastructuresLoaded = true;
-            
+
             if (isExpanded)
             {
                 StartCoroutine(ShowEmptyStateAfterError());
@@ -185,14 +185,14 @@ public class AccordionItem : MonoBehaviour
             targetHeight = minHeight + emptyMessageHeight;
             rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
         }
-        
+
         ForceLayoutUpdate();
     }
 
     void OnInfrastructuresLoadError(string errorMessage)
     {
         infrastructuresLoaded = true;
-        
+
         if (isExpanded)
         {
             StartCoroutine(ShowEmptyStateAfterError());
@@ -247,19 +247,19 @@ public class AccordionItem : MonoBehaviour
 
         TextMeshProUGUI emptyText = emptyObj.AddComponent<TextMeshProUGUI>();
         emptyText.text = emptyMessageText;
-        
+
         if (emptyMessageFont != null)
             emptyText.font = emptyMessageFont;
-        
+
         emptyText.fontSize = emptyMessageFontSize;
         emptyText.color = emptyMessageColor;
         emptyText.alignment = emptyMessageAlignment;
         emptyText.fontStyle = emptyMessageFontStyle;
         emptyText.enableWordWrapping = true;
         emptyText.margin = new Vector4(
-            emptyMessagePaddingLeft, 
-            emptyMessagePaddingTop, 
-            emptyMessagePaddingRight, 
+            emptyMessagePaddingLeft,
+            emptyMessagePaddingTop,
+            emptyMessagePaddingRight,
             emptyMessagePaddingBottom
         );
 
@@ -292,7 +292,7 @@ public class AccordionItem : MonoBehaviour
         if (isExpanded) return;
 
         isExpanded = true;
-        
+
 
         if (contentPanel != null)
             contentPanel.gameObject.SetActive(true);
@@ -313,16 +313,16 @@ public class AccordionItem : MonoBehaviour
                 targetHeight = minHeight + emptyMessageHeight;
                 rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
             }
-            
+
             ForceLayoutUpdate();
         }
         else
         {
             targetHeight = minHeight + emptyMessageHeight;
             rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
-            
+
             ForceLayoutUpdate();
-            
+
             StartCoroutine(LoadInfrastructures());
         }
     }
@@ -338,9 +338,9 @@ public class AccordionItem : MonoBehaviour
         HideEmptyMessage();
 
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, minHeight);
-        
+
         ForceLayoutUpdate();
-        
+
         if (contentPanel != null)
             contentPanel.gameObject.SetActive(false);
     }
@@ -348,7 +348,7 @@ public class AccordionItem : MonoBehaviour
     void ForceLayoutUpdate()
     {
         LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
-        
+
         if (transform.parent != null)
         {
             RectTransform parentRect = transform.parent.GetComponent<RectTransform>();
@@ -357,7 +357,7 @@ public class AccordionItem : MonoBehaviour
                 LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
             }
         }
-        
+
         LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
     }
 
@@ -372,5 +372,63 @@ public class AccordionItem : MonoBehaviour
 
         if (emptyMessageObject != null)
             Destroy(emptyMessageObject);
+    }
+
+    public string GetCategoryName()
+    {
+        if (headerButton != null)
+        {
+            TMPro.TextMeshProUGUI headerText = headerButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            if (headerText != null)
+            {
+                return headerText.text;
+            }
+        }
+        return "";
+    }
+
+    public List<string> FilterInfrastructuresBySearch(string searchText)
+    {
+        List<string> matchingIds = new List<string>();
+
+        if (spawnedInfrastructures == null || spawnedInfrastructures.Count == 0)
+            return matchingIds;
+
+        searchText = searchText.ToLower().Trim(); 
+
+        foreach (GameObject infraObj in spawnedInfrastructures)
+        {
+            if (infraObj == null) continue;
+
+            ExploreInfrastructureItem itemScript = infraObj.GetComponent<ExploreInfrastructureItem>();
+            if (itemScript != null)
+            {
+                string infraName = itemScript.GetInfrastructureName().ToLower().Trim(); 
+                bool matches = infraName.Contains(searchText);
+
+                infraObj.SetActive(matches);
+
+                if (matches)
+                {
+                    matchingIds.Add(infraObj.name);
+                }
+            }
+        }
+
+        return matchingIds;
+    }
+
+    public void ShowAllInfrastructures()
+    {
+        if (spawnedInfrastructures == null)
+            return;
+
+        foreach (GameObject infraObj in spawnedInfrastructures)
+        {
+            if (infraObj != null)
+            {
+                infraObj.SetActive(true);
+            }
+        }
     }
 }

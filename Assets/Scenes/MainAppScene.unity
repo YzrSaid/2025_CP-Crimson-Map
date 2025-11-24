@@ -17481,6 +17481,7 @@ GameObject:
   - component: {fileID: 1465186298}
   - component: {fileID: 1465186299}
   - component: {fileID: 1465186300}
+  - component: {fileID: 1465186301}
   m_Layer: 0
   m_Name: MainAppManager
   m_TagString: Untagged
@@ -17895,6 +17896,21 @@ MonoBehaviour:
   searchPlaceholder: Search destination...
   itemHeight: 50
   roomItemHeight: 45
+--- !u!114 &1465186301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465186272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b17136d52e1d6819e9dbe0c5fffd4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  searchField: {fileID: 786233300}
+  accordionManager: {fileID: 1588432973}
+  searchPlaceholder: Search categories or places...
 --- !u!1 &1477156718
 GameObject:
   m_ObjectHideFlags: 0

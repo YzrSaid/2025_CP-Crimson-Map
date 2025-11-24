@@ -76,6 +76,15 @@ public class ExploreInfrastructureItem : MonoBehaviour
 
         yield return new WaitUntil(() => loadComplete);
     }
+    public string GetInfrastructureName()
+    {
+        TMPro.TextMeshProUGUI nameText = GetComponentInChildren<TMPro.TextMeshProUGUI>();
+        if (nameText != null)
+        {
+            return nameText.text;
+        }
+        return "";
+    }
 
     private IEnumerator LoadCampuses()
     {
@@ -152,7 +161,7 @@ public class ExploreInfrastructureItem : MonoBehaviour
         }
 
         PathfindingController pathfindingController = FindObjectOfType<PathfindingController>();
-        
+
         if (pathfindingController != null)
         {
             pathfindingController.NavigateToInfrastructure(infrastructureData.infra_id);

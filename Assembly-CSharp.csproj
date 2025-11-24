@@ -160,6 +160,7 @@
     <Compile Include="Assets/Scripts/Main App Scripts/InfrastructurePopulator.cs" />
     <Compile Include="Assets/Mapbox/Examples/8_VoxelMap/Scripts/TextureScaler.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/Logging/LocationLogWriter.cs" />
+    <Compile Include="Assets/Scripts/App Managers/HomePageLoadingManager.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ISubLayerColliderOptions.cs" />
     <Compile Include="Assets/Mapbox/Examples/5_Playground/Scripts/RasterTileExample.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ImageryLayer.cs" />
@@ -355,6 +356,7 @@
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/JsonConverters/BboxToGeoCoordinateBoundsConverter.cs" />
     <Compile Include="Assets/Mapbox/Examples/Scripts/HeroBuildingSelectionUserInput.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Directions/Response/Leg.cs" />
+    <Compile Include="Assets/Scripts/App Managers/ExploreSearchManager.cs" />
     <Compile Include="Assets/Mapbox/Examples/6_ZoomableMap/Scripts/SpawnOnMap.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/CrossPlatformFileLoader.cs" />
     <Compile Include="Assets/Scripts/ARSCene/ARUIManager.cs" />
