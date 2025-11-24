@@ -25,7 +25,8 @@ public class FirestoreManager : MonoBehaviour
         "Infrastructure",
         "Categories",
         "Campus",
-        "IndoorInfrastructure"
+        "IndoorInfrastructure",
+        "IndoorEdges"
     };
 
     private readonly string[] versionedCollections = {
@@ -92,7 +93,7 @@ public class FirestoreManager : MonoBehaviour
         yield return new WaitUntil(() => mapsSyncComplete);
 
         LoadAvailableMaps();
-        
+
         if (JSONFileManager.Instance != null)
         {
             List<string> currentMapIds = availableMaps.Select(m => m.map_id).ToList();
@@ -209,7 +210,7 @@ public class FirestoreManager : MonoBehaviour
                     };
 
                     LocalVersionCache localCache = GetLocalVersionCache(mapId);
-                    
+
                     // Check if version has changed
                     bool versionChanged = localCache == null ||
                                          string.IsNullOrEmpty(localCache.cached_version) ||
@@ -219,8 +220,8 @@ public class FirestoreManager : MonoBehaviour
                     bool versionUpdatedFlag = false;
                     if (!versionChanged && localCache != null)
                     {
-                        versionUpdatedFlag = data.ContainsKey("current_version_updated") && 
-                                            data["current_version_updated"] is bool && 
+                        versionUpdatedFlag = data.ContainsKey("current_version_updated") &&
+                                            data["current_version_updated"] is bool &&
                                             (bool)data["current_version_updated"];
                     }
 
@@ -409,7 +410,8 @@ public class FirestoreManager : MonoBehaviour
                         infrastructure_updated = data.ContainsKey("infrastructure_updated") ? (bool)data["infrastructure_updated"] : false,
                         categories_updated = data.ContainsKey("categories_updated") ? (bool)data["categories_updated"] : false,
                         campus_updated = data.ContainsKey("campus_updated") ? (bool)data["campus_updated"] : false,
-                        indoor_infrastructure_updated = data.ContainsKey("indoor_infrastructure_updated") ? (bool)data["indoor_infrastructure_updated"] : false
+                        indoor_infrastructure_updated = data.ContainsKey("indoor_infrastructure_updated") ? (bool)data["indoor_infrastructure_updated"] : false,
+                        indoor_edges_updated = data.ContainsKey("indoor_edges_updated") ? (bool)data["indoor_edges_updated"] : false // ADD THIS LINE
                     };
 
                     LocalStaticDataCache localCache = GetLocalStaticDataCache();
@@ -419,16 +421,19 @@ public class FirestoreManager : MonoBehaviour
                          !localCache.categories_synced &&
                          !localCache.campus_synced &&
                          !localCache.indoor_synced &&
+                         !localCache.indoor_edges_synced && // ADD THIS LINE
                          !serverInfo.infrastructure_updated &&
                          !serverInfo.categories_updated &&
                          !serverInfo.campus_updated &&
-                         !serverInfo.indoor_infrastructure_updated;
+                         !serverInfo.indoor_infrastructure_updated &&
+                         !serverInfo.indoor_edges_updated; // ADD THIS LINE
 
                     bool needsUpdate = localCache == null || bootstrapNeeded ||
                                        serverInfo.infrastructure_updated ||
                                        serverInfo.categories_updated ||
                                        serverInfo.campus_updated ||
-                                       serverInfo.indoor_infrastructure_updated;
+                                       serverInfo.indoor_infrastructure_updated ||
+                                       serverInfo.indoor_edges_updated; // ADD THIS LINE
 
                     onComplete?.Invoke(needsUpdate, serverInfo);
                 }
@@ -439,7 +444,8 @@ public class FirestoreManager : MonoBehaviour
                         infrastructure_updated = true,
                         categories_updated = true,
                         campus_updated = true,
-                        indoor_infrastructure_updated = true
+                        indoor_infrastructure_updated = true,
+                        indoor_edges_updated = true // ADD THIS LINE
                     };
                     onComplete?.Invoke(true, defaultInfo);
                 }
@@ -487,6 +493,13 @@ public class FirestoreManager : MonoBehaviour
             flagsToReset.Add("indoor_infrastructure_updated");
         }
 
+        bool shouldSyncIndoorEdges = versionInfo.indoor_edges_updated || !hasLocalCache || (hasLocalCache && !localCache.indoor_edges_synced);
+        if (shouldSyncIndoorEdges)
+        {
+            collectionsToSync.Add("IndoorEdges");
+            flagsToReset.Add("indoor_edges_updated");
+        }
+
         if (collectionsToSync.Count == 0)
         {
             onComplete?.Invoke();
@@ -528,6 +541,10 @@ public class FirestoreManager : MonoBehaviour
         if (collectionName == "IndoorInfrastructure")
         {
             fileName = "indoor.json";
+        }
+        else if (collectionName == "IndoorEdges")
+        {
+            fileName = "indoor_edges.json";
         }
         else
         {
@@ -611,7 +628,8 @@ public class FirestoreManager : MonoBehaviour
                 infrastructure_synced = false,
                 categories_synced = false,
                 campus_synced = false,
-                indoor_synced = false
+                indoor_synced = false,
+                indoor_edges_synced = false
             };
         }
 
@@ -635,6 +653,11 @@ public class FirestoreManager : MonoBehaviour
             cache.indoor_synced = true;
         }
 
+        if (syncResults.ContainsKey("IndoorEdges") && syncResults["IndoorEdges"])
+        {
+            cache.indoor_edges_synced = true;
+        }
+
         string jsonContent = JsonUtility.ToJson(cache, true);
         if (JSONFileManager.Instance != null)
         {
@@ -655,6 +678,14 @@ public class FirestoreManager : MonoBehaviour
             if (flag == "indoor_infrastructure_updated")
             {
                 if (syncResults.ContainsKey("IndoorInfrastructure") && syncResults["IndoorInfrastructure"])
+                {
+                    resetData[flag] = false;
+                    hasUpdates = true;
+                }
+            }
+            else if (flag == "indoor_edges_updated")
+            {
+                if (syncResults.ContainsKey("IndoorEdges") && syncResults["IndoorEdges"])
                 {
                     resetData[flag] = false;
                     hasUpdates = true;

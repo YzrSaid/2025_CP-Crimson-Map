@@ -159,6 +159,19 @@ public class IndoorInfrastructure
     public string room_id;
 }
 
+// Indoor Edges Data
+[System.Serializable]
+public class IndoorEdge
+{
+    public string indoor_edge_id;
+    public string from_indoor;
+    public string to_indoor;
+    public string infra_id;
+    public bool is_active;
+    public bool is_deleted;
+    public string created_at;
+}
+
 // Campus data class
 [System.Serializable]
 public class CampusData
@@ -208,6 +221,7 @@ public class StaticDataVersionInfo
     public bool categories_updated;
     public bool campus_updated;
     public bool indoor_infrastructure_updated;
+    public bool indoor_edges_updated; 
 }
 
 [System.Serializable]
@@ -217,6 +231,7 @@ public class LocalStaticDataCache
     public bool categories_synced;
     public bool campus_synced;
     public bool indoor_synced;
+    public bool indoor_edges_synced;
 }
 
 [System.Serializable]

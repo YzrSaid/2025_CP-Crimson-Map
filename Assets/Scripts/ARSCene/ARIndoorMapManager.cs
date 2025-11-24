@@ -19,11 +19,20 @@ public class ARIndoorMapManager : MonoBehaviour
     public GameObject entranceMarkerPrefab;
     public GameObject destinationRoomMarkerPrefab;
 
+    [Header("Edge Prefabs")]
+    public GameObject indoorEdgePrefab;
+    public GameObject highlightedEdgePrefab;
+
     [Header("Map Settings")]
     public float mapWidth = 1000f;
     public float mapHeight = 1000f;
     public float pixelsPerMeter = 20f;
     public Color backgroundColor = Color.white;
+
+    [Header("Edge Settings")]
+    public float edgeWidth = 2f;
+    public Color normalEdgeColor = Color.gray;
+    public Color highlightEdgeColor = new Color(0.74f, 0.06f, 0.18f, 1f);
 
     [Header("Pan & Zoom Settings")]
     public float minZoom = 0.5f;
@@ -37,8 +46,11 @@ public class ARIndoorMapManager : MonoBehaviour
     private List<int> availableFloors = new List<int>();
 
     private Dictionary<string, GameObject> spawnedMarkers = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> spawnedEdges = new Dictionary<string, GameObject>();
     private Dictionary<string, Node> allNodes = new Dictionary<string, Node>();
     private Dictionary<string, IndoorInfrastructure> indoorInfrastructures = new Dictionary<string, IndoorInfrastructure>();
+    private Dictionary<string, IndoorEdge> indoorEdges = new Dictionary<string, IndoorEdge>();
+    private HashSet<string> highlightedEdgeIds = new HashSet<string>();
 
     private Vector2 dragStartPos;
     private Vector2 mapStartPos;
@@ -63,6 +75,7 @@ public class ARIndoorMapManager : MonoBehaviour
         currentInfraNode = infraNode;
 
         ClearAllMarkers();
+        ClearAllEdges();
 
         StartCoroutine(LoadIndoorMapData());
     }
@@ -73,6 +86,7 @@ public class ARIndoorMapManager : MonoBehaviour
         yield return StartCoroutine(LoadNodes(mapId));
 
         yield return StartCoroutine(LoadIndoorData());
+        yield return StartCoroutine(LoadIndoorEdges());
 
         DetermineAvailableFloors();
 
@@ -81,7 +95,10 @@ public class ARIndoorMapManager : MonoBehaviour
             currentFloor = availableFloors[0];
         }
 
+        CalculateHighlightedPath();
+
         SpawnMarkersForCurrentFloor();
+        SpawnEdgesForCurrentFloor();
 
         if (ARMapModeController.Instance != null)
         {
@@ -161,6 +178,204 @@ public class ARIndoorMapManager : MonoBehaviour
         yield return new WaitUntil(() => loadComplete);
     }
 
+    private IEnumerator LoadIndoorEdges()
+    {
+        bool loadComplete = false;
+
+        yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
+            "indoor_edges.json",
+            (jsonContent) =>
+            {
+                try
+                {
+                    IndoorEdge[] edgesArray = JsonHelper.FromJson<IndoorEdge>(jsonContent);
+                    indoorEdges.Clear();
+
+                    foreach (var edge in edgesArray)
+                    {
+                        if (!edge.is_deleted && edge.is_active)
+                        {
+                            indoorEdges[edge.indoor_edge_id] = edge;
+                        }
+                    }
+
+                    loadComplete = true;
+                }
+                catch (System.Exception)
+                {
+                    loadComplete = true;
+                }
+            },
+            (error) =>
+            {
+                loadComplete = true;
+            }
+        ));
+
+        yield return new WaitUntil(() => loadComplete);
+    }
+
+    private void CalculateHighlightedPath()
+    {
+        highlightedEdgeIds.Clear();
+
+        if (string.IsNullOrEmpty(destinationNodeId) || !allNodes.ContainsKey(destinationNodeId))
+            return;
+
+        Node destNode = allNodes[destinationNodeId];
+        if (destNode.type != "indoorinfra" || !destNode.HasRelatedRoomId)
+            return;
+
+        string destRoomId = destNode.related_room_id;
+        if (!indoorInfrastructures.ContainsKey(destRoomId))
+            return;
+
+        int destFloor = 1;
+        if (destNode.indoor != null && !string.IsNullOrEmpty(destNode.indoor.floor))
+        {
+            int.TryParse(destNode.indoor.floor, out destFloor);
+        }
+
+        string startRoomId = GetStartingPoint(destFloor);
+        if (string.IsNullOrEmpty(startRoomId))
+            return;
+
+        List<string> path = FindPath(startRoomId, destRoomId);
+
+        if (path != null && path.Count > 1)
+        {
+            for (int i = 0; i < path.Count - 1; i++)
+            {
+                string fromRoom = path[i];
+                string toRoom = path[i + 1];
+
+                var edge = indoorEdges.Values.FirstOrDefault(e =>
+                    e.infra_id == currentInfraId &&
+                    ((e.from_indoor == fromRoom && e.to_indoor == toRoom) ||
+                     (e.from_indoor == toRoom && e.to_indoor == fromRoom))
+                );
+
+                if (edge != null)
+                {
+                    highlightedEdgeIds.Add(edge.indoor_edge_id);
+                }
+            }
+        }
+    }
+
+    private string GetStartingPoint(int destFloor)
+    {
+        if (destFloor == 1)
+        {
+            var entrance = indoorInfrastructures.Values.FirstOrDefault(i =>
+                i.infra_id == currentInfraId &&
+                i.indoor_type.ToLower() == "entrance"
+            );
+
+            if (entrance != null)
+                return entrance.room_id;
+        }
+
+        var stairs = indoorInfrastructures.Values.FirstOrDefault(i =>
+            i.infra_id == currentInfraId &&
+            i.indoor_type.ToLower() == "stairs"
+        );
+
+        if (stairs != null)
+        {
+            var stairsNode = allNodes.Values.FirstOrDefault(n =>
+                n.type == "indoorinfra" &&
+                n.HasRelatedRoomId &&
+                n.related_room_id == stairs.room_id &&
+                n.indoor != null &&
+                n.indoor.floor == destFloor.ToString()
+            );
+
+            if (stairsNode != null)
+                return stairs.room_id;
+        }
+
+        return null;
+    }
+
+    private List<string> FindPath(string startRoomId, string destRoomId)
+    {
+        Dictionary<string, List<string>> graph = BuildGraph();
+
+        if (!graph.ContainsKey(startRoomId) || !graph.ContainsKey(destRoomId))
+            return null;
+
+        Queue<string> queue = new Queue<string>();
+        Dictionary<string, string> cameFrom = new Dictionary<string, string>();
+        HashSet<string> visited = new HashSet<string>();
+
+        queue.Enqueue(startRoomId);
+        visited.Add(startRoomId);
+        cameFrom[startRoomId] = null;
+
+        while (queue.Count > 0)
+        {
+            string current = queue.Dequeue();
+
+            if (current == destRoomId)
+            {
+                return ReconstructPath(cameFrom, current);
+            }
+
+            if (graph.ContainsKey(current))
+            {
+                foreach (string neighbor in graph[current])
+                {
+                    if (!visited.Contains(neighbor))
+                    {
+                        visited.Add(neighbor);
+                        cameFrom[neighbor] = current;
+                        queue.Enqueue(neighbor);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Dictionary<string, List<string>> BuildGraph()
+    {
+        Dictionary<string, List<string>> graph = new Dictionary<string, List<string>>();
+
+        foreach (var edge in indoorEdges.Values)
+        {
+            if (edge.infra_id != currentInfraId)
+                continue;
+
+            if (!graph.ContainsKey(edge.from_indoor))
+                graph[edge.from_indoor] = new List<string>();
+
+            if (!graph.ContainsKey(edge.to_indoor))
+                graph[edge.to_indoor] = new List<string>();
+
+            graph[edge.from_indoor].Add(edge.to_indoor);
+            graph[edge.to_indoor].Add(edge.from_indoor);
+        }
+
+        return graph;
+    }
+
+    private List<string> ReconstructPath(Dictionary<string, string> cameFrom, string current)
+    {
+        List<string> path = new List<string>();
+        path.Add(current);
+
+        while (cameFrom[current] != null)
+        {
+            current = cameFrom[current];
+            path.Add(current);
+        }
+
+        path.Reverse();
+        return path;
+    }
+
     private void DetermineAvailableFloors()
     {
         availableFloors.Clear();
@@ -226,6 +441,74 @@ public class ARIndoorMapManager : MonoBehaviour
         {
             SpawnMarkerForNode(node);
         }
+    }
+
+    private void SpawnEdgesForCurrentFloor()
+    {
+        ClearAllEdges();
+
+        if (indoorEdgePrefab == null)
+            return;
+
+        var currentFloorNodes = allNodes.Values.Where(n =>
+            n.type == "indoorinfra" &&
+            n.HasRelatedRoomId &&
+            indoorInfrastructures.ContainsKey(n.related_room_id) &&
+            indoorInfrastructures[n.related_room_id].infra_id == currentInfraId &&
+            n.indoor != null &&
+            n.indoor.floor == currentFloor.ToString()
+        ).ToList();
+
+        Dictionary<string, Node> roomIdToNode = new Dictionary<string, Node>();
+        foreach (var node in currentFloorNodes)
+        {
+            roomIdToNode[node.related_room_id] = node;
+        }
+
+        var currentInfraEdges = indoorEdges.Values.Where(e =>
+            e.infra_id == currentInfraId &&
+            roomIdToNode.ContainsKey(e.from_indoor) &&
+            roomIdToNode.ContainsKey(e.to_indoor)
+        );
+
+        foreach (var edge in currentInfraEdges)
+        {
+            bool isHighlighted = highlightedEdgeIds.Contains(edge.indoor_edge_id);
+            GameObject prefabToUse = isHighlighted && highlightedEdgePrefab != null ? highlightedEdgePrefab : indoorEdgePrefab;
+            Color colorToUse = isHighlighted ? highlightEdgeColor : normalEdgeColor;
+
+            SpawnEdge(edge, roomIdToNode[edge.from_indoor], roomIdToNode[edge.to_indoor], prefabToUse, colorToUse);
+        }
+    }
+
+    private void SpawnEdge(IndoorEdge edge, Node fromNode, Node toNode, GameObject prefab, Color color)
+    {
+        GameObject edgeObj = Instantiate(prefab, markersContainer);
+        edgeObj.name = $"Edge_{edge.indoor_edge_id}";
+
+        RectTransform edgeRect = edgeObj.GetComponent<RectTransform>();
+        if (edgeRect != null)
+        {
+            Vector2 fromPos = WorldToMapPosition(fromNode.indoor.x, fromNode.indoor.y);
+            Vector2 toPos = WorldToMapPosition(toNode.indoor.x, toNode.indoor.y);
+
+            Vector2 direction = toPos - fromPos;
+            float distance = direction.magnitude;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            Vector2 centerPos = (fromPos + toPos) / 2f;
+            edgeRect.anchoredPosition = centerPos;
+            edgeRect.sizeDelta = new Vector2(distance, edgeWidth);
+            edgeRect.rotation = Quaternion.Euler(0, 0, angle);
+
+            Image edgeImage = edgeObj.GetComponent<Image>();
+            if (edgeImage != null)
+            {
+                edgeImage.color = color;
+            }
+        }
+
+        spawnedEdges[edge.indoor_edge_id] = edgeObj;
     }
 
     private void SpawnMarkerForNode(Node node)
@@ -302,6 +585,7 @@ public class ARIndoorMapManager : MonoBehaviour
         currentFloor = availableFloors[newIndex];
 
         SpawnMarkersForCurrentFloor();
+        SpawnEdgesForCurrentFloor();
 
         if (ARMapModeController.Instance != null)
         {
@@ -320,6 +604,19 @@ public class ARIndoorMapManager : MonoBehaviour
         }
 
         spawnedMarkers.Clear();
+    }
+
+    private void ClearAllEdges()
+    {
+        foreach (var edge in spawnedEdges.Values)
+        {
+            if (edge != null)
+            {
+                Destroy(edge);
+            }
+        }
+
+        spawnedEdges.Clear();
     }
 
     public int GetCurrentFloor()

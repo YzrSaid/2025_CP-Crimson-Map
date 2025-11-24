@@ -10160,7 +10160,6 @@ GameObject:
   - component: {fileID: 1112017721}
   - component: {fileID: 1112017720}
   - component: {fileID: 1112017719}
-  - component: {fileID: 1112017722}
   m_Layer: 5
   m_Name: IndoorMapContainer
   m_TagString: Untagged
@@ -10241,26 +10240,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   indoorMapContainer: {fileID: 1112017718}
   viewportRect: {fileID: 1306397720}
-  dragSensitivity: 1
-  clampDrag: 1
-  minZoom: 0.5
-  maxZoom: 3
-  zoomSensitivity: 0.01
-  pinchZoomDeadzone: 5
---- !u!114 &1112017722
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1112017717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1624bb308216e8d35991a4b7c5bda217, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  indoorMapContainer: {fileID: 0}
-  viewportRect: {fileID: 0}
   dragSensitivity: 1
   clampDrag: 1
   minZoom: 0.5
@@ -15737,6 +15716,8 @@ GameObject:
   - component: {fileID: 1709089056}
   - component: {fileID: 1709089058}
   - component: {fileID: 1709089057}
+  - component: {fileID: 1709089060}
+  - component: {fileID: 1709089059}
   m_Layer: 0
   m_Name: ARSceneManager
   m_TagString: Untagged
@@ -16050,6 +16031,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   whichOneDropdown: {fileID: 980842043}
+--- !u!114 &1709089059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709089041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c9a11059fbfc934ca3176ffed8f8cde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outdoorMapContainer: {fileID: 204240414}
+  indoorMapContainer: {fileID: 1112017717}
+  goInsideButton: {fileID: 209261695}
+  goOutsideButton: {fileID: 1529212189}
+  floorButtonPanel: {fileID: 1188645783}
+  floorUpButton: {fileID: 1022392494}
+  floorDownButton: {fileID: 514874733}
+  floorIndicator: {fileID: 1535673503}
+  floorIndicatorText: {fileID: 385508234}
+  arIndoorMapManager: {fileID: 1709089060}
+  arMapManager: {fileID: 1709089046}
+--- !u!114 &1709089060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709089041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0562fd43af6192b518fa9317791f13d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  indoorMapContainer: {fileID: 1112017718}
+  indoorMapBackground: {fileID: 999378300}
+  markersContainer: {fileID: 230062472}
+  roomMarkerPrefab: {fileID: 1693813094809218848, guid: e3091809ae651d4b0ad80966bab8a2ce, type: 3}
+  stairsMarkerPrefab: {fileID: 5093649431513760526, guid: e4910e44ec0bebaf7a7b44c92342da37, type: 3}
+  fireExitMarkerPrefab: {fileID: 8061291825233335852, guid: 15ba6e67824071769a124ce8827905d5, type: 3}
+  entranceMarkerPrefab: {fileID: 6831055385296088179, guid: 1be9b211adb2c56e1af9ae850dba4e54, type: 3}
+  destinationRoomMarkerPrefab: {fileID: 1693813094809218848, guid: 57a96514fae81734cb8ebc0a58f86898, type: 3}
+  mapWidth: 1000
+  mapHeight: 1000
+  pixelsPerMeter: 20
+  backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  minZoom: 0.5
+  maxZoom: 3
+  zoomSpeed: 0.1
 --- !u!1 &1710405585
 GameObject:
   m_ObjectHideFlags: 0

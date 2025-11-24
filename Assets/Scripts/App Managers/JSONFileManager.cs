@@ -22,6 +22,7 @@ public class JSONFileManager : MonoBehaviour
         "saved_destinations.json",
         "static_data_cache.json",
         "indoor.json",
+        "indoor_edges.json",
         "bookmarks.json"
     };
 
@@ -181,6 +182,9 @@ public class JSONFileManager : MonoBehaviour
                 return "[]";
 
             case "indoor.json":
+                return "[]";
+
+            case "indoor_edges.json":
                 return "[]";
                 
             case "maps.json":

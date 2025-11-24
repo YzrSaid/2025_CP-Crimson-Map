@@ -17,12 +17,17 @@ public class IndoorMapManager : MonoBehaviour
     public GameObject stairsMarkerPrefab;
     public GameObject fireExitMarkerPrefab;
     public GameObject entranceMarkerPrefab;
+    public GameObject indoorEdgePrefab; 
 
     [Header("Map Settings")]
     public float mapWidth = 1000f;
     public float mapHeight = 1000f;
     public float pixelsPerMeter = 20f;
     public Color backgroundColor = Color.white;
+
+    [Header("Edge Settings")] 
+    public float edgeWidth = 2f;
+    public Color edgeColor = Color.gray;
 
     [Header("Pan & Zoom Settings")]
     public float minZoom = 0.5f;
@@ -35,8 +40,10 @@ public class IndoorMapManager : MonoBehaviour
     private List<int> availableFloors = new List<int>();
 
     private Dictionary<string, GameObject> spawnedMarkers = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> spawnedEdges = new Dictionary<string, GameObject>(); 
     private Dictionary<string, Node> allNodes = new Dictionary<string, Node>();
     private Dictionary<string, IndoorInfrastructure> indoorInfrastructures = new Dictionary<string, IndoorInfrastructure>();
+    private Dictionary<string, IndoorEdge> indoorEdges = new Dictionary<string, IndoorEdge>(); 
 
     private Vector2 dragStartPos;
     private Vector2 mapStartPos;
@@ -59,6 +66,7 @@ public class IndoorMapManager : MonoBehaviour
         currentInfraNode = infraNode;
 
         ClearAllMarkers();
+        ClearAllEdges();
 
         StartCoroutine(LoadIndoorMapData());
     }
@@ -72,6 +80,7 @@ public class IndoorMapManager : MonoBehaviour
         }
 
         yield return StartCoroutine(LoadIndoorData());
+        yield return StartCoroutine(LoadIndoorEdges()); 
 
         DetermineAvailableFloors();
 
@@ -81,6 +90,7 @@ public class IndoorMapManager : MonoBehaviour
         }
 
         SpawnMarkersForCurrentFloor();
+        SpawnEdgesForCurrentFloor(); 
 
         if (MapModeController.Instance != null)
         {
@@ -141,6 +151,43 @@ public class IndoorMapManager : MonoBehaviour
                         if (!indoor.is_deleted)
                         {
                             indoorInfrastructures[indoor.room_id] = indoor;
+                        }
+                    }
+
+                    loadComplete = true;
+                }
+                catch (System.Exception)
+                {
+                    loadComplete = true;
+                }
+            },
+            (error) =>
+            {
+                loadComplete = true;
+            }
+        ));
+
+        yield return new WaitUntil(() => loadComplete);
+    }
+
+    private IEnumerator LoadIndoorEdges()
+    {
+        bool loadComplete = false;
+
+        yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
+            "indoor_edges.json",
+            (jsonContent) =>
+            {
+                try
+                {
+                    IndoorEdge[] edgesArray = JsonHelper.FromJson<IndoorEdge>(jsonContent);
+                    indoorEdges.Clear();
+
+                    foreach (var edge in edgesArray)
+                    {
+                        if (!edge.is_deleted && edge.is_active)
+                        {
+                            indoorEdges[edge.indoor_edge_id] = edge;
                         }
                     }
 
@@ -227,6 +274,70 @@ public class IndoorMapManager : MonoBehaviour
         }
     }
 
+    private void SpawnEdgesForCurrentFloor()
+    {
+        ClearAllEdges();
+
+        if (indoorEdgePrefab == null)
+            return;
+
+        var currentFloorNodes = allNodes.Values.Where(n =>
+            n.type == "indoorinfra" &&
+            n.HasRelatedRoomId &&
+            indoorInfrastructures.ContainsKey(n.related_room_id) &&
+            indoorInfrastructures[n.related_room_id].infra_id == currentInfraId &&
+            n.indoor != null &&
+            n.indoor.floor == currentFloor.ToString()
+        ).ToList();
+
+        Dictionary<string, Node> roomIdToNode = new Dictionary<string, Node>();
+        foreach (var node in currentFloorNodes)
+        {
+            roomIdToNode[node.related_room_id] = node;
+        }
+
+        var currentInfraEdges = indoorEdges.Values.Where(e =>
+            e.infra_id == currentInfraId &&
+            roomIdToNode.ContainsKey(e.from_indoor) &&
+            roomIdToNode.ContainsKey(e.to_indoor)
+        );
+
+        foreach (var edge in currentInfraEdges)
+        {
+            SpawnEdge(edge, roomIdToNode[edge.from_indoor], roomIdToNode[edge.to_indoor], edgeColor);
+        }
+    }
+
+    private void SpawnEdge(IndoorEdge edge, Node fromNode, Node toNode, Color color)
+    {
+        GameObject edgeObj = Instantiate(indoorEdgePrefab, markersContainer);
+        edgeObj.name = $"Edge_{edge.indoor_edge_id}";
+
+        RectTransform edgeRect = edgeObj.GetComponent<RectTransform>();
+        if (edgeRect != null)
+        {
+            Vector2 fromPos = WorldToMapPosition(fromNode.indoor.x, fromNode.indoor.y);
+            Vector2 toPos = WorldToMapPosition(toNode.indoor.x, toNode.indoor.y);
+
+            Vector2 direction = toPos - fromPos;
+            float distance = direction.magnitude;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            Vector2 centerPos = (fromPos + toPos) / 2f;
+            edgeRect.anchoredPosition = centerPos;
+            edgeRect.sizeDelta = new Vector2(distance, edgeWidth);
+            edgeRect.rotation = Quaternion.Euler(0, 0, angle);
+
+            Image edgeImage = edgeObj.GetComponent<Image>();
+            if (edgeImage != null)
+            {
+                edgeImage.color = color;
+            }
+        }
+
+        spawnedEdges[edge.indoor_edge_id] = edgeObj;
+    }
+
     private void SpawnMarkerForNode(Node node)
     {
         if (node.indoor == null || !indoorInfrastructures.ContainsKey(node.related_room_id))
@@ -294,6 +405,7 @@ public class IndoorMapManager : MonoBehaviour
         currentFloor = availableFloors[newIndex];
 
         SpawnMarkersForCurrentFloor();
+        SpawnEdgesForCurrentFloor(); // ADD THIS LINE
 
         if (MapModeController.Instance != null)
         {
@@ -312,6 +424,19 @@ public class IndoorMapManager : MonoBehaviour
         }
 
         spawnedMarkers.Clear();
+    }
+
+    private void ClearAllEdges()
+    {
+        foreach (var edge in spawnedEdges.Values)
+        {
+            if (edge != null)
+            {
+                Destroy(edge);
+            }
+        }
+
+        spawnedEdges.Clear();
     }
 
     public int GetCurrentFloor()

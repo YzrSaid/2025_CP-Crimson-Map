@@ -18,6 +18,15 @@
     "id": "4yGH3q5i1z91ukfFc0VK"
   },
   {
+    "room_id": "IND-053",
+    "name": "CCS Entrance",
+    "is_deleted": false,
+    "infra_id": "INFRA-14",
+    "indoor_type": "entrance",
+    "createdAt": {},
+    "id": "7egx7JkbY2lgl3czZA6V"
+  },
+  {
     "room_id": "IND-035",
     "name": "LSS Office",
     "is_deleted": false,
