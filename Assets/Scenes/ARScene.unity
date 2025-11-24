@@ -16074,10 +16074,15 @@ MonoBehaviour:
   fireExitMarkerPrefab: {fileID: 8061291825233335852, guid: 15ba6e67824071769a124ce8827905d5, type: 3}
   entranceMarkerPrefab: {fileID: 6831055385296088179, guid: 1be9b211adb2c56e1af9ae850dba4e54, type: 3}
   destinationRoomMarkerPrefab: {fileID: 1693813094809218848, guid: 57a96514fae81734cb8ebc0a58f86898, type: 3}
+  indoorEdgePrefab: {fileID: 8428658769689208955, guid: cac9fd23db709a904b1c980dc483d0b9, type: 3}
+  highlightedEdgePrefab: {fileID: 8428658769689208955, guid: 8a969ab3b3520101abd416be5a552dd0, type: 3}
   mapWidth: 1000
   mapHeight: 1000
   pixelsPerMeter: 20
   backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  edgeWidth: 2
+  normalEdgeColor: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 0.6392157}
+  highlightEdgeColor: {r: 0.72156864, g: 0.0627451, b: 0.07450981, a: 0.64705884}
   minZoom: 0.5
   maxZoom: 3
   zoomSpeed: 0.1

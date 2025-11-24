@@ -18107,10 +18107,13 @@ MonoBehaviour:
   stairsMarkerPrefab: {fileID: 5093649431513760526, guid: e4910e44ec0bebaf7a7b44c92342da37, type: 3}
   fireExitMarkerPrefab: {fileID: 8061291825233335852, guid: 15ba6e67824071769a124ce8827905d5, type: 3}
   entranceMarkerPrefab: {fileID: 6831055385296088179, guid: 1be9b211adb2c56e1af9ae850dba4e54, type: 3}
+  indoorEdgePrefab: {fileID: 8428658769689208955, guid: cac9fd23db709a904b1c980dc483d0b9, type: 3}
   mapWidth: 1000
   mapHeight: 1000
   pixelsPerMeter: 20
   backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  edgeWidth: 2
+  edgeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   minZoom: 0.5
   maxZoom: 3
   zoomSpeed: 0.1

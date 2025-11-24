@@ -163,7 +163,7 @@ public class IndoorInfrastructure
 [System.Serializable]
 public class IndoorEdge
 {
-    public string indoor_edge_id;
+    public string indooredge_id;
     public string from_indoor;
     public string to_indoor;
     public string infra_id;

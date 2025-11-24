@@ -96,9 +96,8 @@ public class ARIndoorMapManager : MonoBehaviour
         }
 
         CalculateHighlightedPath();
-
-        SpawnMarkersForCurrentFloor();
         SpawnEdgesForCurrentFloor();
+        SpawnMarkersForCurrentFloor();
 
         if (ARMapModeController.Instance != null)
         {
@@ -195,7 +194,7 @@ public class ARIndoorMapManager : MonoBehaviour
                     {
                         if (!edge.is_deleted && edge.is_active)
                         {
-                            indoorEdges[edge.indoor_edge_id] = edge;
+                            indoorEdges[edge.indooredge_id] = edge;
                         }
                     }
 
@@ -257,7 +256,7 @@ public class ARIndoorMapManager : MonoBehaviour
 
                 if (edge != null)
                 {
-                    highlightedEdgeIds.Add(edge.indoor_edge_id);
+                    highlightedEdgeIds.Add(edge.indooredge_id);
                 }
             }
         }
@@ -380,9 +379,9 @@ public class ARIndoorMapManager : MonoBehaviour
     {
         availableFloors.Clear();
 
-        var indoorNodes = allNodes.Values.Where(n => 
-            n.type == "indoorinfra" && 
-            n.HasRelatedRoomId && 
+        var indoorNodes = allNodes.Values.Where(n =>
+            n.type == "indoorinfra" &&
+            n.HasRelatedRoomId &&
             indoorInfrastructures.ContainsKey(n.related_room_id) &&
             indoorInfrastructures[n.related_room_id].infra_id == currentInfraId &&
             n.indoor != null &&
@@ -407,30 +406,9 @@ public class ARIndoorMapManager : MonoBehaviour
     {
         ClearAllMarkers();
 
-        if (currentFloor == 1)
-        {
-            Node infraNode = allNodes.Values.FirstOrDefault(n => 
-                n.type == "infrastructure" && n.related_infra_id == currentInfraId);
-
-            if (infraNode != null && entranceMarkerPrefab != null)
-            {
-                GameObject entranceMarker = Instantiate(entranceMarkerPrefab, markersContainer);
-                Vector2 entrancePos = WorldToMapPosition(0f, 0f);
-                entranceMarker.GetComponent<RectTransform>().anchoredPosition = entrancePos;
-                
-                TextMeshProUGUI nameText = entranceMarker.GetComponentInChildren<TextMeshProUGUI>();
-                if (nameText != null)
-                {
-                    nameText.text = "Entrance";
-                }
-                
-                spawnedMarkers["entrance"] = entranceMarker;
-            }
-        }
-
-        var indoorNodes = allNodes.Values.Where(n => 
-            n.type == "indoorinfra" && 
-            n.HasRelatedRoomId && 
+        var indoorNodes = allNodes.Values.Where(n =>
+            n.type == "indoorinfra" &&
+            n.HasRelatedRoomId &&
             indoorInfrastructures.ContainsKey(n.related_room_id) &&
             indoorInfrastructures[n.related_room_id].infra_id == currentInfraId &&
             n.indoor != null &&
@@ -473,7 +451,7 @@ public class ARIndoorMapManager : MonoBehaviour
 
         foreach (var edge in currentInfraEdges)
         {
-            bool isHighlighted = highlightedEdgeIds.Contains(edge.indoor_edge_id);
+            bool isHighlighted = highlightedEdgeIds.Contains(edge.indooredge_id);
             GameObject prefabToUse = isHighlighted && highlightedEdgePrefab != null ? highlightedEdgePrefab : indoorEdgePrefab;
             Color colorToUse = isHighlighted ? highlightEdgeColor : normalEdgeColor;
 
@@ -484,7 +462,7 @@ public class ARIndoorMapManager : MonoBehaviour
     private void SpawnEdge(IndoorEdge edge, Node fromNode, Node toNode, GameObject prefab, Color color)
     {
         GameObject edgeObj = Instantiate(prefab, markersContainer);
-        edgeObj.name = $"Edge_{edge.indoor_edge_id}";
+        edgeObj.name = $"Edge_{edge.indooredge_id}";
 
         RectTransform edgeRect = edgeObj.GetComponent<RectTransform>();
         if (edgeRect != null)
@@ -508,7 +486,7 @@ public class ARIndoorMapManager : MonoBehaviour
             }
         }
 
-        spawnedEdges[edge.indoor_edge_id] = edgeObj;
+        spawnedEdges[edge.indooredge_id] = edgeObj;
     }
 
     private void SpawnMarkerForNode(Node node)
@@ -584,8 +562,8 @@ public class ARIndoorMapManager : MonoBehaviour
 
         currentFloor = availableFloors[newIndex];
 
-        SpawnMarkersForCurrentFloor();
         SpawnEdgesForCurrentFloor();
+        SpawnMarkersForCurrentFloor();
 
         if (ARMapModeController.Instance != null)
         {

@@ -11,16 +11,6 @@
     "id": "3hFzZT9hQhuSYv6hyK7A"
   },
   {
-    "name": "123",
-    "is_deleted": true,
-    "deletedAt": {},
-    "createdAt": {},
-    "color": "#b41c1c",
-    "category_id": "CAT-10",
-    "buildings": 0,
-    "id": "DAXMb84LE3hqVjxV1RG8"
-  },
-  {
     "updatedAt": {},
     "is_deleted": false,
     "name": "Health & Wellness Services",
@@ -30,15 +20,6 @@
     "category_id": "CAT-07",
     "buildings": 0,
     "id": "GEklwq8BSgJ7UK9koul5"
-  },
-  {
-    "name": "123456789",
-    "is_deleted": false,
-    "createdAt": {},
-    "legend": "A",
-    "category_id": "CAT-11",
-    "buildings": 0,
-    "id": "GqGd10hfGpiuGJKzktEJ"
   },
   {
     "name": "Courts & Gyms",

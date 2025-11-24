@@ -45,6 +45,15 @@
     "id": "8RapT9ISmE1EINoYbhVm"
   },
   {
+    "room_id": "IND-055",
+    "name": "CCS Intermediate 2",
+    "is_deleted": false,
+    "infra_id": "INFRA-14",
+    "indoor_type": "indoorinter",
+    "createdAt": {},
+    "id": "8n9T8kLYnFsfKsVfKMfo"
+  },
+  {
     "room_id": "IND-031",
     "name": "Department of Bio Sciences Faculty",
     "is_deleted": false,
@@ -335,6 +344,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "imiztPwotsAVR7oRZslh"
+  },
+  {
+    "room_id": "IND-054",
+    "name": "CCS Intermediate 1",
+    "is_deleted": false,
+    "infra_id": "INFRA-14",
+    "indoor_type": "indoorinter",
+    "createdAt": {},
+    "id": "k74SBOPtpY6Q07e4FmKy"
   },
   {
     "room_id": "IND-030",

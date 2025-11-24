@@ -1,0 +1,172 @@
+[
+  {
+    "to_indoor": "IND-010",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-017",
+    "from_indoor": "IND-013",
+    "created_at": {},
+    "id": "5Lvcxm23z86x49oKwYRS"
+  },
+  {
+    "to_indoor": "IND-005",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-008",
+    "from_indoor": "IND-004",
+    "created_at": {},
+    "id": "7BYTG9BIXipBB7GJBLaK"
+  },
+  {
+    "to_indoor": "IND-012",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-014",
+    "from_indoor": "IND-055",
+    "created_at": {},
+    "id": "8FhThxDbIrMZPO9j1Jju"
+  },
+  {
+    "to_indoor": "IND-001",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-002",
+    "from_indoor": "IND-054",
+    "created_at": {},
+    "id": "NzIIozefVOpq4JlRWAsB"
+  },
+  {
+    "to_indoor": "IND-055",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-012",
+    "from_indoor": "IND-007",
+    "created_at": {},
+    "id": "PYYel4kXrf4cDaArR8uA"
+  },
+  {
+    "to_indoor": "IND-002",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-004",
+    "from_indoor": "IND-003",
+    "created_at": {},
+    "id": "TDs7UQCeizGVanjgHu53"
+  },
+  {
+    "to_indoor": "IND-013",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-013",
+    "from_indoor": "IND-055",
+    "created_at": {},
+    "id": "VdjF8sqUAJWboflqzQ8k"
+  },
+  {
+    "to_indoor": "IND-008",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-015",
+    "from_indoor": "IND-055",
+    "created_at": {},
+    "id": "Xaz6e61HHzKIkmhAzc9h"
+  },
+  {
+    "to_indoor": "IND-055",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-011",
+    "from_indoor": "IND-007",
+    "created_at": {},
+    "id": "YSWIdKurmyZOz6xRmKnq"
+  },
+  {
+    "to_indoor": "IND-054",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-001",
+    "from_indoor": "IND-053",
+    "created_at": {},
+    "id": "ZFBrTjYi0bwyPdV9tWCx"
+  },
+  {
+    "to_indoor": "IND-003",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-003",
+    "from_indoor": "IND-054",
+    "created_at": {},
+    "id": "aH9DfhzqsdvfBtqs21oL"
+  },
+  {
+    "to_indoor": "IND-004",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-007",
+    "from_indoor": "IND-054",
+    "created_at": {},
+    "id": "aU4eIVkvRdZ0mIlW8P6O"
+  },
+  {
+    "to_indoor": "IND-009",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-016",
+    "from_indoor": "IND-008",
+    "created_at": {},
+    "id": "b4J6OvaBI8jO4vGViye7"
+  },
+  {
+    "to_indoor": "IND-003",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-005",
+    "from_indoor": "IND-001",
+    "created_at": {},
+    "id": "bGEnohoe51xDWUot8lb3"
+  },
+  {
+    "to_indoor": "IND-006",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-006",
+    "from_indoor": "IND-054",
+    "created_at": {},
+    "id": "caDErfCdKsmrGiQqG7xr"
+  },
+  {
+    "to_indoor": "IND-007",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-010",
+    "from_indoor": "IND-006",
+    "created_at": {},
+    "id": "jinlfQ6RP04vHTO1I87E"
+  },
+  {
+    "to_indoor": "IND-011",
+    "is_deleted": false,
+    "is_active": true,
+    "infra_id": "INFRA-14",
+    "indooredge_id": "IED-009",
+    "from_indoor": "IND-005",
+    "created_at": {},
+    "id": "jlsGq3ChaxHwqZne2yDm"
+  }
+]

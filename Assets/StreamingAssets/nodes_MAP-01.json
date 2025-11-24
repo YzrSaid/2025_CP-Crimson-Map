@@ -516,8 +516,8 @@
         "is_active": true,
         "related_room_id": "IND-001",
         "indoor": {
-            "y": 8.4582,
-            "x": -4.2672,
+            "y": 3.89,
+            "x": -8.64,
             "floor": "1"
         },
         "type": "indoorinfra",
@@ -527,7 +527,7 @@
             "seconds": 1759140524,
             "nanoseconds": 18000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -538,8 +538,8 @@
         "is_active": true,
         "related_room_id": "IND-002",
         "indoor": {
-            "y": 14.6304,
-            "x": -0.4572,
+            "y": 11.08,
+            "x": -9.56,
             "floor": "1"
         },
         "type": "indoorinfra",
@@ -549,7 +549,7 @@
             "seconds": 1759151492,
             "nanoseconds": 685000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -560,8 +560,8 @@
         "is_active": true,
         "related_room_id": "IND-003",
         "indoor": {
-            "y": 13.716,
-            "x": 0,
+            "y": 10.66,
+            "x": -8.63,
             "floor": "1"
         },
         "type": "indoorinfra",
@@ -571,7 +571,7 @@
             "seconds": 1759152043,
             "nanoseconds": 935000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -582,18 +582,18 @@
         "is_active": true,
         "related_room_id": "IND-006",
         "indoor": {
-            "y": 8.6868,
-            "x": 5.4864,
+            "y": 10.2,
+            "x": -1.2,
             "floor": "1"
         },
         "type": "indoorinfra",
-        "name": "Staris Floor 1",
+        "name": "Stairs Floor 1",
         "latitude": null,
         "created_at": {
             "seconds": 1759152250,
             "nanoseconds": 900000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -604,8 +604,8 @@
         "is_active": true,
         "related_room_id": "IND-004",
         "indoor": {
-            "y": 4.8768,
-            "x": 5.7912,
+            "y": 7.43,
+            "x": 1.43,
             "floor": "1"
         },
         "type": "indoorinfra",
@@ -615,7 +615,7 @@
             "seconds": 1759152325,
             "nanoseconds": 426000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -626,8 +626,8 @@
         "is_active": true,
         "related_room_id": "IND-005",
         "indoor": {
-            "y": 0,
-            "x": 11.9634,
+            "y": 7.53,
+            "x": 9.3,
             "floor": "1"
         },
         "type": "indoorinfra",
@@ -637,7 +637,7 @@
             "seconds": 1759152392,
             "nanoseconds": 70000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -648,8 +648,8 @@
         "is_active": true,
         "related_room_id": "IND-011",
         "indoor": {
-            "y": -4.8768,
-            "x": 17.9832,
+            "y": 7.53,
+            "x": 17.04,
             "floor": "1"
         },
         "type": "indoorinfra",
@@ -659,7 +659,7 @@
             "seconds": 1759152744,
             "nanoseconds": 835000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -670,8 +670,8 @@
         "is_active": true,
         "related_room_id": "IND-012",
         "indoor": {
-            "y": 8.4582,
-            "x": -4.2672,
+            "y": 3.89,
+            "x": -8.64,
             "floor": "2"
         },
         "type": "indoorinfra",
@@ -681,7 +681,7 @@
             "seconds": 1759153332,
             "nanoseconds": 938000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -692,8 +692,8 @@
         "is_active": true,
         "related_room_id": "IND-010",
         "indoor": {
-            "y": 14.6304,
-            "x": -0.4572,
+            "y": 11.08,
+            "x": -9.56,
             "floor": "2"
         },
         "type": "indoorinfra",
@@ -703,7 +703,7 @@
             "seconds": 1759153401,
             "nanoseconds": 363000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -714,8 +714,8 @@
         "is_active": true,
         "related_room_id": "IND-013",
         "indoor": {
-            "y": 13.716,
-            "x": 0,
+            "y": 10.66,
+            "x": -8.63,
             "floor": "2"
         },
         "type": "indoorinfra",
@@ -725,7 +725,7 @@
             "seconds": 1759153504,
             "nanoseconds": 873000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -736,8 +736,8 @@
         "is_active": true,
         "related_room_id": "IND-007",
         "indoor": {
-            "y": 8.6868,
-            "x": 5.4864,
+            "y": 10.2,
+            "x": -1.2,
             "floor": "2"
         },
         "type": "indoorinfra",
@@ -747,14 +747,14 @@
             "seconds": 1759153583,
             "nanoseconds": 622000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
 {
         "longitude": null,
         "campus_id": "CAMP-02",
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "updated_at": "2025-10-08T07:33:50.663Z",
         "created_at": {
             "seconds": 1759153646,
@@ -764,8 +764,8 @@
         "name": "Lecture Room 1",
         "type": "indoorinfra",
         "indoor": {
-            "y": 4.8768,
-            "x": 5.7912,
+            "y": 7.43,
+            "x": 1.43,
             "floor": "2"
         },
         "related_room_id": "IND-008",
@@ -781,8 +781,8 @@
         "is_active": true,
         "related_room_id": "IND-009",
         "indoor": {
-            "y": 0,
-            "x": 11.6586,
+            "y": 7.34,
+            "x": 9.06,
             "floor": "2"
         },
         "type": "indoorinfra",
@@ -792,7 +792,7 @@
             "seconds": 1759153685,
             "nanoseconds": 538000000
         },
-        "related_infra_id": "INFRA-14",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -2126,10 +2126,10 @@
             "floor": "1"
         },
         "type": "indoorinfra",
-        "name": "FLoor 1 Stairs (Old Building)",
+        "name": "Floor 1 Stairs (Old Building)",
         "latitude": null,
         "created_at": "2025-10-25T09:16:10.709Z",
-        "related_infra_id": "INFRA-17",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -2148,14 +2148,14 @@
         "name": "Testing and Evaluation Center",
         "latitude": null,
         "created_at": "2025-10-25T10:19:31.904Z",
-        "related_infra_id": "INFRA-17",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
 {
         "longitude": null,
         "campus_id": "CAMP-02",
-        "related_infra_id": "INFRA-17",
+        "related_infra_id": null,
         "updated_at": "2025-10-25T10:25:40.338Z",
         "created_at": "2025-10-25T10:20:13.408Z",
         "latitude": null,
@@ -2187,7 +2187,7 @@
         "name": "COA",
         "latitude": null,
         "created_at": "2025-10-25T10:22:08.620Z",
-        "related_infra_id": "INFRA-17",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -2206,7 +2206,7 @@
         "name": "Floor 2 Stairs (Old Building)",
         "latitude": null,
         "created_at": "2025-10-25T10:23:17.982Z",
-        "related_infra_id": "INFRA-17",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -2225,7 +2225,7 @@
         "name": "Room 22",
         "latitude": null,
         "created_at": "2025-10-25T10:23:49.903Z",
-        "related_infra_id": "INFRA-17",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -2244,7 +2244,7 @@
         "name": "Audio Visual Room",
         "latitude": null,
         "created_at": "2025-10-25T10:24:20.915Z",
-        "related_infra_id": "INFRA-17",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -2263,7 +2263,7 @@
         "name": "Student Council Office",
         "latitude": null,
         "created_at": "2025-10-25T10:24:51.481Z",
-        "related_infra_id": "INFRA-17",
+        "related_infra_id": null,
         "longitude": null,
         "campus_id": "CAMP-02"
     },
@@ -2295,6 +2295,629 @@
         "created_at": "2025-10-26T04:41:35.069Z",
         "related_infra_id": "INFRA-76",
         "longitude": 122.119194,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": 2.44628838622595,
+        "x_coordinate": -13.3567624282614,
+        "node_id": "ND-129",
+        "is_active": true,
+        "related_room_id": null,
+        "indoor": null,
+        "type": "infrastructure",
+        "name": "Training Center",
+        "latitude": 6.913363,
+        "created_at": "2025-11-02T12:04:23.539Z",
+        "related_infra_id": "INFRA-77",
+        "longitude": 122.063572,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-130",
+        "is_active": true,
+        "related_room_id": "IND-023",
+        "indoor": {
+            "y": 3.2258,
+            "x": 9.1134,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Comdev",
+        "latitude": null,
+        "created_at": "2025-11-02T16:37:21.862Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-131",
+        "is_active": true,
+        "related_room_id": "IND-024",
+        "indoor": {
+            "y": 3.2258,
+            "x": -16.7334,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Entrance (Social Work)",
+        "latitude": null,
+        "created_at": "2025-11-02T16:37:57.370Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-132",
+        "is_active": true,
+        "related_room_id": "IND-025",
+        "indoor": {
+            "y": 3.2258,
+            "x": -4.8514,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "BSCD Department",
+        "latitude": null,
+        "created_at": "2025-11-02T16:38:35.716Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-133",
+        "is_active": true,
+        "related_room_id": "IND-026",
+        "indoor": {
+            "y": 3.2258,
+            "x": 0,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Floor 1 Stairs (Social Work)",
+        "latitude": null,
+        "created_at": "2025-11-02T16:39:57.768Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-135",
+        "is_active": true,
+        "related_room_id": "IND-027",
+        "indoor": {
+            "y": 3.3528,
+            "x": 3.3528,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 101 Lab Room Ground Floor",
+        "latitude": null,
+        "created_at": "2025-11-02T16:45:06.742Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-136",
+        "is_active": true,
+        "related_room_id": "IND-028",
+        "indoor": {
+            "y": 3.3528,
+            "x": 1.3411,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Physical Plant Facilities Office",
+        "latitude": null,
+        "created_at": "2025-11-02T16:45:35.816Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-137",
+        "is_active": true,
+        "related_room_id": "IND-029",
+        "indoor": {
+            "y": 3.3528,
+            "x": -9.7536,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Stockroom",
+        "latitude": null,
+        "created_at": "2025-11-02T16:46:07.971Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-138",
+        "is_active": true,
+        "related_room_id": "IND-030",
+        "indoor": {
+            "y": 3.3528,
+            "x": -12.9245,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 102 Lab Room",
+        "latitude": null,
+        "created_at": "2025-11-02T16:47:08.138Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-139",
+        "is_active": true,
+        "related_room_id": "IND-031",
+        "indoor": {
+            "y": 3.3528,
+            "x": -26.061,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Department of Bio Sciences Faculty",
+        "latitude": null,
+        "created_at": "2025-11-02T16:47:40.921Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-140",
+        "is_active": true,
+        "related_room_id": "IND-032",
+        "indoor": {
+            "y": 3.3528,
+            "x": -31.0896,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Microbiology CSM10",
+        "latitude": null,
+        "created_at": "2025-11-02T16:48:04.570Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-142",
+        "is_active": true,
+        "related_room_id": "IND-034",
+        "indoor": {
+            "y": 3.3528,
+            "x": -48.7423,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 105 Analytical Services RM",
+        "latitude": null,
+        "created_at": "2025-11-02T16:48:45.921Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-143",
+        "is_active": true,
+        "related_room_id": "IND-035",
+        "indoor": {
+            "y": 3.3528,
+            "x": -52.7304,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "LSS Office",
+        "latitude": null,
+        "created_at": "2025-11-02T16:49:09.026Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-144",
+        "is_active": true,
+        "related_room_id": "IND-036",
+        "indoor": {
+            "y": 3.3528,
+            "x": -54.3578,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Stairs 2 CSM",
+        "latitude": null,
+        "created_at": "2025-11-02T16:49:44.165Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-145",
+        "is_active": true,
+        "related_room_id": "IND-037",
+        "indoor": {
+            "y": 3.3528,
+            "x": -56.2063,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "College Student Council Office CSM",
+        "latitude": null,
+        "created_at": "2025-11-02T16:50:05.850Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-146",
+        "is_active": true,
+        "related_room_id": "IND-038",
+        "indoor": {
+            "y": 3.3528,
+            "x": -65.8327,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "CSM and IB Lec Room",
+        "latitude": null,
+        "created_at": "2025-11-02T16:50:33.563Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-147",
+        "is_active": true,
+        "related_room_id": "IND-040",
+        "indoor": {
+            "y": 1.463,
+            "x": 2.7432,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "Stairs 1 CSM",
+        "latitude": null,
+        "created_at": "2025-11-02T16:51:21.319Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-148",
+        "is_active": true,
+        "related_room_id": "IND-041",
+        "indoor": {
+            "y": 3.2004,
+            "x": 2.8042,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "Floor 2 Stairs CSM",
+        "latitude": null,
+        "created_at": "2025-11-02T16:52:51.987Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-149",
+        "is_active": true,
+        "related_room_id": "IND-042",
+        "indoor": {
+            "y": 3.2004,
+            "x": -1.8288,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 201",
+        "latitude": null,
+        "created_at": "2025-11-02T16:53:11.892Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-150",
+        "is_active": true,
+        "related_room_id": "IND-043",
+        "indoor": {
+            "y": 3.2004,
+            "x": -3.6576,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 202",
+        "latitude": null,
+        "created_at": "2025-11-02T16:53:31.347Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-151",
+        "is_active": true,
+        "related_room_id": "IND-044",
+        "indoor": {
+            "y": 3.2004,
+            "x": -12.6806,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 203",
+        "latitude": null,
+        "created_at": "2025-11-02T16:53:48.498Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-152",
+        "is_active": true,
+        "related_room_id": "IND-045",
+        "indoor": {
+            "y": 3.2004,
+            "x": -21.336,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 104",
+        "latitude": null,
+        "created_at": "2025-11-02T16:54:12.278Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-153",
+        "is_active": true,
+        "related_room_id": "IND-046",
+        "indoor": {
+            "y": 3.2004,
+            "x": -30.785,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "Office of the Dean CSM",
+        "latitude": null,
+        "created_at": "2025-11-02T16:54:42.781Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-154",
+        "is_active": true,
+        "related_room_id": "IND-047",
+        "indoor": {
+            "y": 3.2004,
+            "x": -37.928,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 205",
+        "latitude": null,
+        "created_at": "2025-11-02T16:55:07.620Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-155",
+        "is_active": true,
+        "related_room_id": "IND-048",
+        "indoor": {
+            "y": 3.2004,
+            "x": -40.665,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 206",
+        "latitude": null,
+        "created_at": "2025-11-02T16:55:25.758Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-156",
+        "is_active": true,
+        "related_room_id": "IND-049",
+        "indoor": {
+            "y": 3.2004,
+            "x": -49.456,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 207",
+        "latitude": null,
+        "created_at": "2025-11-02T16:55:50.096Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-157",
+        "is_active": true,
+        "related_room_id": "IND-050",
+        "indoor": {
+            "y": 3.2004,
+            "x": -52.765,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "Stairs CSM 2nd Floor Near Room 207",
+        "latitude": null,
+        "created_at": "2025-11-02T16:56:19.447Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-158",
+        "is_active": true,
+        "related_room_id": "IND-051",
+        "indoor": {
+            "y": 3.2004,
+            "x": -55.778,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "Faculty Room Math and Stats",
+        "latitude": null,
+        "created_at": "2025-11-02T16:56:48.365Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-159",
+        "is_active": true,
+        "related_room_id": "IND-052",
+        "indoor": {
+            "y": 3.2004,
+            "x": -65.392,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "Department of Math and Statistics",
+        "latitude": null,
+        "created_at": "2025-11-02T16:57:13.146Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-160",
+        "is_active": true,
+        "related_room_id": "IND-033",
+        "indoor": {
+            "y": 3.3528,
+            "x": -40.8432,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "CSM 104 Lab Room",
+        "latitude": null,
+        "created_at": "2025-11-02T17:03:57.031Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-161",
+        "is_active": true,
+        "related_room_id": "IND-053",
+        "indoor": {
+            "y": 0,
+            "x": 0,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "CCS Entrance",
+        "latitude": null,
+        "created_at": "2025-11-24T12:54:07.704Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-162",
+        "is_active": true,
+        "related_room_id": "IND-054",
+        "indoor": {
+            "y": 7.5,
+            "x": -6,
+            "floor": "1"
+        },
+        "type": "indoorinfra",
+        "name": "CCS Intermediate 1",
+        "latitude": null,
+        "created_at": "2025-11-24T14:36:10.013Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-02"
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-163",
+        "is_active": true,
+        "related_room_id": "IND-055",
+        "indoor": {
+            "y": 7.1,
+            "x": -4,
+            "floor": "2"
+        },
+        "type": "indoorinfra",
+        "name": "CCS Intermediate 2",
+        "latitude": null,
+        "created_at": "2025-11-24T14:48:11.783Z",
+        "related_infra_id": null,
+        "longitude": null,
         "campus_id": "CAMP-02"
     }
 ]

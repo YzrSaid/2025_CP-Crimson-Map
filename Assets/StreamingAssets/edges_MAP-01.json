@@ -1949,5 +1949,16 @@
         "edge_id": "EDG-177",
         "distance": 51.39,
         "created_at": "2025-10-26T06:37:18.287Z"
+    },
+{
+        "to_node": "ND-044",
+        "path_type": "via_overpass",
+        "is_deleted": false,
+        "is_active": true,
+        "from_node": "ND-042",
+        "elevations": "mixed",
+        "edge_id": "EDG-178",
+        "distance": 29.9,
+        "created_at": "2025-11-24T14:58:42.893Z"
     }
 ]
