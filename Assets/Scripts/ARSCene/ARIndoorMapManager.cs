@@ -411,6 +411,7 @@ public class ARIndoorMapManager : MonoBehaviour
             n.HasRelatedRoomId &&
             indoorInfrastructures.ContainsKey(n.related_room_id) &&
             indoorInfrastructures[n.related_room_id].infra_id == currentInfraId &&
+            indoorInfrastructures[n.related_room_id].indoor_type.ToLower() != "indoorinter" && 
             n.indoor != null &&
             n.indoor.floor == currentFloor.ToString()
         );
@@ -532,6 +533,8 @@ public class ARIndoorMapManager : MonoBehaviour
                 return stairsMarkerPrefab;
             case "fire_exit":
                 return fireExitMarkerPrefab;
+            case "entrance":
+                return entranceMarkerPrefab;
             default:
                 return roomMarkerPrefab;
         }

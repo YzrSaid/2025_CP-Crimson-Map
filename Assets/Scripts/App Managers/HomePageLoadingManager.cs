@@ -3,24 +3,61 @@ using System.Collections;
 
 public class HomePageLoadingManager : MonoBehaviour
 {
-    [Header("UI References")]
     public GameObject loaderPanel;
 
-    [Header("Managers to Wait For")]
     public MapManager mapManager;
     public BarrierSpawner barrierSpawner;
     public PathRenderer pathRenderer;
     public InfrastructureSpawner infrastructureSpawner;
 
-    [Header("Settings")]
     public float minimumLoadingTime = 1f;
     public float checkInterval = 0.1f;
     public float maxWaitTime = 30f;
 
     private float loadingStartTime;
+    private bool isLoading = false;
 
     void Start()
     {
+        bool returningFromAR = GlobalManager.ShouldSkipFullInitialization();
+        
+        if (returningFromAR || !GlobalManager.Instance.isDataInitialized)
+        {
+            ShowLoaderAndWait();
+        }
+    }
+
+    void OnEnable()
+    {
+        if (GlobalManager.Instance != null)
+        {
+            GlobalManager.Instance.OnDataInitializationComplete += OnDataInitComplete;
+        }
+    }
+
+    void OnDisable()
+    {
+        if (GlobalManager.Instance != null)
+        {
+            GlobalManager.Instance.OnDataInitializationComplete -= OnDataInitComplete;
+        }
+    }
+
+    private void OnDataInitComplete()
+    {
+        if (!isLoading)
+        {
+            ShowLoaderAndWait();
+        }
+    }
+
+    private void ShowLoaderAndWait()
+    {
+        if (isLoading)
+            return;
+
+        isLoading = true;
+
         if (loaderPanel != null)
         {
             loaderPanel.SetActive(true);
@@ -33,8 +70,12 @@ public class HomePageLoadingManager : MonoBehaviour
 
     private IEnumerator WaitForAllSystemsReady()
     {
+        yield return StartCoroutine(WaitForGlobalManager());
+
         yield return StartCoroutine(WaitForMapManager());
+        
         yield return StartCoroutine(WaitForMapLoadingComplete());
+        
         yield return StartCoroutine(WaitForSpawnersToFinish());
 
         float elapsedTime = Time.time - loadingStartTime;
@@ -46,6 +87,24 @@ public class HomePageLoadingManager : MonoBehaviour
         if (loaderPanel != null)
         {
             loaderPanel.SetActive(false);
+        }
+
+        isLoading = false;
+    }
+
+    private IEnumerator WaitForGlobalManager()
+    {
+        float waitTime = 0f;
+        
+        while (GlobalManager.Instance == null || !GlobalManager.Instance.IsSystemReady())
+        {
+            if (waitTime >= maxWaitTime)
+            {
+                yield break;
+            }
+
+            waitTime += checkInterval;
+            yield return new WaitForSeconds(checkInterval);
         }
     }
 
@@ -103,5 +162,13 @@ public class HomePageLoadingManager : MonoBehaviour
             infrastructureSpawner = FindObjectOfType<InfrastructureSpawner>();
 
         yield return new WaitForSeconds(1f);
+    }
+
+    public void TriggerLoading()
+    {
+        if (!isLoading)
+        {
+            ShowLoaderAndWait();
+        }
     }
 }

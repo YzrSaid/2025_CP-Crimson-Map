@@ -274,7 +274,7 @@ public class UnifiedARManager : MonoBehaviour
     }
 
     private void UpdateUserMarkerPosition()
-    {https://yzrsaid.github.io/studya.io.com/
+    {
         if (userMarkerObject == null) return;
 
         Vector3 userWorldPos = GPSToWorldPosition(userLocation.x, userLocation.y);

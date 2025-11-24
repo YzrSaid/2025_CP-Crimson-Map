@@ -13905,7 +13905,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 2
+  m_PixelsPerUnitMultiplier: 12
 --- !u!222 &1535673506
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16080,7 +16080,7 @@ MonoBehaviour:
   mapHeight: 1000
   pixelsPerMeter: 20
   backgroundColor: {r: 1, g: 1, b: 1, a: 1}
-  edgeWidth: 2
+  edgeWidth: 4
   normalEdgeColor: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 0.6392157}
   highlightEdgeColor: {r: 0.72156864, g: 0.0627451, b: 0.07450981, a: 0.64705884}
   minZoom: 0.5
