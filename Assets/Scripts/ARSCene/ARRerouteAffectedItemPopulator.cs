@@ -3,7 +3,7 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ReportAffectedItemPopulator : MonoBehaviour
+public class ARRerouteAffectedItemPopulator : MonoBehaviour
 {
     public TMP_Dropdown whichOneDropdown;
 
@@ -13,11 +13,6 @@ public class ReportAffectedItemPopulator : MonoBehaviour
     private Dictionary<string, string> nodeIdToName = new Dictionary<string, string>();
 
     void Start()
-    {
-        LoadNavigationData();
-    }
-
-    public void ReloadNavigationData()
     {
         LoadNavigationData();
     }
@@ -79,14 +74,14 @@ public class ReportAffectedItemPopulator : MonoBehaviour
                         nodeIdToName[node.node_id] = node.name;
                     }
                 }
-                catch (System.Exception)
+                catch (System.Exception e)
                 {
-                    // Handle exception as needed
+                    Debug.LogError($"[ARRerouteAffectedItemPopulator] Error: {e.Message}");
                 }
             },
             (error) =>
             {
-                // Handle error as needed
+                Debug.LogError($"[ARRerouteAffectedItemPopulator] Failed to load: {error}");
             }
         ));
     }
@@ -113,7 +108,7 @@ public class ReportAffectedItemPopulator : MonoBehaviour
 
     private void PopulateNodes()
     {
-        List<string> options = new List<string> { "Select location..." };
+        List<string> options = new List<string> { "Select building/node..." };
 
         foreach (string nodeId in currentNodeIds)
         {
@@ -130,7 +125,7 @@ public class ReportAffectedItemPopulator : MonoBehaviour
 
     private void PopulateEdges()
     {
-        List<string> options = new List<string> { "Select pathway..." };
+        List<string> options = new List<string> { "Select path/walkway..." };
 
         foreach (string edgeId in currentEdgeIds)
         {

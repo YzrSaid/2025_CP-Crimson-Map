@@ -26,7 +26,7 @@ public class InfrastructurePopulator : MonoBehaviour
     public bool useAccordionUI = false;
     public float maxWaitTime = 30f;
 
-    private Dictionary<string, List<IndoorInfrastructure>> infraToRoomsMap = new Dictionary<string, List<IndoorInfrastructure>>();
+    public Dictionary<string, List<IndoorInfrastructure>> infraToRoomsMap = new Dictionary<string, List<IndoorInfrastructure>>();
     private Dictionary<string, GameObject> accordionInstances = new Dictionary<string, GameObject>();
     private string selectedDestinationId = null;
     private string selectedDestinationType = null;
@@ -359,6 +359,38 @@ public class InfrastructurePopulator : MonoBehaviour
         }
 
         return buttonObj;
+    }
+
+    public void PopulateInfrastructureDropdown(TMP_Dropdown dropdown)
+    {
+        if (dropdown == null)
+        {
+            Debug.LogWarning("[InfrastructurePopulator] Dropdown is null!");
+            return;
+        }
+
+        dropdown.ClearOptions();
+
+        if (infrastructureList == null || infrastructureList.infrastructures.Length == 0)
+        {
+            Debug.LogWarning("[InfrastructurePopulator] Infrastructure list is empty!");
+            return;
+        }
+
+        List<string> options = new List<string> { "Select location..." };
+
+        foreach (var infra in infrastructureList.infrastructures)
+        {
+            if (!infra.is_deleted)
+            {
+                options.Add(infra.name);
+            }
+        }
+
+        dropdown.AddOptions(options);
+        dropdown.value = 0;
+
+        Debug.Log($"[InfrastructurePopulator] Populated dropdown with {options.Count} options");
     }
 
     private GameObject CreateRoomButton(string text)

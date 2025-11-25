@@ -285,7 +285,7 @@ public class AStarPathfinding : MonoBehaviour
                 shortestRoute.isRecommended = true;
                 shortestRoute.routeName = $"Route 1 (Recommended)";
             }
-            
+
             for (int i = 0; i < allRoutes.Count; i++)
             {
                 if (!allRoutes[i].isRecommended)
@@ -309,7 +309,7 @@ public class AStarPathfinding : MonoBehaviour
         var foundPathTypes = new HashSet<string>();
 
         int maxAttempts = maxPaths * 5;
-        
+
         for (int i = 0; i < maxAttempts && allPaths.Count < maxPaths; i++)
         {
             List<string> path = AStarWithPenalty(startId, goalId, usedEdges, blockedEdges);
@@ -321,10 +321,10 @@ public class AStarPathfinding : MonoBehaviour
 
             string pathType = DetermineViaMode(path);
             string crossingEdge = FindCrossCampusEdge(path);
-            
+
             bool isNewPathType = !foundPathTypes.Contains(pathType);
             bool isNewCrossing = !string.IsNullOrEmpty(crossingEdge) && !usedCrossings.Contains(crossingEdge);
-            
+
             bool isDifferent = true;
             if (allPaths.Count > 0 && !isNewPathType && !isNewCrossing)
             {
@@ -343,13 +343,13 @@ public class AStarPathfinding : MonoBehaviour
             {
                 allPaths.Add(path);
                 foundPathTypes.Add(pathType);
-                
+
                 if (!string.IsNullOrEmpty(crossingEdge))
                 {
                     usedCrossings.Add(crossingEdge);
                     blockedEdges.Add(crossingEdge);
                 }
-                
+
                 for (int j = 0; j < path.Count - 1; j++)
                 {
                     string edgeKey = GetEdgeKey(path[j], path[j + 1]);
@@ -362,7 +362,7 @@ public class AStarPathfinding : MonoBehaviour
                 {
                     blockedEdges.Add(crossingEdge);
                 }
-                
+
                 if (path.Count > 4)
                 {
                     int[] positions = { path.Count / 4, path.Count / 2, (path.Count * 3) / 4 };
@@ -380,7 +380,7 @@ public class AStarPathfinding : MonoBehaviour
 
         return allPaths;
     }
-    
+
     private string FindCrossCampusEdge(List<string> path)
     {
         for (int i = 0; i < path.Count - 1; i++)
@@ -401,7 +401,7 @@ public class AStarPathfinding : MonoBehaviour
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -437,7 +437,7 @@ public class AStarPathfinding : MonoBehaviour
         var openSet = new PriorityQueue<AStarNode>();
         var openSetHash = new HashSet<string>();
         var closedSet = new HashSet<string>();
-        
+
         var gScore = new Dictionary<string, float>();
         var fScore = new Dictionary<string, float>();
         var cameFrom = new Dictionary<string, string>();
@@ -480,7 +480,7 @@ public class AStarPathfinding : MonoBehaviour
                     continue;
 
                 string edgeKey = GetEdgeKey(current.nodeId, neighborId);
-                
+
                 if (blockedEdges != null && blockedEdges.Contains(edgeKey))
                 {
                     continue;
@@ -534,7 +534,7 @@ public class AStarPathfinding : MonoBehaviour
 
         return path;
     }
-    
+
     private string DetermineViaMode(List<string> path)
     {
         if (path == null || path.Count <= 1)
@@ -794,6 +794,280 @@ public class AStarPathfinding : MonoBehaviour
                !float.IsInfinity(lat) && !float.IsInfinity(lon) &&
                lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
     }
+
+    public IEnumerator FindMultiplePathsWithBlocking(
+    string startNodeId,
+    string endNodeId,
+    int maxPaths,
+    HashSet<string> blockedNodes,
+    HashSet<string> blockedEdges)
+    {
+        if (isCalculating)
+        {
+            yield break;
+        }
+
+        isCalculating = true;
+
+        ClearCurrentPath();
+
+        if (!allNodes.ContainsKey(startNodeId) || !allNodes.ContainsKey(endNodeId))
+        {
+            isCalculating = false;
+            yield break;
+        }
+
+        var startNode = allNodes[startNodeId];
+        var endNode = allNodes[endNodeId];
+
+        if (startNode.type != "infrastructure" || endNode.type != "infrastructure")
+        {
+            isCalculating = false;
+            yield break;
+        }
+
+        List<List<string>> paths = FindAlternativePathsWithBlocking(
+            startNodeId,
+            endNodeId,
+            maxPaths,
+            blockedNodes,
+            blockedEdges
+        );
+
+        if (paths == null || paths.Count == 0)
+        {
+            isCalculating = false;
+            yield break;
+        }
+
+        foreach (var path in paths)
+        {
+            var routeData = new RouteData
+            {
+                path = ConvertToPathNodes(path),
+                totalDistance = CalculateTotalDistance(path),
+                startNode = startNode,
+                endNode = endNode
+            };
+
+            routeData.formattedDistance = FormatDistance(routeData.totalDistance);
+            routeData.walkingTime = CalculateWalkingTime(routeData.totalDistance);
+            routeData.viaMode = DetermineViaMode(path);
+
+            allRoutes.Add(routeData);
+        }
+
+        if (allRoutes.Count > 0)
+        {
+            float shortestDistance = allRoutes.Min(r => r.totalDistance);
+            var shortestRoute = allRoutes.FirstOrDefault(r => r.totalDistance == shortestDistance);
+            if (shortestRoute != null)
+            {
+                shortestRoute.isRecommended = true;
+                shortestRoute.routeName = $"Route 1 (Recommended)";
+            }
+
+            for (int i = 0; i < allRoutes.Count; i++)
+            {
+                if (!allRoutes[i].isRecommended)
+                {
+                    allRoutes[i].routeName = $"Route {i + 1}";
+                }
+            }
+        }
+
+        activeRouteIndex = 0;
+        isCalculating = false;
+    }
+
+    private List<List<string>> FindAlternativePathsWithBlocking(
+        string startId,
+        string goalId,
+        int maxPaths,
+        HashSet<string> blockedNodes,
+        HashSet<string> blockedEdges)
+    {
+        var allPaths = new List<List<string>>();
+        var usedEdges = new HashSet<string>();
+        var additionalBlockedEdges = new HashSet<string>(blockedEdges);
+        var usedCrossings = new HashSet<string>();
+        var foundPathTypes = new HashSet<string>();
+
+        int maxAttempts = maxPaths * 5;
+
+        for (int i = 0; i < maxAttempts && allPaths.Count < maxPaths; i++)
+        {
+            List<string> path = AStarWithPenaltyAndBlocking(
+                startId,
+                goalId,
+                usedEdges,
+                additionalBlockedEdges,
+                blockedNodes
+            );
+
+            if (path == null || path.Count == 0)
+            {
+                break;
+            }
+
+            string pathType = DetermineViaMode(path);
+            string crossingEdge = FindCrossCampusEdge(path);
+
+            bool isNewPathType = !foundPathTypes.Contains(pathType);
+            bool isNewCrossing = !string.IsNullOrEmpty(crossingEdge) && !usedCrossings.Contains(crossingEdge);
+
+            bool isDifferent = true;
+            if (allPaths.Count > 0 && !isNewPathType && !isNewCrossing)
+            {
+                foreach (var existingPath in allPaths)
+                {
+                    float similarity = CalculatePathSimilarity(path, existingPath);
+                    if (similarity > 0.5f)
+                    {
+                        isDifferent = false;
+                        break;
+                    }
+                }
+            }
+
+            if (allPaths.Count == 0 || isNewPathType || isNewCrossing || isDifferent)
+            {
+                allPaths.Add(path);
+                foundPathTypes.Add(pathType);
+
+                if (!string.IsNullOrEmpty(crossingEdge))
+                {
+                    usedCrossings.Add(crossingEdge);
+                    additionalBlockedEdges.Add(crossingEdge);
+                }
+
+                for (int j = 0; j < path.Count - 1; j++)
+                {
+                    string edgeKey = GetEdgeKey(path[j], path[j + 1]);
+                    usedEdges.Add(edgeKey);
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(crossingEdge) && usedCrossings.Contains(crossingEdge))
+                {
+                    additionalBlockedEdges.Add(crossingEdge);
+                }
+
+                if (path.Count > 4)
+                {
+                    int[] positions = { path.Count / 4, path.Count / 2, (path.Count * 3) / 4 };
+                    foreach (int pos in positions)
+                    {
+                        if (pos > 0 && pos < path.Count - 1)
+                        {
+                            string edgeKey = GetEdgeKey(path[pos], path[pos + 1]);
+                            usedEdges.Add(edgeKey);
+                        }
+                    }
+                }
+            }
+        }
+
+        return allPaths;
+    }
+
+    private List<string> AStarWithPenaltyAndBlocking(
+        string startId,
+        string goalId,
+        HashSet<string> penalizedEdges,
+        HashSet<string> blockedEdges,
+        HashSet<string> blockedNodes)
+    {
+        var openSet = new PriorityQueue<AStarNode>();
+        var openSetHash = new HashSet<string>();
+        var closedSet = new HashSet<string>();
+
+        var gScore = new Dictionary<string, float>();
+        var fScore = new Dictionary<string, float>();
+        var cameFrom = new Dictionary<string, string>();
+
+        gScore[startId] = 0;
+        fScore[startId] = Heuristic(allNodes[startId], allNodes[goalId]);
+
+        openSet.Enqueue(new AStarNode
+        {
+            nodeId = startId,
+            fScore = fScore[startId]
+        });
+        openSetHash.Add(startId);
+
+        int iterations = 0;
+        int maxIterations = 200;
+
+        while (openSet.Count > 0 && iterations < maxIterations)
+        {
+            iterations++;
+
+            AStarNode current = openSet.Dequeue();
+            openSetHash.Remove(current.nodeId);
+
+            if (current.nodeId == goalId)
+            {
+                return ReconstructPath(cameFrom, current.nodeId);
+            }
+
+            closedSet.Add(current.nodeId);
+
+            if (!adjacencyList.ContainsKey(current.nodeId))
+                continue;
+
+            foreach (var edge in adjacencyList[current.nodeId])
+            {
+                string neighborId = edge.toNodeId;
+
+                if (closedSet.Contains(neighborId))
+                    continue;
+
+                // BLOCK NODES
+                if (blockedNodes.Contains(neighborId))
+                {
+                    continue;
+                }
+
+                string edgeKey = GetEdgeKey(current.nodeId, neighborId);
+
+                // BLOCK EDGES
+                if (blockedEdges.Contains(edgeKey))
+                {
+                    continue;
+                }
+
+                float edgeCost = edge.cost;
+
+                if (penalizedEdges.Contains(edgeKey))
+                {
+                    edgeCost *= (1.0f + alternativePathPenalty);
+                }
+
+                float tentativeGScore = gScore[current.nodeId] + edgeCost;
+
+                if (!gScore.ContainsKey(neighborId) || tentativeGScore < gScore[neighborId])
+                {
+                    cameFrom[neighborId] = current.nodeId;
+                    gScore[neighborId] = tentativeGScore;
+                    fScore[neighborId] = gScore[neighborId] + Heuristic(allNodes[neighborId], allNodes[goalId]);
+
+                    if (!openSetHash.Contains(neighborId))
+                    {
+                        openSet.Enqueue(new AStarNode
+                        {
+                            nodeId = neighborId,
+                            fScore = fScore[neighborId]
+                        });
+                        openSetHash.Add(neighborId);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
 }
 
 public class AStarNode : System.IComparable<AStarNode>
@@ -869,4 +1143,6 @@ public class PriorityQueue<T> where T : System.IComparable<T>
     {
         get { return data.Count; }
     }
+
+
 }

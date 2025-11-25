@@ -276,7 +276,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
                     }
 
                     spawnedNodeMarkers[markerId] = marker;
-                    
+
                     Debug.Log($"[NavigationMarkerSpawner] Created marker for {node.node_id} at {worldPos}");
                 }
             }
@@ -294,6 +294,49 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
                 marker.transform.LookAt(arCamera.transform);
                 marker.transform.Rotate(0, 180, 0);
             }
+        }
+    }
+
+    // public void ReloadPathNodes()
+    // {
+    //     ClearAllMarkers();
+
+    //     pathNodes.Clear();
+
+    //     LoadPathNodesFromPlayerPrefs();
+
+    //     if (isARNavigationMode)
+    //     {
+    //         StartCoroutine(InitializeNavigationMarkers());
+    //     }
+    // }
+
+    public void ReloadPathNodes()
+    {
+        Debug.Log("[NavigationMarkerSpawner] Reloading path nodes...");
+
+        ClearAllMarkers();
+
+        // Clear path nodes
+        pathNodes.Clear();
+        spawnedNodeMarkers.Clear();
+
+        CancelInvoke(nameof(UpdateNavigationSystem));
+
+        markersInitialized = false;
+
+        LoadPathNodesFromPlayerPrefs();
+
+        StartCoroutine(ReinitializeAfterReload());
+    }
+
+    private IEnumerator ReinitializeAfterReload()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        if (isARNavigationMode && pathNodes.Count > 0)
+        {
+            yield return StartCoroutine(InitializeNavigationMarkers());
         }
     }
 
@@ -347,7 +390,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     private Vector3 GetGroundPosition(Vector3 targetWorldPos)
     {
         bool isIndoor = (unifiedARManager != null && unifiedARManager.IsIndoorMode());
-        
+
         if (!isIndoor || arRaycastManager == null || arCamera == null)
         {
             targetWorldPos.y = groundPlaneY + markerHeightOffset;

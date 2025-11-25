@@ -222,6 +222,7 @@
     <Compile Include="Assets/Mapbox/Unity/DataContainers/SpawnPrefabOptions.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/EditorLocationProvider.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/Map/SmartMapDownloadButton.cs" />
+    <Compile Include="Assets/Scripts/ARSCene/ARSceneUpdateManager.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Data/VectorFeatureUnity.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/MergedModifierStack.cs" />
     <Compile Include="Assets/Mapbox/Unity/LayerProperties/ImageryLayerProperties.cs" />
@@ -321,6 +322,7 @@
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ISubLayerLineGeometryOptions.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Platform/Cache/CachingWebFileSource.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/SubLayerCustomStyleAtlasWithColorPallete.cs" />
+    <Compile Include="Assets/Scripts/ARSCene/ARPAthfindingController.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/SubLayerFantasyStyle.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/MapMatching/MatchObject.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/MapMatching/MapMatchingParameters.cs" />
@@ -461,6 +463,7 @@
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/GameObjectModifiers/MapboxStylesColorModifier.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/MapboxDataProperty.cs" />
     <Compile Include="Assets/Mapbox/Examples/8_VoxelMap/Scripts/VoxelData.cs" />
+    <Compile Include="Assets/Scripts/ARSCene/ARRerouteAffectedItemPopulator.cs" />
     <Compile Include="Assets/Mapbox/Unity/Map/Strategies/MapScalingAtUnityScaleStrategy.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/UnityLayerOptions.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/SubLayerLightStyle.cs" />
@@ -482,6 +485,7 @@
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Directions/Directions.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/RangeAroundTransformTileProviderOptions.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/MapMatching/MapMatchingResponse.cs" />
+    <Compile Include="Assets/Scripts/App Managers/ARRerouteUIManager.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/DropdownRoomItem.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Platform/Cache/SQLiteCache/Tilesets.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ISubLayerCustomStyleOptions.cs" />

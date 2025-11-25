@@ -184,7 +184,7 @@ public class ARLoadingManager : MonoBehaviour
 
     public bool IsLoadingComplete()
     {
-        return isARReady && isMapReady && isCameraSetupReady && 
+        return isARReady && isMapReady && isCameraSetupReady &&
                (!ARModeHelper.IsNavigationMode() || isNavigationReady);
     }
 }

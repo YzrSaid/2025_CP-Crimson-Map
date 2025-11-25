@@ -518,6 +518,21 @@ public class DirectionDisplayManager : MonoBehaviour
         UpdateDirectionItemsStatus();
     }
 
+    public void ReloadDirections()
+    {
+        allDirections.Clear();
+        directionItemInstances.Clear();
+        currentDirectionIndex = 0;
+        isNavigationActive = false;
+
+        LoadDirectionsFromPlayerPrefs();
+
+        if (allDirections.Count > 0 && ARModeHelper.IsNavigationMode())
+        {
+            StartNavigation();
+        }
+    }
+
     public int GetCurrentDirectionIndex()
     {
         return currentDirectionIndex;
