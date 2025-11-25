@@ -1176,7 +1176,7 @@ MonoBehaviour:
   backgroundImage: {fileID: 6540234415166997774}
   blackOutline: {fileID: 5546735412134791595}
   redOutline: {fileID: 4695892766561275311}
-  normalColor: {r: 1, g: 1, b: 1, a: 0.1}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &3683650683569979981
 MonoBehaviour:
@@ -1230,7 +1230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0.9056604, g: 0.9056604, b: 0.9056604, a: 1}
+  m_EffectColor: {r: 0.9528302, g: 0.9528302, b: 0.9528302, a: 1}
   m_EffectDistance: {x: 4, y: 4}
   m_UseGraphicAlpha: 1
 --- !u!1 &8409370352319412304

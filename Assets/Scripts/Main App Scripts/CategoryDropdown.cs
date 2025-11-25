@@ -9,21 +9,72 @@ using System.Linq;
 public class CategoryDropdown : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject panel;
+    public GameObject outdoorPanel;
+    public GameObject indoorPanel;
     public Button categoryButton;
-    public Transform panelContent;
-
+    public Transform outdoorPanelContent;
+    
     [Header("CategoryItem Prefab")]
-    public Button categoryItemPrefab;
-    private List<Button> spawnedItems = new List<Button>();
+    public GameObject categoryItemPrefab;
+    private List<GameObject> spawnedItems = new List<GameObject>();
 
     [Header("Loading Check")]
     public float maxWaitTime = 30f;
 
     void Start()
     {
-        panel.SetActive(false);
+        if (outdoorPanel != null)
+            outdoorPanel.SetActive(false);
+        
+        if (indoorPanel != null)
+            indoorPanel.SetActive(false);
+        
+        if (categoryButton != null)
+        {
+            categoryButton.onClick.AddListener(OnCategoryButtonClicked);
+        }
+        
         StartCoroutine(WaitForDataInitializationThenPopulate());
+    }
+
+    private void OnCategoryButtonClicked()
+    {
+        bool isIndoorMode = IsIndoorMode();
+        
+        if (isIndoorMode)
+        {
+            // Show indoor panel, hide outdoor panel
+            if (indoorPanel != null)
+            {
+                indoorPanel.SetActive(!indoorPanel.activeSelf);
+            }
+            if (outdoorPanel != null)
+            {
+                outdoorPanel.SetActive(false);
+            }
+        }
+        else
+        {
+            // Show outdoor panel, hide indoor panel
+            if (outdoorPanel != null)
+            {
+                outdoorPanel.SetActive(!outdoorPanel.activeSelf);
+            }
+            if (indoorPanel != null)
+            {
+                indoorPanel.SetActive(false);
+            }
+        }
+    }
+
+    private bool IsIndoorMode()
+    {
+        if (MapModeController.Instance != null)
+        {
+            return MapModeController.Instance.IsIndoorMode();
+        }
+        
+        return false;
     }
 
     private IEnumerator WaitForDataInitializationThenPopulate()
@@ -34,7 +85,11 @@ public class CategoryDropdown : MonoBehaviour
         {
             if (GlobalManager.Instance != null && MapManager.Instance != null && MapManager.Instance.IsReady() && IsDataInitializationComplete())
             {
-                yield return StartCoroutine(PopulatePanel());
+                // Only populate outdoor panel since indoor is static
+                if (!IsIndoorMode())
+                {
+                    yield return StartCoroutine(PopulatePanel());
+                }
                 yield break;
             }
 
@@ -42,7 +97,11 @@ public class CategoryDropdown : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
 
-        yield return StartCoroutine(PopulatePanel());
+        // Only populate outdoor panel since indoor is static
+        if (!IsIndoorMode())
+        {
+            yield return StartCoroutine(PopulatePanel());
+        }
     }
 
     private bool IsDataInitializationComplete()
@@ -114,7 +173,7 @@ public class CategoryDropdown : MonoBehaviour
                 continue;
             }
 
-            Button item = Instantiate(categoryItemPrefab, panelContent);
+            GameObject item = Instantiate(categoryItemPrefab, outdoorPanelContent);
             spawnedItems.Add(item);
 
             TMP_Text[] allTexts = item.GetComponentsInChildren<TMP_Text>(true);
@@ -133,7 +192,6 @@ public class CategoryDropdown : MonoBehaviour
                 }
             }
 
-            // Set the texts
             if (nameText != null)
             {
                 nameText.text = category.name;

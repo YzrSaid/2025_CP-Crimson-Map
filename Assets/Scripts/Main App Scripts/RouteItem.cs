@@ -38,7 +38,6 @@ public class RouteItem : MonoBehaviour
         onRouteSelected = selectCallback;
 
         if ( titleText != null ) {
-            // FIXED: Use routeName from RouteData if available, otherwise fallback to "Route #X"
             if ( !string.IsNullOrEmpty( routeData.routeName ) ) {
                 titleText.text = routeData.routeName;
             } else {
@@ -83,7 +82,7 @@ public class RouteItem : MonoBehaviour
         SetSelected( false );
 
         if ( blackOutline != null ) {
-            blackOutline.effectColor = HexToColor( "4B4B4B" );
+            blackOutline.effectColor = HexToColor( "F3F3F3" );
             blackOutline.enabled = true;
         }
 
@@ -123,18 +122,16 @@ public class RouteItem : MonoBehaviour
             pathInfoText.gameObject.SetActive( visible );
         }
 
-        // Update button text
         if ( toggleButtonText != null ) {
             toggleButtonText.text = visible ? "Hide Paths" : "Show Full Path";
         }
 
-        // Toggle icons
         if ( openIcon != null ) {
-            openIcon.SetActive( !visible ); // Show open icon when path is hidden
+            openIcon.SetActive( !visible );
         }
 
         if ( closeIcon != null ) {
-            closeIcon.SetActive( visible ); // Show close icon when path is visible
+            closeIcon.SetActive( visible ); 
         }
 
         // Force layout rebuild
@@ -143,13 +140,10 @@ public class RouteItem : MonoBehaviour
 
     private IEnumerator RefreshLayoutNextFrame()
     {
-        // Wait for end of frame to ensure all UI changes are processed
         yield return new WaitForEndOfFrame();
 
-        // Force rebuild the layout starting from this object up to the parent
         LayoutRebuilder.ForceRebuildLayoutImmediate( GetComponent<RectTransform>() );
 
-        // Also rebuild parent if it exists (in case it's in a Vertical/Horizontal Layout Group)
         if ( transform.parent != null ) {
             RectTransform parentRect = transform.parent.GetComponent<RectTransform>();
             if ( parentRect != null ) {
@@ -166,13 +160,12 @@ public class RouteItem : MonoBehaviour
             backgroundImage.color = selected ? selectedColor : normalColor;
         }
 
-        // Toggle between black and red outlines
         if ( blackOutline != null ) {
-            blackOutline.enabled = !selected;  // Black OFF when selected
+            blackOutline.enabled = !selected;  
         }
 
         if ( redOutline != null ) {
-            redOutline.enabled = selected;     // Red ON when selected
+            redOutline.enabled = selected;  
         }
     }
 
