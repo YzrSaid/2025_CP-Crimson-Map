@@ -61,6 +61,18 @@ public class SearchableDropdown : MonoBehaviour
         }
     }
 
+    public void ResetSelection()
+    {
+        selectedId = null;
+        selectedType = null;
+        selectedDisplayName = null;
+
+        if (searchField != null)
+        {
+            searchField.text = "";
+        }
+    }
+
     public void Initialize(InfrastructureList infrastructureList, Dictionary<string, List<IndoorInfrastructure>> infraToRoomsMap)
     {
         ClearDropdown();

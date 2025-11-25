@@ -334,7 +334,7 @@ public class InfrastructurePopulator : MonoBehaviour
         RectTransform textRect = textObj.GetComponent<RectTransform>();
         textRect.sizeDelta = new Vector2(300, 30);
 
-        LayoutElement textLayout = textObj.AddComponent<LayoutElement>();
+        LayoutElement textLayout = textObj.AddComponent<LayoutElement>();   
         textLayout.flexibleWidth = 1;
         textLayout.preferredHeight = 30;
 
@@ -359,38 +359,6 @@ public class InfrastructurePopulator : MonoBehaviour
         }
 
         return buttonObj;
-    }
-
-    public void PopulateInfrastructureDropdown(TMP_Dropdown dropdown)
-    {
-        if (dropdown == null)
-        {
-            Debug.LogWarning("[InfrastructurePopulator] Dropdown is null!");
-            return;
-        }
-
-        dropdown.ClearOptions();
-
-        if (infrastructureList == null || infrastructureList.infrastructures.Length == 0)
-        {
-            Debug.LogWarning("[InfrastructurePopulator] Infrastructure list is empty!");
-            return;
-        }
-
-        List<string> options = new List<string> { "Select location..." };
-
-        foreach (var infra in infrastructureList.infrastructures)
-        {
-            if (!infra.is_deleted)
-            {
-                options.Add(infra.name);
-            }
-        }
-
-        dropdown.AddOptions(options);
-        dropdown.value = 0;
-
-        Debug.Log($"[InfrastructurePopulator] Populated dropdown with {options.Count} options");
     }
 
     private GameObject CreateRoomButton(string text)

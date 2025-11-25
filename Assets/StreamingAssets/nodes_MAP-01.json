@@ -538,7 +538,7 @@
         "is_active": true,
         "related_room_id": "IND-002",
         "indoor": {
-            "y": 11.08,
+            "y": 12.08,
             "x": -9.56,
             "floor": "1"
         },
@@ -692,7 +692,7 @@
         "is_active": true,
         "related_room_id": "IND-010",
         "indoor": {
-            "y": 11.08,
+            "y": 12.08,
             "x": -9.56,
             "floor": "2"
         },

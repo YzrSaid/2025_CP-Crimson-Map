@@ -11,6 +11,10 @@ public class ARMapManager : MonoBehaviour
     [Header("Mapbox References")]
     public AbstractMap arMapboxMap;
 
+    [Header("Default Colors (for reset)")]
+    public Color defaultPathColor = new Color(0.62f, 0.62f, 0.62f, 1f);
+    public float defaultPathWidth = 1f;
+
     [Header("Spawner References")]
     public PathRenderer pathRenderer;
     public BarrierSpawner barrierSpawner;
@@ -28,6 +32,8 @@ public class ARMapManager : MonoBehaviour
     private List<string> currentCampusIds = new List<string>();
     private List<string> navigationNodeIds = new List<string>();
     private HashSet<string> navigationEdgeIds = new HashSet<string>();
+    private Dictionary<string, Vector3> originalPathScales = new Dictionary<string, Vector3>();
+    private Dictionary<string, Material> originalNodeMaterials = new Dictionary<string, Material>();
 
     private List<PathEdge> spawnedNavigationPaths = new List<PathEdge>();
     private Dictionary<string, InfrastructureNode> spawnedNavigationNodes = new Dictionary<string, InfrastructureNode>();
@@ -87,7 +93,7 @@ public class ARMapManager : MonoBehaviour
     private RouteData LoadRouteDataFromPlayerPrefs()
     {
         int pathNodeCount = PlayerPrefs.GetInt("ARNavigation_PathNodeCount", 0);
-        
+
         if (pathNodeCount == 0)
         {
             return null;
@@ -110,7 +116,7 @@ public class ARMapManager : MonoBehaviour
         };
 
         route.path = new List<PathNode>();
-        
+
         return route;
     }
 
@@ -129,9 +135,9 @@ public class ARMapManager : MonoBehaviour
         if (route != null)
         {
             yield return StartCoroutine(LoadAllNodesForAR());
-            
+
             RouteData fullRoute = ReconstructRouteFromPlayerPrefs();
-            
+
             if (fullRoute != null)
             {
                 InitializeARNavigation(mapId, campusIds, fullRoute);
@@ -143,17 +149,17 @@ public class ARMapManager : MonoBehaviour
     {
         float centerLat = PlayerPrefs.GetFloat("ARScene_CenterLat");
         float centerLng = PlayerPrefs.GetFloat("ARScene_CenterLng");
-        
+
         if (arMapboxMap != null)
         {
             Vector2d newCenter = new Vector2d(centerLat, centerLng);
-            
+
             int zoom = (int)arMapboxMap.Zoom;
             if (zoom == 0) zoom = 16;
-            
+
             arMapboxMap.Initialize(newCenter, zoom);
         }
-        
+
         yield break;
     }
 
@@ -210,18 +216,18 @@ public class ARMapManager : MonoBehaviour
     private List<string> ExtractPathNodeIdsFromDirections()
     {
         int pathNodeCount = PlayerPrefs.GetInt("ARNavigation_PathNodeCount", 0);
-        
+
         if (pathNodeCount == 0)
         {
             return new List<string>();
         }
 
         List<string> pathNodeIds = new List<string>();
-        
+
         for (int i = 0; i < pathNodeCount; i++)
         {
             string nodeId = PlayerPrefs.GetString($"ARNavigation_PathNode_{i}", "");
-            
+
             if (!string.IsNullOrEmpty(nodeId))
             {
                 pathNodeIds.Add(nodeId);
@@ -345,7 +351,6 @@ public class ARMapManager : MonoBehaviour
         yield return null;
 
         PathEdge[] allPathEdges = arMapboxMap.GetComponentsInChildren<PathEdge>();
-        int highlightedCount = 0;
 
         foreach (var pathEdge in allPathEdges)
         {
@@ -360,6 +365,13 @@ public class ARMapManager : MonoBehaviour
 
             if (navigationEdgeIds.Contains(edgeKey))
             {
+                if (!originalPathScales.ContainsKey(edgeKey))
+                {
+                    originalPathScales[edgeKey] = pathEdge.transform.localScale;
+                }
+
+                spawnedNavigationPaths.Add(pathEdge);
+
                 Renderer[] renderers = pathEdge.GetComponentsInChildren<Renderer>();
                 foreach (var renderer in renderers)
                 {
@@ -370,15 +382,12 @@ public class ARMapManager : MonoBehaviour
                 }
 
                 pathEdge.transform.localScale = new Vector3(
-                    navigationPathWidth / 1f, 
-                    navigationPathWidth / 1f, 
+                    navigationPathWidth / 1f,
+                    navigationPathWidth / 1f,
                     pathEdge.transform.localScale.z
                 );
-
-                highlightedCount++;
             }
         }
-
         yield break;
     }
 
@@ -392,7 +401,6 @@ public class ARMapManager : MonoBehaviour
         yield return null;
 
         InfrastructureNode[] allInfraNodes = arMapboxMap.GetComponentsInChildren<InfrastructureNode>();
-        int highlightedCount = 0;
 
         foreach (var infraNode in allInfraNodes)
         {
@@ -412,6 +420,11 @@ public class ARMapManager : MonoBehaviour
                 {
                     if (renderer != null)
                     {
+                        if (!originalNodeMaterials.ContainsKey(nodeId))
+                        {
+                            originalNodeMaterials[nodeId] = renderer.material;
+                        }
+
                         Material newMat = new Material(renderer.material);
                         newMat.SetColor("_BaseColor", navigationNodeColor);
                         renderer.material = newMat;
@@ -419,7 +432,6 @@ public class ARMapManager : MonoBehaviour
                 }
 
                 spawnedNavigationNodes[nodeId] = infraNode;
-                highlightedCount++;
             }
         }
 
@@ -428,10 +440,62 @@ public class ARMapManager : MonoBehaviour
 
     public void ClearNavigationHighlights()
     {
+        foreach (var pathEdge in spawnedNavigationPaths)
+        {
+            if (pathEdge == null) continue;
+
+            Edge edgeData = pathEdge.GetEdgeData();
+            if (edgeData != null)
+            {
+                string edgeKey = GetEdgeKey(edgeData.from_node, edgeData.to_node);
+
+                if (originalPathScales.TryGetValue(edgeKey, out Vector3 originalScale))
+                {
+                    pathEdge.transform.localScale = originalScale;
+                }
+                else
+                {
+                    pathEdge.transform.localScale = new Vector3(defaultPathWidth, defaultPathWidth, pathEdge.transform.localScale.z);
+                }
+            }
+
+            Renderer[] renderers = pathEdge.GetComponentsInChildren<Renderer>();
+            foreach (var renderer in renderers)
+            {
+                if (renderer.material != null)
+                {
+                    renderer.material.color = defaultPathColor;
+                }
+            }
+        }
+
+        foreach (var kvp in spawnedNavigationNodes)
+        {
+            string nodeId = kvp.Key;
+            InfrastructureNode infraNode = kvp.Value;
+
+            if (infraNode != null)
+            {
+                if (originalNodeMaterials.TryGetValue(nodeId, out Material originalMat))
+                {
+                    Renderer[] renderers = infraNode.GetComponentsInChildren<Renderer>();
+                    foreach (var renderer in renderers)
+                    {
+                        if (renderer != null)
+                        {
+                            renderer.material = originalMat;
+                        }
+                    }
+                }
+            }
+        }
+
         spawnedNavigationPaths.Clear();
         spawnedNavigationNodes.Clear();
         navigationNodeIds.Clear();
         navigationEdgeIds.Clear();
+        originalPathScales.Clear();
+        originalNodeMaterials.Clear();
         activeRoute = null;
     }
 

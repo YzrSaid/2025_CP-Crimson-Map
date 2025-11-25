@@ -159,7 +159,7 @@ public class ARLoadingManager : MonoBehaviour
         }
     }
 
-    private void HideLoadingPanel()
+    public void HideLoadingPanel()
     {
         if (loadingAnimation != null)
             loadingAnimation.SetActive(false);

@@ -28,7 +28,6 @@ public class DirectionDisplayManager : MonoBehaviour
     [Header("Settings")]
     public bool enableKeyboardTesting = true;
     public float autoProgressDistance = 5f;
-    public bool enableDebugLogs = true;
 
     private List<NavigationDirection> allDirections = new List<NavigationDirection>();
     private List<DirectionItemUI> directionItemInstances = new List<DirectionItemUI>();
@@ -307,6 +306,11 @@ public class DirectionDisplayManager : MonoBehaviour
 
     private void HideAllTurnIcons()
     {
+        if (turnRightImage != null) turnRightImage.SetActive(false);
+        if (turnLeftImage != null) turnLeftImage.SetActive(false);
+        if (walkStraightImage != null) walkStraightImage.SetActive(false);
+        if (enterImage != null) enterImage.SetActive(false);
+
         if (turnIconsContainer != null) turnIconsContainer.SetActive(false);
     }
 
@@ -521,16 +525,11 @@ public class DirectionDisplayManager : MonoBehaviour
     public void ReloadDirections()
     {
         allDirections.Clear();
-        directionItemInstances.Clear();
+        ClearDirectionItems();
         currentDirectionIndex = 0;
         isNavigationActive = false;
 
         LoadDirectionsFromPlayerPrefs();
-
-        if (allDirections.Count > 0 && ARModeHelper.IsNavigationMode())
-        {
-            StartNavigation();
-        }
     }
 
     public int GetCurrentDirectionIndex()

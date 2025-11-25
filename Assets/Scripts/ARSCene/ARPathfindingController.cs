@@ -111,15 +111,13 @@ public class ARPathfindingController : MonoBehaviour
 
                     loadComplete = true;
                 }
-                catch (System.Exception e)
+                catch (System.Exception)
                 {
-                    Debug.LogError($"[ARPathfindingController] Error loading nodes: {e.Message}");
                     loadComplete = true;
                 }
             },
             (error) =>
             {
-                Debug.LogError($"[ARPathfindingController] Failed to load nodes: {error}");
                 loadComplete = true;
             }
         ));
@@ -150,15 +148,13 @@ public class ARPathfindingController : MonoBehaviour
 
                     loadComplete = true;
                 }
-                catch (System.Exception e)
+                catch (System.Exception)
                 {
-                    Debug.LogError($"[ARPathfindingController] Error loading indoor data: {e.Message}");
                     loadComplete = true;
                 }
             },
             (error) =>
             {
-                Debug.LogError($"[ARPathfindingController] Failed to load indoor.json: {error}");
                 loadComplete = true;
             }
         ));
@@ -166,10 +162,21 @@ public class ARPathfindingController : MonoBehaviour
         yield return new WaitUntil(() => loadComplete);
     }
 
-    public void StartReroute(string fromNodeId, string toNodeId, ARRerouteUIManager.ExemptionType exemption, string exemptedId)
+    public void StartReroute(string fromId, string toId, ARRerouteUIManager.ExemptionType exemption, string exemptedId)
     {
-        rerouteFromNodeId = fromNodeId;
-        rerouteToNodeId = toNodeId;
+        rerouteFromNodeId = ConvertToNodeId(fromId);
+        rerouteToNodeId = ConvertToNodeId(toId);
+
+        if (string.IsNullOrEmpty(rerouteFromNodeId))
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(rerouteToNodeId))
+        {
+            return;
+        }
+
         exemptionType = exemption;
         exemptedItemId = exemptedId;
 
@@ -178,35 +185,63 @@ public class ARPathfindingController : MonoBehaviour
 
         if (exemptionType == ARRerouteUIManager.ExemptionType.BuildingsNodes && !string.IsNullOrEmpty(exemptedId))
         {
-            blockedNodes.Add(exemptedId);
-            Debug.Log($"[ARPathfindingController] Blocking node: {exemptedId}");
+            string exemptedNodeId = ConvertToNodeId(exemptedId);
+            if (!string.IsNullOrEmpty(exemptedNodeId))
+            {
+                blockedNodes.Add(exemptedNodeId);
+            }
         }
         else if (exemptionType == ARRerouteUIManager.ExemptionType.PathsWalkways && !string.IsNullOrEmpty(exemptedId))
         {
             blockedEdges.Add(exemptedId);
-            Debug.Log($"[ARPathfindingController] Blocking edge: {exemptedId}");
         }
 
         StartCoroutine(FindAndDisplayRoutes());
+    }
+
+    private string ConvertToNodeId(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return null;
+
+        if (allNodes.ContainsKey(id))
+        {
+            return id;
+        }
+
+        foreach (var node in allNodes.Values)
+        {
+            if (node.type == "infrastructure" && node.related_infra_id == id)
+            {
+                return node.node_id;
+            }
+        }
+
+        foreach (var node in allNodes.Values)
+        {
+            if (node.type == "indoorinfra" && node.HasRelatedRoomId && node.related_room_id == id)
+            {
+                return node.node_id;
+            }
+        }
+
+        return null;
     }
 
     private IEnumerator FindAndDisplayRoutes()
     {
         if (pathfinding == null)
         {
-            Debug.LogError("[ARPathfindingController] Pathfinding is null!");
             yield break;
         }
 
         if (!allNodes.ContainsKey(rerouteFromNodeId))
         {
-            Debug.LogError($"[ARPathfindingController] FROM node not found: {rerouteFromNodeId}");
             yield break;
         }
 
         if (!allNodes.ContainsKey(rerouteToNodeId))
         {
-            Debug.LogError($"[ARPathfindingController] TO node not found: {rerouteToNodeId}");
             yield break;
         }
 
@@ -256,8 +291,8 @@ public class ARPathfindingController : MonoBehaviour
         }
 
         yield return StartCoroutine(pathfinding.FindMultiplePathsWithBlocking(
-            pathStartNodeId, 
-            pathEndNodeId, 
+            pathStartNodeId,
+            pathEndNodeId,
             3,
             blockedNodes,
             blockedEdges
@@ -267,7 +302,6 @@ public class ARPathfindingController : MonoBehaviour
 
         if (routes == null || routes.Count == 0)
         {
-            Debug.LogWarning("[ARPathfindingController] No path found!");
             yield break;
         }
 
@@ -529,7 +563,6 @@ public class ARPathfindingController : MonoBehaviour
 
         if (!directionGen.IsDataLoaded())
         {
-            Debug.LogError("[ARPathfindingController] DirectionGenerator data not loaded!");
             yield break;
         }
 
@@ -537,7 +570,6 @@ public class ARPathfindingController : MonoBehaviour
 
         if (directions == null || directions.Count == 0)
         {
-            Debug.LogError("[ARPathfindingController] No directions generated!");
             yield break;
         }
 
@@ -575,8 +607,6 @@ public class ARPathfindingController : MonoBehaviour
 
     private void SaveRouteDataForAR(RouteData route, List<NavigationDirection> directions)
     {
-        Debug.Log("=============== REROUTE SAVE START ===============");
-
         int oldDirectionCount = PlayerPrefs.GetInt("ARNavigation_DirectionCount", 0);
 
         for (int i = 0; i < oldDirectionCount; i++)
@@ -636,7 +666,5 @@ public class ARPathfindingController : MonoBehaviour
 
         PlayerPrefs.SetString("ARMode", "Navigation");
         PlayerPrefs.Save();
-
-        Debug.Log("=============== REROUTE SAVE END ===============");
     }
 }

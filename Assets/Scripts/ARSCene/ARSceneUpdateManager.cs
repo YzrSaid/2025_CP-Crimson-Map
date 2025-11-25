@@ -46,7 +46,7 @@ public class ARSceneUpdateManager : MonoBehaviour
 
     private void LoadMapData()
     {
-        currentMapId = PlayerPrefs.GetString("ARScene_MapId", "MAP-01");
+        currentMapId = PlayerPrefs.GetString("ARScene_MapId");
         string campusIdsStr = PlayerPrefs.GetString("ARScene_CampusIds", "");
         currentCampusIds = string.IsNullOrEmpty(campusIdsStr)
             ? new List<string>()
@@ -55,80 +55,61 @@ public class ARSceneUpdateManager : MonoBehaviour
 
     public IEnumerator ApplyReroute()
     {
-        Debug.Log("[ARSceneUpdateManager] ========== STARTING REROUTE APPLICATION ==========");
-
-        // STEP 1: Update Directions
-        if (arLoadingManager != null)
-        {
-            arLoadingManager.ShowLoadingPanel("Updating directions...");
-        }
-        yield return new WaitForSeconds(0.3f);
         yield return StartCoroutine(UpdateDirectionDisplay());
 
-        // STEP 2: Update AR Map Highlighting
-        if (arLoadingManager != null)
-        {
-            arLoadingManager.ShowLoadingPanel("Updating map highlights...");
-        }
-        yield return new WaitForSeconds(0.3f);
         yield return StartCoroutine(UpdateARMapHighlighting());
 
-        // STEP 3: Update Navigation Markers
-        if (arLoadingManager != null)
-        {
-            arLoadingManager.ShowLoadingPanel("Updating navigation markers...");
-        }
-        yield return new WaitForSeconds(0.3f);
         yield return StartCoroutine(UpdateNavigationMarkers());
 
-        // STEP 4: Refresh Affected Item Populators
-        if (arLoadingManager != null)
-        {
-            arLoadingManager.ShowLoadingPanel("Refreshing route data...");
-        }
-        yield return new WaitForSeconds(0.3f);
         UpdateAffectedItemPopulators();
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
 
-        Debug.Log("[ARSceneUpdateManager] ========== REROUTE APPLICATION COMPLETE ==========");
+        if (arLoadingManager != null)
+            arLoadingManager.HideLoadingPanel();
     }
 
     private IEnumerator UpdateDirectionDisplay()
     {
         if (directionDisplayManager == null)
         {
-            Debug.LogWarning("[ARSceneUpdateManager] DirectionDisplayManager not found!");
             yield break;
         }
 
-        Debug.Log("[ARSceneUpdateManager] → Reloading directions...");
-
-        directionDisplayManager.ResetNavigation();
-        yield return new WaitForSeconds(0.2f);
-
         directionDisplayManager.ReloadDirections();
-        yield return new WaitForSeconds(0.5f);
 
-        Debug.Log("[ARSceneUpdateManager] ✅ Directions updated!");
+        float timeout = 5f;
+        float elapsed = 0f;
+        int previousCount = 0;
+
+        while (elapsed < timeout)
+        {
+            int currentCount = directionDisplayManager.GetAllDirections().Count;
+
+            if (currentCount > 0 && currentCount != previousCount)
+            {
+                break;
+            }
+
+            previousCount = currentCount;
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);
     }
 
     private IEnumerator UpdateARMapHighlighting()
     {
         if (arMapManager == null)
         {
-            Debug.LogWarning("[ARSceneUpdateManager] ARMapManager not found!");
             yield break;
         }
 
-        Debug.Log("[ARSceneUpdateManager] → Clearing old highlights...");
         arMapManager.ClearNavigationHighlights();
         yield return new WaitForSeconds(0.2f);
 
-        Debug.Log("[ARSceneUpdateManager] → Reconstructing route from PlayerPrefs...");
         yield return StartCoroutine(ReconstructAndApplyRoute());
-
-        Debug.Log("[ARSceneUpdateManager] ✅ AR map highlighting updated!");
     }
 
     private IEnumerator ReconstructAndApplyRoute()
@@ -141,10 +122,6 @@ public class ARSceneUpdateManager : MonoBehaviour
             arMapManager.InitializeARNavigation(currentMapId, currentCampusIds, newRoute);
             yield return new WaitForSeconds(0.5f);
         }
-        else
-        {
-            Debug.LogWarning("[ARSceneUpdateManager] Failed to reconstruct route!");
-        }
     }
 
     private IEnumerator BuildRouteFromPlayerPrefs(System.Action<RouteData> callback)
@@ -152,7 +129,6 @@ public class ARSceneUpdateManager : MonoBehaviour
         int pathNodeCount = PlayerPrefs.GetInt("ARNavigation_PathNodeCount", 0);
         if (pathNodeCount == 0)
         {
-            Debug.LogWarning("[ARSceneUpdateManager] No path nodes in PlayerPrefs!");
             callback?.Invoke(null);
             yield break;
         }
@@ -186,15 +162,13 @@ public class ARSceneUpdateManager : MonoBehaviour
                     }
                     loadComplete = true;
                 }
-                catch (System.Exception e)
+                catch (System.Exception)
                 {
-                    Debug.LogError($"[ARSceneUpdateManager] Error loading nodes: {e.Message}");
                     loadComplete = true;
                 }
             },
             (error) =>
             {
-                Debug.LogError($"[ARSceneUpdateManager] Failed to load nodes: {error}");
                 loadComplete = true;
             }
         ));
@@ -241,22 +215,15 @@ public class ARSceneUpdateManager : MonoBehaviour
     {
         if (navigationMarkerSpawner == null)
         {
-            Debug.LogWarning("[ARSceneUpdateManager] NavigationMarkerSpawner not found!");
             yield break;
         }
 
-        Debug.Log("[ARSceneUpdateManager] → Reloading navigation markers...");
-
         navigationMarkerSpawner.ReloadPathNodes();
         yield return new WaitForSeconds(0.5f);
-
-        Debug.Log("[ARSceneUpdateManager] ✅ Navigation markers updated!");
     }
 
     private void UpdateAffectedItemPopulators()
     {
-        Debug.Log("[ARSceneUpdateManager] → Refreshing affected item populators...");
-
         if (reportAffectedItemPopulator != null)
         {
             reportAffectedItemPopulator.ReloadNavigationData();
@@ -267,7 +234,5 @@ public class ARSceneUpdateManager : MonoBehaviour
             rerouteAffectedItemPopulator.enabled = false;
             rerouteAffectedItemPopulator.enabled = true;
         }
-
-        Debug.Log("[ARSceneUpdateManager] ✅ Affected item populators refreshed!");
     }
 }

@@ -150,6 +150,30 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         yield return new WaitUntil(() => loadComplete);
     }
 
+    // private IEnumerator InitializeNavigationMarkers()
+    // {
+    //     yield return new WaitForSeconds(0.5f);
+
+    //     if (pathNodes.Count < 2)
+    //     {
+    //         yield break;
+    //     }
+
+    //     // NEW: Wait for UnifiedARManager to initialize AR origin
+    //     yield return new WaitUntil(() => unifiedARManager != null);
+    //     yield return new WaitForSeconds(0.5f); // Give it time to set up reference
+
+    //     // Get fixed reference from UnifiedARManager
+    //     referenceGPS = unifiedARManager.GetReferenceGPS();
+    //     referenceARWorldPosition = unifiedARManager.GetReferenceARWorldPosition();
+
+    //     Debug.Log($"[NavigationMarkerSpawner] Using fixed AR origin: GPS {referenceGPS}, World {referenceARWorldPosition}");
+
+    //     markersInitialized = true;
+
+    //     InvokeRepeating(nameof(UpdateNavigationSystem), 0.5f, 0.2f);
+    // }
+
     private IEnumerator InitializeNavigationMarkers()
     {
         yield return new WaitForSeconds(0.5f);
@@ -159,9 +183,12 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
             yield break;
         }
 
+        // CANCEL ANY EXISTING INVOKES FIRST!
+        CancelInvoke(nameof(UpdateNavigationSystem));
+
         // NEW: Wait for UnifiedARManager to initialize AR origin
         yield return new WaitUntil(() => unifiedARManager != null);
-        yield return new WaitForSeconds(0.5f); // Give it time to set up reference
+        yield return new WaitForSeconds(0.5f);
 
         // Get fixed reference from UnifiedARManager
         referenceGPS = unifiedARManager.GetReferenceGPS();
@@ -171,7 +198,10 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
         markersInitialized = true;
 
+        // Now start the repeating update
         InvokeRepeating(nameof(UpdateNavigationSystem), 0.5f, 0.2f);
+
+        Debug.Log("[NavigationMarkerSpawner] Navigation markers initialized!");
     }
 
     private void UpdateNavigationSystem()
@@ -311,34 +341,80 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     //     }
     // }
 
+    // public void ReloadPathNodes()
+    // {
+    //     Debug.Log("[NavigationMarkerSpawner] Reloading path nodes...");
+
+    //     ClearAllMarkers();
+
+    //     // Clear path nodes
+    //     pathNodes.Clear();
+    //     spawnedNodeMarkers.Clear();
+
+    //     CancelInvoke(nameof(UpdateNavigationSystem));
+
+    //     markersInitialized = false;
+
+    //     LoadPathNodesFromPlayerPrefs();
+
+    //     StartCoroutine(ReinitializeAfterReload());
+    // }
+
     public void ReloadPathNodes()
     {
-        Debug.Log("[NavigationMarkerSpawner] Reloading path nodes...");
+        Debug.Log("[NavigationMarkerSpawner] ========== RELOADING PATH NODES ==========");
 
-        ClearAllMarkers();
-
-        // Clear path nodes
-        pathNodes.Clear();
-        spawnedNodeMarkers.Clear();
-
+        // STOP ALL UPDATES FIRST
         CancelInvoke(nameof(UpdateNavigationSystem));
 
+        // Clear everything
+        ClearAllMarkers();
+        pathNodes.Clear();
+        spawnedNodeMarkers.Clear();
         markersInitialized = false;
 
+        Debug.Log("[NavigationMarkerSpawner] Cleared old data");
+
+        // Reload path nodes
         LoadPathNodesFromPlayerPrefs();
 
+        Debug.Log("[NavigationMarkerSpawner] Starting reinitialization...");
+
+        // Reinitialize
         StartCoroutine(ReinitializeAfterReload());
     }
 
     private IEnumerator ReinitializeAfterReload()
     {
+        Debug.Log("[NavigationMarkerSpawner] Waiting before reinitialize...");
+
         yield return new WaitForSeconds(0.5f);
+
+        Debug.Log($"[NavigationMarkerSpawner] Path nodes count: {pathNodes.Count}, IsARNavMode: {isARNavigationMode}");
 
         if (isARNavigationMode && pathNodes.Count > 0)
         {
+            Debug.Log("[NavigationMarkerSpawner] Calling InitializeNavigationMarkers...");
             yield return StartCoroutine(InitializeNavigationMarkers());
+            Debug.Log("[NavigationMarkerSpawner] InitializeNavigationMarkers complete!");
         }
+        else
+        {
+            Debug.LogWarning("[NavigationMarkerSpawner] Cannot reinitialize - insufficient data");
+        }
+
+        Debug.Log("[NavigationMarkerSpawner] ========== RELOAD COMPLETE ==========");
     }
+
+    // private IEnumerator ReinitializeAfterReload()
+    // {
+    //     yield return new WaitForSeconds(0.5f);
+
+    //     if (isARNavigationMode && pathNodes.Count > 0)
+    //     {
+    //         yield return StartCoroutine(InitializeNavigationMarkers());
+    //     }
+    // }
 
     private float CalculateDistance(Node node, bool isIndoor)
     {

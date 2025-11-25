@@ -169,6 +169,95 @@ public class UnifiedARManager : MonoBehaviour
         }
     }
 
+    public void ReloadNavigationData()
+    {
+        navigationFromNodeId = PlayerPrefs.GetString("ARNavigation_OriginalFromNodeId", "");
+        navigationToNodeId = PlayerPrefs.GetString("ARNavigation_OriginalToNodeId", "");
+
+        UpdateNavigationTexts();
+    }
+
+    private void UpdateNavigationTexts()
+    {
+        if (fromLocationText != null)
+        {
+            fromLocationText.gameObject.SetActive(true);
+
+            if (!string.IsNullOrEmpty(navigationFromNodeId) && currentNodes != null)
+            {
+                Node fromNode = currentNodes.FirstOrDefault(n => n.node_id == navigationFromNodeId);
+                if (fromNode != null)
+                {
+                    if (fromNode.type == "indoorinfra" && !string.IsNullOrEmpty(fromNode.related_infra_id))
+                    {
+                        string buildingName = GetBuildingNameFromInfraId(fromNode.related_infra_id);
+                        fromLocationText.text = $"FROM: {buildingName} ({fromNode.name})";
+                    }
+                    else
+                    {
+                        fromLocationText.text = $"FROM: {fromNode.name}";
+                    }
+                }
+                else
+                {
+                    fromLocationText.text = "FROM: Unknown";
+                }
+            }
+            else
+            {
+                fromLocationText.text = "FROM: Not Set";
+            }
+        }
+
+        if (toDestinationText != null)
+        {
+            toDestinationText.gameObject.SetActive(true);
+
+            if (!string.IsNullOrEmpty(navigationToNodeId) && currentNodes != null)
+            {
+                Node toNode = currentNodes.FirstOrDefault(n => n.node_id == navigationToNodeId);
+                if (toNode != null)
+                {
+                    if (toNode.type == "indoorinfra" && !string.IsNullOrEmpty(toNode.related_infra_id))
+                    {
+                        string buildingName = GetBuildingNameFromInfraId(toNode.related_infra_id);
+                        toDestinationText.text = $"TO: {buildingName} ({toNode.name})";
+                    }
+                    else
+                    {
+                        toDestinationText.text = $"TO: {toNode.name}";
+                    }
+                }
+                else
+                {
+                    toDestinationText.text = "TO: Unknown";
+                }
+            }
+            else
+            {
+                toDestinationText.text = "TO: Not Set";
+            }
+        }
+    }
+
+    private string GetBuildingNameFromInfraId(string infraId)
+    {
+        Infrastructure infra = currentInfrastructures.FirstOrDefault(i => i.infra_id == infraId);
+        if (infra != null)
+        {
+            return infra.name;
+        }
+        Node infrastructureNode = currentNodes.FirstOrDefault(n =>
+            n.type == "infrastructure" && n.related_infra_id == infraId);
+
+        if (infrastructureNode != null)
+        {
+            return infrastructureNode.name;
+        }
+
+        return "Building";
+    }
+
     private void LoadNavigationData()
     {
         navigationFromNodeId = PlayerPrefs.GetString("ARNavigation_OriginalFromNodeId", "");
@@ -511,10 +600,8 @@ public class UnifiedARManager : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        // Use debug GPS strength if enabled in editor
         if (useDebugGPSStrength)
         {
-            // Set accuracy based on debug strength for display
             switch (debugGPSStrength)
             {
                 case GPSStrength.Strong:
@@ -531,7 +618,6 @@ public class UnifiedARManager : MonoBehaviour
         }
         else
         {
-            // Default editor behavior
             currentGPSAccuracy = 10f;
             UpdateGPSStrengthIndicator(GPSStrength.Strong);
         }
@@ -766,7 +852,7 @@ public class UnifiedARManager : MonoBehaviour
         }
 
         Vector3 worldPosition = GPSToWorldPosition(node.latitude, node.longitude);
-        
+
         worldPosition.y = groundPlaneY + markerHeightOffset;
 
         GameObject marker = Instantiate(buildingMarkerPrefab);
@@ -794,12 +880,12 @@ public class UnifiedARManager : MonoBehaviour
         float deltaLng = longitude - referenceGPS.y;
 
         float meterPerDegree = 111000f;
-        
+
         float offsetEast = deltaLng * meterPerDegree * Mathf.Cos(referenceGPS.x * Mathf.Deg2Rad);
         float offsetNorth = deltaLat * meterPerDegree;
 
         float headingRad = referenceCompassHeading * Mathf.Deg2Rad;
-        
+
         float rotatedX = offsetEast * Mathf.Cos(headingRad) - offsetNorth * Mathf.Sin(headingRad);
         float rotatedZ = offsetEast * Mathf.Sin(headingRad) + offsetNorth * Mathf.Cos(headingRad);
 
@@ -902,53 +988,6 @@ public class UnifiedARManager : MonoBehaviour
         currentLocationText.text = locationDisplay;
     }
 
-    private void UpdateNavigationTexts()
-    {
-        if (fromLocationText != null)
-        {
-            fromLocationText.gameObject.SetActive(true);
-
-            if (!string.IsNullOrEmpty(navigationFromNodeId) && currentNodes != null)
-            {
-                Node fromNode = currentNodes.FirstOrDefault(n => n.node_id == navigationFromNodeId);
-                if (fromNode != null)
-                {
-                    fromLocationText.text = $"FROM: {fromNode.name}";
-                }
-                else
-                {
-                    fromLocationText.text = "FROM: Unknown";
-                }
-            }
-            else
-            {
-                fromLocationText.text = "FROM: Not Set";
-            }
-        }
-
-        if (toDestinationText != null)
-        {
-            toDestinationText.gameObject.SetActive(true);
-
-            if (!string.IsNullOrEmpty(navigationToNodeId) && currentNodes != null)
-            {
-                Node toNode = currentNodes.FirstOrDefault(n => n.node_id == navigationToNodeId);
-                if (toNode != null)
-                {
-                    toDestinationText.text = $"TO: {toNode.name}";
-                }
-                else
-                {
-                    toDestinationText.text = "TO: Unknown";
-                }
-            }
-            else
-            {
-                toDestinationText.text = "TO: Not Set";
-            }
-        }
-    }
-
     void UpdateTrackingStatusUI()
     {
         if (trackingStatusText != null)
@@ -975,14 +1014,14 @@ public class UnifiedARManager : MonoBehaviour
         {
             string lockStatus = isGPSLocked ? $" (Locked: {gpsLockTimer:F1}s)" : "";
             string debugMode = "";
-            
+
 #if UNITY_EDITOR
             if (useDebugGPSStrength)
             {
                 debugMode = $"\n[DEBUG GPS: {debugGPSStrength}]";
             }
 #endif
-            
+
             debugInfoText.text = $"Navigation + Outdoor (GPS){lockStatus}{debugMode}\n" +
                                  $"User: {userLocation.x:F5}, {userLocation.y:F5}\n" +
                                  $"Reference: {referenceGPS.x:F5}, {referenceGPS.y:F5}\n" +
@@ -1048,7 +1087,7 @@ public class UnifiedARManager : MonoBehaviour
 
     public string GetCurrentIndoorInfraId()
     {
-        return ""; 
+        return "";
     }
 
     public Vector2 GetReferenceGPS()

@@ -17,7 +17,7 @@ public class ARRerouteUIManager : MonoBehaviour
     public TextMeshProUGUI toDestinationText;
 
     [Header("Optional Exemption")]
-    public TMP_Dropdown exemptionTypeDropdown; 
+    public TMP_Dropdown exemptionTypeDropdown;
     public GameObject exemptionItemDropdownContainer;
     public TMP_Dropdown exemptionItemDropdown;
 
@@ -113,7 +113,7 @@ public class ARRerouteUIManager : MonoBehaviour
             return;
 
         exemptionTypeDropdown.ClearOptions();
-        
+
         List<string> options = new List<string>
         {
             "None",
@@ -136,7 +136,6 @@ public class ARRerouteUIManager : MonoBehaviour
         {
             rerouteBGPanel.SetActive(true);
         }
-
         if (infrastructurePopulator != null && fromSearchableDropdown != null)
         {
             if (infrastructurePopulator.infrastructureList != null)
@@ -149,7 +148,7 @@ public class ARRerouteUIManager : MonoBehaviour
                 fromSearchableDropdown.OnDestinationSelected -= OnFromLocationSelected;
                 fromSearchableDropdown.OnDestinationSelected += OnFromLocationSelected;
 
-                Debug.Log("[ARRerouteUI] SearchableDropdown initialized");
+                Debug.Log("[ARRerouteUI] SearchableDropdown initialized and event subscribed");
             }
             else
             {
@@ -162,8 +161,15 @@ public class ARRerouteUIManager : MonoBehaviour
     {
         selectedFromNodeId = id;
         selectedFromType = type;
-        
-        Debug.Log($"[ARRerouteUI] FROM selected: {displayName} (ID: {id}, Type: {type})");
+
+        Debug.Log("========================================");
+        Debug.Log($"[ARRerouteUI] FROM LOCATION SELECTED:");
+        Debug.Log($"  Display Name: '{displayName}'");
+        Debug.Log($"  ID: '{id}'");
+        Debug.Log($"  Type: '{type}'");
+        Debug.Log($"  Is Null? {string.IsNullOrEmpty(id)}");
+        Debug.Log("========================================");
+
     }
 
     public void HideReroutePanel()
@@ -183,10 +189,9 @@ public class ARRerouteUIManager : MonoBehaviour
 
     private void ResetForm()
     {
-        // Reset SearchableDropdown
         if (fromSearchableDropdown != null)
         {
-            fromSearchableDropdown.SelectDestination(null, null, "");
+            fromSearchableDropdown.ResetSelection();
         }
 
         if (exemptionTypeDropdown != null)
@@ -219,9 +224,17 @@ public class ARRerouteUIManager : MonoBehaviour
 
     private void OnConfirmClicked()
     {
+        Debug.Log($"[ARRerouteUI] OnConfirmClicked - selectedFromNodeId: '{selectedFromNodeId}'");
+
         if (string.IsNullOrEmpty(selectedFromNodeId))
         {
             Debug.LogWarning("[ARRerouteUI] Please select a FROM location");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(originalToNodeId))
+        {
+            Debug.LogError("[ARRerouteUI] Original TO node ID is missing!");
             return;
         }
 
@@ -231,7 +244,6 @@ public class ARRerouteUIManager : MonoBehaviour
             return;
         }
 
-        // Get exempted item if selected
         if (selectedExemptionType != ExemptionType.None && exemptionItemDropdown != null)
         {
             int selectedIndex = exemptionItemDropdown.value;
@@ -275,7 +287,15 @@ public class ARRerouteUIManager : MonoBehaviour
     private void OnConfirmationYes()
     {
         HideConfirmationPanel();
-        HideReroutePanel();
+        if (reroutePanel != null)
+        {
+            reroutePanel.SetActive(false);
+        }
+
+        if (rerouteBGPanel != null)
+        {
+            rerouteBGPanel.SetActive(false);
+        }
 
         Debug.Log($"[ARRerouteUI] Starting reroute: FROM={selectedFromNodeId}, TO={originalToNodeId}, Exemption={selectedExemptionType}, Blocked={exemptedItemId}");
 
@@ -287,6 +307,8 @@ public class ARRerouteUIManager : MonoBehaviour
                 selectedExemptionType,
                 exemptedItemId
             );
+
+            ResetForm();
         }
         else
         {

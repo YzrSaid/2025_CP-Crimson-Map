@@ -322,7 +322,6 @@
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/ISubLayerLineGeometryOptions.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Platform/Cache/CachingWebFileSource.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/SubLayerCustomStyleAtlasWithColorPallete.cs" />
-    <Compile Include="Assets/Scripts/ARSCene/ARPAthfindingController.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/SubLayerFantasyStyle.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/MapMatching/MatchObject.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/MapMatching/MapMatchingParameters.cs" />
@@ -497,6 +496,7 @@
     <Compile Include="Assets/Scripts/Onboarding Screens Script/PageIndicator.cs" />
     <Compile Include="Assets/Mapbox/Unity/Map/Interfaces/IMap.cs" />
     <Compile Include="Assets/Mapbox/Examples/Scripts/ObjectInspectorModifier.cs" />
+    <Compile Include="Assets/Scripts/ARSCene/ARPathfindingController.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/MapboxDefaultStyles.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/GameObjectModifiers/DisableMeshRendererModifier.cs" />
     <Compile Include="Assets/Mapbox/Unity/Utilities/NodeEditorElementAttribute.cs" />
