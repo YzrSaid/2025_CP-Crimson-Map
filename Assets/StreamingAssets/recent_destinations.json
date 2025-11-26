@@ -617,6 +617,150 @@
                     "isIndoorDirection": false
                 }
             ]
+        },
+        {
+            "timestamp": "2025-11-26 18:29:37",
+            "startNodeId": "ND-002",
+            "endNodeId": "ND-082",
+            "startNodeName": "Park",
+            "endNodeName": "Gym",
+            "totalDistance": 325.0199890136719,
+            "formattedDistance": "325.0m",
+            "walkingTime": "4 minutes",
+            "viaMode": "Via Overpass",
+            "pathNodes": [
+                "ND-002",
+                "ND-116",
+                "ND-042",
+                "ND-044",
+                "ND-095",
+                "ND-094",
+                "ND-105",
+                "ND-102",
+                "ND-101",
+                "ND-082"
+            ],
+            "edges": [
+                {
+                    "fromNode": "ND-002",
+                    "toNode": "ND-116"
+                },
+                {
+                    "fromNode": "ND-116",
+                    "toNode": "ND-042"
+                },
+                {
+                    "fromNode": "ND-042",
+                    "toNode": "ND-044"
+                },
+                {
+                    "fromNode": "ND-044",
+                    "toNode": "ND-095"
+                },
+                {
+                    "fromNode": "ND-095",
+                    "toNode": "ND-094"
+                },
+                {
+                    "fromNode": "ND-094",
+                    "toNode": "ND-105"
+                },
+                {
+                    "fromNode": "ND-105",
+                    "toNode": "ND-102"
+                },
+                {
+                    "fromNode": "ND-102",
+                    "toNode": "ND-101"
+                },
+                {
+                    "fromNode": "ND-101",
+                    "toNode": "ND-082"
+                }
+            ],
+            "directions": [
+                {
+                    "instruction": "Head straight to Intermediate 2 (17m)",
+                    "turn": "Straight",
+                    "distance": 16.92292594909668,
+                    "destNodeId": "ND-116",
+                    "destNode": "Intermediate 2",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn left toward Overpass Campus B (22m)",
+                    "turn": "Left",
+                    "distance": 22.063066482543947,
+                    "destNodeId": "ND-042",
+                    "destNode": "Overpass Campus B",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn right toward Overpass Campus A (59m)",
+                    "turn": "Right",
+                    "distance": 58.76396942138672,
+                    "destNodeId": "ND-044",
+                    "destNode": "Overpass Campus A",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn left toward Intermediate 2 (25m)",
+                    "turn": "Left",
+                    "distance": 25.15403938293457,
+                    "destNodeId": "ND-095",
+                    "destNode": "Intermediate 2",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn left toward Intermediate 1 (130m)",
+                    "turn": "Left",
+                    "distance": 129.8046417236328,
+                    "destNodeId": "ND-094",
+                    "destNode": "Intermediate 1",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Head straight to Intermediate 14 (118m)",
+                    "turn": "Straight",
+                    "distance": 117.63558197021485,
+                    "destNodeId": "ND-105",
+                    "destNode": "Intermediate 14",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn right toward Intermediate 11 (85m)",
+                    "turn": "Right",
+                    "distance": 84.88501739501953,
+                    "destNodeId": "ND-102",
+                    "destNode": "Intermediate 11",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn left toward Intermediate 10 (88m)",
+                    "turn": "Left",
+                    "distance": 87.76016998291016,
+                    "destNodeId": "ND-101",
+                    "destNode": "Intermediate 10",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn right toward Gym (66m)",
+                    "turn": "Right",
+                    "distance": 66.12727355957031,
+                    "destNodeId": "ND-082",
+                    "destNode": "Gym",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                }
+            ]
         }
     ]
 }

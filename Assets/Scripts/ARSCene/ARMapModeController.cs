@@ -321,4 +321,4 @@ public class ARMapModeController : MonoBehaviour
         if (floorDownButton != null)
             floorDownButton.onClick.RemoveListener(OnFloorDownClicked);
     }
-}
+}   

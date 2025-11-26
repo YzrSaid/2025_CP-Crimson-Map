@@ -162,7 +162,7 @@ public class PathfindingController : MonoBehaviour
 
         if (locationLockText != null)
         {
-            locationLockText.text = "Getting location... 📍";
+            locationLockText.text = "Loading map data...";
         }
 
         if (MapManager.Instance != null)
@@ -566,11 +566,19 @@ public class PathfindingController : MonoBehaviour
     {
         if (gpsManager == null)
         {
+            if (locationLockText != null)
+            {
+                locationLockText.text = "Initializing GPS... 📍";
+            }
             return;
         }
 
         if (!nodesLoaded || allNodes == null || allNodes.Count == 0)
         {
+            if (locationLockText != null)
+            {
+                locationLockText.text = "Loading map data... 📍";
+            }
             return;
         }
 
@@ -714,6 +722,7 @@ public class PathfindingController : MonoBehaviour
 
         locationConflictPanel.SetActive(true);
     }
+
 
     private void OnLocationConflictConfirm()
     {
@@ -1212,7 +1221,7 @@ public class PathfindingController : MonoBehaviour
         ARManagerCleanup arCleanup = FindObjectOfType<ARManagerCleanup>();
         if (arCleanup != null)
         {
-            arCleanup.LoadARNavigationWithScene("ARScene");  
+            arCleanup.LoadARNavigationWithScene("ARScene");
         }
     }
 

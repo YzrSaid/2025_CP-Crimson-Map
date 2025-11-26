@@ -55,78 +55,39 @@ public class GPSManager : MonoBehaviour
 
     private void InitializeSensors()
     {
-        Debug.Log("[GPSManager] Initializing sensors with new Input System...");
-
         try
         {
             magnetometer = MagneticFieldSensor.current;
             if (magnetometer != null)
             {
                 InputSystem.EnableDevice(magnetometer);
-                Debug.Log("[GPSManager] Magnetometer enabled");
-            }
-            else
-            {
-                Debug.LogWarning("[GPSManager] Magnetometer not found!");
             }
 
             accelerometer = Accelerometer.current;
             if (accelerometer != null)
             {
                 InputSystem.EnableDevice(accelerometer);
-                Debug.Log("[GPSManager] Accelerometer enabled");
-            }
-            else
-            {
-                Debug.LogWarning("[GPSManager] Accelerometer not found!");
             }
 
             gyroscope = UnityEngine.InputSystem.Gyroscope.current;
             if (gyroscope != null)
             {
                 InputSystem.EnableDevice(gyroscope);
-                Debug.Log("[GPSManager] Gyroscope enabled");
-            }
-            else
-            {
-                Debug.LogWarning("[GPSManager] Gyroscope not found (optional)");
             }
 
             sensorsInitialized = (magnetometer != null && accelerometer != null);
-
-            if (sensorsInitialized)
-            {
-                Debug.Log("[GPSManager] Sensors initialized successfully!");
-            }
-            else
-            {
-                Debug.LogError("[GPSManager] Failed to initialize required sensors");
-            }
         }
-        catch (System.Exception e)
+        catch (System.Exception)
         {
-            Debug.LogError($"[GPSManager] Error initializing sensors: {e.Message}");
+            // Handle exception as needed
         }
     }
 
     private void LoadLockStateFromPlayerPrefs()
     {
+        // Loading logic remains but without debug logs
         bool isLocked = PlayerPrefs.GetInt(PREF_LOCATION_LOCKED, 0) == 1;
         bool hasQROverride = PlayerPrefs.GetInt(PREF_QR_OVERRIDE, 0) == 1;
-
-        if (isLocked)
-        {
-            float lat = PlayerPrefs.GetFloat(PREF_LOCKED_LAT, 0f);
-            float lng = PlayerPrefs.GetFloat(PREF_LOCKED_LNG, 0f);
-            Debug.Log($"[GPSManager] Loaded locked location from PlayerPrefs: {lat}, {lng}");
-        }
-
-        if (hasQROverride)
-        {
-            float lat = PlayerPrefs.GetFloat(PREF_QR_LAT, 0f);
-            float lng = PlayerPrefs.GetFloat(PREF_QR_LNG, 0f);
-            Debug.Log($"[GPSManager] Loaded QR override from PlayerPrefs: {lat}, {lng}");
-        }
     }
 
     public void Start()
@@ -139,7 +100,6 @@ public class GPSManager : MonoBehaviour
 #if UNITY_EDITOR
         if (useMockLocationInEditor)
         {
-            Debug.Log("[GPSManager] Using mock GPS in Editor");
             sensorsInitialized = true;
             yield break;
         }
@@ -147,34 +107,21 @@ public class GPSManager : MonoBehaviour
 
         if (!Input.location.isEnabledByUser)
         {
-            Debug.LogWarning("[GPSManager] Location service not enabled by user");
             yield break;
         }
 
-        Debug.Log("[GPSManager] Starting location services...");
         Input.location.Start();
 
         int maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
         {
-            Debug.Log($"[GPSManager] Waiting for location... {maxWait}s remaining");
             yield return new WaitForSeconds(1);
             maxWait--;
-        }
-
-        if (Input.location.status == LocationServiceStatus.Failed)
-        {
-            Debug.LogError("[GPSManager] Unable to determine device location");
-        }
-        else
-        {
-            Debug.Log($"[GPSManager] GPS started: {Input.location.lastData.latitude}, {Input.location.lastData.longitude}");
         }
     }
 
     public Vector2 GetCoordinates()
     {
-        // ✅ PRIORITY 1: Pathfinding locked location (from PlayerPrefs)
         if (PlayerPrefs.GetInt(PREF_LOCATION_LOCKED, 0) == 1)
         {
             float lat = PlayerPrefs.GetFloat(PREF_LOCKED_LAT, 0f);
@@ -182,7 +129,6 @@ public class GPSManager : MonoBehaviour
             return new Vector2(lat, lng);
         }
 
-        // ✅ PRIORITY 2: QR override location (from PlayerPrefs)
         if (PlayerPrefs.GetInt(PREF_QR_OVERRIDE, 0) == 1)
         {
             float lat = PlayerPrefs.GetFloat(PREF_QR_LAT, 0f);
@@ -191,14 +137,12 @@ public class GPSManager : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        // ✅ PRIORITY 3: Mock location in editor
         if (useMockLocationInEditor)
         {
             return new Vector2(mockLatitude, mockLongitude);
         }
 #endif
 
-        // ✅ PRIORITY 4: Real GPS
         if (Input.location.status == LocationServiceStatus.Running)
         {
             return new Vector2(Input.location.lastData.latitude, Input.location.lastData.longitude);
@@ -235,10 +179,6 @@ public class GPSManager : MonoBehaviour
         }
         else
         {
-            if (enableCompassDebug && Time.frameCount % 120 == 0)
-            {
-                Debug.LogWarning("[GPSManager] Sensors not initialized!");
-            }
             return currentHeading;
         }
     }
@@ -267,40 +207,30 @@ public class GPSManager : MonoBehaviour
             float heading = Mathf.Atan2(-magY, -magX) * Mathf.Rad2Deg + 90f; 
             heading = (heading + 360f) % 360f;
 
-            if (enableCompassDebug && Time.frameCount % 120 == 0)
-                Debug.Log($"[GPSManager] Tilt-compensated heading: {heading:F1}°");
-
             return heading;
         }
-        catch (System.Exception e)
+        catch (System.Exception)
         {
-            if (enableCompassDebug && Time.frameCount % 120 == 0)
-                Debug.LogError($"[GPSManager] Error calculating heading: {e.Message}");
             return currentHeading;
         }
     }
 
-    // ✅ Lock location for pathfinding (saves to PlayerPrefs)
     public void LockLocationForPathfinding(float latitude, float longitude)
     {
         PlayerPrefs.SetInt(PREF_LOCATION_LOCKED, 1);
         PlayerPrefs.SetFloat(PREF_LOCKED_LAT, latitude);
         PlayerPrefs.SetFloat(PREF_LOCKED_LNG, longitude);
         PlayerPrefs.Save();
-        Debug.Log($"[GPSManager] Location locked and saved: {latitude}, {longitude}");
     }
 
-    // ✅ Unlock pathfinding location (clears PlayerPrefs)
     public void UnlockLocationForPathfinding()
     {
         PlayerPrefs.DeleteKey(PREF_LOCATION_LOCKED);
         PlayerPrefs.DeleteKey(PREF_LOCKED_LAT);
         PlayerPrefs.DeleteKey(PREF_LOCKED_LNG);
         PlayerPrefs.Save();
-        Debug.Log("[GPSManager] Location unlocked and cleared from PlayerPrefs");
     }
 
-    // ✅ Check if locked (reads from PlayerPrefs)
     public bool IsLocationLocked()
     {
         bool isLocked = PlayerPrefs.GetInt(PREF_LOCATION_LOCKED, 0) == 1;
@@ -308,14 +238,12 @@ public class GPSManager : MonoBehaviour
         return isLocked || hasQROverride;
     }
 
-    // ✅ Set QR override (saves to PlayerPrefs)
     public void SetQRLocationOverride(Vector2 location, float heading = 0f)
     {
         PlayerPrefs.SetInt(PREF_QR_OVERRIDE, 1);
         PlayerPrefs.SetFloat(PREF_QR_LAT, location.x);
         PlayerPrefs.SetFloat(PREF_QR_LNG, location.y);
         PlayerPrefs.Save();
-        Debug.Log($"[GPSManager] QR Override set and saved: {location}, heading: {heading}°");
     }
 
     public void SetQRLocationOverride(float latitude, float longitude, float heading = 0f)
@@ -323,14 +251,12 @@ public class GPSManager : MonoBehaviour
         SetQRLocationOverride(new Vector2(latitude, longitude), heading);
     }
 
-    // ✅ Clear QR override (clears PlayerPrefs)
     public void ClearQRLocationOverride()
     {
         PlayerPrefs.DeleteKey(PREF_QR_OVERRIDE);
         PlayerPrefs.DeleteKey(PREF_QR_LAT);
         PlayerPrefs.DeleteKey(PREF_QR_LNG);
         PlayerPrefs.Save();
-        Debug.Log("[GPSManager] QR Override cleared from PlayerPrefs");
     }
 
     public bool IsUsingQROverride()
@@ -342,7 +268,6 @@ public class GPSManager : MonoBehaviour
     {
         Vector2 rawCoords = GetCoordinates();
 
-        // ✅ Don't smooth locked/QR coordinates
         if (IsLocationLocked())
         {
             return rawCoords;
@@ -379,7 +304,7 @@ public class GPSManager : MonoBehaviour
 #if UNITY_EDITOR
         if (useMockLocationInEditor && Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
         {
-            Debug.Log($"[GPSManager] Mock GPS: {mockLatitude}, {mockLongitude}, Heading: {mockHeading:F1}°");
+            // Handle G key press if needed
         }
 
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
@@ -396,7 +321,6 @@ public class GPSManager : MonoBehaviour
     {
         if (!pauseStatus)
         {
-            Debug.Log("[GPSManager] App resumed - re-enabling sensors");
             InitializeSensors();
         }
     }
