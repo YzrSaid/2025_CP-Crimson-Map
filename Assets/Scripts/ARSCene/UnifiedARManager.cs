@@ -15,18 +15,11 @@ public class UnifiedARManager : MonoBehaviour
     private bool isExitingAR = false;
 
     [Header("AR Components")]
-    public GameObject buildingMarkerPrefab;
     public XROrigin xrOrigin;
     public ARRaycastManager arRaycastManager;
     public ARPlaneManager arPlaneManager;
     public ARCameraManager arCameraManager;
     public Camera arCamera;
-
-    [Header("Marker Settings")]
-    public float maxVisibleDistance = 500f;
-    public float markerScale = 0.3f;
-    public float minMarkerDistance = 2f;
-    public float markerHeightOffset = 0.1f;
 
     [Header("Tracking Quality")]
     private TrackingState lastTrackingState = TrackingState.None;
@@ -86,12 +79,10 @@ public class UnifiedARManager : MonoBehaviour
     private Vector3 referenceARWorldPosition;
     private float referenceCompassHeading;
     private bool arOriginInitialized = false;
-    private GameObject userMarkerObject;
 
     [Header("Data")]
     private List<Node> currentNodes = new List<Node>();
     private List<Infrastructure> currentInfrastructures = new List<Infrastructure>();
-    private Dictionary<string, MarkerAnchor> markerAnchors = new Dictionary<string, MarkerAnchor>();
 
     [Header("Position Tracking")]
     private Vector2 userLocation;
@@ -269,7 +260,6 @@ public class UnifiedARManager : MonoBehaviour
 
         isExitingAR = true;
 
-        ClearMarkers();
         CancelInvoke();
 
         if (GlobalManager.Instance != null)
@@ -305,7 +295,7 @@ public class UnifiedARManager : MonoBehaviour
         yield return StartCoroutine(InitializeFixedAROrigin());
 
         UpdateLoadingUI("Starting tracking...");
-        StartMarkerTracking();
+        StartGPSTracking();
         HideLoadingUI();
     }
 
@@ -343,17 +333,7 @@ public class UnifiedARManager : MonoBehaviour
         yield break;
     }
 
-    private void UpdateUserMarkerPosition()
-    {
-        if (userMarkerObject == null) return;
-
-        Vector3 userWorldPos = GPSToWorldPosition(userLocation.x, userLocation.y);
-        userWorldPos.y = groundPlaneY + markerHeightOffset;
-
-        userMarkerObject.transform.position = userWorldPos;
-    }
-
-    private void StartMarkerTracking()
+    private void StartGPSTracking()
     {
         if (isTrackingStarted)
         {
@@ -361,7 +341,7 @@ public class UnifiedARManager : MonoBehaviour
         }
 
         isTrackingStarted = true;
-        InvokeRepeating(nameof(UpdateMarkers), 0.5f, 0.2f);
+        InvokeRepeating(nameof(UpdateGPSTracking), 0.5f, 0.2f);
         InvokeRepeating(nameof(UpdateNearestNode), 0.5f, 2f);
     }
 
@@ -373,8 +353,6 @@ public class UnifiedARManager : MonoBehaviour
         {
             return;
         }
-
-        ClearMarkers();
 
         referenceGPS = new Vector2(scannedNode.latitude, scannedNode.longitude);
         referenceARWorldPosition = arCamera.transform.position;
@@ -392,21 +370,9 @@ public class UnifiedARManager : MonoBehaviour
 
         HideRecalibrationPanel();
 
-        StartCoroutine(InitializeOutdoorMarkersAfterScan());
-
         UpdateTopPanelUI();
         UpdateTrackingStatusUI();
         UpdateDebugInfo();
-    }
-
-    private IEnumerator InitializeOutdoorMarkersAfterScan()
-    {
-        yield return null;
-        yield return null;
-
-        ReconcileVisibleMarkersGPS();
-
-        yield return new WaitForSeconds(1.5f);
     }
 
     public string GetInfrastructureName(string infraId)
@@ -516,15 +482,10 @@ public class UnifiedARManager : MonoBehaviour
         }
     }
 
-    void UpdateMarkers()
+    void UpdateGPSTracking()
     {
         if (isExitingAR) return;
 
-        UpdateMarkersGPS();
-    }
-
-    void UpdateMarkersGPS()
-    {
         if (!arOriginInitialized)
         {
             return;
@@ -551,10 +512,7 @@ public class UnifiedARManager : MonoBehaviour
             userLocation = StabilizeGPSLocation(rawGpsLocation);
         }
 
-        UpdateUserMarkerPosition();
-
         UpdateTrackingStatusUI();
-        ReconcileVisibleMarkersGPS();
         UpdateDebugInfo();
         UpdateTopPanelUI();
     }
@@ -756,117 +714,6 @@ public class UnifiedARManager : MonoBehaviour
         UpdateTopPanelUI();
     }
 
-    private void ReconcileVisibleMarkersGPS()
-    {
-        if (currentNodes == null || currentNodes.Count == 0)
-        {
-            return;
-        }
-
-        List<string> nodesToRemove = new List<string>();
-
-        foreach (var kvp in markerAnchors)
-        {
-            MarkerAnchor anchor = kvp.Value;
-
-            if (!ShouldShowMarkerGPS(anchor.node))
-            {
-                if (anchor.markerGameObject != null)
-                    Destroy(anchor.markerGameObject);
-                nodesToRemove.Add(kvp.Key);
-            }
-        }
-
-        foreach (string nodeId in nodesToRemove)
-        {
-            markerAnchors.Remove(nodeId);
-        }
-
-        foreach (Node node in currentNodes)
-        {
-            if (node.type == "indoorinfra")
-                continue;
-
-            if (markerAnchors.ContainsKey(node.node_id))
-            {
-                continue;
-            }
-
-            if (ShouldShowMarkerGPS(node))
-            {
-                CreateMarkerForNodeGPS(node);
-            }
-        }
-    }
-
-    bool ShouldShowMarkerGPS(Node node)
-    {
-        if (node.type == "indoorinfra")
-            return false;
-
-        float distance = CalculateDistanceGPS(userLocation, new Vector2(node.latitude, node.longitude));
-
-        return distance <= maxVisibleDistance && distance >= minMarkerDistance;
-    }
-
-    void CreateMarkerForNodeGPS(Node node)
-    {
-        if (buildingMarkerPrefab == null)
-        {
-            return;
-        }
-
-        Infrastructure infra = currentInfrastructures.FirstOrDefault(i => i.infra_id == node.related_infra_id);
-        if (infra == null)
-        {
-            return;
-        }
-
-        Vector3 worldPosition = GPSToWorldPosition(node.latitude, node.longitude);
-
-        worldPosition.y = groundPlaneY + markerHeightOffset;
-
-        GameObject marker = Instantiate(buildingMarkerPrefab);
-        marker.transform.position = worldPosition;
-        marker.transform.localScale = Vector3.one * markerScale;
-
-        UpdateMarkerText(marker, infra);
-
-        MarkerAnchor anchor = new MarkerAnchor
-        {
-            node = node,
-            nodeLatitude = node.latitude,
-            nodeLongitude = node.longitude,
-            nodeX = node.x_coordinate,
-            nodeY = node.y_coordinate,
-            markerGameObject = marker
-        };
-
-        markerAnchors[node.node_id] = anchor;
-    }
-
-    Vector3 GPSToWorldPosition(float latitude, float longitude)
-    {
-        float deltaLat = latitude - referenceGPS.x;
-        float deltaLng = longitude - referenceGPS.y;
-
-        float meterPerDegree = 111000f;
-
-        float offsetEast = deltaLng * meterPerDegree * Mathf.Cos(referenceGPS.x * Mathf.Deg2Rad);
-        float offsetNorth = deltaLat * meterPerDegree;
-
-        float headingRad = referenceCompassHeading * Mathf.Deg2Rad;
-
-        float rotatedX = offsetEast * Mathf.Cos(headingRad) - offsetNorth * Mathf.Sin(headingRad);
-        float rotatedZ = offsetEast * Mathf.Sin(headingRad) + offsetNorth * Mathf.Cos(headingRad);
-
-        Vector3 worldPos = referenceARWorldPosition;
-        worldPos.x += rotatedX;
-        worldPos.z += rotatedZ;
-
-        return worldPos;
-    }
-
     float CalculateDistanceGPS(Vector2 coord1, Vector2 coord2)
     {
         float lat1Rad = coord1.x * Mathf.Deg2Rad;
@@ -881,41 +728,6 @@ public class UnifiedARManager : MonoBehaviour
         float c = 2 * Mathf.Atan2(Mathf.Sqrt(a), Mathf.Sqrt(1 - a));
 
         return 6371000 * c;
-    }
-
-    void UpdateMarkerText(GameObject marker, Infrastructure infra)
-    {
-        TextMeshPro textMeshPro = marker.GetComponentInChildren<TextMeshPro>();
-        if (textMeshPro != null)
-        {
-            textMeshPro.text = infra.name;
-            textMeshPro.fontSize = 8;
-
-            if (gameObject != null && gameObject.activeInHierarchy && !isExitingAR)
-            {
-                StartCoroutine(UpdateTextRotation(textMeshPro.transform));
-            }
-        }
-
-        Text nameText = marker.GetComponentInChildren<Text>();
-        if (nameText != null && textMeshPro == null)
-        {
-            nameText.text = infra.name;
-            nameText.fontSize = 12;
-        }
-    }
-
-    IEnumerator UpdateTextRotation(Transform textTransform)
-    {
-        while (textTransform != null && !isExitingAR && gameObject != null && gameObject.activeInHierarchy)
-        {
-            if (arCamera != null)
-            {
-                textTransform.LookAt(arCamera.transform);
-                textTransform.Rotate(0, 180, 0);
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
     }
 
     private void UpdateTopPanelUI()
@@ -996,8 +808,7 @@ public class UnifiedARManager : MonoBehaviour
             debugInfoText.text = $"Navigation + Outdoor (GPS){lockStatus}{debugMode}\n" +
                                  $"User: {userLocation.x:F5}, {userLocation.y:F5}\n" +
                                  $"Reference: {referenceGPS.x:F5}, {referenceGPS.y:F5}\n" +
-                                 $"GPS Accuracy: {currentGPSAccuracy:F1}m\n" +
-                                 $"Active Markers: {markerAnchors.Count}";
+                                 $"GPS Accuracy: {currentGPSAccuracy:F1}m";
         }
     }
 
@@ -1018,27 +829,11 @@ public class UnifiedARManager : MonoBehaviour
         }
     }
 
-    void ClearMarkers()
-    {
-        foreach (var kvp in markerAnchors)
-        {
-            if (kvp.Value.markerGameObject != null)
-                Destroy(kvp.Value.markerGameObject);
-        }
-        markerAnchors.Clear();
-    }
-
     void OnDestroy()
     {
         isExitingAR = true;
         CancelInvoke();
-        ClearMarkers();
         StopAllCoroutines();
-
-        if (userMarkerObject != null)
-        {
-            Destroy(userMarkerObject);
-        }
 
         if (debugToggleButton != null)
         {
@@ -1069,6 +864,11 @@ public class UnifiedARManager : MonoBehaviour
     public Vector3 GetReferenceARWorldPosition()
     {
         return referenceARWorldPosition;
+    }
+
+    public float GetReferenceCompassHeading()
+    {
+        return referenceCompassHeading;
     }
 
     public enum GPSStrength
