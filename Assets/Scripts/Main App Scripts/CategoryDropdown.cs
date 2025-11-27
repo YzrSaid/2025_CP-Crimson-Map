@@ -13,7 +13,7 @@ public class CategoryDropdown : MonoBehaviour
     public GameObject indoorPanel;
     public Button categoryButton;
     public Transform outdoorPanelContent;
-    
+
     [Header("CategoryItem Prefab")]
     public GameObject categoryItemPrefab;
     private List<GameObject> spawnedItems = new List<GameObject>();
@@ -25,46 +25,11 @@ public class CategoryDropdown : MonoBehaviour
     {
         if (outdoorPanel != null)
             outdoorPanel.SetActive(false);
-        
+
         if (indoorPanel != null)
             indoorPanel.SetActive(false);
-        
-        if (categoryButton != null)
-        {
-            categoryButton.onClick.AddListener(OnCategoryButtonClicked);
-        }
-        
-        StartCoroutine(WaitForDataInitializationThenPopulate());
-    }
 
-    private void OnCategoryButtonClicked()
-    {
-        bool isIndoorMode = IsIndoorMode();
-        
-        if (isIndoorMode)
-        {
-            // Show indoor panel, hide outdoor panel
-            if (indoorPanel != null)
-            {
-                indoorPanel.SetActive(!indoorPanel.activeSelf);
-            }
-            if (outdoorPanel != null)
-            {
-                outdoorPanel.SetActive(false);
-            }
-        }
-        else
-        {
-            // Show outdoor panel, hide indoor panel
-            if (outdoorPanel != null)
-            {
-                outdoorPanel.SetActive(!outdoorPanel.activeSelf);
-            }
-            if (indoorPanel != null)
-            {
-                indoorPanel.SetActive(false);
-            }
-        }
+        StartCoroutine(WaitForDataInitializationThenPopulate());
     }
 
     private bool IsIndoorMode()
@@ -73,7 +38,7 @@ public class CategoryDropdown : MonoBehaviour
         {
             return MapModeController.Instance.IsIndoorMode();
         }
-        
+
         return false;
     }
 
@@ -85,7 +50,6 @@ public class CategoryDropdown : MonoBehaviour
         {
             if (GlobalManager.Instance != null && MapManager.Instance != null && MapManager.Instance.IsReady() && IsDataInitializationComplete())
             {
-                // Only populate outdoor panel since indoor is static
                 if (!IsIndoorMode())
                 {
                     yield return StartCoroutine(PopulatePanel());
@@ -97,7 +61,6 @@ public class CategoryDropdown : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
 
-        // Only populate outdoor panel since indoor is static
         if (!IsIndoorMode())
         {
             yield return StartCoroutine(PopulatePanel());

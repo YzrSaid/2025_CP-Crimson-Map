@@ -16,7 +16,6 @@ public class UnifiedARManager : MonoBehaviour
 
     [Header("AR Components")]
     public GameObject buildingMarkerPrefab;
-    public GameObject userMarkerPrefab;
     public XROrigin xrOrigin;
     public ARRaycastManager arRaycastManager;
     public ARPlaneManager arPlaneManager;
@@ -341,25 +340,7 @@ public class UnifiedARManager : MonoBehaviour
         gpsLockTimer = gpsLockDuration;
 
         arOriginInitialized = true;
-
-        CreateUserMarker();
-
         yield break;
-    }
-
-    private void CreateUserMarker()
-    {
-        if (userMarkerPrefab != null)
-        {
-            userMarkerObject = Instantiate(userMarkerPrefab);
-            userMarkerObject.transform.position = referenceARWorldPosition;
-            userMarkerObject.transform.position = new Vector3(
-                userMarkerObject.transform.position.x,
-                groundPlaneY + markerHeightOffset,
-                userMarkerObject.transform.position.z
-            );
-            userMarkerObject.transform.localScale = Vector3.one * markerScale;
-        }
     }
 
     private void UpdateUserMarkerPosition()
@@ -408,16 +389,6 @@ public class UnifiedARManager : MonoBehaviour
 
         isGPSLocked = true;
         gpsLockTimer = gpsLockDuration;
-
-        if (userMarkerObject != null)
-        {
-            userMarkerObject.SetActive(true);
-            userMarkerObject.transform.position = referenceARWorldPosition;
-        }
-        else
-        {
-            CreateUserMarker();
-        }
 
         HideRecalibrationPanel();
 

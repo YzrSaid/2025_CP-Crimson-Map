@@ -5355,7 +5355,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &441353724
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14609,6 +14609,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panelsToToggle:
   - {fileID: 1686185376}
+  isCategoryPanelToggler: 1
+  outdoorPanel: {fileID: 1686185376}
+  indoorPanel: {fileID: 2085044935}
 --- !u!1 &1172265916
 GameObject:
   m_ObjectHideFlags: 0
@@ -20380,7 +20383,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Main Map
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
   m_sharedMaterial: {fileID: 730542738843737679, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
@@ -25263,7 +25266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2010721439
 RectTransform:
   m_ObjectHideFlags: 0

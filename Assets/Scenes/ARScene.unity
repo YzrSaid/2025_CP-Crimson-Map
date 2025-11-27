@@ -1241,7 +1241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &97322317
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13962,7 +13962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1009610696
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14408,7 +14408,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1065543454
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20109,6 +20109,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panelsToToggle:
   - {fileID: 846084843}
+  isCategoryPanelToggler: 0
+  outdoorPanel: {fileID: 0}
+  indoorPanel: {fileID: 0}
 --- !u!1 &1529212187
 GameObject:
   m_ObjectHideFlags: 0
@@ -22791,7 +22794,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainSceneName: MainAppScene
   buildingMarkerPrefab: {fileID: 2395739616877220581, guid: 9651b0f074c56f421b790ae228f60189, type: 3}
-  userMarkerPrefab: {fileID: 1244328067049688358, guid: 38c48f419bcdfba28b5e2523a06bc77f, type: 3}
   xrOrigin: {fileID: 331264286}
   arRaycastManager: {fileID: 331264289}
   arPlaneManager: {fileID: 331264290}
@@ -23135,7 +23137,7 @@ MonoBehaviour:
   outdoorPanel: {fileID: 1458340289}
   indoorPanel: {fileID: 1144366682}
   categoryButton: {fileID: 1826757340}
-  outdoorPanelContent: {fileID: 97322317}
+  outdoorPanelContent: {fileID: 1458340290}
   categoryItemPrefab: {fileID: 5246217756407943387, guid: df0af4a5ed8792cb191809d17e424709, type: 3}
   maxWaitTime: 30
 --- !u!1 &1710405585
@@ -24777,6 +24779,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panelsToToggle:
   - {fileID: 1458340289}
+  isCategoryPanelToggler: 1
+  outdoorPanel: {fileID: 1458340289}
+  indoorPanel: {fileID: 1144366682}
 --- !u!114 &1826757340
 MonoBehaviour:
   m_ObjectHideFlags: 0
