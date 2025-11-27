@@ -352,6 +352,7 @@
     <Compile Include="Assets/Scripts/ARSCene/DirectionGenerator.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/MapMatching/MapMatcher.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Factories/VectorTileFactory.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/PanelConfirmation.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/AngleSmoothing/AngleSmoothingAbstractBase.cs" />
     <Compile Include="Assets/Mapbox/Examples/Scripts/LabelTextSetter.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/JsonConverters/BboxToGeoCoordinateBoundsConverter.cs" />

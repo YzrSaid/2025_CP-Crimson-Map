@@ -18267,7 +18267,7 @@ GameObject:
   - component: {fileID: 1377477622}
   - component: {fileID: 1377477621}
   m_Layer: 5
-  m_Name: Title (1)
+  m_Name: Message
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27008,6 +27008,7 @@ GameObject:
   - component: {fileID: 2075943849}
   - component: {fileID: 2075943848}
   - component: {fileID: 2075943847}
+  - component: {fileID: 2075943850}
   m_Layer: 5
   m_Name: StopNavigationButton
   m_TagString: Untagged
@@ -27078,19 +27079,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2075943848}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1709089045}
-        m_TargetAssemblyTypeName: SceneTransitionWithoutLoading, Assembly-CSharp
-        m_MethodName: GoToTargetSceneSimple
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: MainAppScene
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2075943848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27129,6 +27118,47 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2075943845}
   m_CullTransparentMesh: 1
+--- !u!114 &2075943850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075943845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69a61f1a8d61f4a83b5e0649072830ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panelContainer: {fileID: 791928076}
+  backgroundPanel: {fileID: 959403723}
+  messageText: {fileID: 1377477621}
+  confirmButton: {fileID: 1219902592}
+  cancelButton: {fileID: 371583161}
+  confirmationMessage: Are you sure you want to end your navigation?
+  confirmButtonText: Confirm
+  cancelButtonText: Cancel
+  animationDuration: 0.2
+  showEase: 27
+  hideEase: 26
+  onConfirmed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1709089045}
+        m_TargetAssemblyTypeName: SceneTransitionWithoutLoading, Assembly-CSharp
+        m_MethodName: GoToTargetSceneSimple
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: MainAppScene
+          m_BoolArgument: 0
+        m_CallState: 2
+  onCancelled:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2083669895
 GameObject:
   m_ObjectHideFlags: 0
