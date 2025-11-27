@@ -30,6 +30,30 @@ public class MainAppManager : MonoBehaviour
     [Header("Lock Location Panel")]
     public GameObject lockPanel;
 
+    [Header("GPS Strength Indicators")]
+    public GameObject gpsStrongImage;
+    public GameObject gpsWeakImage;
+    public GameObject gpsNoneImage;
+
+    [Header("GPS Strength Thresholds")]
+    public float strongGPSAccuracyThreshold = 20f;
+    public float weakGPSAccuracyThreshold = 50f;
+    public float gpsCheckInterval = 2f;
+    private float lastGPSCheckTime = 0f;
+
+    [Header("Debug GPS Strength Testing (Editor Only)")]
+    public bool useDebugGPSStrength = false;
+    public GPSStrength debugGPSStrength = GPSStrength.Strong;
+
+    private float currentGPSAccuracy = 0f;
+
+    public enum GPSStrength
+    {
+        Strong,
+        Weak,
+        None
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -47,6 +71,17 @@ public class MainAppManager : MonoBehaviour
         homeButton.onClick.AddListener(OnHomeButtonClicked);
         navigateButton.onClick.AddListener(OnNavigateButtonClicked);
         settingsButton.onClick.AddListener(OnSettingsButtonClicked);
+
+        HideAllGPSIndicators();
+    }
+
+    void Update()
+    {
+        if (Time.time - lastGPSCheckTime >= gpsCheckInterval)
+        {
+            CheckGPSStrength();
+            lastGPSCheckTime = Time.time;
+        }
     }
 
     void OnHomeButtonClicked()
@@ -62,12 +97,6 @@ public class MainAppManager : MonoBehaviour
         homePanel.SetActive(true);
         explorePanel.SetActive(false);
         settingsPanel.SetActive(false);
-
-        // Show the lock panel in home page
-        if (lockPanel != null)
-        {
-            lockPanel.SetActive(true);
-        }
     }
 
     void OnNavigateButtonClicked()
@@ -84,11 +113,6 @@ public class MainAppManager : MonoBehaviour
         explorePanel.SetActive(true);
         settingsPanel.SetActive(false);
 
-        // Hide the location panel (only show it in home page)
-        if (lockPanel != null)
-        {
-            lockPanel.SetActive(false);
-        }
     }
 
     void OnSettingsButtonClicked()
@@ -104,11 +128,110 @@ public class MainAppManager : MonoBehaviour
         homePanel.SetActive(false);
         explorePanel.SetActive(false);
         settingsPanel.SetActive(true);
+    }
 
-        // Hide the location panel (only show it in home page)
-        if (lockPanel != null)
+    private void CheckGPSStrength()
+    {
+        if (GPSManager.Instance == null)
         {
-            lockPanel.SetActive(false);
+            UpdateGPSStrengthIndicator(GPSStrength.None);
+            return;
         }
+
+        Vector2 gpsCoords = GPSManager.Instance.GetSmoothedCoordinates();
+
+        if (gpsCoords.magnitude < 0.0001f)
+        {
+            currentGPSAccuracy = -1f;
+            UpdateGPSStrengthIndicator(GPSStrength.None);
+            return;
+        }
+
+#if UNITY_EDITOR
+        if (useDebugGPSStrength)
+        {
+            switch (debugGPSStrength)
+            {
+                case GPSStrength.Strong:
+                    currentGPSAccuracy = 10f;
+                    break;
+                case GPSStrength.Weak:
+                    currentGPSAccuracy = 35f;
+                    break;
+                case GPSStrength.None:
+                    currentGPSAccuracy = 100f;
+                    break;
+            }
+            UpdateGPSStrengthIndicator(debugGPSStrength);
+        }
+        else
+        {
+            currentGPSAccuracy = 10f;
+            UpdateGPSStrengthIndicator(GPSStrength.Strong);
+        }
+#else
+        if (Input.location.status == LocationServiceStatus.Running)
+        {
+            currentGPSAccuracy = Input.location.lastData.horizontalAccuracy;
+
+            if (currentGPSAccuracy <= strongGPSAccuracyThreshold)
+            {
+                UpdateGPSStrengthIndicator(GPSStrength.Strong);
+            }
+            else if (currentGPSAccuracy <= weakGPSAccuracyThreshold)
+            {
+                UpdateGPSStrengthIndicator(GPSStrength.Weak);
+            }
+            else
+            {
+                UpdateGPSStrengthIndicator(GPSStrength.None);
+            }
+        }
+        else
+        {
+            currentGPSAccuracy = -1f;
+            UpdateGPSStrengthIndicator(GPSStrength.None);
+        }
+#endif
+    }
+
+    private void UpdateGPSStrengthIndicator(GPSStrength strength)
+    {
+        HideAllGPSIndicators();
+
+        switch (strength)
+        {
+            case GPSStrength.Strong:
+                if (gpsStrongImage != null)
+                    gpsStrongImage.SetActive(true);
+                break;
+
+            case GPSStrength.Weak:
+                if (gpsWeakImage != null)
+                    gpsWeakImage.SetActive(true);
+                break;
+
+            case GPSStrength.None:
+                if (gpsNoneImage != null)
+                    gpsNoneImage.SetActive(true);
+                break;
+        }
+    }
+
+    private void HideAllGPSIndicators()
+    {
+        if (gpsStrongImage != null)
+            gpsStrongImage.SetActive(false);
+
+        if (gpsWeakImage != null)
+            gpsWeakImage.SetActive(false);
+
+        if (gpsNoneImage != null)
+            gpsNoneImage.SetActive(false);
+    }
+
+    public float GetCurrentGPSAccuracy()
+    {
+        return currentGPSAccuracy;
     }
 }
