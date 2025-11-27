@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Turn Left
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
   m_sharedMaterial: {fileID: 730542738843737679, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
@@ -218,6 +218,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6958301366095149853}
+  - component: {fileID: 1874856876690449986}
   m_Layer: 0
   m_Name: DirectionItemPrefab
   m_TagString: Untagged
@@ -247,6 +248,21 @@ RectTransform:
   m_AnchoredPosition: {x: 415.3605, y: -61.535}
   m_SizeDelta: {x: 809.2433, y: 123.07}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1874856876690449986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2952134583974949221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29581ba87785e7e30988e4cda6b5fa6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  directionText: {fileID: 6284150249998127811}
+  unfilledCheckmark: {fileID: 6586404474320759982}
+  filledCheckmark: {fileID: 898655068196359123}
 --- !u!1 &6586404474320759982
 GameObject:
   m_ObjectHideFlags: 0
