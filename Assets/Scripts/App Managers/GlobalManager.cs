@@ -262,10 +262,6 @@ public class GlobalManager : MonoBehaviour
     {
         isDataInitialized = true;
 
-        foreach (var kvp in currentMapVersions)
-        {
-        }
-
         OnDataInitializationComplete?.Invoke();
     }
 
@@ -283,10 +279,6 @@ public class GlobalManager : MonoBehaviour
                     var mapsArray = JsonConvert.DeserializeObject<List<MapInfo>>(mapsJson);
                     availableMaps.AddRange(mapsArray);
 
-                    foreach (var map in availableMaps)
-                    {
-                    }
-
                     OnAvailableMapsChanged?.Invoke(availableMaps);
                 }
                 catch (Exception)
@@ -296,7 +288,7 @@ public class GlobalManager : MonoBehaviour
         }
     }
 
-    private void UpdateCurrentMapVersions()
+    public void UpdateCurrentMapVersions()
     {
         currentMapVersions.Clear();
 

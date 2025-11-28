@@ -79,6 +79,14 @@ public class FirestoreManager : MonoBehaviour
     {
         if (!isFirebaseReady)
         {
+            LoadAvailableMaps();
+            onComplete?.Invoke();
+            return;
+        }
+        
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            LoadAvailableMaps();
             onComplete?.Invoke();
             return;
         }
@@ -88,6 +96,13 @@ public class FirestoreManager : MonoBehaviour
 
     private IEnumerator CheckAndSyncDataCoroutine(System.Action onComplete)
     {
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            LoadAvailableMaps();
+            onComplete?.Invoke();
+            yield break;
+        }
+        
         bool mapsSyncComplete = false;
         SyncCollectionToLocal(MAPS_COLLECTION, () => mapsSyncComplete = true);
         yield return new WaitUntil(() => mapsSyncComplete);
@@ -211,12 +226,10 @@ public class FirestoreManager : MonoBehaviour
 
                     LocalVersionCache localCache = GetLocalVersionCache(mapId);
 
-                    // Check if version has changed
                     bool versionChanged = localCache == null ||
                                          string.IsNullOrEmpty(localCache.cached_version) ||
                                          localCache.cached_version != serverVersion.current_version;
 
-                    // If version is the same, check if current_version_updated flag is true
                     bool versionUpdatedFlag = false;
                     if (!versionChanged && localCache != null)
                     {
@@ -331,7 +344,6 @@ public class FirestoreManager : MonoBehaviour
 
         UpdateLocalVersionCache(mapVersion);
 
-        // Reset the current_version_updated flag in Firebase after successful sync
         ResetMapVersionUpdatedFlag(mapVersion.map_id);
 
         onComplete?.Invoke();
@@ -411,7 +423,7 @@ public class FirestoreManager : MonoBehaviour
                         categories_updated = data.ContainsKey("categories_updated") ? (bool)data["categories_updated"] : false,
                         campus_updated = data.ContainsKey("campus_updated") ? (bool)data["campus_updated"] : false,
                         indoor_infrastructure_updated = data.ContainsKey("indoor_infrastructure_updated") ? (bool)data["indoor_infrastructure_updated"] : false,
-                        indoor_edges_updated = data.ContainsKey("indoor_edges_updated") ? (bool)data["indoor_edges_updated"] : false // ADD THIS LINE
+                        indoor_edges_updated = data.ContainsKey("indoor_edges_updated") ? (bool)data["indoor_edges_updated"] : false
                     };
 
                     LocalStaticDataCache localCache = GetLocalStaticDataCache();
@@ -421,19 +433,19 @@ public class FirestoreManager : MonoBehaviour
                          !localCache.categories_synced &&
                          !localCache.campus_synced &&
                          !localCache.indoor_synced &&
-                         !localCache.indoor_edges_synced && // ADD THIS LINE
+                         !localCache.indoor_edges_synced &&
                          !serverInfo.infrastructure_updated &&
                          !serverInfo.categories_updated &&
                          !serverInfo.campus_updated &&
                          !serverInfo.indoor_infrastructure_updated &&
-                         !serverInfo.indoor_edges_updated; // ADD THIS LINE
+                         !serverInfo.indoor_edges_updated;
 
                     bool needsUpdate = localCache == null || bootstrapNeeded ||
                                        serverInfo.infrastructure_updated ||
                                        serverInfo.categories_updated ||
                                        serverInfo.campus_updated ||
                                        serverInfo.indoor_infrastructure_updated ||
-                                       serverInfo.indoor_edges_updated; // ADD THIS LINE
+                                       serverInfo.indoor_edges_updated;
 
                     onComplete?.Invoke(needsUpdate, serverInfo);
                 }
@@ -445,7 +457,7 @@ public class FirestoreManager : MonoBehaviour
                         categories_updated = true,
                         campus_updated = true,
                         indoor_infrastructure_updated = true,
-                        indoor_edges_updated = true // ADD THIS LINE
+                        indoor_edges_updated = true
                     };
                     onComplete?.Invoke(true, defaultInfo);
                 }
@@ -713,6 +725,7 @@ public class FirestoreManager : MonoBehaviour
             });
         }
     }
+    
     private void SyncStaticDataSelectively(StaticDataVersionInfo versionInfo, System.Action onComplete)
     {
         StartCoroutine(SyncStaticDataSelectivelyCoroutine(versionInfo, onComplete));
@@ -997,14 +1010,6 @@ public class FirestoreManager : MonoBehaviour
 
         mapRef.SetAsync(resetData, SetOptions.MergeAll).ContinueWithOnMainThread(task =>
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                Debug.Log($"Successfully reset current_version_updated flag for map {mapId}");
-            }
-            else
-            {
-                Debug.LogError($"Failed to reset current_version_updated flag for map {mapId}: {task.Exception?.Message}");
-            }
         });
     }
 

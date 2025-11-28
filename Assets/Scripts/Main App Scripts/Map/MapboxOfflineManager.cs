@@ -4,6 +4,8 @@ using Mapbox.Utils;
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
 
 public class MapboxOfflineManager : MonoBehaviour
 {
@@ -94,6 +96,9 @@ public class MapboxOfflineManager : MonoBehaviour
         PlayerPrefs.SetString($"MapCache_{currentMapId}_Date", DateTime.UtcNow.ToString("o"));
         PlayerPrefs.SetString($"MapCache_{currentMapId}_Center", $"{currentMapCenter.x},{currentMapCenter.y}");
         PlayerPrefs.SetFloat($"MapCache_{currentMapId}_Radius", radiusInKm);
+        
+        SaveCachedMapIdToPlayerPrefs(currentMapId);
+        
         PlayerPrefs.Save();
         
         isCaching = false;
@@ -135,13 +140,8 @@ public class MapboxOfflineManager : MonoBehaviour
     
     public bool HasAnyCachedTiles()
     {
-        string[] possibleMapIds = { "MAP-01", "MAP-02", "MAP-03" };
-        foreach (string mapId in possibleMapIds)
-        {
-            if (HasCachedTiles(mapId))
-                return true;
-        }
-        return false;
+        List<string> cachedMapIds = GetAllCachedMapIds();
+        return cachedMapIds.Count > 0;
     }
     
     public bool IsCacheStale(string mapId, int maxAgeDays = 30)
@@ -193,17 +193,73 @@ public class MapboxOfflineManager : MonoBehaviour
     {
         List<string> cachedMaps = new List<string>();
         
-        string[] possibleMapIds = { "MAP-01", "MAP-02", "MAP-03", "MAP-04", "MAP-05" };
-        
-        foreach (string mapId in possibleMapIds)
+        if (FirestoreManager.Instance != null && FirestoreManager.Instance.AvailableMaps != null)
         {
-            if (HasCachedTiles(mapId))
+            foreach (MapInfo map in FirestoreManager.Instance.AvailableMaps)
             {
-                cachedMaps.Add(mapId);
+                if (HasCachedTiles(map.map_id))
+                {
+                    cachedMaps.Add(map.map_id);
+                }
+            }
+            return cachedMaps;
+        }
+        
+        if (JSONFileManager.Instance != null)
+        {
+            string mapsJson = JSONFileManager.Instance.ReadJSONFile("maps.json");
+            if (!string.IsNullOrEmpty(mapsJson))
+            {
+                try
+                {
+                    var mapsArray = JsonConvert.DeserializeObject<List<MapInfo>>(mapsJson);
+                    foreach (MapInfo map in mapsArray)
+                    {
+                        if (HasCachedTiles(map.map_id))
+                        {
+                            cachedMaps.Add(map.map_id);
+                        }
+                    }
+                    return cachedMaps;
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+        
+        string cachedMapIdsList = PlayerPrefs.GetString("CachedMapIds", "");
+        if (!string.IsNullOrEmpty(cachedMapIdsList))
+        {
+            string[] mapIds = cachedMapIdsList.Split(',');
+            foreach (string mapId in mapIds)
+            {
+                if (!string.IsNullOrEmpty(mapId) && HasCachedTiles(mapId))
+                {
+                    cachedMaps.Add(mapId);
+                }
             }
         }
         
         return cachedMaps;
+    }
+    
+    private void SaveCachedMapIdToPlayerPrefs(string mapId)
+    {
+        string cachedMapIdsList = PlayerPrefs.GetString("CachedMapIds", "");
+        List<string> mapIds = new List<string>();
+        
+        if (!string.IsNullOrEmpty(cachedMapIdsList))
+        {
+            mapIds = cachedMapIdsList.Split(',').ToList();
+        }
+        
+        if (!mapIds.Contains(mapId))
+        {
+            mapIds.Add(mapId);
+            PlayerPrefs.SetString("CachedMapIds", string.Join(",", mapIds));
+            PlayerPrefs.Save();
+        }
     }
     
     public void ClearCacheMetadata(string mapId)
@@ -212,6 +268,9 @@ public class MapboxOfflineManager : MonoBehaviour
         PlayerPrefs.DeleteKey($"MapCache_{mapId}_Date");
         PlayerPrefs.DeleteKey($"MapCache_{mapId}_Center");
         PlayerPrefs.DeleteKey($"MapCache_{mapId}_Radius");
+        
+        RemoveCachedMapIdFromPlayerPrefs(mapId);
+        
         PlayerPrefs.Save();
     }
     
@@ -222,6 +281,29 @@ public class MapboxOfflineManager : MonoBehaviour
         foreach (string mapId in cachedMaps)
         {
             ClearCacheMetadata(mapId);
+        }
+        
+        PlayerPrefs.DeleteKey("CachedMapIds");
+        PlayerPrefs.Save();
+    }
+    
+    private void RemoveCachedMapIdFromPlayerPrefs(string mapId)
+    {
+        string cachedMapIdsList = PlayerPrefs.GetString("CachedMapIds", "");
+        if (!string.IsNullOrEmpty(cachedMapIdsList))
+        {
+            List<string> mapIds = cachedMapIdsList.Split(',').ToList();
+            mapIds.Remove(mapId);
+            
+            if (mapIds.Count > 0)
+            {
+                PlayerPrefs.SetString("CachedMapIds", string.Join(",", mapIds));
+            }
+            else
+            {
+                PlayerPrefs.DeleteKey("CachedMapIds");
+            }
+            PlayerPrefs.Save();
         }
     }
     
