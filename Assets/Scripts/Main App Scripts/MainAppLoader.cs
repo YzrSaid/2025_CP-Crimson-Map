@@ -274,11 +274,6 @@ public class MainAppLoader : MonoBehaviour
             }
         }
         
-        if (hasJsonData && mapboxOffline != null)
-        {
-            return mapboxOffline.HasAnyCachedTiles();
-        }
-        
         return hasJsonData;
     }
     

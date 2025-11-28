@@ -120,8 +120,6 @@ public class OfflineCacheCoordinator : MonoBehaviour
             return;
         }
         
-        statusMessage = $"Downloading {mapToDownload.map_name}...";
-        
         StartCachingProcess(mapToDownload);
     }
     

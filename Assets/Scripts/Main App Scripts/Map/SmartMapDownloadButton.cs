@@ -8,18 +8,12 @@ public class SmartMapDownloadButton : MonoBehaviour
 {
     [Header("UI References")]
     public Button downloadButton;
-    public Button checkButton;
+    public GameObject statusImage;
     public GameObject progressPanel;
     public Slider progressBar;
     public TextMeshProUGUI progressText;
     public Button cancelButton;
     public TextMeshProUGUI cancelButtonText;
-    
-    [Header("Delete Confirmation Panel")]
-    public GameObject deleteConfirmPanel;
-    public Button confirmDeleteButton;
-    public Button cancelDeleteButton;
-    public TextMeshProUGUI deleteMessageText;
     
     [Header("Background Panel")]
     public GameObject backgroundPanel;
@@ -54,16 +48,10 @@ public class SmartMapDownloadButton : MonoBehaviour
         }
         
         StoreOriginalScale(progressPanel);
-        StoreOriginalScale(deleteConfirmPanel);
         
         if (downloadButton != null)
         {
             downloadButton.onClick.AddListener(OnDownloadClicked);
-        }
-        
-        if (checkButton != null)
-        {
-            checkButton.onClick.AddListener(OnCheckClicked);
         }
         
         if (cancelButton != null)
@@ -71,24 +59,9 @@ public class SmartMapDownloadButton : MonoBehaviour
             cancelButton.onClick.AddListener(OnCancelClicked);
         }
         
-        if (confirmDeleteButton != null)
-        {
-            confirmDeleteButton.onClick.AddListener(OnConfirmDelete);
-        }
-        
-        if (cancelDeleteButton != null)
-        {
-            cancelDeleteButton.onClick.AddListener(OnCancelDelete);
-        }
-        
         if (progressPanel != null)
         {
             progressPanel.SetActive(false);
-        }
-        
-        if (deleteConfirmPanel != null)
-        {
-            deleteConfirmPanel.SetActive(false);
         }
         
         if (backgroundPanel != null)
@@ -141,11 +114,6 @@ public class SmartMapDownloadButton : MonoBehaviour
         {
             progressPanel.transform.DOKill();
         }
-        
-        if (deleteConfirmPanel != null)
-        {
-            deleteConfirmPanel.transform.DOKill();
-        }
     }
     
     void OpenPanel(GameObject panel, GameObject background = null)
@@ -182,20 +150,9 @@ public class SmartMapDownloadButton : MonoBehaviour
             {
                 panel.SetActive(false);
                 
-                if (bgToUse != null)
+                if (bgToUse != null && progressPanel != null && !progressPanel.activeSelf)
                 {
-                    bool otherPanelsActive = false;
-                    
-                    if (progressPanel != null && progressPanel != panel && progressPanel.activeSelf)
-                        otherPanelsActive = true;
-                    
-                    if (deleteConfirmPanel != null && deleteConfirmPanel != panel && deleteConfirmPanel.activeSelf)
-                        otherPanelsActive = true;
-                    
-                    if (!otherPanelsActive)
-                    {
-                        bgToUse.SetActive(false);
-                    }
+                    bgToUse.SetActive(false);
                 }
             });
     }
@@ -225,10 +182,9 @@ public class SmartMapDownloadButton : MonoBehaviour
             downloadButton.interactable = !isDownloading && hasInternet;
         }
         
-        if (checkButton != null)
+        if (statusImage != null)
         {
-            checkButton.gameObject.SetActive(isDownloaded);
-            checkButton.interactable = !isDownloading;
+            statusImage.SetActive(isDownloaded);
         }
     }
     
@@ -275,24 +231,6 @@ public class SmartMapDownloadButton : MonoBehaviour
         UpdateButtonStates();
     }
     
-    void OnCheckClicked()
-    {
-        OpenPanel(deleteConfirmPanel);
-        
-        if (deleteMessageText != null && MapManager.Instance != null)
-        {
-            MapInfo currentMap = MapManager.Instance.GetCurrentMap();
-            if (currentMap != null)
-            {
-                deleteMessageText.text = $"Delete {currentMap.map_name} offline cache?\n\nYou'll need internet to download it again.";
-            }
-            else
-            {
-                deleteMessageText.text = "Delete offline cache?\n\nYou'll need internet to download it again.";
-            }
-        }
-    }
-    
     void OnCancelClicked()
     {
         if (isWaitingForInternet || Application.internetReachability == NetworkReachability.NotReachable)
@@ -313,8 +251,6 @@ public class SmartMapDownloadButton : MonoBehaviour
         ClosePanel(progressPanel);
         
         UpdateButtonStates();
-        
-        ShowToast("Download cancelled");
     }
     
     System.Collections.IEnumerator MonitorInternetDuringDownload()
@@ -383,24 +319,6 @@ public class SmartMapDownloadButton : MonoBehaviour
         }
     }
     
-    void OnConfirmDelete()
-    {
-        if (string.IsNullOrEmpty(currentMapId)) return;
-        
-        coordinator.ClearCache(currentMapId);
-        
-        ClosePanel(deleteConfirmPanel);
-        
-        UpdateButtonStates();
-        
-        ShowToast("Offline cache deleted");
-    }
-    
-    void OnCancelDelete()
-    {
-        ClosePanel(deleteConfirmPanel);
-    }
-    
     void OnCacheProgress(float progress)
     {
         if (!isWaitingForInternet)
@@ -434,8 +352,6 @@ public class SmartMapDownloadButton : MonoBehaviour
         }
         
         UpdateButtonStates();
-        
-        ShowToast("Map downloaded successfully!");
     }
     
     void OnCacheError(string error)
@@ -477,15 +393,9 @@ public class SmartMapDownloadButton : MonoBehaviour
             {
                 cancelButtonText.text = "Cancel";
             }
-            
-            ShowToast($"Download failed: {error}");
         }
         
         UpdateButtonStates();
-    }
-    
-    void ShowToast(string message)
-    {
     }
     
     void Update()
