@@ -13,7 +13,7 @@ public class MainAppLoader : MonoBehaviour
 
     [Header("Loading UI")]
     public GameObject loadingPanel;
-    public Image loadingBar;
+    public Slider loadingBar;
     public TextMeshProUGUI loadingText;
     public TextMeshProUGUI progressText;
 
@@ -361,7 +361,7 @@ public class MainAppLoader : MonoBehaviour
             loadingText.text = message;
 
         if (loadingBar != null)
-            loadingBar.fillAmount = progress;
+            loadingBar.value = progress;
 
         if (progressText != null)
             progressText.text = $"{Mathf.RoundToInt(progress * 100)}%";

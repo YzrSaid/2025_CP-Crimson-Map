@@ -10,7 +10,8 @@ public class SearchableDropdown : MonoBehaviour
     [Header("UI References")]
     public TMP_InputField searchField;
     public Button dropdownButton;
-    public GameObject dropdownArrow;
+    public GameObject arrowDownButton;
+    public GameObject arrowUpButton;
     public GameObject dropdownPanel;
     public ScrollRect scrollView;
     public Transform contentContainer;
@@ -59,6 +60,8 @@ public class SearchableDropdown : MonoBehaviour
         {
             dropdownPanel.SetActive(false);
         }
+
+        UpdateArrowVisibility(false);
     }
 
     public void ResetSelection()
@@ -141,10 +144,7 @@ public class SearchableDropdown : MonoBehaviour
             dropdownPanel.SetActive(true);
             isOpen = true;
 
-            if (dropdownArrow != null)
-            {
-                dropdownArrow.transform.rotation = Quaternion.Euler(0, 0, 180);
-            }
+            UpdateArrowVisibility(true);
 
             if (isManualOpen)
             {
@@ -174,12 +174,22 @@ public class SearchableDropdown : MonoBehaviour
             isOpen = false;
             isManualOpen = false;
 
-            if (dropdownArrow != null)
-            {
-                dropdownArrow.transform.rotation = Quaternion.Euler(0, 0, 0);
-            }
+            UpdateArrowVisibility(false);
 
             CollapseAllAccordions();
+        }
+    }
+
+    private void UpdateArrowVisibility(bool isDropdownOpen)
+    {
+        if (arrowDownButton != null)
+        {
+            arrowDownButton.SetActive(!isDropdownOpen);
+        }
+
+        if (arrowUpButton != null)
+        {
+            arrowUpButton.SetActive(isDropdownOpen);
         }
     }
 
