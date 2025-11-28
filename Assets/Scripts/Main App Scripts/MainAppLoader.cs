@@ -243,7 +243,6 @@ public class MainAppLoader : MonoBehaviour
     private bool CheckForOfflineData()
     {
         bool hasJsonData = false;
-        bool hasEmptyFiles = false;
         
         if (JSONFileManager.Instance != null)
         {
@@ -252,10 +251,6 @@ public class MainAppLoader : MonoBehaviour
             if (!string.IsNullOrEmpty(mapsJson) && mapsJson.Trim() != "[]")
             {
                 hasJsonData = true;
-            }
-            else if (!string.IsNullOrEmpty(mapsJson) && mapsJson.Trim() == "[]")
-            {
-                hasEmptyFiles = true;
             }
             
             if (hasJsonData)
@@ -273,7 +268,6 @@ public class MainAppLoader : MonoBehaviour
                     if (string.IsNullOrEmpty(content) || content.Trim() == "[]")
                     {
                         hasJsonData = false;
-                        hasEmptyFiles = true;
                         break;
                     }
                 }
