@@ -25,6 +25,12 @@ public class DirectionDisplayManager : MonoBehaviour
     public Transform directionsScrollContent;
     public GameObject directionItemPrefab;
 
+    [Header("Success Panel")]
+    public GameObject successPanel;
+    public TextMeshProUGUI successTitleText;
+    public TextMeshProUGUI successBodyText;
+    public Button successCloseButton;
+
     [Header("Settings")]
     public bool enableKeyboardTesting = true;
     public float autoProgressDistance = 5f;
@@ -56,6 +62,12 @@ public class DirectionDisplayManager : MonoBehaviour
 
         if (compassArrow == null)
             compassArrow = FindObjectOfType<CompassNavigationArrow>();
+
+        if (successPanel != null)
+            successPanel.SetActive(false);
+
+        if (successCloseButton != null)
+            successCloseButton.onClick.AddListener(OnSuccessCloseClicked);
 
         LoadDirectionsFromPlayerPrefs();
 
@@ -276,6 +288,8 @@ public class DirectionDisplayManager : MonoBehaviour
             }
 
             hasAutoProgressed = false;
+            
+            UpdateDirectionItemsStatus();
             return;
         }
 
@@ -483,6 +497,57 @@ public class DirectionDisplayManager : MonoBehaviour
             compassArrow.SetActive(false);
 
         UpdateDirectionItemsStatus();
+        
+        ShowSuccessPanel();
+    }
+
+    private void ShowSuccessPanel()
+    {
+        if (successPanel == null)
+            return;
+
+        string originalToId = PlayerPrefs.GetString("ARNavigation_OriginalToNodeId", "");
+        bool toIsIndoor = PlayerPrefs.GetInt("ARNavigation_ToIsIndoor", 0) == 1;
+
+        if (successTitleText != null)
+        {
+            successTitleText.text = "🎉 Destination Reached!";
+        }
+
+        if (successBodyText != null)
+        {
+            if (toIsIndoor)
+            {
+                string roomName = PlayerPrefs.GetString($"ARNavigation_Direction_{allDirections.Count - 1}_DestNode", "your destination");
+                
+                successBodyText.text = 
+                    $"<b>Congratulations!</b> You've arrived at the building.\n\n" +
+                    $"<b>{roomName}</b> is located inside this building. " +
+                    $"Check the directions panel to see which floor the room is on.\n\n" +
+                    $"<b>Next Steps:</b>\n" +
+                    $"• Tap the <b>Indoor Map</b> button to switch to the indoor map view\n" +
+                    $"• Navigate inside the building using the floor map\n" +
+                    $"• Find your room on the indicated floor\n\n" +
+                    $"You can stop AR navigation now or continue exploring!";
+            }
+            else
+            {
+                successBodyText.text = 
+                    $"<b>Congratulations!</b> You've successfully reached your destination!\n\n" +
+                    $"You can now stop AR navigation or explore other locations on campus.\n\n" +
+                    $"Thank you for using CRIMSON Navigation! 🎯";
+            }
+        }
+
+        successPanel.SetActive(true);
+    }
+
+    private void OnSuccessCloseClicked()
+    {
+        if (successPanel != null)
+        {
+            successPanel.SetActive(false);
+        }
     }
 
     private float CalculateDistanceGPS(Vector2 coord1, Vector2 coord2)
@@ -518,6 +583,9 @@ public class DirectionDisplayManager : MonoBehaviour
 
         if (compassArrow != null)
             compassArrow.SetActive(false);
+
+        if (successPanel != null)
+            successPanel.SetActive(false);
 
         UpdateDirectionItemsStatus();
     }

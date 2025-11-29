@@ -927,16 +927,16 @@ public class PathfindingController : MonoBehaviour
         string pathStartNodeId = fromNodeId;
         string pathEndNodeId = toNodeId;
 
-        Node fromNode = allNodes[fromNodeId];
+        Node fromNode = allNodes[fromNodeId]; 
         Node toNode = allNodes[toNodeId];
 
-        if (fromIsIndoor && allNodes.TryGetValue(fromNodeId, out Node fromIndoorNode))
+        if (fromIsIndoor)
         {
-            Node entranceNode = GetBuildingEntranceNode(fromIndoorNode);
-            if (entranceNode != null)
-            {
-                pathStartNodeId = entranceNode.node_id;
-            }
+            string buildingName = GetBuildingNameFromInfraId(fromNode.related_infra_id); 
+
+            ShowConfirmationError($"Please exit {buildingName} first before navigating to another location. Use the outdoor map to start navigation from outside the building.");
+            if (findPathButton != null) findPathButton.interactable = true;
+            yield break;
         }
 
         if (toIsIndoor && allNodes.TryGetValue(toNodeId, out Node toIndoorNode))
