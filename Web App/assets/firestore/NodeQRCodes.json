@@ -6,8 +6,8 @@
       "seconds": 1762569544,
       "nanoseconds": 803000000
     },
-    "node_id": "CRIMSON_ND-004",
-    "node_name": "College of Sciences and Mathematics"
+    "node_name": "College of Sciences and Mathematics",
+    "node_id": "CRIMSON_ND-004"
   },
   {
     "id": "CRIMSON_ND-011",
@@ -16,8 +16,8 @@
       "seconds": 1762529666,
       "nanoseconds": 108000000
     },
-    "node_id": "CRIMSON_ND-011",
-    "node_name": "CCJE"
+    "node_name": "CCJE",
+    "node_id": "CRIMSON_ND-011"
   },
   {
     "id": "CRIMSON_ND-013",
@@ -31,13 +31,13 @@
   },
   {
     "id": "CRIMSON_ND-014",
-    "node_id": "CRIMSON_ND-014",
+    "node_name": "College of Social Work and Community Development",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762529695,
       "nanoseconds": 439000000
     },
-    "node_name": "College of Social Work and Community Development"
+    "node_id": "CRIMSON_ND-014"
   },
   {
     "id": "CRIMSON_ND-015",
@@ -45,8 +45,8 @@
     "node_id": "CRIMSON_ND-015",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
-      "seconds": 1762528820,
-      "nanoseconds": 99000000
+      "seconds": 1764124921,
+      "nanoseconds": 954000000
     }
   },
   {
@@ -56,33 +56,33 @@
       "seconds": 1762529523,
       "nanoseconds": 715000000
     },
-    "node_name": "MSA",
-    "node_id": "CRIMSON_ND-016"
+    "node_id": "CRIMSON_ND-016",
+    "node_name": "MSA"
   },
   {
     "id": "CRIMSON_ND-017",
+    "node_name": "Wmsu Clinic Campus B",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762529542,
       "nanoseconds": 67000000
     },
-    "node_id": "CRIMSON_ND-017",
-    "node_name": "Wmsu Clinic Campus B"
+    "node_id": "CRIMSON_ND-017"
   },
   {
     "id": "CRIMSON_ND-018",
-    "node_id": "CRIMSON_ND-018",
+    "node_name": "Old Building Campus B",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762529467,
       "nanoseconds": 776000000
     },
-    "node_name": "Old Building Campus B"
+    "node_id": "CRIMSON_ND-018"
   },
   {
     "id": "CRIMSON_ND-019",
-    "node_name": "College of Medicine",
     "node_id": "CRIMSON_ND-019",
+    "node_name": "College of Medicine",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762529899,
@@ -91,13 +91,13 @@
   },
   {
     "id": "CRIMSON_ND-021",
-    "node_name": "Campus B Canteen(Garments)",
     "node_id": "CRIMSON_ND-021",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762529617,
       "nanoseconds": 87000000
-    }
+    },
+    "node_name": "Campus B Canteen(Garments)"
   },
   {
     "id": "CRIMSON_ND-022",
@@ -106,8 +106,8 @@
       "seconds": 1762529749,
       "nanoseconds": 401000000
     },
-    "node_name": "Wmsu Integrated School SHS Building",
-    "node_id": "CRIMSON_ND-022"
+    "node_id": "CRIMSON_ND-022",
+    "node_name": "Wmsu Integrated School SHS Building"
   },
   {
     "id": "CRIMSON_ND-023",
@@ -121,13 +121,13 @@
   },
   {
     "id": "CRIMSON_ND-029",
-    "node_name": "Department of Computer Science",
-    "node_id": "CRIMSON_ND-029",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762480898,
       "nanoseconds": 98000000
-    }
+    },
+    "node_id": "CRIMSON_ND-029",
+    "node_name": "Department of Computer Science"
   },
   {
     "id": "CRIMSON_ND-030",
@@ -141,33 +141,33 @@
   },
   {
     "id": "CRIMSON_ND-031",
-    "node_id": "CRIMSON_ND-031",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762527932,
       "nanoseconds": 268000000
     },
-    "node_name": "Deans Office"
+    "node_name": "Deans Office",
+    "node_id": "CRIMSON_ND-031"
   },
   {
     "id": "CRIMSON_ND-032",
+    "node_id": "CRIMSON_ND-032",
+    "node_name": "Floor 1 Stairs",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762527964,
       "nanoseconds": 503000000
-    },
-    "node_id": "CRIMSON_ND-032",
-    "node_name": "Floor 1 Stairs"
+    }
   },
   {
     "id": "CRIMSON_ND-033",
     "node_name": "Laboratory 1",
+    "node_id": "CRIMSON_ND-033",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762528019,
       "nanoseconds": 678000000
-    },
-    "node_id": "CRIMSON_ND-033"
+    }
   },
   {
     "id": "CRIMSON_ND-034",
@@ -181,32 +181,32 @@
   },
   {
     "id": "CRIMSON_ND-035",
-    "node_id": "CRIMSON_ND-035",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762528087,
       "nanoseconds": 258000000
     },
-    "node_name": "Fire Exit"
+    "node_name": "Fire Exit",
+    "node_id": "CRIMSON_ND-035"
   },
   {
     "id": "CRIMSON_ND-036",
     "node_id": "CRIMSON_ND-036",
-    "node_name": "Auditorium",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762528220,
       "nanoseconds": 235000000
-    }
+    },
+    "node_name": "Auditorium"
   },
   {
     "id": "CRIMSON_ND-037",
+    "node_name": "Guidance Office",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762528165,
       "nanoseconds": 623000000
     },
-    "node_name": "Guidance Office",
     "node_id": "CRIMSON_ND-037"
   },
   {
@@ -221,28 +221,28 @@
   },
   {
     "id": "CRIMSON_ND-039",
-    "node_name": "Floor 2 Stairs",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762528470,
       "nanoseconds": 955000000
     },
-    "node_id": "CRIMSON_ND-039"
+    "node_id": "CRIMSON_ND-039",
+    "node_name": "Floor 2 Stairs"
   },
   {
     "id": "CRIMSON_ND-040",
+    "node_name": "Lecture Room 1",
     "node_id": "CRIMSON_ND-040",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762528493,
       "nanoseconds": 461000000
-    },
-    "node_name": "Lecture Room 1"
+    }
   },
   {
     "id": "CRIMSON_ND-041",
-    "node_name": "Lecture Room 2",
     "node_id": "CRIMSON_ND-041",
+    "node_name": "Lecture Room 2",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762528548,
@@ -251,43 +251,43 @@
   },
   {
     "id": "CRIMSON_ND-042",
+    "node_name": "Overpass Campus B",
     "node_id": "CRIMSON_ND-042",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761394882,
       "nanoseconds": 684000000
-    },
-    "node_name": "Overpass Campus B"
+    }
   },
   {
     "id": "CRIMSON_ND-045",
-    "node_id": "CRIMSON_ND-045",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760452205,
       "nanoseconds": 37000000
     },
-    "node_name": "Bahay Ni Aldrin Main Door"
+    "node_name": "Bahay Ni Aldrin Main Door",
+    "node_id": "CRIMSON_ND-045"
   },
   {
     "id": "CRIMSON_ND-046",
     "node_name": "Gate Ni Aldrin",
-    "node_id": "CRIMSON_ND-046",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760452231,
       "nanoseconds": 567000000
-    }
+    },
+    "node_id": "CRIMSON_ND-046"
   },
   {
     "id": "CRIMSON_ND-047",
-    "node_id": "CRIMSON_ND-047",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760452176,
       "nanoseconds": 153000000
     },
-    "node_name": "Puno Ni Aldrin"
+    "node_name": "Puno Ni Aldrin",
+    "node_id": "CRIMSON_ND-047"
   },
   {
     "id": "CRIMSON_ND-048",
@@ -296,8 +296,28 @@
       "seconds": 1760452112,
       "nanoseconds": 197000000
     },
-    "node_name": "Dirty Kitchen Ni Aldrin",
-    "node_id": "CRIMSON_ND-048"
+    "node_id": "CRIMSON_ND-048",
+    "node_name": "Dirty Kitchen Ni Aldrin"
+  },
+  {
+    "id": "CRIMSON_ND-052",
+    "node_name": "College of Nursing",
+    "node_id": "CRIMSON_ND-052",
+    "last_generated": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764418724,
+      "nanoseconds": 334000000
+    }
+  },
+  {
+    "id": "CRIMSON_ND-063",
+    "node_name": "RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING",
+    "node_id": "CRIMSON_ND-063",
+    "last_generated": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764397655,
+      "nanoseconds": 38000000
+    }
   },
   {
     "id": "CRIMSON_ND-069",
@@ -311,52 +331,52 @@
   },
   {
     "id": "CRIMSON_ND-084",
+    "node_name": "Research Building",
     "node_id": "CRIMSON_ND-084",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759924326,
       "nanoseconds": 882000000
-    },
-    "node_name": "Research Building"
+    }
   },
   {
     "id": "CRIMSON_ND-096",
-    "node_id": "CRIMSON_ND-096",
     "node_name": "CTE",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759925545,
       "nanoseconds": 323000000
-    }
+    },
+    "node_id": "CRIMSON_ND-096"
   },
   {
     "id": "CRIMSON_ND-116",
-    "node_id": "CRIMSON_ND-116",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759924556,
       "nanoseconds": 350000000
     },
-    "node_name": "CLA"
+    "node_name": "CLA",
+    "node_id": "CRIMSON_ND-116"
   },
   {
     "id": "CRIMSON_ND-127",
-    "node_name": "Daanan 1",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761469743,
       "nanoseconds": 458000000
     },
+    "node_name": "Daanan 1",
     "node_id": "CRIMSON_ND-127"
   },
   {
     "id": "CRIMSON_ND-128",
     "node_id": "CRIMSON_ND-128",
-    "node_name": "Daanan 2",
     "last_generated": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761469778,
       "nanoseconds": 352000000
-    }
+    },
+    "node_name": "Daanan 2"
   }
 ]

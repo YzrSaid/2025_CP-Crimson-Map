@@ -2,15 +2,15 @@
   {
     "id": "V4iKddNa8KGJDVlayew8",
     "lastName": "Mula",
-    "email": "sample_email@gmail.com",
-    "password": "U2FsdGVkX19mp7gK9x51GDOuDuMOcputdAJViWbMPfM=",
     "created_at": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760965731,
       "nanoseconds": 663000000
     },
-    "contactNumber": "09123456789",
+    "password": "U2FsdGVkX19mp7gK9x51GDOuDuMOcputdAJViWbMPfM=",
     "middleInitial": "P",
-    "firstName": "John Basil"
+    "email": "sample_email@gmail.com",
+    "firstName": "John Basil",
+    "contactNumber": "09123456789"
   }
 ]

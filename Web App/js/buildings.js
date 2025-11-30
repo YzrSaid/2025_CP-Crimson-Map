@@ -3162,7 +3162,6 @@ document.getElementById("confirmDeleteRoomBtn").addEventListener("click", async 
     const btn = e.target;
     const originalHTML = btn.innerHTML;
 
-    
     btn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Deleting...</span>
@@ -3170,25 +3169,22 @@ document.getElementById("confirmDeleteRoomBtn").addEventListener("click", async 
     btn.disabled = true;
 
     try {
-        await updateDoc(doc(db, "IndoorInfrastructure", roomToDelete.docId), {
-            is_deleted: true,
-            deletedAt: new Date()
-        });
+        // 🔥 PERMANENT DELETE (not just soft delete)
+        await deleteDoc(doc(db, "IndoorInfrastructure", roomToDelete.docId));
 
         document.getElementById("deleteRoomModal").style.display = "none";
         roomToDelete = null;
+
         renderRoomsTable();
-        showModal('success', 'Room deleted successfully!');
+        showModal('success', 'Room deleted permanently!');
     } catch (err) {
         showModal('error', 'Failed to delete room. Please try again.');
         console.error(err);
     } finally {
-        
         btn.innerHTML = originalHTML;
         btn.disabled = false;
     }
 });
-
 
 
 document.getElementById("cancelDeleteRoomBtn").addEventListener("click", () => {

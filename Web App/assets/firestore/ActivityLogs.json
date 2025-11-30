@@ -1,152 +1,317 @@
 [
   {
     "id": "0OcKvnwlcfhqoJp4mfJ3",
-    "item": "Map MAP-01",
-    "description": "Created map \"WMSU MAP\" with version v1.0.0 and campuses: CAMP-01, CAMP-02.",
-    "activity": "Added Map",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757922211,
       "nanoseconds": 301000000
-    }
+    },
+    "description": "Created map \"WMSU MAP\" with version v1.0.0 and campuses: CAMP-01, CAMP-02.",
+    "activity": "Added Map",
+    "item": "Map MAP-01"
   },
   {
     "id": "0eJLoNI8oj4V0vjHhRnD",
+    "item": "Infrastructure INFRA-67",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161534,
       "nanoseconds": 763000000
     },
-    "activity": "Added Infrastructure",
     "description": "Added infrastructure \"CTE\" under category \"Academics\".",
-    "item": "Infrastructure INFRA-67"
+    "activity": "Added Infrastructure"
+  },
+  {
+    "id": "11WrPrKFn695zWlqX2LV",
+    "description": "Added \"Office of the Assistant, Principal and Department Secretary\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425562,
+      "nanoseconds": 414000000
+    },
+    "item": "Indoor IND-126"
   },
   {
     "id": "1Co2L9JTP7RRAMYv45x1",
+    "item": "Indoor IND-010",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Office ni Ma'am Marj\" under infrastructure \"College of Computing Studies\" (Type: office).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759139499,
       "nanoseconds": 892000000
-    },
-    "description": "Added \"Office ni Ma'am Marj\" under infrastructure \"College of Computing Studies\" (Type: office).",
+    }
+  },
+  {
+    "id": "1Ez7TzvC3YDta1oXeDcJ",
+    "description": "Added \"Computer Room\" under infrastructure \"College of Nursing\" (Type: room).",
     "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-010"
+    "item": "Indoor IND-068",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321762,
+      "nanoseconds": 96000000
+    }
+  },
+  {
+    "id": "1JKLNWI3kWogbYQV3Vni",
+    "description": "Added \"Stairs 1 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: stairs).",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-151",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426525,
+      "nanoseconds": 745000000
+    }
+  },
+  {
+    "id": "1ODmSnA4O1IPrcNYrq1T",
+    "item": "Campus CAMP-05",
+    "description": "Added campus \"234\" under map \"webgoat\".",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764393764,
+      "nanoseconds": 190000000
+    },
+    "activity": "Added Campus"
   },
   {
     "id": "1qJTq9Fc6tT19vVNt7pn",
+    "item": "Indoor IND-013",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759153462,
       "nanoseconds": 593000000
     },
     "description": "Added \"PhiCCS\" under infrastructure \"College of Computing Studies\" (Type: room).",
-    "item": "Indoor IND-013",
     "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "1vb6qR8ZksvPtMKoEMsu",
-    "description": "Created map \"WMSU MAP\" with version v1.0.0 and campuses: CAMP-01, CAMP-02.",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757999130,
       "nanoseconds": 454000000
     },
     "activity": "Added Map",
-    "item": "Map MAP-01"
+    "item": "Map MAP-01",
+    "description": "Created map \"WMSU MAP\" with version v1.0.0 and campuses: CAMP-01, CAMP-02."
+  },
+  {
+    "id": "25HK4eem0f9w2TiOU4mr",
+    "description": "Added \"Stairs (1st floor)\" under infrastructure \"College of home economics\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324183,
+      "nanoseconds": 389000000
+    },
+    "item": "Indoor IND-078",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "2N7yYCRfEhfSufJmkHIm",
-    "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-021",
+    "description": "Added \"Student Council Office\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761383588,
       "nanoseconds": 284000000
     },
-    "description": "Added \"Student Council Office\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room)."
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "2UTpfR0Log5YSU4KyU5I",
-    "item": "Infrastructure INFRA-46",
     "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"College of Engineering\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158689,
       "nanoseconds": 205000000
     },
-    "description": "Added infrastructure \"College of Engineering\" under category \"Academics\"."
+    "item": "Infrastructure INFRA-46"
   },
   {
     "id": "2yexmKvtJWyLZAd2YOtX",
-    "activity": "Added Indoor Infrastructure",
     "item": "Room RM-005",
+    "description": "Added \"Lan\" under infrastructure \"College of Computing Studies\" (Type: laboratory).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758434980,
       "nanoseconds": 585000000
     },
-    "description": "Added \"Lan\" under infrastructure \"College of Computing Studies\" (Type: laboratory)."
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "2z0TP8dEnowmg3DGVGkp",
+    "description": "Added \"Faculty room\" under infrastructure \"College of Nursing\" (Type: room).",
+    "item": "Indoor IND-061",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321451,
+      "nanoseconds": 69000000
+    },
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "31Zq9jLiNBCgunvyFvVK",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 8 (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426401,
+      "nanoseconds": 849000000
+    },
+    "item": "Indoor IND-148"
+  },
+  {
+    "id": "35y8MGgzTnkXNID1M9Cx",
+    "description": "Added \"Room 4 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-154",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426659,
+      "nanoseconds": 455000000
+    }
+  },
+  {
+    "id": "39qE0sduqrvktn0CFszh",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-109",
+    "description": "Added \"Faculty Room\" under infrastructure \"College of Medicine\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422045,
+      "nanoseconds": 647000000
+    }
+  },
+  {
+    "id": "3BtSgN8aqkt6YrBJZDE3",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425852,
+      "nanoseconds": 527000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 1\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-131"
+  },
+  {
+    "id": "3RE0qIbQLLxRsZXoObQx",
+    "item": "Indoor IND-152",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426556,
+      "nanoseconds": 439000000
+    },
+    "description": "Added \"Comfort Room for HS Female only (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "3aRDhLhZLlOD8DCi0RXq",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-105",
+    "description": "Added \"Floor 1 Stairs 2\" under infrastructure \"College of Medicine\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421948,
+      "nanoseconds": 13000000
+    }
+  },
+  {
+    "id": "3iHnhXKttfWb0bF6SHBq",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Stairs (3rd  floor)\" under infrastructure \"College of Nursing\" (Type: room).",
+    "item": "Indoor IND-069",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321808,
+      "nanoseconds": 590000000
+    }
   },
   {
     "id": "3kdFHW9LYfIF9s6KRpkU",
+    "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-020",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761383572,
       "nanoseconds": 707000000
     },
-    "activity": "Added Indoor Infrastructure",
     "description": "Added \"Audio Visual Room\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room)."
   },
   {
     "id": "3z4OAbwi4xKslAD1EDLT",
-    "description": "Created map \"12345\" with version v1.0.0 and campuses: CAMP-01.",
-    "item": "Map MAP-03",
-    "activity": "Added Map",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761374909,
       "nanoseconds": 745000000
-    }
+    },
+    "item": "Map MAP-03",
+    "activity": "Added Map",
+    "description": "Created map \"12345\" with version v1.0.0 and campuses: CAMP-01."
   },
   {
     "id": "4GUKh7BgHWrFFeL2KMJ6",
-    "description": "Added infrastructure \"College of home economics\" under category \"Academics\".",
-    "item": "Infrastructure INFRA-33",
     "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"College of home economics\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158474,
       "nanoseconds": 792000000
+    },
+    "item": "Infrastructure INFRA-33"
+  },
+  {
+    "id": "4WmwToD7LpnKTxWIJxhq",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-116",
+    "description": "Added \"Stock Room (3rd floor)\" under infrastructure \"College of Medicine\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422503,
+      "nanoseconds": 199000000
+    }
+  },
+  {
+    "id": "4lJCc5hhIGDJszrRSkCe",
+    "description": "Added \"Stairs 1 (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: stairs).",
+    "item": "Indoor IND-138",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426022,
+      "nanoseconds": 622000000
     }
   },
   {
     "id": "4rypKzoZdxzMNYZfLTIs",
-    "item": "Indoor IND-041",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395617,
       "nanoseconds": 805000000
     },
-    "description": "Added \"Floor 2 Stairs CSM\" under infrastructure \"College of Sciences and Mathematics\" (Type: stairs).",
-    "activity": "Added Indoor Infrastructure"
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-041",
+    "description": "Added \"Floor 2 Stairs CSM\" under infrastructure \"College of Sciences and Mathematics\" (Type: stairs)."
   },
   {
     "id": "5BzfN3dYicbOh1LrWbGp",
-    "activity": "Added Map",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757940038,
       "nanoseconds": 774000000
     },
+    "activity": "Added Map",
     "description": "Created map \"sample\" with version v1.0.0 and campuses: CAMP-02.",
     "item": "Map MAP-03"
   },
   {
     "id": "5v5iYUHKP8DvZAmvmxUi",
+    "description": "Added \"CSM 102 Lab Room\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-030",
-    "description": "Added \"CSM 102 Lab Room\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395325,
@@ -155,53 +320,86 @@
   },
   {
     "id": "67k2qMQv4YE7s6q90SDV",
-    "activity": "Added Indoor Infrastructure",
+    "item": "Room IND-006",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758436059,
       "nanoseconds": 981000000
     },
-    "item": "Room IND-006",
+    "activity": "Added Indoor Infrastructure",
     "description": "Added \"aasd\" under infrastructure \"College of Asian Islamic Studies\" (Type: lecture)."
+  },
+  {
+    "id": "6RAbiHDIVg80ruSV2s6C",
+    "description": "Added \"Stock Room (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-176",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427554,
+      "nanoseconds": 329000000
+    }
   },
   {
     "id": "6ZgPetV34HyvxdGi7m9i",
     "item": "Infrastructure INFRA-55",
+    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161378,
       "nanoseconds": 859000000
     },
-    "activity": "Added Infrastructure",
     "description": "Added infrastructure \"Research Building\" under category \"Academics\"."
   },
   {
+    "id": "6ceGxm0lWswaI8JQcINI",
+    "description": "Added \"Room 6 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427463,
+      "nanoseconds": 90000000
+    },
+    "item": "Indoor IND-172",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
     "id": "6k2yOzScV8Dtz9TWyNvd",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CSM 206\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395795,
       "nanoseconds": 594000000
     },
-    "description": "Added \"CSM 206\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "item": "Indoor IND-048",
-    "activity": "Added Indoor Infrastructure"
+    "item": "Indoor IND-048"
+  },
+  {
+    "id": "6v09cWMr6ATHUD7gsRb7",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Floor 1 Stairs 1\" under infrastructure \"College of Medicine\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421784,
+      "nanoseconds": 439000000
+    },
+    "item": "Indoor IND-097"
   },
   {
     "id": "6w4ixMgFk0L9kyGfmILc",
-    "description": "Added \"sample indoor infra\" under infrastructure \"SPED\" (Type: room).",
-    "item": "Indoor IND-053",
+    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761580585,
       "nanoseconds": 748000000
     },
-    "activity": "Added Indoor Infrastructure"
+    "item": "Indoor IND-053",
+    "description": "Added \"sample indoor infra\" under infrastructure \"SPED\" (Type: room)."
   },
   {
     "id": "6wEA36PeHaIbHizGgojX",
+    "activity": "Added Infrastructure",
     "item": "Infrastructure INFRA-74",
     "description": "Added infrastructure \"123456789\" under category \"Academics\".",
-    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761308471,
@@ -216,52 +414,96 @@
       "nanoseconds": 932000000
     },
     "description": "Added \"CSM 204\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "item": "Indoor IND-045",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-045"
+  },
+  {
+    "id": "7RYYJIiVvZkCrH8HLLnp",
+    "description": "Added \"Room 8 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-174",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427498,
+      "nanoseconds": 350000000
+    },
     "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "7WbX06IEDiWeEtiexwx2",
+    "activity": "Added Campus",
+    "description": "Added campus \"1234\" under map \"asdsa\".",
+    "item": "Campus CAMP-05",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761372178,
       "nanoseconds": 205000000
+    }
+  },
+  {
+    "id": "7a4iRc7S4rCYxXoC0Bk8",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324904,
+      "nanoseconds": 393000000
     },
-    "description": "Added campus \"1234\" under map \"asdsa\".",
-    "activity": "Added Campus",
-    "item": "Campus CAMP-05"
+    "item": "Indoor IND-086",
+    "description": "Added \"Room 1\" under infrastructure \"College of home economics\" (Type: room).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "7eiQXBgfpfYEMNbfoipI",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426307,
+      "nanoseconds": 536000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 5 (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-145"
   },
   {
     "id": "7tkVKqTyuYnQ0dNGbAny",
-    "item": "Infrastructure INFRA-53",
+    "description": "Added infrastructure \"Law- Canteen\" under category \"Canteen / Cafeterias\".",
     "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161361,
       "nanoseconds": 269000000
     },
-    "description": "Added infrastructure \"Law- Canteen\" under category \"Canteen / Cafeterias\"."
+    "item": "Infrastructure INFRA-53"
   },
   {
     "id": "8OqPrddWpNkRSGfQuCVz",
-    "item": "Infrastructure INFRA-54",
-    "description": "Added infrastructure \"College of Law\" under category \"Academics\".",
-    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161369,
       "nanoseconds": 288000000
-    }
+    },
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"College of Law\" under category \"Academics\".",
+    "item": "Infrastructure INFRA-54"
+  },
+  {
+    "id": "8Szti9r5vWh0y9nt6ume",
+    "item": "Indoor IND-101",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421865,
+      "nanoseconds": 911000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 1\" under infrastructure \"College of Medicine\" (Type: room)."
   },
   {
     "id": "8XbdHSd436717J2SJqe9",
-    "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-042",
+    "description": "Added \"CSM 201\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395662,
       "nanoseconds": 968000000
-    },
-    "description": "Added \"CSM 201\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
+    }
   },
   {
     "id": "8beq1HK5UF4TG4mQtLmd",
@@ -270,42 +512,42 @@
       "seconds": 1759138881,
       "nanoseconds": 77000000
     },
+    "item": "Indoor IND-005",
     "description": "Added \"Laboratory 2\" under infrastructure \"College of Computing Studies\" (Type: laboratory).",
-    "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-005"
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "8qyfe4tVyyRT0A8AoF26",
     "activity": "Added Infrastructure",
+    "item": "Infrastructure INFRA-38",
     "description": "Added infrastructure \"Scholarship Office\" under category \"Administrative Offices\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158601,
       "nanoseconds": 633000000
-    },
-    "item": "Infrastructure INFRA-38"
+    }
   },
   {
     "id": "98ip2FKNWBg4j8xEuXmF",
+    "item": "Indoor IND-002",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Deoartment of Information Technology\" under infrastructure \"College of Computing Studies\" (Type: office).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759138834,
       "nanoseconds": 725000000
-    },
-    "item": "Indoor IND-002",
-    "activity": "Added Indoor Infrastructure",
-    "description": "Added \"Deoartment of Information Technology\" under infrastructure \"College of Computing Studies\" (Type: office)."
+    }
   },
   {
     "id": "9DmR9iBYtoknTjnBP1EU",
-    "item": "Room RM-003",
-    "activity": "Added Room",
     "description": "Added room \"samp activity\" under infrastructure \"College of Computing Studies\".",
+    "activity": "Added Room",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757492861,
       "nanoseconds": 689000000
-    }
+    },
+    "item": "Room RM-003"
   },
   {
     "id": "9EVRbDTtGSst7MOSqlP5",
@@ -314,151 +556,360 @@
       "seconds": 1757922647,
       "nanoseconds": 78000000
     },
-    "item": "Map MAP-02",
     "activity": "Added Map",
+    "item": "Map MAP-02",
     "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03."
   },
   {
+    "id": "9TwzaPx2lfVCknWTvHIA",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Comfort Room\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491891,
+      "nanoseconds": 808000000
+    },
+    "item": "Indoor IND-191"
+  },
+  {
     "id": "9W7oDCJBWaYg4ZNC6CQ2",
-    "item": "Infrastructure INFRA-76",
-    "activity": "Added Infrastructure",
     "description": "Added infrastructure \"Daanan 2\" under category \"Academics\".",
+    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761453544,
       "nanoseconds": 173000000
-    }
+    },
+    "item": "Infrastructure INFRA-76"
+  },
+  {
+    "id": "9f3L0wV6CjfYy4Hm7D4k",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422478,
+      "nanoseconds": 986000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Stairs 1 (3rd floor)\" under infrastructure \"College of Medicine\" (Type: stairs).",
+    "item": "Indoor IND-115"
   },
   {
     "id": "9oT6qrrAcAypHqq88HSi",
-    "description": "Added infrastructure \"Gate Ni Aldrin\" under category \"Gates\".",
+    "item": "Infrastructure INFRA-71",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761274180,
       "nanoseconds": 807000000
     },
-    "item": "Infrastructure INFRA-71",
+    "description": "Added infrastructure \"Gate Ni Aldrin\" under category \"Gates\".",
     "activity": "Added Infrastructure"
   },
   {
     "id": "9tUvJgIaJRifGrB6bZPE",
-    "activity": "Added Indoor Infrastructure",
-    "description": "Added \"Laboratory 1\" under infrastructure \"College of Computing Studies\" (Type: laboratory).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759138867,
       "nanoseconds": 360000000
     },
-    "item": "Indoor IND-004"
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-004",
+    "description": "Added \"Laboratory 1\" under infrastructure \"College of Computing Studies\" (Type: laboratory)."
+  },
+  {
+    "id": "AAjL6RFV4EyB1PDNPGju",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422001,
+      "nanoseconds": 799000000
+    },
+    "description": "Added \"Room 3 (2nd floor)\" under infrastructure \"College of Medicine\" (Type: room).",
+    "item": "Indoor IND-108"
+  },
+  {
+    "id": "AKarrtDUvbzi0RWTllEA",
+    "description": "Added \"Workshop Room\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-183",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491641,
+      "nanoseconds": 10000000
+    }
   },
   {
     "id": "AR1Hym0YllRVEZkWin4y",
+    "activity": "Added Category",
     "description": "Added category \"sample category log\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757494174,
       "nanoseconds": 589000000
     },
-    "activity": "Added Category",
     "item": "Category 1757494172539"
   },
   {
     "id": "AY0gLXPwGFZIAwQYKGFX",
-    "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-59",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161423,
       "nanoseconds": 106000000
     },
+    "item": "Infrastructure INFRA-59",
+    "activity": "Added Infrastructure",
     "description": "Added infrastructure \"Friendship Garden\" under category \"Parks & Green Spaces\"."
   },
   {
+    "id": "AYzj3pfxqSHqRPPnaxo7",
+    "description": "Added \"Room 1 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427445,
+      "nanoseconds": 220000000
+    },
+    "item": "Indoor IND-171",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "BSPmvHMsiwGbdhkKVuxq",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 6 (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426359,
+      "nanoseconds": 927000000
+    },
+    "item": "Indoor IND-146"
+  },
+  {
     "id": "BT4Vb1LWu2wUs2O6Vjh6",
-    "item": "Infrastructure INFRA-68",
+    "description": "Added infrastructure \"Camp A Field\" under category \"Parks & Green Spaces\".",
+    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161548,
       "nanoseconds": 656000000
     },
-    "description": "Added infrastructure \"Camp A Field\" under category \"Parks & Green Spaces\".",
-    "activity": "Added Infrastructure"
+    "item": "Infrastructure INFRA-68"
+  },
+  {
+    "id": "BauBtQnsZrzqHJ4i4TvR",
+    "item": "Indoor IND-066",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321691,
+      "nanoseconds": 304000000
+    },
+    "description": "Added \"Central Supply and Anatomy Room\" under infrastructure \"College of Nursing\" (Type: room).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "BshVnnMKw91jvtHOvKsG",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 2 (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-142",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426196,
+      "nanoseconds": 481000000
+    }
+  },
+  {
+    "id": "CE4ayzmDRGverB35n1kI",
+    "item": "Indoor IND-123",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764423550,
+      "nanoseconds": 399000000
+    },
+    "description": "Added \"Stairs 2 (3rd Floor)\" under infrastructure \"College of Medicine\" (Type: room).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "CUSuGJ3iq46VXiyuMijq",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324838,
+      "nanoseconds": 472000000
+    },
+    "item": "Indoor IND-085",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"HM Department\" under infrastructure \"College of home economics\" (Type: room)."
+  },
+  {
+    "id": "CnoxoBBrqKRvoGX9feiE",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Stairs 1 (Floor 1)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425994,
+      "nanoseconds": 240000000
+    },
+    "item": "Indoor IND-137"
+  },
+  {
+    "id": "CprrfJDJsCSEJAvTX8FF",
+    "item": "Indoor IND-175",
+    "description": "Added \"Room 9 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427514,
+      "nanoseconds": 856000000
+    }
+  },
+  {
+    "id": "DSn567ThsipPAkE65YZB",
+    "item": "Indoor IND-122",
+    "description": "Added \"Room 4(3rd floor)\" under infrastructure \"College of Medicine\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764423437,
+      "nanoseconds": 969000000
+    }
   },
   {
     "id": "DVZtU373Q7fITPU5ITLu",
-    "activity": "Added Infrastructure",
-    "description": "Added infrastructure \"Bahay Ni Aldrin Main Door\" under category \"Gates\".",
     "item": "Infrastructure INFRA-70",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761274126,
       "nanoseconds": 870000000
-    }
+    },
+    "description": "Added infrastructure \"Bahay Ni Aldrin Main Door\" under category \"Gates\".",
+    "activity": "Added Infrastructure"
   },
   {
     "id": "E7dlQwbA3iw9BZlB5itM",
     "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CSM 207\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395817,
       "nanoseconds": 184000000
     },
-    "item": "Indoor IND-049",
-    "description": "Added \"CSM 207\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
+    "item": "Indoor IND-049"
+  },
+  {
+    "id": "EcyrHHnfvuWhL78QeWqr",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422329,
+      "nanoseconds": 103000000
+    },
+    "item": "Indoor IND-111",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Stock Room (2nd floor)\" under infrastructure \"College of Medicine\" (Type: room)."
   },
   {
     "id": "EyCfqtvpwHTwWrsv0xQS",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Floor 2 Stairs\" under infrastructure \"College of Computing Studies\" (Type: stairs).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759138913,
       "nanoseconds": 436000000
     },
-    "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-007",
-    "description": "Added \"Floor 2 Stairs\" under infrastructure \"College of Computing Studies\" (Type: stairs)."
+    "item": "Indoor IND-007"
+  },
+  {
+    "id": "FsLtjlgsYdE92FEgfmBc",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324002,
+      "nanoseconds": 663000000
+    },
+    "item": "Indoor IND-075",
+    "description": "Added \"College Of Home Economics Entrance\" under infrastructure \"College of home economics\" (Type: entrance).",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "G9mS9McTz2sZg619C1U8",
+    "item": "Infrastructure INFRA-77",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1762084997,
       "nanoseconds": 663000000
     },
-    "activity": "Added Infrastructure",
     "description": "Added infrastructure \"Training Center\" under category \"Academics\".",
-    "item": "Infrastructure INFRA-77"
+    "activity": "Added Infrastructure"
+  },
+  {
+    "id": "GBqH4XMdQ8qowNP7gLSg",
+    "item": "Indoor IND-189",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"AREC Conference Room\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491851,
+      "nanoseconds": 889000000
+    }
+  },
+  {
+    "id": "GPMTT6b43Iy79wo8gABe",
+    "item": "Indoor IND-132",
+    "description": "Added \"ILS HS Audio Visual Room\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425871,
+      "nanoseconds": 640000000
+    },
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "GaRPLvw4sc2AEdqTWjQ0",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 3 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-169",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427406,
+      "nanoseconds": 87000000
+    }
   },
   {
     "id": "HDFD1oDmRxWZX6iRUGY2",
-    "item": "Infrastructure INFA-31",
-    "description": "Added infrastructure \"sample infra\" under category \"1756907782760\".",
-    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757490577,
       "nanoseconds": 305000000
+    },
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"sample infra\" under category \"1756907782760\".",
+    "item": "Infrastructure INFA-31"
+  },
+  {
+    "id": "HEiN2GxZdXP678Z5taqs",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"WMSU ILS Building Entrance\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: entrance).",
+    "item": "Indoor IND-124",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425369,
+      "nanoseconds": 323000000
     }
   },
   {
     "id": "HXmDwuu4jLWiTaB4zIGX",
-    "item": "Infrastructure INFRA-69",
     "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"Gate Campus A\" under category \"Barriers & Gates\".",
+    "item": "Infrastructure INFRA-69",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760198631,
       "nanoseconds": 795000000
-    },
-    "description": "Added infrastructure \"Gate Campus A\" under category \"Barriers & Gates\"."
+    }
   },
   {
     "id": "HqzEB5SAgSjMcLD3glo4",
+    "item": "Indoor IND-018",
     "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761383532,
       "nanoseconds": 398000000
     },
-    "item": "Indoor IND-018",
     "description": "Added \"Floor 2 Stairs\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: stairs)."
   },
   {
@@ -474,47 +925,91 @@
   },
   {
     "id": "Ium9ZE1WzB2dAiz8JdX1",
-    "item": "Infrastructure INFRA-63",
-    "description": "Added infrastructure \"Barcode\" under category \"Canteen / Cafeterias\".",
-    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161484,
       "nanoseconds": 639000000
-    }
+    },
+    "description": "Added infrastructure \"Barcode\" under category \"Canteen / Cafeterias\".",
+    "item": "Infrastructure INFRA-63",
+    "activity": "Added Infrastructure"
   },
   {
     "id": "Iym1NDmNqjEwOBY0FpWs",
     "description": "Added infrastructure \"1234567\" under category \"Academics\".",
+    "activity": "Added Infrastructure",
+    "item": "Infrastructure INFRA-74",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761374607,
       "nanoseconds": 795000000
-    },
-    "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-74"
+    }
   },
   {
     "id": "J8flsfzxfPuvNYfpY6bd",
+    "description": "Added \"CSM 203\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "item": "Indoor IND-044",
-    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395707,
       "nanoseconds": 412000000
     },
-    "description": "Added \"CSM 203\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "JUwiFO7XiHwbXSkFvRPB",
+    "item": "Indoor IND-102",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421881,
+      "nanoseconds": 508000000
+    },
+    "description": "Added \"Meeting Room\" under infrastructure \"College of Medicine\" (Type: room).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "JeQCJ9dKmCKX2En6pXf4",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427316,
+      "nanoseconds": 350000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Comfort Room for HS Female only (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-166"
   },
   {
     "id": "KFhKIR3BzKsINAnlEI2W",
+    "description": "Added \"Deans Office\" under infrastructure \"College of Computing Studies\" (Type: office).",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-003",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759138845,
       "nanoseconds": 233000000
+    }
+  },
+  {
+    "id": "KTCEyvfJYYnEfIuJo9Pd",
+    "item": "Indoor IND-185",
+    "description": "Added \"Room 1 (2nd floor)\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491706,
+      "nanoseconds": 237000000
     },
-    "description": "Added \"Deans Office\" under infrastructure \"College of Computing Studies\" (Type: office).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "KefNqUxAQ635XArsD0er",
     "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-003"
+    "item": "Indoor IND-083",
+    "description": "Added \"Fire Exit\" under infrastructure \"College of home economics\" (Type: fire_exit).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324637,
+      "nanoseconds": 630000000
+    }
   },
   {
     "id": "KjYBpadTUdl2UCCTVpdf",
@@ -524,139 +1019,326 @@
       "nanoseconds": 854000000
     },
     "description": "Added \"45tyu\" under infrastructure \"College of Nursing\" (Type: fire_exit).",
+    "item": "Indoor IND-016",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "Kr8GVR5LrXtgzO6qV8Yd",
+    "item": "Indoor IND-093",
+    "description": "Added \"CN - 304\" under infrastructure \"College of Nursing\" (Type: room).",
     "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-016"
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764420887,
+      "nanoseconds": 812000000
+    }
   },
   {
     "id": "Kvps6jX5SbGKG3h7m7Et",
     "activity": "Added Indoor Infrastructure",
     "description": "Added \"3456\" under infrastructure \"234\" (Type: room).",
-    "item": "Indoor IND-015",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761372025,
       "nanoseconds": 696000000
+    },
+    "item": "Indoor IND-015"
+  },
+  {
+    "id": "L9XsWXb2w1oR8StEZqtK",
+    "description": "Added \"Stairs 1 (Floor 1)\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: stairs).",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-181",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491583,
+      "nanoseconds": 458000000
+    }
+  },
+  {
+    "id": "LK86DYZxg6IpyqdHGvfI",
+    "item": "Indoor IND-179",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Comfort Room HS Male Only (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764490527,
+      "nanoseconds": 244000000
     }
   },
   {
     "id": "LNUhT65GeyJjm7O4N9Xk",
     "activity": "Added Category",
     "description": "Added category \"sada\" with color \"#e66100\".",
-    "item": "Category CAT-01",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758702809,
       "nanoseconds": 217000000
+    },
+    "item": "Category CAT-01"
+  },
+  {
+    "id": "LOtGGf9ihVpx5f6UdnlL",
+    "item": "Indoor IND-180",
+    "description": "Added \"Research and Innovation Center for Metals and Engineering Entrance\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: entrance).",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491545,
+      "nanoseconds": 163000000
     }
   },
   {
+    "id": "LTv7COPY2diAuaQrMybI",
+    "item": "Indoor IND-054",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1763994917,
+      "nanoseconds": 10000000
+    },
+    "description": "Added \"CCS Intermediate 1\" under infrastructure \"College of Computing Studies\" (Type: indoorinter)."
+  },
+  {
+    "id": "LeJ2YMDcT5Ty4eZcAiPh",
+    "description": "Added \"Accreditation Room\" under infrastructure \"College of Nursing\" (Type: room).",
+    "item": "Indoor IND-057",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321290,
+      "nanoseconds": 757000000
+    }
+  },
+  {
+    "id": "LrKXpRfquO4sDfbIw18F",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426850,
+      "nanoseconds": 919000000
+    },
+    "item": "Indoor IND-159",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 7 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room)."
+  },
+  {
     "id": "M6EkMEo3RgPRv7OMU0La",
-    "description": "Added infrastructure \"1234567o\" under category \"Academics\".",
     "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-76",
+    "description": "Added infrastructure \"1234567o\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761312983,
       "nanoseconds": 91000000
-    }
+    },
+    "item": "Infrastructure INFRA-76"
+  },
+  {
+    "id": "MXJgRC6ItbwHgA3H4Llq",
+    "description": "Added \"Intermediate 2 (2nd floor)\" under infrastructure \"College of Medicine\" (Type: indoorinter).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422356,
+      "nanoseconds": 164000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-112"
+  },
+  {
+    "id": "MZQxxs5l1Ahj9Qco4wie",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321432,
+      "nanoseconds": 484000000
+    },
+    "item": "Indoor IND-060",
+    "description": "Added \"Stairs (1st floor)\" under infrastructure \"College of Nursing\" (Type: stairs).",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "MahmM82xiI1HdtIEF3Rj",
-    "description": "Added campus \"232\" under map \"WMSU MAP\".",
-    "activity": "Added Campus",
     "item": "Campus CAMP-05",
+    "activity": "Added Campus",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760449060,
       "nanoseconds": 715000000
-    }
+    },
+    "description": "Added campus \"232\" under map \"WMSU MAP\"."
+  },
+  {
+    "id": "MhW22jevS1BkRh1R9NJE",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321732,
+      "nanoseconds": 494000000
+    },
+    "item": "Indoor IND-067",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CN-203\" under infrastructure \"College of Nursing\" (Type: room)."
+  },
+  {
+    "id": "N2fASsc3ALm27n2wfFVs",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427100,
+      "nanoseconds": 31000000
+    },
+    "description": "Added \"Stairs 1 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: stairs).",
+    "item": "Indoor IND-165",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "NaC2fZAR1k4VJZWKj0zN",
-    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759138897,
       "nanoseconds": 74000000
     },
-    "description": "Added \"Floor 1 Stairs\" under infrastructure \"College of Computing Studies\" (Type: stairs).",
-    "item": "Indoor IND-006"
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-006",
+    "description": "Added \"Floor 1 Stairs\" under infrastructure \"College of Computing Studies\" (Type: stairs)."
+  },
+  {
+    "id": "NcNqCz9LlTVt9WAJUMKA",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-156",
+    "description": "Added \"Room 2 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426751,
+      "nanoseconds": 125000000
+    }
+  },
+  {
+    "id": "NvZo1w36AvDOwMGiGg3X",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427423,
+      "nanoseconds": 847000000
+    },
+    "description": "Added \"Room 2 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-170",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "OG2IXWgGTJoo7aBVZnyE",
+    "description": "Added infrastructure \"Elementary\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158637,
       "nanoseconds": 881000000
     },
-    "description": "Added infrastructure \"Elementary\" under category \"Academics\".",
     "activity": "Added Infrastructure",
     "item": "Infrastructure INFRA-42"
   },
   {
     "id": "OdrLto5d2b4HwUcOfvgc",
-    "description": "Added category \"sads\" with color \"#000000\".",
-    "item": "Category 1758437799615",
-    "activity": "Added Category",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758437801,
       "nanoseconds": 814000000
+    },
+    "activity": "Added Category",
+    "description": "Added category \"sads\" with color \"#000000\".",
+    "item": "Category 1758437799615"
+  },
+  {
+    "id": "OfQCIsoFnmDeI7KSloUf",
+    "description": "Added infrastructure \"Building 1\" under category \"Academics\".",
+    "activity": "Added Infrastructure",
+    "item": "Infrastructure INFRA-79",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764433519,
+      "nanoseconds": 297000000
     }
   },
   {
     "id": "OfdrJOjyBL1QhhK7qwsW",
     "description": "Added infrastructure \"Gym\" under category \"Courts & Gyms\".",
     "item": "Infrastructure INFRA-57",
+    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161398,
       "nanoseconds": 175000000
-    },
-    "activity": "Added Infrastructure"
+    }
   },
   {
     "id": "OhMgk7sAkVvGMh6QNIE9",
     "item": "Infrastructure INFRA-56",
     "description": "Added infrastructure \"Peace Education\" under category \"Academics\".",
-    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161389,
       "nanoseconds": 182000000
-    }
+    },
+    "activity": "Added Infrastructure"
+  },
+  {
+    "id": "Ous3Axv9cE8jLnJZgoBJ",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-090",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764325251,
+      "nanoseconds": 529000000
+    },
+    "description": "Added \"Guidance Office\" under infrastructure \"College of home economics\" (Type: room)."
   },
   {
     "id": "PQcegCuTCTTF3WrwG9mO",
-    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395576,
       "nanoseconds": 849000000
     },
     "description": "Added \"CSM Back Room\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "item": "Indoor IND-039"
+    "item": "Indoor IND-039",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "Pxue7emCmFehikfIE6QI",
+    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158587,
       "nanoseconds": 909000000
     },
     "description": "Added infrastructure \"Covered Court\" under category \"Courts & Gyms\".",
-    "item": "Infrastructure INFRA-37",
-    "activity": "Added Infrastructure"
+    "item": "Infrastructure INFRA-37"
+  },
+  {
+    "id": "Q2ldAyUt5BjBptalUz9v",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421743,
+      "nanoseconds": 728000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-096",
+    "description": "Added \"College of Medicine Entrance\" under infrastructure \"College of Medicine\" (Type: entrance)."
+  },
+  {
+    "id": "QEALBSr6eE8OxYsY1iQD",
+    "item": "Indoor IND-065",
+    "description": "Added \"Delivery Area\" under infrastructure \"College of Nursing\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321661,
+      "nanoseconds": 693000000
+    }
   },
   {
     "id": "QJ9LIK98QEr1Zr8ExCKo",
-    "item": "Infrastructure INFRA-47",
-    "description": "Added infrastructure \"College of Architecture\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158702,
       "nanoseconds": 410000000
     },
+    "description": "Added infrastructure \"College of Architecture\" under category \"Academics\".",
+    "item": "Infrastructure INFRA-47",
     "activity": "Added Infrastructure"
   },
   {
@@ -666,9 +1348,9 @@
       "seconds": 1761388891,
       "nanoseconds": 363000000
     },
-    "description": "Added \"Floor 1 Stairs (Social Work)\" under infrastructure \"College of Social Work and Community Development\" (Type: stairs).",
+    "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-026",
-    "activity": "Added Indoor Infrastructure"
+    "description": "Added \"Floor 1 Stairs (Social Work)\" under infrastructure \"College of Social Work and Community Development\" (Type: stairs)."
   },
   {
     "id": "QlKg1xMS24pAq7GFnJVO",
@@ -677,64 +1359,97 @@
       "seconds": 1761388852,
       "nanoseconds": 440000000
     },
+    "item": "Indoor IND-024",
     "description": "Added \"Entrance (Social Work)\" under infrastructure \"College of Social Work and Community Development\" (Type: room).",
-    "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-024"
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "QmQ85mTBVtJNbi95N4C6",
-    "item": "Category CAT-09",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158574,
       "nanoseconds": 748000000
     },
+    "item": "Category CAT-09",
     "activity": "Added Category",
     "description": "Added category \"Courts & Gyms\" with color \"#813d9c\"."
   },
   {
+    "id": "R8dqYSPU0mXZdp8Bqzh9",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764428309,
+      "nanoseconds": 410000000
+    },
+    "description": "Added infrastructure \"WMSU San Ramon Gate\" under category \"Gates\".",
+    "item": "Infrastructure INFRA-78",
+    "activity": "Added Infrastructure"
+  },
+  {
+    "id": "R9JEFGMA2hzKgIIsPRIX",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764322038,
+      "nanoseconds": 655000000
+    },
+    "description": "Added \"Stairs 3 (Emergency Exit )\" under infrastructure \"College of Nursing\" (Type: fire_exit).",
+    "item": "Indoor IND-073",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
     "id": "RUHxQIVJdGW6ezPu2bRd",
+    "description": "Added infrastructure \"GATE 1\" under category \"Barriers & Gates\".",
+    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161406,
       "nanoseconds": 668000000
     },
-    "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-58",
-    "description": "Added infrastructure \"GATE 1\" under category \"Barriers & Gates\"."
+    "item": "Infrastructure INFRA-58"
   },
   {
     "id": "RuvUOexR4Z5FU7vCGPMr",
     "activity": "Added Category",
-    "item": "Category CAT-11",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761469209,
       "nanoseconds": 599000000
     },
+    "item": "Category CAT-11",
     "description": "Added category \"123456789\" with legend \"A\"."
   },
   {
     "id": "SLUm7DLuClXtuyM6SsKK",
-    "activity": "Added Indoor Infrastructure",
-    "description": "Added \"Lecture Room 1\" under infrastructure \"College of Computing Studies\" (Type: lecture).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759138926,
       "nanoseconds": 22000000
     },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Lecture Room 1\" under infrastructure \"College of Computing Studies\" (Type: lecture).",
     "item": "Indoor IND-008"
   },
   {
     "id": "SPIJkgpUrSFbl4rJ7OoO",
+    "item": "Indoor IND-037",
     "description": "Added \"College Student Council Office CSM\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395519,
       "nanoseconds": 641000000
+    }
+  },
+  {
+    "id": "SfsXm07aOhzuTJCefTU2",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426382,
+      "nanoseconds": 861000000
     },
-    "item": "Indoor IND-037",
-    "activity": "Added Indoor Infrastructure"
+    "description": "Added \"Room 7 (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-147"
   },
   {
     "id": "TYhiZ6U8sLbxPhXmtktv",
@@ -744,102 +1459,113 @@
       "nanoseconds": 983000000
     },
     "description": "Added infrastructure \"College of Nursing\" under category \"Academics\".",
-    "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-34"
+    "item": "Infrastructure INFRA-34",
+    "activity": "Added Infrastructure"
   },
   {
     "id": "Tbqj96aEz5Flu5200pbe",
-    "item": "Category CAT-10",
     "description": "Added category \"123\" with color \"#b41c1c\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761375073,
       "nanoseconds": 688000000
     },
+    "item": "Category CAT-10",
     "activity": "Added Category"
   },
   {
     "id": "TdXUO4PZZSJwg0tZuNSJ",
-    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"Hostel\" under category \"Administrative Offices\".",
+    "item": "Infrastructure INFRA-35",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158500,
       "nanoseconds": 672000000
     },
-    "item": "Infrastructure INFRA-35",
-    "description": "Added infrastructure \"Hostel\" under category \"Administrative Offices\"."
+    "activity": "Added Infrastructure"
   },
   {
     "id": "ThhOmYiMJT8vI7Ccjepy",
+    "description": "Added \"CSM 202\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395684,
       "nanoseconds": 520000000
     },
-    "description": "Added \"CSM 202\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "item": "Indoor IND-043",
     "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "TsU8dxeMKwAWgAMieGwl",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Comdev\" under infrastructure \"College of Social Work and Community Development\" (Type: room).",
+    "item": "Indoor IND-023",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761388803,
       "nanoseconds": 438000000
-    },
-    "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-023",
-    "description": "Added \"Comdev\" under infrastructure \"College of Social Work and Community Development\" (Type: room)."
+    }
   },
   {
     "id": "U7xfIPzpUZ1FQ27MzIi1",
-    "description": "Updated campus \"2345asdas\" under map \"asdsa\".",
-    "item": "Campus L7Q4nwPXL1gc8iPll4oE",
     "activity": "Edited Campus",
+    "description": "Updated campus \"2345asdas\" under map \"asdsa\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761372898,
       "nanoseconds": 664000000
-    }
+    },
+    "item": "Campus L7Q4nwPXL1gc8iPll4oE"
+  },
+  {
+    "id": "UeBkOmR8wTxVOinUcTSm",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764489521,
+      "nanoseconds": 617000000
+    },
+    "item": "Indoor IND-178",
+    "description": "Added \"Stock Room (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "UiMSC02gkkGfmUlnRjI5",
-    "item": "Indoor IND-017",
+    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761383486,
       "nanoseconds": 414000000
     },
-    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-017",
     "description": "Added \"COA\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room)."
   },
   {
     "id": "Umno0MRT1gPi7qRp3LKJ",
+    "description": "Added infrastructure \"CLA\" under category \"Academics\".",
+    "activity": "Added Infrastructure",
+    "item": "Infrastructure INFRA-51",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161268,
       "nanoseconds": 277000000
-    },
-    "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-51",
-    "description": "Added infrastructure \"CLA\" under category \"Academics\"."
+    }
   },
   {
     "id": "Urqgkg1GgkcMx0fhS3wt",
+    "description": "Added infrastructure \"sample\" under category \"Academics\".",
+    "item": "Infrastructure INFRA-34",
     "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758705276,
       "nanoseconds": 263000000
-    },
-    "description": "Added infrastructure \"sample\" under category \"Academics\".",
-    "item": "Infrastructure INFRA-34"
+    }
   },
   {
     "id": "Uv9iBVG8a9nGjibe6Rcr",
-    "description": "Added \"Stairs CSM 2nd Floor Near Room 207\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-050",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Stairs CSM 2nd Floor Near Room 207\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395861,
@@ -847,31 +1573,64 @@
     }
   },
   {
+    "id": "V1lkChKJKnaVt193wDyZ",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324289,
+      "nanoseconds": 976000000
+    },
+    "description": "Added \"Stock Room\" under infrastructure \"College of home economics\" (Type: room).",
+    "item": "Indoor IND-081"
+  },
+  {
     "id": "Vw1hrQkBFHXmLnnvxQIm",
+    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161452,
       "nanoseconds": 876000000
     },
-    "description": "Added infrastructure \"University Library\" under category \"Academics\".",
     "item": "Infrastructure INFRA-60",
-    "activity": "Added Infrastructure"
+    "description": "Added infrastructure \"University Library\" under category \"Academics\"."
+  },
+  {
+    "id": "VxzUXuZRXcU8DcLhCwZu",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321267,
+      "nanoseconds": 209000000
+    },
+    "description": "Added \"College of Nursing\" under infrastructure \"College of Nursing\" (Type: entrance).",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-056"
+  },
+  {
+    "id": "W55HYvUEoOqmTgcjllpD",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425894,
+      "nanoseconds": 129000000
+    },
+    "description": "Added \"Room 2\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-133"
   },
   {
     "id": "WLrQtcQSJFDy1VJujMmR",
-    "activity": "Added Category",
-    "description": "Added category \"23456\" with color \"#f6d32d\".",
-    "item": "Category CAT-10",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761371910,
       "nanoseconds": 338000000
-    }
+    },
+    "activity": "Added Category",
+    "item": "Category CAT-10",
+    "description": "Added category \"23456\" with color \"#f6d32d\"."
   },
   {
     "id": "WTUIpjuKUOZ3GIZ2qldE",
-    "item": "Indoor IND-028",
     "description": "Added \"Physical Plant Facilities Office\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
+    "item": "Indoor IND-028",
     "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
@@ -891,109 +1650,241 @@
     "activity": "Added Indoor Infrastructure"
   },
   {
+    "id": "WVS45mKISHBCk2sLegVd",
+    "description": "Added \"Stairs 1 (2nd floor)\" under infrastructure \"College of Medicine\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422461,
+      "nanoseconds": 33000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-114"
+  },
+  {
     "id": "WhFhsMc7eXXb8CxmnJB3",
+    "item": "Infrastructure INFRA-43",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158654,
       "nanoseconds": 795000000
     },
     "activity": "Added Infrastructure",
-    "description": "Added infrastructure \"WMSU WATER REFILLING STATION\" under category \"Health & Wellness Services\".",
-    "item": "Infrastructure INFRA-43"
+    "description": "Added infrastructure \"WMSU WATER REFILLING STATION\" under category \"Health & Wellness Services\"."
+  },
+  {
+    "id": "WptEGxZmzByYq0nMFgPR",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422792,
+      "nanoseconds": 464000000
+    },
+    "item": "Indoor IND-117",
+    "description": "Added \"Intermediate 3 (3rd floor)\" under infrastructure \"College of Medicine\" (Type: room)."
+  },
+  {
+    "id": "Wxk0IsvNTNlZ5dQIUqik",
+    "description": "Added \"Stairs 2 (floor 1)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425826,
+      "nanoseconds": 822000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-130"
+  },
+  {
+    "id": "X02cBhCkvavRf6gnf478",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-095",
+    "description": "Added \"CN - 306\" under infrastructure \"College of Nursing\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421229,
+      "nanoseconds": 149000000
+    }
   },
   {
     "id": "XpZyUqIGfr6EiAyvDhnF",
     "item": "Infrastructure INFRA-78",
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"1234987\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761371415,
       "nanoseconds": 849000000
-    },
-    "description": "Added infrastructure \"1234987\" under category \"Academics\".",
-    "activity": "Added Infrastructure"
+    }
+  },
+  {
+    "id": "XzMosSYHguYfPmH6UDtS",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-141",
+    "description": "Added \"ILS HS Audio Visual Room (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426171,
+      "nanoseconds": 306000000
+    }
   },
   {
     "id": "Yal6wSyhHcktSx27Dr0m",
-    "item": "Campus 5cERj1phSYripBusCH6l",
-    "activity": "Edited Campus",
     "description": "Updated campus \"232asd\" under map \"WMSU MAP\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760449076,
       "nanoseconds": 616000000
-    }
+    },
+    "activity": "Edited Campus",
+    "item": "Campus 5cERj1phSYripBusCH6l"
   },
   {
     "id": "YhptgMUEQONDrWkC0CK1",
+    "activity": "Added Map",
+    "item": "Map MAP-02",
+    "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03.",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761222362,
       "nanoseconds": 79000000
-    },
-    "item": "Map MAP-02",
-    "activity": "Added Map",
-    "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03."
+    }
   },
   {
     "id": "ZDy9cu4gxjrMJ31eZpP5",
-    "description": "Added infrastructure \"sample\" under category \"Academics\".",
-    "item": "Infrastructure INFRA-74",
     "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761449881,
       "nanoseconds": 970000000
-    }
+    },
+    "description": "Added infrastructure \"sample\" under category \"Academics\".",
+    "item": "Infrastructure INFRA-74"
+  },
+  {
+    "id": "ZVSLAnh1Pd886ZmfE0W7",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426603,
+      "nanoseconds": 803000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-153",
+    "description": "Added \"Room 5 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room)."
   },
   {
     "id": "ZmtpPIbeayrEv46etDrZ",
-    "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03.",
+    "activity": "Added Map",
+    "item": "Map MAP-01",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757998902,
       "nanoseconds": 550000000
     },
-    "item": "Map MAP-01",
-    "activity": "Added Map"
+    "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03."
+  },
+  {
+    "id": "ZrUxVXc1Uo6tPLxkb6qh",
+    "item": "Indoor IND-140",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 1 (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426143,
+      "nanoseconds": 301000000
+    }
   },
   {
     "id": "ZrxgVs0Rpsf6zJ5mV6Zg",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-001",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759138815,
       "nanoseconds": 966000000
     },
-    "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-001",
     "description": "Added \"Department of Computer Science\" under infrastructure \"College of Computing Studies\" (Type: office)."
   },
   {
+    "id": "a6dGvvU999RuatI1OfPh",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-087",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764325098,
+      "nanoseconds": 10000000
+    },
+    "description": "Added \"Student Consultation\" under infrastructure \"College of home economics\" (Type: room)."
+  },
+  {
+    "id": "aBDEJPCiFBt5ZRmY0CIf",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321626,
+      "nanoseconds": 240000000
+    },
+    "description": "Added \"Nursing Art Laboratory Room\" under infrastructure \"College of Nursing\" (Type: room).",
+    "item": "Indoor IND-064",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "aKmJ3n5Ib1exTTH9jVAO",
+    "item": "Indoor IND-177",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427658,
+      "nanoseconds": 20000000
+    },
+    "description": "Added \"Stairs 2 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room)."
+  },
+  {
     "id": "aKsJoZAUGk7SN3yHzLc5",
+    "item": "Infrastructure INFRA-36",
     "activity": "Added Infrastructure",
-    "description": "Added infrastructure \"College of Nutri Dietetics\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158535,
       "nanoseconds": 799000000
     },
-    "item": "Infrastructure INFRA-36"
+    "description": "Added infrastructure \"College of Nutri Dietetics\" under category \"Academics\"."
+  },
+  {
+    "id": "aOJcC12SjkaQcsqtn4dS",
+    "item": "Indoor IND-113",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422437,
+      "nanoseconds": 513000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Comfort Room (2nd floor)\" under infrastructure \"College of Medicine\" (Type: room)."
   },
   {
     "id": "afmnBy4qfSQQwMCKJmjC",
+    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761371276,
       "nanoseconds": 874000000
     },
-    "activity": "Added Infrastructure",
     "description": "Added infrastructure \"1234\" under category \"Academics\".",
     "item": "Infrastructure INFRA-77"
   },
   {
+    "id": "akWhMTdzdlv5PsBEG6dH",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321561,
+      "nanoseconds": 791000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Operating Area\" under infrastructure \"College of Nursing\" (Type: room).",
+    "item": "Indoor IND-063"
+  },
+  {
     "id": "atPwt7eBoo2qYu9FQIZG",
-    "item": "Campus CAMP-04",
-    "description": "Added campus \"dasds\" under map \"asdsa\".",
     "activity": "Added Campus",
+    "description": "Added campus \"dasds\" under map \"asdsa\".",
+    "item": "Campus CAMP-04",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761374843,
@@ -1002,124 +1893,256 @@
   },
   {
     "id": "b2LXENgt6rlqoMc2hmgt",
-    "item": "Indoor IND-038",
-    "description": "Added \"CSM and IB Lec Room\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395537,
       "nanoseconds": 828000000
-    }
+    },
+    "item": "Indoor IND-038",
+    "description": "Added \"CSM and IB Lec Room\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
+  },
+  {
+    "id": "bIOtN76g3xz3zaJdUdpw",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764325131,
+      "nanoseconds": 277000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Euthenics Room\" under infrastructure \"College of home economics\" (Type: room).",
+    "item": "Indoor IND-088"
+  },
+  {
+    "id": "bWnFyjwDjnkfBTLk6of6",
+    "item": "Indoor IND-100",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421842,
+      "nanoseconds": 838000000
+    },
+    "description": "Added \"Comfort Room\" under infrastructure \"College of Medicine\" (Type: room)."
+  },
+  {
+    "id": "bb1zvT534gBuVBMRK4Mx",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-110",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422127,
+      "nanoseconds": 835000000
+    },
+    "description": "Added \"Room 2 (2nd floor)\" under infrastructure \"College of Medicine\" (Type: room)."
+  },
+  {
+    "id": "bbDAPiEBHxqWZbgYNQIH",
+    "description": "Added campus \"123\" under map \"WebGoat\".",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764393675,
+      "nanoseconds": 415000000
+    },
+    "activity": "Added Campus",
+    "item": "Campus CAMP-04"
   },
   {
     "id": "bf2R0OccEL72Gd2TgCn4",
-    "description": "Added \"CSM 104 Lab Room\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-033",
+    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395409,
       "nanoseconds": 524000000
-    }
+    },
+    "description": "Added \"CSM 104 Lab Room\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
+  },
+  {
+    "id": "c2zq61iKkEt2UDEciVyA",
+    "description": "Added \"Room 1 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-157",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426775,
+      "nanoseconds": 86000000
+    },
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "c30nTHqSF3ksAzhUEflu",
+    "item": "Map MAP-02",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761222234,
       "nanoseconds": 923000000
     },
-    "item": "Map MAP-02",
-    "activity": "Added Map",
-    "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03."
+    "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03.",
+    "activity": "Added Map"
   },
   {
     "id": "c789gkojyRFslkkQX6Qe",
-    "description": "Added \"BSCD Department\" under infrastructure \"College of Social Work and Community Development\" (Type: room).",
-    "item": "Indoor IND-025",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761388866,
       "nanoseconds": 850000000
     },
-    "activity": "Added Indoor Infrastructure"
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-025",
+    "description": "Added \"BSCD Department\" under infrastructure \"College of Social Work and Community Development\" (Type: room)."
   },
   {
     "id": "c8tulzlxJvv5vWuHcO5v",
+    "item": "Indoor IND-014",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761371992,
       "nanoseconds": 286000000
     },
-    "item": "Indoor IND-014",
-    "description": "Added \"1234\" under infrastructure \"College of Asian Islamic Studies\" (Type: room).",
-    "activity": "Added Indoor Infrastructure"
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"1234\" under infrastructure \"College of Asian Islamic Studies\" (Type: room)."
   },
   {
     "id": "cBkoSrfTIo2uR9fHs8qe",
-    "activity": "Added Infrastructure",
     "item": "Infrastructure INFRA-65",
-    "description": "Added infrastructure \"Interfaith Center\" under category \"Health & Wellness Services\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161510,
       "nanoseconds": 755000000
+    },
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"Interfaith Center\" under category \"Health & Wellness Services\"."
+  },
+  {
+    "id": "ciy8QeL92pG6ALgJXsQj",
+    "item": "Indoor IND-072",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CN-301\" under infrastructure \"College of Nursing\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321969,
+      "nanoseconds": 329000000
     }
   },
   {
-    "id": "dUF3iFJwlZyezgAeX9fU",
-    "description": "Added \"Department of Bio Sciences Faculty\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "item": "Indoor IND-031",
+    "id": "cls24UCBYOzDuqOs0I3r",
+    "item": "Indoor IND-186",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491739,
+      "nanoseconds": 618000000
+    },
     "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 2 (2nd Floor)\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room)."
+  },
+  {
+    "id": "csduOhL519HrkFV5YCbK",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321517,
+      "nanoseconds": 661000000
+    },
+    "item": "Indoor IND-062",
+    "description": "Added \"Stairs (2nd floor)\" under infrastructure \"College of Nursing\" (Type: stairs).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "dI0W9u4s7o0kwLIggTc3",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-094",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421200,
+      "nanoseconds": 715000000
+    },
+    "description": "Added \"CN - 305\" under infrastructure \"College of Nursing\" (Type: room)."
+  },
+  {
+    "id": "dUF3iFJwlZyezgAeX9fU",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-031",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395352,
       "nanoseconds": 294000000
-    }
+    },
+    "description": "Added \"Department of Bio Sciences Faculty\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
   },
   {
     "id": "dt3DyhOkpnkvrlu0RKJb",
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"University Press\" under category \"Administrative Offices\".",
+    "item": "Infrastructure INFRA-32",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158463,
       "nanoseconds": 203000000
+    }
+  },
+  {
+    "id": "e29e8a2hvVNnezzEKv46",
+    "item": "Indoor IND-127",
+    "description": "Added \"ILS HS Faculty Room\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425602,
+      "nanoseconds": 92000000
     },
-    "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-32",
-    "description": "Added infrastructure \"University Press\" under category \"Administrative Offices\"."
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "eBMY4RZecDXwcoua6E4A",
+    "activity": "Added Campus",
     "item": "Campus CAMP-04",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757494067,
       "nanoseconds": 915000000
     },
-    "activity": "Added Campus",
     "description": "Added campus \"sampe campus log\" under map \"sample map log\"."
   },
   {
     "id": "eMh5k2zvTFPbtbmno3cd",
-    "description": "Added infrastructure \"MA in Special Education\" under category \"Academics\".",
     "item": "Infrastructure INFRA-48",
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"MA in Special Education\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158746,
       "nanoseconds": 498000000
-    },
-    "activity": "Added Infrastructure"
+    }
   },
   {
     "id": "edxTyxYF2yywPPgoOBuB",
-    "item": "Infrastructure INFRA-39",
+    "description": "Added infrastructure \"NSTP\" under category \"Administrative Offices\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158610,
       "nanoseconds": 127000000
     },
     "activity": "Added Infrastructure",
-    "description": "Added infrastructure \"NSTP\" under category \"Administrative Offices\"."
+    "item": "Infrastructure INFRA-39"
+  },
+  {
+    "id": "eniCErPbvoNFYec2uLkJ",
+    "item": "Indoor IND-107",
+    "description": "Added \"Stairs 2 (2nd floor)\" under infrastructure \"College of Medicine\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421985,
+      "nanoseconds": 869000000
+    },
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "etqT0YPtbSUWzMXj4VXe",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Comfort Room HS Male only (floor 2)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426427,
+      "nanoseconds": 641000000
+    },
+    "item": "Indoor IND-149"
   },
   {
     "id": "f3HzONyAAAQS1Y4fKjih",
@@ -1133,48 +2156,103 @@
     "item": "Infrastructure INFRA-61"
   },
   {
+    "id": "fKF2r7nOt7ERfdxtRnrV",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491760,
+      "nanoseconds": 911000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Stairs 3 (3rd floor)\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room).",
+    "item": "Indoor IND-187"
+  },
+  {
+    "id": "faodTxFYTj4m7mKUgvr6",
+    "item": "Campus CAMP-04",
+    "description": "Added campus \"WebGoat\" under map \"WMSU MAP 2\".",
+    "activity": "Added Campus",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764405566,
+      "nanoseconds": 9000000
+    }
+  },
+  {
     "id": "fnZGDszwwZPzjbwAri9s",
+    "item": "Indoor IND-016",
+    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761383445,
       "nanoseconds": 315000000
     },
-    "description": "Added \"TEC Office\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room).",
-    "item": "Indoor IND-016",
-    "activity": "Added Indoor Infrastructure"
+    "description": "Added \"TEC Office\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room)."
+  },
+  {
+    "id": "gF2PGQhtSwxghV0BsHXf",
+    "item": "Indoor IND-055",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1763995447,
+      "nanoseconds": 491000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CCS Intermediate 2\" under infrastructure \"College of Computing Studies\" (Type: indoorinter)."
   },
   {
     "id": "gMDeBuDvz7QE1EaMmyJP",
+    "description": "Added category \"sampl\" with color \"#1a5fb4\".",
+    "item": "Category CAT-09",
+    "activity": "Added Category",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758704043,
       "nanoseconds": 769000000
-    },
-    "description": "Added category \"sampl\" with color \"#1a5fb4\".",
-    "activity": "Added Category",
-    "item": "Category CAT-09"
+    }
   },
   {
     "id": "gU1Tp1UrLla5OfrhZEbu",
-    "item": "Infrastructure INFA-32",
-    "description": "Added infrastructure \"samp again\" under category \"[object HTMLInputElement]\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757491363,
       "nanoseconds": 275000000
     },
-    "activity": "Added Infrastructure"
+    "description": "Added infrastructure \"samp again\" under category \"[object HTMLInputElement]\".",
+    "activity": "Added Infrastructure",
+    "item": "Infrastructure INFA-32"
+  },
+  {
+    "id": "gVyaHWzJGRv1oN7ZmXIw",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421822,
+      "nanoseconds": 709000000
+    },
+    "description": "Added \"Intermediate 1\" under infrastructure \"College of Medicine\" (Type: indoorinter).",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-099"
   },
   {
     "id": "gZZGbB4pzvXbOU2QTaWT",
     "activity": "Added Infrastructure",
+    "item": "Infrastructure INFRA-62",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161475,
       "nanoseconds": 757000000
     },
-    "item": "Infrastructure INFRA-62",
     "description": "Added infrastructure \"MIS Tech Office\" under category \"Administrative Offices\"."
+  },
+  {
+    "id": "gd4pjSkOzhLRYUnKDgFA",
+    "item": "Indoor IND-162",
+    "description": "Added \"Stock Room (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426914,
+      "nanoseconds": 706000000
+    }
   },
   {
     "id": "guyvWEzR6DsinuZ0oyRM",
@@ -1183,9 +2261,9 @@
       "seconds": 1760449290,
       "nanoseconds": 39000000
     },
-    "activity": "Added Category",
+    "description": "Added category \"samp\" with color \"#b41c1c\".",
     "item": "Category CAT-10",
-    "description": "Added category \"samp\" with color \"#b41c1c\"."
+    "activity": "Added Category"
   },
   {
     "id": "h4sx6e268Uf8t3s8GS2F",
@@ -1194,383 +2272,680 @@
       "seconds": 1759139887,
       "nanoseconds": 795000000
     },
-    "item": "Indoor IND-011",
     "description": "Added \"Fire Exit\" under infrastructure \"College of Computing Studies\" (Type: fire_exit).",
-    "activity": "Added Indoor Infrastructure"
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-011"
   },
   {
     "id": "hU9vNsSLezRCLQFYCdrF",
-    "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-019",
-    "description": "Added \"Room 22\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761383556,
       "nanoseconds": 168000000
-    }
+    },
+    "description": "Added \"Room 22\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room).",
+    "item": "Indoor IND-019",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "i4na9m4OZeUK2TZy0t7u",
+    "description": "Added \"Social work\" under infrastructure \"College of Social Work and Community Development\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761388785,
       "nanoseconds": 426000000
     },
-    "description": "Added \"Social work\" under infrastructure \"College of Social Work and Community Development\" (Type: room).",
-    "item": "Indoor IND-022",
-    "activity": "Added Indoor Infrastructure"
+    "item": "Indoor IND-022"
   },
   {
     "id": "i58rFy2KP6MRTfMnBtgF",
     "item": "Indoor IND-047",
-    "description": "Added \"CSM 205\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395777,
       "nanoseconds": 876000000
-    }
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CSM 205\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
   },
   {
     "id": "iC4uWpqGcAAbJkobeavc",
-    "item": "Indoor IND-051",
     "description": "Added \"Faculty Room Math and Stats\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395905,
       "nanoseconds": 995000000
     },
+    "item": "Indoor IND-051",
     "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "iQdSaF7AMUNtRoe1rgU6",
+    "item": "Infrastructure INFRA-49",
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"University Clinic\" under category \"Health & Wellness Services\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161222,
       "nanoseconds": 575000000
-    },
-    "description": "Added infrastructure \"University Clinic\" under category \"Health & Wellness Services\".",
-    "item": "Infrastructure INFRA-49",
-    "activity": "Added Infrastructure"
+    }
   },
   {
     "id": "iQpwZRiBHLSaOXrBtXtW",
-    "description": "Added \"Department of Math and Statistics\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "item": "Indoor IND-052",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395926,
       "nanoseconds": 957000000
     },
+    "item": "Indoor IND-052",
+    "description": "Added \"Department of Math and Statistics\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "iXZzr2llqawzVeINT4Qt",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CSM 101 Lab Room Ground Floor\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
+    "item": "Indoor IND-027",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395224,
       "nanoseconds": 718000000
-    },
-    "activity": "Added Indoor Infrastructure",
-    "description": "Added \"CSM 101 Lab Room Ground Floor\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "item": "Indoor IND-027"
+    }
   },
   {
     "id": "ijA7fKWbkpNGee4uUYwX",
-    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Floor 1 Stairs\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: stairs).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761383393,
       "nanoseconds": 718000000
     },
-    "description": "Added \"Floor 1 Stairs\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: stairs).",
+    "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-014"
   },
   {
     "id": "iyb4TQMG3jwxacb2sMY9",
     "description": "Added \"Lecture Room 2\" under infrastructure \"College of Computing Studies\" (Type: lecture).",
-    "item": "Indoor IND-009",
-    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759138935,
       "nanoseconds": 966000000
+    },
+    "item": "Indoor IND-009",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "j3KCuY7hyTP4N9Lo8dMw",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-184",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491678,
+      "nanoseconds": 291000000
+    },
+    "description": "Added \"Stairs 2 (Floor 2)\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: stairs)."
+  },
+  {
+    "id": "jOK1bSQfOjILCXSD1bSf",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-173",
+    "description": "Added \"Room 7 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427480,
+      "nanoseconds": 658000000
     }
   },
   {
     "id": "jdR9oY76qpqCIsmolrQW",
-    "description": "Updated campus \"sdasdsadasg\" under map \"sample map log\".",
+    "activity": "Edited Campus",
+    "item": "Campus OMYVL8mDyYmfkz5NsImA",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757938676,
       "nanoseconds": 302000000
     },
-    "activity": "Edited Campus",
-    "item": "Campus OMYVL8mDyYmfkz5NsImA"
+    "description": "Updated campus \"sdasdsadasg\" under map \"sample map log\"."
+  },
+  {
+    "id": "je0CZ7hPRzcGE2mjGr9d",
+    "description": "Added \"Room 5 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427358,
+      "nanoseconds": 968000000
+    },
+    "item": "Indoor IND-167",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "js9vjGouvUnjyiJtVBGO",
     "activity": "Added Category",
-    "item": "Category CAT-10",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758704045,
       "nanoseconds": 657000000
     },
+    "item": "Category CAT-10",
     "description": "Added category \"sampl\" with color \"#1a5fb4\"."
   },
   {
+    "id": "k3b9JtQWoazq85J9Aw1U",
+    "item": "Indoor IND-188",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"WMSU AREC office\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491827,
+      "nanoseconds": 169000000
+    }
+  },
+  {
     "id": "kEH33xN5dwwSnxvGYqIQ",
+    "description": "Added \"Stairs 2 CSM\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395477,
       "nanoseconds": 165000000
     },
-    "description": "Added \"Stairs 2 CSM\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "item": "Indoor IND-036",
     "activity": "Added Indoor Infrastructure"
   },
   {
-    "id": "kmKIRuLjbeRFQpHCegIp",
-    "description": "Added \"CSM 105 Analytical Services RM\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
+    "id": "kYAT7vf0uLW2ityaFKoQ",
+    "item": "Indoor IND-119",
     "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-034",
+    "description": "Added \"Room 1 (3rd floor)\" under infrastructure \"College of Medicine\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764423342,
+      "nanoseconds": 91000000
+    }
+  },
+  {
+    "id": "kmKIRuLjbeRFQpHCegIp",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395434,
       "nanoseconds": 199000000
-    }
+    },
+    "description": "Added \"CSM 105 Analytical Services RM\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-034"
   },
   {
     "id": "kxmx6LBglBGuPRjuzqh7",
+    "description": "Added campus \"Campus Ni Aldrin\" under map \"WMSU MAP\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759155335,
       "nanoseconds": 252000000
     },
-    "item": "Campus CAMP-05",
     "activity": "Added Campus",
-    "description": "Added campus \"Campus Ni Aldrin\" under map \"WMSU MAP\"."
+    "item": "Campus CAMP-05"
+  },
+  {
+    "id": "lGZ7ILL1yzWY3aVP9b69",
+    "item": "Indoor IND-136",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425957,
+      "nanoseconds": 604000000
+    },
+    "description": "Added \"Comfort Room for PWD only\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room)."
   },
   {
     "id": "lOYFU4DcQOvSYdPZMMxQ",
-    "activity": "Added Infrastructure",
-    "description": "Added infrastructure \"Admission Office\" under category \"Administrative Offices\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158620,
       "nanoseconds": 743000000
     },
-    "item": "Infrastructure INFRA-40"
+    "item": "Infrastructure INFRA-40",
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"Admission Office\" under category \"Administrative Offices\"."
+  },
+  {
+    "id": "lwI2trScOF9NmlrjlNVX",
+    "description": "Added \"Graduate Office\" under infrastructure \"College of home economics\" (Type: room).",
+    "item": "Indoor IND-089",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764325201,
+      "nanoseconds": 704000000
+    },
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "mHIwc4GFsBRI8SPtVT7c",
+    "activity": "Added Map",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757493952,
       "nanoseconds": 119000000
     },
-    "item": "Map MAP-03",
-    "activity": "Added Map",
-    "description": "Added map \"sample map log\" including campuses: CAMP-02."
+    "description": "Added map \"sample map log\" including campuses: CAMP-02.",
+    "item": "Map MAP-03"
   },
   {
     "id": "mHbJ6AwP5SrmzGINwuTE",
+    "description": "Added infrastructure \"Dirty Kitchen Ni Aldrin\" under category \"Academics\".",
+    "activity": "Added Infrastructure",
     "item": "Infrastructure INFRA-73",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761274263,
       "nanoseconds": 939000000
-    },
-    "description": "Added infrastructure \"Dirty Kitchen Ni Aldrin\" under category \"Academics\".",
-    "activity": "Added Infrastructure"
+    }
   },
   {
     "id": "mJlvnTlhXwlHo98P9Zir",
-    "description": "Added \"Microbiology CSM10\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
-    "item": "Indoor IND-032",
-    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395379,
       "nanoseconds": 243000000
-    }
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-032",
+    "description": "Added \"Microbiology CSM10\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
+  },
+  {
+    "id": "mTnpsbHSjDXoZ6nnItHn",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426874,
+      "nanoseconds": 195000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-160",
+    "description": "Added \"Room 8 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room)."
+  },
+  {
+    "id": "msTBA9M4zu86kAMGtwwS",
+    "description": "Added \"Hostel Contextual Learning Area\" under infrastructure \"College of home economics\" (Type: room).",
+    "item": "Indoor IND-082",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324393,
+      "nanoseconds": 1000000
+    },
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "nBAjmGjFEztMdQ2cZDOA",
-    "activity": "Added Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761374689,
       "nanoseconds": 246000000
     },
-    "description": "Added infrastructure \"12345\" under category \"Academics\".",
-    "item": "Infrastructure INFRA-75"
+    "activity": "Added Infrastructure",
+    "item": "Infrastructure INFRA-75",
+    "description": "Added infrastructure \"12345\" under category \"Academics\"."
   },
   {
     "id": "nMoI1fsHHamSNt6kGXvk",
-    "description": "Added infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158678,
       "nanoseconds": 996000000
     },
+    "item": "Infrastructure INFRA-45",
     "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-45"
+    "description": "Added infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" under category \"Academics\"."
+  },
+  {
+    "id": "nOsU90d12LM4vLyH3SNT",
+    "item": "Indoor IND-121",
+    "description": "Added \"Room 3 (3rd floor)\" under infrastructure \"College of Medicine\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764423401,
+      "nanoseconds": 107000000
+    },
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "nj10yNUpJUhYF9SvhhlG",
     "item": "Map MAP-02",
+    "activity": "Added Map",
+    "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03.",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758009037,
       "nanoseconds": 228000000
-    },
-    "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03.",
-    "activity": "Added Map"
+    }
   },
   {
     "id": "oKEBrV0CqwAn0wCJJudL",
-    "activity": "Added Indoor Infrastructure",
     "item": "Indoor IND-029",
-    "description": "Added \"Stockroom\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
+    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395278,
       "nanoseconds": 557000000
-    }
+    },
+    "description": "Added \"Stockroom\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
   },
   {
     "id": "ooTRCht1y2Nr1HnRm1No",
+    "item": "Room RM-004",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758433612,
       "nanoseconds": 483000000
     },
-    "item": "Room RM-004",
+    "description": "Added \"Laboratory 1\" under infrastructure \"College of Computing Studies\" (Type: laboratory).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "p0jGrWboMWr0vQBJKq99",
+    "item": "Indoor IND-091",
     "activity": "Added Indoor Infrastructure",
-    "description": "Added \"Laboratory 1\" under infrastructure \"College of Computing Studies\" (Type: laboratory)."
+    "description": "Added \"CHE Accreditation Center\" under infrastructure \"College of home economics\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764325334,
+      "nanoseconds": 804000000
+    }
   },
   {
     "id": "ppnTK6cBKxzXbc1mVJm1",
+    "activity": "Added Indoor Infrastructure",
     "description": "Added \"2345\" under infrastructure \"College of Medicine\" (Type: room).",
+    "item": "Indoor IND-017",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761374780,
       "nanoseconds": 178000000
-    },
-    "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-017"
+    }
   },
   {
     "id": "qTprn1XdgOabpG0h4GYk",
+    "item": "Infrastructure INFRA-44",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158665,
       "nanoseconds": 31000000
     },
-    "item": "Infrastructure INFRA-44",
     "activity": "Added Infrastructure",
     "description": "Added infrastructure \"Office of the principal\" under category \"Administrative Offices\"."
   },
   {
+    "id": "qkm1Ua50ofg4neA2A86F",
+    "description": "Added \"Room 4 (4th floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-168",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764427388,
+      "nanoseconds": 895000000
+    },
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
     "id": "qutQWHvJMMsQZb5fv8w1",
-    "description": "Created map \"Aldrin nag sabe\" with version v1.0.0 and campuses: CAMP-01, CAMP-02, CAMP-03.",
+    "item": "Map MAP-02",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757921007,
       "nanoseconds": 452000000
     },
     "activity": "Added Map",
-    "item": "Map MAP-02"
+    "description": "Created map \"Aldrin nag sabe\" with version v1.0.0 and campuses: CAMP-01, CAMP-02, CAMP-03."
+  },
+  {
+    "id": "rHwJ0RwOVUIRc0CpEPec",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Stock Room\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491871,
+      "nanoseconds": 960000000
+    },
+    "item": "Indoor IND-190"
   },
   {
     "id": "rNqEXHOfAoo6bRaGa9R1",
-    "item": "Infrastructure INFRA-52",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161308,
       "nanoseconds": 698000000
     },
-    "description": "Added infrastructure \"CPADS\" under category \"Academics\".",
-    "activity": "Added Infrastructure"
+    "item": "Infrastructure INFRA-52",
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"CPADS\" under category \"Academics\"."
+  },
+  {
+    "id": "rXCK0ai3vRSLi82TrNqV",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426224,
+      "nanoseconds": 851000000
+    },
+    "item": "Indoor IND-143",
+    "description": "Added \"ILS HS Computer Room (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room)."
+  },
+  {
+    "id": "s5T8XHtxqasLiNcL2bH0",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421803,
+      "nanoseconds": 231000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-098",
+    "description": "Added \"Stock Room\" under infrastructure \"College of Medicine\" (Type: room)."
+  },
+  {
+    "id": "sDTdQnjvjk7UqE7x1dBL",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-150",
+    "description": "Added \"Stairs 2 (floor 2)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426481,
+      "nanoseconds": 456000000
+    }
+  },
+  {
+    "id": "sNUhidRBxYRAltNaKm10",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CN - 102\" under infrastructure \"College of Nursing\" (Type: room).",
+    "item": "Indoor IND-058",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321331,
+      "nanoseconds": 547000000
+    }
+  },
+  {
+    "id": "sWhtQnnSTZUEr1bpEWnu",
+    "description": "Added \"Stairs 2 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: stairs).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426987,
+      "nanoseconds": 891000000
+    },
+    "item": "Indoor IND-164",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "sWx7imc3kwmdWiWrMeGR",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425917,
+      "nanoseconds": 160000000
+    },
+    "description": "Added \"Room 3\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-134",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "saPsikEHpJpFtoj8oOej",
+    "description": "Added \"Room 9 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-161",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426897,
+      "nanoseconds": 718000000
+    }
   },
   {
     "id": "shePkYAO99dzRV2KqFnK",
+    "item": "Infrastructure INFRA-31",
+    "description": "Added infrastructure \"Canteen Camp A\" under category \"Canteen / Cafeterias\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158289,
       "nanoseconds": 508000000
     },
-    "item": "Infrastructure INFRA-31",
-    "activity": "Added Infrastructure",
-    "description": "Added infrastructure \"Canteen Camp A\" under category \"Canteen / Cafeterias\"."
+    "activity": "Added Infrastructure"
   },
   {
     "id": "slVVD2OvlLTcLrnbXIyh",
-    "activity": "Added Indoor Infrastructure",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395599,
       "nanoseconds": 278000000
     },
+    "activity": "Added Indoor Infrastructure",
     "description": "Added \"Stairs 1 CSM\" under infrastructure \"College of Sciences and Mathematics\" (Type: room).",
     "item": "Indoor IND-040"
   },
   {
     "id": "sqpQ7W4L7HlBjmlKXOXP",
-    "description": "Added infrastructure \"Puno Ni Aldrin\" under category \"Parks & Green Spaces\".",
-    "item": "Infrastructure INFRA-72",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761274222,
       "nanoseconds": 343000000
     },
+    "item": "Infrastructure INFRA-72",
+    "description": "Added infrastructure \"Puno Ni Aldrin\" under category \"Parks & Green Spaces\".",
     "activity": "Added Infrastructure"
   },
   {
+    "id": "swu17Vx0j9nNxjYPvxT7",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-079",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324231,
+      "nanoseconds": 740000000
+    },
+    "description": "Added \"Dean’s office\" under infrastructure \"College of home economics\" (Type: room)."
+  },
+  {
+    "id": "syn59VOBa4y0em26CYg0",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324256,
+      "nanoseconds": 392000000
+    },
+    "description": "Added \"Culinary Room\" under infrastructure \"College of home economics\" (Type: room).",
+    "item": "Indoor IND-080",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "szgzQoNESZCFa6n3KaPF",
+    "item": "Indoor IND-182",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764491610,
+      "nanoseconds": 422000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Storage Room 1\" under infrastructure \"RESEARCH AND INNOVATION CENTER FOR METALS AND ENGINEERING\" (Type: room)."
+  },
+  {
     "id": "t0OA1rrjH3k2egSg2SuL",
-    "activity": "Added Infrastructure",
     "description": "Added infrastructure \"OSA\" under category \"Administrative Offices\".",
+    "item": "Infrastructure INFRA-50",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161257,
       "nanoseconds": 96000000
     },
-    "item": "Infrastructure INFRA-50"
+    "activity": "Added Infrastructure"
+  },
+  {
+    "id": "t2BDtU9pASzWAVsPbEnu",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321885,
+      "nanoseconds": 147000000
+    },
+    "description": "Added \"CN-303\" under infrastructure \"College of Nursing\" (Type: room).",
+    "item": "Indoor IND-070"
+  },
+  {
+    "id": "t786fVWX4ptlSpDtafVN",
+    "item": "Indoor IND-071",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CN-302\" under infrastructure \"College of Nursing\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321940,
+      "nanoseconds": 446000000
+    }
   },
   {
     "id": "tJIdjJLRe2k2tSFU4Gjp",
+    "item": "Infrastructure INFRA-75",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761312936,
       "nanoseconds": 295000000
     },
-    "item": "Infrastructure INFRA-75",
-    "description": "Added infrastructure \"234\" under category \"Academics\".",
-    "activity": "Added Infrastructure"
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"234\" under category \"Academics\"."
+  },
+  {
+    "id": "tNUyvaqsLYieR4bddQPE",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425936,
+      "nanoseconds": 899000000
+    },
+    "description": "Added \"Guidance and GAD office\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-135",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "tQNdz11B6l3XouuF2egn",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 2 (3rd floor)\" under infrastructure \"College of Medicine\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764423371,
+      "nanoseconds": 166000000
+    },
+    "item": "Indoor IND-120"
   },
   {
     "id": "tQii63Hyp6kCbGLMlkXD",
     "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-046",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761395754,
       "nanoseconds": 1000000
     },
+    "item": "Indoor IND-046",
     "description": "Added \"Office of the Dean CSM\" under infrastructure \"College of Sciences and Mathematics\" (Type: room)."
   },
   {
     "id": "tV06o7eASBTX83XUtYgG",
-    "item": "Indoor IND-007",
+    "description": "Added \"12345678\" under infrastructure \"Department of Biological Sciences\" (Type: laboratory).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758436234,
       "nanoseconds": 74000000
     },
     "activity": "Added Indoor Infrastructure",
-    "description": "Added \"12345678\" under infrastructure \"Department of Biological Sciences\" (Type: laboratory)."
+    "item": "Indoor IND-007"
   },
   {
     "id": "toX9BjFpX8YhmdifR4Qf",
@@ -1584,43 +2959,109 @@
     "description": "Added category \"1234567\" with color \"#1c71d8\"."
   },
   {
-    "id": "vQSrN8ji7Nw0oQfqZZO4",
-    "description": "Added \"Auditorium\" under infrastructure \"College of Computing Studies\" (Type: room).",
+    "id": "u9zIBuZjTBn6GWEjgnMo",
+    "item": "Indoor IND-104",
+    "description": "Added \"Microscopy Room\" under infrastructure \"College of Medicine\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421925,
+      "nanoseconds": 333000000
+    },
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "uUF9bIR2CVwlyFKHHZZH",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425705,
+      "nanoseconds": 92000000
+    },
+    "item": "Indoor IND-129",
     "activity": "Added Indoor Infrastructure",
-    "item": "Indoor IND-012",
+    "description": "Added \"Stock Room\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room)."
+  },
+  {
+    "id": "uhw2Uw62Jw8ZfRXHaHFI",
+    "description": "Added \"Fire Exit (Home Economics)\" under infrastructure \"College of home economics\" (Type: fire_exit).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764325388,
+      "nanoseconds": 412000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-092"
+  },
+  {
+    "id": "vN2mAprS3NbHJF5Xap0W",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425522,
+      "nanoseconds": 532000000
+    },
+    "description": "Added \"Office of the ILS HS Registrar\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-125"
+  },
+  {
+    "id": "vQSrN8ji7Nw0oQfqZZO4",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Auditorium\" under infrastructure \"College of Computing Studies\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759153216,
       "nanoseconds": 622000000
-    }
+    },
+    "item": "Indoor IND-012"
   },
   {
     "id": "vRY7nOoSMJwYIbKVrV2E",
-    "item": "Indoor IND-015",
+    "description": "Added \"Testing and Evaluation Center\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room).",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761383418,
       "nanoseconds": 895000000
     },
-    "description": "Added \"Testing and Evaluation Center\" under infrastructure \"Old building Campus B(Near CCS)\" (Type: room).",
-    "activity": "Added Indoor Infrastructure"
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-015"
+  },
+  {
+    "id": "vjOr76O0BGqtWLDAgHLm",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"CCS Entrance\" under infrastructure \"College of Computing Studies\" (Type: entrance).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1763988780,
+      "nanoseconds": 804000000
+    },
+    "item": "Indoor IND-053"
   },
   {
     "id": "vtoexAibPQnHMZy8ruL2",
-    "activity": "Added Infrastructure",
-    "description": "Added infrastructure \"smapasda\" under category \"Parks & Green Spaces\".",
-    "item": "Infrastructure INFA-33",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757491633,
       "nanoseconds": 859000000
-    }
+    },
+    "description": "Added infrastructure \"smapasda\" under category \"Parks & Green Spaces\".",
+    "activity": "Added Infrastructure",
+    "item": "Infrastructure INFA-33"
+  },
+  {
+    "id": "w4XrrjuNA5hgvNBcVfYu",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324680,
+      "nanoseconds": 169000000
+    },
+    "item": "Indoor IND-084",
+    "description": "Added \"Stairs (2nd floor)\" under infrastructure \"College of home economics\" (Type: stairs).",
+    "activity": "Added Indoor Infrastructure"
   },
   {
     "id": "w8HAjjtRHs7xCnYORCpA",
+    "description": "Created map \"asdsa\" with version v1.0.0 and campuses: CAMP-01, CAMP-02.",
     "activity": "Added Map",
     "item": "Map MAP-03",
-    "description": "Created map \"asdsa\" with version v1.0.0 and campuses: CAMP-01, CAMP-02.",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761372119,
@@ -1628,69 +3069,212 @@
     }
   },
   {
+    "id": "wM0x3cAE3tGBJxN8l07P",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764422840,
+      "nanoseconds": 356000000
+    },
+    "description": "Added \"Comfort Room (3rd floor)\" under infrastructure \"College of Medicine\" (Type: room).",
+    "item": "Indoor IND-118"
+  },
+  {
+    "id": "wN2tHgVftKQ6NR6DSAN7",
+    "description": "Added \"Comfort Room HS Male Only (3rd floor))\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-163",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426952,
+      "nanoseconds": 369000000
+    }
+  },
+  {
+    "id": "wXkpmMFFH1zKiTanR7ox",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 3 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "item": "Indoor IND-155",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426692,
+      "nanoseconds": 649000000
+    }
+  },
+  {
+    "id": "weeLFC4d05bpNlZUtWdO",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421965,
+      "nanoseconds": 760000000
+    },
+    "item": "Indoor IND-106",
+    "description": "Added \"Emergency Exit 1\" under infrastructure \"College of Medicine\" (Type: fire_exit).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
     "id": "wiOcH7OvI8G2LeOSjVZr",
-    "description": "Added infrastructure \"Registrar Building\" under category \"Administrative Offices\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161496,
       "nanoseconds": 120000000
     },
-    "activity": "Added Infrastructure",
-    "item": "Infrastructure INFRA-64"
+    "item": "Infrastructure INFRA-64",
+    "description": "Added infrastructure \"Registrar Building\" under category \"Administrative Offices\".",
+    "activity": "Added Infrastructure"
   },
   {
     "id": "wjmo0Dm9DohWOu59zQ9L",
-    "activity": "Added Infrastructure",
+    "item": "Infrastructure INFRA-75",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761453523,
       "nanoseconds": 81000000
     },
-    "description": "Added infrastructure \"Daanan 1\" under category \"Academics\".",
-    "item": "Infrastructure INFRA-75"
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"Daanan 1\" under category \"Academics\"."
+  },
+  {
+    "id": "wtBUNYxpk3OivZx6PT4V",
+    "description": "Added \"CN-101\" under infrastructure \"College of Nursing\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764321366,
+      "nanoseconds": 756000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-059"
   },
   {
     "id": "x29oeP5cLeZrUEvVlUZT",
-    "activity": "Added Infrastructure",
-    "description": "Added infrastructure \"CTE Park\" under category \"Parks & Green Spaces\".",
-    "item": "Infrastructure INFRA-66",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759161523,
       "nanoseconds": 865000000
+    },
+    "item": "Infrastructure INFRA-66",
+    "activity": "Added Infrastructure",
+    "description": "Added infrastructure \"CTE Park\" under category \"Parks & Green Spaces\"."
+  },
+  {
+    "id": "xDTMq2gCEEUR4lz0FcCO",
+    "item": "Indoor IND-074",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Research and Ethics Review Unit\" under infrastructure \"College of Nursing\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764322061,
+      "nanoseconds": 601000000
     }
+  },
+  {
+    "id": "xIIngwV1u883DEPgJD1B",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426248,
+      "nanoseconds": 612000000
+    },
+    "item": "Indoor IND-144",
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Room 4 (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room)."
   },
   {
     "id": "xipwN3nqANCpnPcyZ0JY",
     "item": "Map MAP-02",
     "description": "Created map \"WMSU MAP 2\" with version v1.0.0 and campuses: CAMP-03.",
+    "activity": "Added Map",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1758000363,
       "nanoseconds": 516000000
+    }
+  },
+  {
+    "id": "xm3dNHJ36RPFqV0dbNed",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426806,
+      "nanoseconds": 519000000
     },
-    "activity": "Added Map"
+    "item": "Indoor IND-158",
+    "description": "Added \"Room 6 (3rd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "activity": "Added Indoor Infrastructure"
+  },
+  {
+    "id": "yLBA304TSmMfw6vgmY7Y",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-139",
+    "description": "Added \"Comfort Room for HS Female only (2nd floor)\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764426062,
+      "nanoseconds": 159000000
+    }
   },
   {
     "id": "yPI3VjHxqRwlBadzu6ht",
+    "activity": "Edited Campus",
+    "description": "Updated campus \"2345\" under map \"asdsa\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761372668,
       "nanoseconds": 57000000
     },
-    "item": "Campus L7Q4nwPXL1gc8iPll4oE",
-    "description": "Updated campus \"2345\" under map \"asdsa\".",
-    "activity": "Edited Campus"
+    "item": "Campus L7Q4nwPXL1gc8iPll4oE"
+  },
+  {
+    "id": "z4nvL3dxnEXgj1bcJeZA",
+    "activity": "Added Indoor Infrastructure",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764421900,
+      "nanoseconds": 108000000
+    },
+    "description": "Added \"Library\" under infrastructure \"College of Medicine\" (Type: room).",
+    "item": "Indoor IND-103"
+  },
+  {
+    "id": "zCHnXdsFtYSxwChe9urL",
+    "description": "Added \"Faculty Room 1\" under infrastructure \"College of home economics\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324058,
+      "nanoseconds": 563000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-076"
+  },
+  {
+    "id": "zeBHahkYltqlgK7JbxRx",
+    "item": "Indoor IND-077",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764324121,
+      "nanoseconds": 952000000
+    },
+    "activity": "Added Indoor Infrastructure",
+    "description": "Added \"Faculty Room 2\" under infrastructure \"College of home economics\" (Type: room)."
   },
   {
     "id": "zfwQK8n1kwGr2RzD2W7O",
-    "item": "Infrastructure INFRA-41",
     "description": "Added infrastructure \"SPED\" under category \"Academics\".",
     "timestamp": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158628,
       "nanoseconds": 765000000
     },
-    "activity": "Added Infrastructure"
+    "activity": "Added Infrastructure",
+    "item": "Infrastructure INFRA-41"
+  },
+  {
+    "id": "zfxlAQBqT08tKPxPphdp",
+    "activity": "Added Indoor Infrastructure",
+    "item": "Indoor IND-128",
+    "description": "Added \"Office of the Principal\" under infrastructure \"Wmsu Integrated School SHS Building\" (Type: room).",
+    "timestamp": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764425633,
+      "nanoseconds": 164000000
+    }
   }
 ]

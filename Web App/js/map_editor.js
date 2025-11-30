@@ -1,7 +1,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import {
-    getFirestore, collection, addDoc, getDocs, query, orderBy, where, updateDoc, doc, getDoc, arrayUnion, writeBatch, deleteDoc, setDoc
+    getFirestore, collection, addDoc, getDocs, query, orderBy, where, updateDoc, doc, getDoc, arrayUnion, writeBatch, deleteDoc, setDoc, limit
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
 import { firebaseConfig } from "../firebaseConfig.js";
@@ -1078,8 +1078,18 @@ document.querySelector(".nodetbl").addEventListener("click", async (e) => {
     let relatedInfraSelect = document.getElementById("editRelatedInfra");
     let relatedIndoorSelect = document.getElementById("editRelatedIndoorInfra");
 
-    let typeValue = nodeData.type;
-    if (typeValue === "indoor") typeValue = "indoorInfra";
+    // Normalize stored type values to UI values (e.g. 'indoorinfra' -> 'indoorInfra')
+    const mapStoredTypeToUI = (t) => {
+      if (!t) return "";
+      const s = String(t).toLowerCase();
+      if (s === "indoor" || s === "indoorinfra" || s === "indoor_infra" ) return "indoorInfra";
+      if (s === "infrastructure") return "infrastructure";
+      if (s === "barrier") return "barrier";
+      if (s === "intermediate") return "intermediate";
+      return "";
+    };
+
+    let typeValue = mapStoredTypeToUI(nodeData.type);
 
     
     if (typeSelect.tagName !== "SELECT") {
@@ -1161,7 +1171,8 @@ typeSelect.addEventListener("change", (e) => {
 });
 
 
-    if (nodeData.indoor || nodeData.type === "indoorInfra") {
+    // Show indoor details if either indoor payload exists or mapped UI type is indoorInfra
+    if (nodeData.indoor || mapStoredTypeToUI(nodeData.type) === "indoorInfra") {
       indoorDetails.style.display = "block";
       document.getElementById("editFloor").value = nodeData.indoor?.floor ?? "";
       document.getElementById("editXCoord").value = nodeData.indoor?.x ?? "";
@@ -1205,6 +1216,8 @@ document.getElementById("editNodeForm").addEventListener("submit", async (e) => 
   const nodeId = document.getElementById("editNodeIdHidden").value.trim();
   const nodeName = document.getElementById("editNodeName").value.trim();
   const type = document.getElementById("editNodeType").value;
+  // Normalize storage type: UI uses 'indoorInfra' but storage expects 'indoorinfra'
+  const storageType = (type === "indoorInfra" || type === "indoor") ? "indoorinfra" : type;
   const relatedInfraId = document.getElementById("editRelatedInfra").value;
   const relatedIndoorInfraId = document.getElementById("editRelatedIndoorInfra").value;
   const campusId = document.getElementById("editCampusDropdown").value;
@@ -1214,7 +1227,7 @@ document.getElementById("editNodeForm").addEventListener("submit", async (e) => 
   let longitude = parseFloat(document.getElementById("editLongitude").value);
 
   let indoor = null;
-  if (type === "indoorInfra") {
+    if (type === "indoorInfra") {
     indoor = {
       floor: document.getElementById("editFloor").value.trim(),
       x: parseFloat(document.getElementById("editXCoord").value) || 0,
@@ -1231,14 +1244,15 @@ document.getElementById("editNodeForm").addEventListener("submit", async (e) => 
     if (!versionSnap.exists()) throw new Error("Version document not found!");
 
     const versionData = versionSnap.data();
-    const updatedNodes = versionData.nodes.map((node) => {
+        const updatedNodes = versionData.nodes.map((node) => {
       if (node.node_id === nodeId) {
         return {
           ...node,
           name: nodeName,
           latitude,
           longitude,
-          type,
+          // write normalized storage type so downstream logic treats indoor nodes correctly
+          type: storageType,
           related_infra_id: relatedInfraId,
           related_room_id: relatedIndoorInfraId,
           indoor,
@@ -2563,10 +2577,14 @@ function setupNodeDeleteHandlers() {
     tbody.querySelectorAll(".fa-trash").forEach(btn => {
         btn.addEventListener("click", () => {
             const tr = btn.closest("tr");
-            const nodeId = tr.children[0]?.textContent || "";
-            const docId = btn.dataset.id;
+      const rowNodeId = tr.children[0]?.textContent?.trim() || "";
+      const docIdAttr = btn.dataset.id || null; // data-id (document id) if present
+      const dataNodeIdAttr = btn.dataset.nodeId || null; // data-node-id attribute (node_id)
 
-            nodeToDelete = { docId, nodeId };
+      // Prefer explicit data-id (document id). If missing, fall back to data-node-id or table text.
+      const nodeId = dataNodeIdAttr || rowNodeId;
+
+      nodeToDelete = { docId: docIdAttr, nodeId };
             document.getElementById("deleteNodePrompt").textContent =
                 `Are you sure you want to delete node "${nodeId}"?`;
             document.getElementById("deleteNodeModal").style.display = "flex";
@@ -2577,22 +2595,60 @@ function setupNodeDeleteHandlers() {
 
 document.getElementById("confirmDeleteNodeBtn").addEventListener("click", async () => {
     if (!nodeToDelete) return;
+
     try {
-        await updateDoc(doc(db, "Nodes", nodeToDelete.docId), {
-            is_deleted: true,
-            deletedAt: new Date()
-        });
+        // Nodes are stored in MapVersions/{mapId}/versions/{versionId}/nodes[] array
+        // Find the MapVersion document containing this node and remove it from the array
+        const nodeIdToDelete = nodeToDelete.nodeId;
+        if (!nodeIdToDelete) {
+            showModal('error', 'No node selected for deletion.');
+            return;
+        }
+
+        const mapVersionsSnap = await getDocs(collection(db, "MapVersions"));
+        let found = false;
+
+        for (const mapDoc of mapVersionsSnap.docs) {
+            const mapData = mapDoc.data();
+            const currentVersion = mapData.current_version;
+            if (!currentVersion) continue;
+
+            const versionRef = doc(db, "MapVersions", mapDoc.id, "versions", currentVersion);
+            const versionSnap = await getDoc(versionRef);
+            if (!versionSnap.exists()) continue;
+
+            const versionData = versionSnap.data();
+            const nodes = Array.isArray(versionData.nodes) ? versionData.nodes : [];
+            const nodeIndex = nodes.findIndex(n => n.node_id === nodeIdToDelete);
+
+            if (nodeIndex !== -1) {
+                // Remove node from array
+                const updatedNodes = nodes.filter((_, i) => i !== nodeIndex);
+                await updateDoc(versionRef, { nodes: updatedNodes });
+                found = true;
+
+                // Update infrastructure_updated flag
+                const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
+                await updateDoc(staticDataRef, { infrastructure_updated: true });
+                break;
+            }
+        }
+
+        if (!found) {
+            showModal('error', 'Node not found for deletion.');
+            return;
+        }
+
         document.getElementById("deleteNodeModal").style.display = "none";
         nodeToDelete = null;
+
         renderNodesTable();
-        showModal('success', 'Node deleted successfully!');
+        showModal('success', 'Node deleted permanently!');
     } catch (err) {
+        console.error(err);
         showModal('error', 'Failed to delete node. Please try again.');
     }
-});
-
-
-document.getElementById("cancelDeleteNodeBtn").addEventListener("click", () => {
+});document.getElementById("cancelDeleteNodeBtn").addEventListener("click", () => {
     document.getElementById("deleteNodeModal").style.display = "none";
     nodeToDelete = null;
 });

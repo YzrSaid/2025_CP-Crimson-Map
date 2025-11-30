@@ -293,3 +293,87 @@ body {
     vertical-align: middle;
     transform: translateY(1px); /* nudges vertically for perfect alignment */
 }
+
+/* Dropdown Menu Styles */
+.menu-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0;
+    color: #333;
+    transition: color 0.2s ease;
+}
+
+.menu-btn:hover {
+    color: #b30000;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-bottom: 5px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 10001;
+    min-width: 150px;
+    display: none;
+}
+
+.dropdown-menu.active {
+    display: block;
+}
+
+
+.dropdown-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f6f6f6;
+    color: #b30000;
+}
+
+.dropdown-menu:not(.active) {
+    display: none;
+}
+
+.dropdown-menu.active {
+    display: block;
+}
+
+/* Status colors for badges and in dropdowns */
+.status.in-progress {
+    color: #2d7a2d;
+    background-color: #e6f7e6;
+    border: 1px solid #a3d9a3;
+}
+
+.status.handled {
+    color: #1565c0;
+    background-color: #e3f2fd;
+    border: 1px solid #90caf9;
+}
+
+.status.rejected {
+    color: #c62828;
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+}
