@@ -1,8 +1,9 @@
 [
   {
+    "updatedAt": {},
     "map_name": "WMSU MAP 2",
-    "center_lng": 121.9276753,
-    "center_lat": 7.0077403,
+    "center_lng": 121.92463699893412,
+    "center_lat": 7.0073395048255582,
     "map_id": "MAP-02",
     "createdAt": {},
     "campus_included": [
@@ -13,8 +14,8 @@
   {
     "updatedAt": {},
     "map_name": "WMSU MAP",
-    "center_lng": 122.06465044780079,
-    "center_lat": 6.9131483930759012,
+    "center_lng": 122.06491440083694,
+    "center_lat": 6.9131845653268247,
     "map_id": "MAP-01",
     "createdAt": {},
     "campus_included": [

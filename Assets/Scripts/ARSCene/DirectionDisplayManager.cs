@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class DirectionDisplayManager : MonoBehaviour
 {
@@ -30,6 +31,11 @@ public class DirectionDisplayManager : MonoBehaviour
     public TextMeshProUGUI successTitleText;
     public TextMeshProUGUI successBodyText;
     public Button successCloseButton;
+    public GameObject successPanelBackground; // NEW: Background for success panel
+    
+    [Header("Success Panel Animation")]
+    public float successAnimationDuration = 0.3f;
+    public Ease successEaseType = Ease.OutBack;
 
     [Header("Settings")]
     public bool enableKeyboardTesting = true;
@@ -46,6 +52,7 @@ public class DirectionDisplayManager : MonoBehaviour
     private bool hasAutoProgressed = false;
 
     private UnifiedARManager arManager;
+    private Vector3 successPanelOriginalScale; // NEW: Store original scale
 
     public enum ARMode { DirectAR, Navigation }
 
@@ -64,7 +71,13 @@ public class DirectionDisplayManager : MonoBehaviour
             compassArrow = FindObjectOfType<CompassNavigationArrow>();
 
         if (successPanel != null)
+        {
+            successPanelOriginalScale = successPanel.transform.localScale; // NEW: Store original scale
             successPanel.SetActive(false);
+        }
+        
+        if (successPanelBackground != null)
+            successPanelBackground.SetActive(false);
 
         if (successCloseButton != null)
             successCloseButton.onClick.AddListener(OnSuccessCloseClicked);
@@ -539,14 +552,38 @@ public class DirectionDisplayManager : MonoBehaviour
             }
         }
 
+        // NEW: Show background first (instantly)
+        if (successPanelBackground != null)
+        {
+            successPanelBackground.SetActive(true);
+        }
+
+        // NEW: Animate the success panel with DOTween
         successPanel.SetActive(true);
+        successPanel.transform.localScale = Vector3.zero;
+        successPanel.transform.DOScale(successPanelOriginalScale, successAnimationDuration)
+            .SetEase(successEaseType)
+            .SetUpdate(true);
     }
 
     private void OnSuccessCloseClicked()
     {
         if (successPanel != null)
         {
-            successPanel.SetActive(false);
+            // NEW: Animate the panel closing
+            successPanel.transform.DOScale(Vector3.zero, successAnimationDuration)
+                .SetEase(Ease.InBack)
+                .SetUpdate(true)
+                .OnComplete(() =>
+                {
+                    successPanel.SetActive(false);
+                    
+                    // Hide background after panel closes
+                    if (successPanelBackground != null)
+                    {
+                        successPanelBackground.SetActive(false);
+                    }
+                });
         }
     }
 
@@ -586,6 +623,9 @@ public class DirectionDisplayManager : MonoBehaviour
 
         if (successPanel != null)
             successPanel.SetActive(false);
+        
+        if (successPanelBackground != null)
+            successPanelBackground.SetActive(false);
 
         UpdateDirectionItemsStatus();
     }

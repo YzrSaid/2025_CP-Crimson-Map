@@ -86,7 +86,11 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         if (isARNavigationMode)
         {
             LoadJourneyNodeIds();
-            groundPlaneY = arCamera.transform.position.y - 1.6f;
+            
+            // FIXED: Set ground plane to 0 for proper marker spawning
+            groundPlaneY = 0f;
+            Debug.Log($"[MarkerSpawner] Ground Plane Y initialized to: {groundPlaneY}");
+            
             StartCoroutine(InitializeMarkerSystem());
         }
     }
@@ -126,6 +130,9 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         referenceGPS = unifiedARManager.GetReferenceGPS();
         referenceARWorldPosition = unifiedARManager.GetReferenceARWorldPosition();
 
+        Debug.Log($"[MarkerSpawner] Reference GPS: {referenceGPS}");
+        Debug.Log($"[MarkerSpawner] Reference AR World Position: {referenceARWorldPosition}");
+
         markersInitialized = true;
 
         InvokeRepeating(nameof(UpdateMarkerSystem), 0.5f, 0.2f);
@@ -134,7 +141,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     private IEnumerator LoadAllNodesAndInfrastructure()
     {
         string mapId = PlayerPrefs.GetString("ARScene_MapId", "MAP-01");
-        
+
         yield return StartCoroutine(LoadNodesData(mapId));
         yield return StartCoroutine(LoadInfrastructureData());
     }

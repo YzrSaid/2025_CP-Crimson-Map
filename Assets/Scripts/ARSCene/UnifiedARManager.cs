@@ -285,8 +285,6 @@ public class UnifiedARManager : MonoBehaviour
         UpdateLoadingUI("GPS Manager found, starting location services...");
         yield return new WaitForSeconds(0.5f);
 
-        groundPlaneY = arCamera.transform.position.y - 1.6f;
-
         UpdateLoadingUI("Loading map data...");
         string currentMapId = GetCurrentMapId();
         yield return StartCoroutine(LoadCurrentMapData(currentMapId));
