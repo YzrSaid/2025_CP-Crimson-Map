@@ -1,16 +1,16 @@
 [
   {
     "id": "V4iKddNa8KGJDVlayew8",
-    "password": "U2FsdGVkX19mp7gK9x51GDOuDuMOcputdAJViWbMPfM=",
-    "contactNumber": "09123456789",
-    "middleInitial": "P",
+    "lastName": "Mula",
     "email": "sample_email@gmail.com",
-    "firstName": "John Basil",
+    "password": "U2FsdGVkX19mp7gK9x51GDOuDuMOcputdAJViWbMPfM=",
     "created_at": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760965731,
       "nanoseconds": 663000000
     },
-    "lastName": "Mula"
+    "contactNumber": "09123456789",
+    "middleInitial": "P",
+    "firstName": "John Basil"
   }
 ]

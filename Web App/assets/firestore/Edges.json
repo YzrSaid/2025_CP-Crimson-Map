@@ -1,43 +1,45 @@
 [
   {
     "id": "EGohxSSF1wNtGiWz10yL",
-    "to_node": "ND-027",
+    "elevations": null,
+    "edge_id": "EDG-001",
     "is_active": true,
+    "from_node": "ND-026",
     "distance": null,
+    "is_deleted": false,
+    "to_node": "ND-027",
+    "path_type": null,
     "created_at": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757505156,
       "nanoseconds": 41000000
-    },
-    "path_type": null,
-    "is_deleted": false,
-    "elevations": null,
-    "from_node": "ND-026",
-    "edge_id": "EDG-001"
+    }
   },
   {
     "id": "LOkIYIyloHQOIZLLyFC8",
     "distance": null,
-    "path_type": null,
-    "edge_id": "EDG-004",
-    "elevations": null,
+    "to_node": "ND-026",
+    "from_node": "ND-029",
     "deletedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757991547,
       "nanoseconds": 964000000
     },
-    "is_deleted": true,
-    "to_node": "ND-026",
+    "path_type": null,
     "is_active": true,
-    "from_node": "ND-029",
     "created_at": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757505181,
       "nanoseconds": 872000000
-    }
+    },
+    "is_deleted": true,
+    "elevations": null,
+    "edge_id": "EDG-004"
   },
   {
     "id": "i92A89tLWDI2kTmyAPJV",
+    "edge_id": "EDG-003",
+    "is_active": true,
     "from_node": "ND-028",
     "is_deleted": false,
     "elevations": null,
@@ -47,25 +49,23 @@
       "nanoseconds": 517000000
     },
     "distance": null,
-    "is_active": true,
     "to_node": "ND-029",
-    "edge_id": "EDG-003",
     "path_type": null
   },
   {
     "id": "xWyCI7XR9TMtCRc8cGHQ",
-    "to_node": "ND-028",
-    "edge_id": "EDG-002",
-    "distance": null,
     "from_node": "ND-027",
+    "distance": null,
     "is_active": true,
     "elevations": null,
+    "path_type": null,
     "created_at": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1757505167,
       "nanoseconds": 216000000
     },
-    "path_type": null,
+    "to_node": "ND-028",
+    "edge_id": "EDG-002",
     "is_deleted": false
   }
 ]

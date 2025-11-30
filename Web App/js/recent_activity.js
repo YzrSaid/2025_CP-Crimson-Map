@@ -1,4 +1,4 @@
-// ======================= FIREBASE SETUP ===========================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import {
     getFirestore,
@@ -9,11 +9,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 import { firebaseConfig } from "../firebaseConfig.js";
 
-// Initialize Firebase and Firestore
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ======================= LOAD FROM FIRESTORE ===========================
+
 async function loadFromFirestore() {
     const q = query(collection(db, "ActivityLogs"), orderBy("timestamp", "asc"));
     const querySnapshot = await getDocs(q);
@@ -23,40 +23,40 @@ async function loadFromFirestore() {
         results.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    // Sort descending by timestamp (latest last)
+    
     results.sort((a, b) => getTimestampValue(a.timestamp) - getTimestampValue(b.timestamp));
 
     return results;
 }
 
-// ======================= LOAD FROM JSON (Fallback) ===========================
+
 async function loadFromJson() {
     const res = await fetch("../assets/firestore/ActivityLogs.json");
     const data = await res.json();
 
-    // Sort descending by timestamp (latest last)
+    
     data.sort((a, b) => getTimestampValue(a.timestamp) - getTimestampValue(b.timestamp));
 
     return data;
 }
 
-// ======================= GET TIMESTAMP VALUE (ms) ===========================
+
 function getTimestampValue(ts) {
     if (!ts) return 0;
 
-    // Firestore Timestamp object
+    
     if (typeof ts.toDate === "function") return ts.toDate().getTime();
 
-    // JSON export (seconds + nanoseconds)
+    
     if (ts.seconds !== undefined) return ts.seconds * 1000 + Math.floor(ts.nanoseconds / 1e6);
 
-    // Older JSON export (_seconds + _nanoseconds)
+    
     if (ts._seconds !== undefined) return ts._seconds * 1000 + Math.floor((ts._nanoseconds || 0) / 1e6);
 
     return 0;
 }
 
-// ======================= FORMAT TIMESTAMP ===========================
+
 function formatTimestamp(ts) {
     if (!ts) return "-";
     const ms = getTimestampValue(ts);
@@ -65,7 +65,7 @@ function formatTimestamp(ts) {
 }
 
 function formatDate(d) {
-    const dateStr = d.toLocaleDateString("en-CA"); // YYYY-MM-DD
+    const dateStr = d.toLocaleDateString("en-CA"); 
     const timeStr = d.toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
@@ -74,12 +74,12 @@ function formatDate(d) {
     return `${dateStr}<br>${timeStr}`;
 }
 
-// ======================= RENDER ACTIVITY LOGS ===========================
+
 async function renderActivityLogsTable() {
     const tbody = document.querySelector(".activity-table tbody");
     if (!tbody) return;
 
-    // Show spinner row in the middle
+    
     tbody.innerHTML = `
         <tr class="table-spinner">
             <td colspan="5">
@@ -96,7 +96,7 @@ async function renderActivityLogsTable() {
             logs = await loadFromJson();
         }
 
-        // Clear spinner
+        
         tbody.innerHTML = "";
 
         let counter = 1;
@@ -112,7 +112,7 @@ async function renderActivityLogsTable() {
             tbody.appendChild(tr);
         });
 
-        // Show message if no logs
+        
         if (logs.length === 0) {
             tbody.innerHTML = `
                 <tr>
@@ -134,9 +134,9 @@ async function renderActivityLogsTable() {
 }
 
 
-// ======================= AUTO SWITCH (ONLINE/OFFLINE) ===========================
+
 window.addEventListener("online", renderActivityLogsTable);
 window.addEventListener("offline", renderActivityLogsTable);
 
-// Run when page loads
+
 document.addEventListener("DOMContentLoaded", renderActivityLogsTable);

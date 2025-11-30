@@ -3,11 +3,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import CryptoJS from "https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/+esm";
 
-// Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔑 Handle login form submit
+
 const loginForm = document.getElementById("loginForm");
 
 loginForm.addEventListener("submit", async (e) => {
@@ -22,7 +22,7 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    const secretKey = "CrimsonMapSecretKey123!"; // must match the one in account.js
+    const secretKey = "CrimsonMapSecretKey123!"; 
     const usersSnapshot = await getDocs(collection(db, "Users"));
     let validUser = null;
 
@@ -30,7 +30,7 @@ loginForm.addEventListener("submit", async (e) => {
       const user = doc.data();
 
       if (user.email === email) {
-        // Decrypt stored password
+        
         const decryptedBytes = CryptoJS.AES.decrypt(user.password, secretKey);
         const decryptedPassword = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
@@ -42,7 +42,7 @@ loginForm.addEventListener("submit", async (e) => {
 
     if (validUser) {
 
-      // Save session (optional)
+      
       sessionStorage.setItem("currentUser", JSON.stringify(validUser));
       window.location.href = "/html/dashboard_main.html";
     } else {

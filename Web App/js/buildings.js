@@ -1,19 +1,19 @@
-// ======================= FIREBASE SETUP ===========================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getFirestore, setDoc, collection, addDoc, getDocs, query, orderBy, where, updateDoc, doc, deleteField, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 import { firebaseConfig } from "../firebaseConfig.js";
 
 
-// Initialize Firebase and Firestore
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
 
 
-// ======================= CATEGORY SECTION =========================
 
-// ----------- Modal Controls -----------
+
+
 function showCategoryModal() {
     document.getElementById('addCategoryModal').style.display = 'flex';
 }
@@ -32,7 +32,7 @@ async function renderCategoriesTable() {
   const tbody = document.getElementById("categoriesTableBody");
   if (!tbody) return;
 
-  // 🌀 Show loader before fetching
+  
   tbody.innerHTML = `
     <tr>
       <td colspan="5" class="table-loader">
@@ -45,20 +45,20 @@ async function renderCategoriesTable() {
     let categories = [];
     let infrastructures = [];
 
-    // ===== Load Categories =====
+    
     if (navigator.onLine) {
       const catSnap = await getDocs(collection(db, "Categories"));
       categories = catSnap.docs
         .map(doc => ({ id: doc.id, ...doc.data() }))
         .filter(data => !data.is_deleted);
 
-      // Also fetch infrastructures
+      
       const infraSnap = await getDocs(collection(db, "Infrastructure"));
       infrastructures = infraSnap.docs
         .map(doc => doc.data())
         .filter(data => !data.is_deleted);
     } else {
-      // ===== Offline fallback =====
+      
       const [catRes, infraRes] = await Promise.all([
         fetch("../assets/firestore/Categories.json"),
         fetch("../assets/firestore/Infrastructure.json"),
@@ -71,7 +71,7 @@ async function renderCategoriesTable() {
       infrastructures = infraData.filter(data => !data.is_deleted);
     }
 
-    // ===== Count infrastructures per category =====
+    
     const infraCountMap = {};
     infrastructures.forEach(infra => {
       if (infra.category_id) {
@@ -80,12 +80,12 @@ async function renderCategoriesTable() {
       }
     });
 
-    // ===== Attach building counts to categories =====
+    
     categories.forEach(cat => {
       cat.buildings = infraCountMap[cat.category_id] || 0;
     });
 
-    // ===== Sort by createdAt =====
+    
     categories.sort((a, b) => {
       const timeA = a.createdAt?.seconds
         ? a.createdAt.seconds * 1000
@@ -100,10 +100,10 @@ async function renderCategoriesTable() {
       return timeA - timeB;
     });
 
-    // Save globally for filtering/searching
+    
     categoriesTableData = categories;
 
-    // Render data
+    
     renderCategoriesTableRows(categoriesTableData);
   } catch (err) {
     console.error("❌ Error loading categories:", err);
@@ -154,91 +154,12 @@ function renderCategoriesTableRows(data) {
   });
 }
 
-// Call on page load
+
 document.addEventListener("DOMContentLoaded", renderCategoriesTable);
 
 
 
 
-// // ----------- Add Category Handler with Loading Spinner + Saving Text -----------
-// document.getElementById('categoryForm')?.addEventListener('submit', async (e) => {
-//     e.preventDefault();
-
-//     const submitBtn = e.target.querySelector(".save-btn");
-//     if (!submitBtn) return;
-
-//     const originalBtnHTML = submitBtn.innerHTML;
-
-//     // 🟢 Show spinner + "Saving..." text + disable button
-//     submitBtn.innerHTML = `
-//         <div class="spinner"></div>
-//         <span class="loading-text">Saving...</span>
-//     `;
-//     submitBtn.disabled = true;
-
-//     const name = document.getElementById('categoryName').value.trim();
-//     const color = document.getElementById('categoryColor').value;
-
-//     if (!name || !color) {
-//         alert("Please fill in all required fields.");
-//         submitBtn.innerHTML = originalBtnHTML;
-//         submitBtn.disabled = false;
-//         return;
-//     }
-
-//     try {
-//         // Generate next category ID in format CAT-01, CAT-02, etc.
-//         let nextNum = 1;
-//         const querySnapshot = await getDocs(collection(db, "Categories"));
-//         const existingIds = querySnapshot.docs
-//             .map(doc => doc.data().category_id)
-//             .filter(id => id && id.startsWith("CAT-"))
-//             .map(id => parseInt(id.slice(4), 10))
-//             .filter(num => !isNaN(num));
-//         if (existingIds.length > 0) {
-//             nextNum = Math.max(...existingIds) + 1;
-//         }
-//         const categoryId = `CAT-${String(nextNum).padStart(2, "0")}`;
-
-//         // Save category
-//         await addDoc(collection(db, "Categories"), {
-//             category_id: categoryId,
-//             name: name,
-//             color: color,
-//             buildings: 0,
-//             is_deleted: false,
-//             createdAt: new Date()
-//         });
-
-//         // Save Activity Log
-//         await addDoc(collection(db, "ActivityLogs"), {
-//             timestamp: new Date(),
-//             activity: "Added Category",
-//             item: `Category ${categoryId}`,
-//             description: `Added category "${name}" with color "${color}".`
-//         });
-
-//         // ✅ Update StaticDataVersions/GlobalInfo
-//         const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
-//         await updateDoc(staticDataRef, {
-//             categories_updated: true,
-//         });
-
-//         document.getElementById('categoryForm').reset();
-//         hideCategoryModal();
-//         renderCategoriesTable();
-//         populateCategoryDropdownForInfra();
-
-//         alert("Category saved!");
-//     } catch (err) {
-//         console.error("Error adding category:", err);
-//         alert("Error adding category: " + err);
-//     } finally {
-//         // 🔄 Restore original button
-//         submitBtn.innerHTML = originalBtnHTML;
-//         submitBtn.disabled = false;
-//     }
-// });
 
 
 
@@ -249,7 +170,86 @@ document.addEventListener("DOMContentLoaded", renderCategoriesTable);
 
 
 
-// ----------- Add Category Handler with Loading Spinner + Saving Text -----------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 document.getElementById('categoryForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -258,7 +258,7 @@ document.getElementById('categoryForm')?.addEventListener('submit', async (e) =>
 
   const originalBtnHTML = submitBtn.innerHTML;
 
-  // 🟢 Show spinner + "Saving..." text + disable button
+  
   submitBtn.innerHTML = `
       <div class="spinner"></div>
       <span class="loading-text">Saving...</span>
@@ -266,7 +266,7 @@ document.getElementById('categoryForm')?.addEventListener('submit', async (e) =>
   submitBtn.disabled = true;
 
   const name = document.getElementById('categoryName').value.trim();
-  const legend = document.getElementById('categoryLegend').value; // ← get legend letter
+  const legend = document.getElementById('categoryLegend').value; 
 
   if (!name || !legend) {
     showModal('error', 'Please fill in all required fields.');
@@ -276,7 +276,7 @@ document.getElementById('categoryForm')?.addEventListener('submit', async (e) =>
   }
 
   try {
-    // Generate next category ID in format CAT-01, CAT-02, etc.
+    
     let nextNum = 1;
     const querySnapshot = await getDocs(collection(db, "Categories"));
     const existingIds = querySnapshot.docs
@@ -290,17 +290,17 @@ document.getElementById('categoryForm')?.addEventListener('submit', async (e) =>
     }
     const categoryId = `CAT-${String(nextNum).padStart(2, "0")}`;
 
-    // Save new category with legend
+    
     await addDoc(collection(db, "Categories"), {
       category_id: categoryId,
       name: name,
-      legend: legend, // ← store letter legend
+      legend: legend, 
       buildings: 0,
       is_deleted: false,
       createdAt: new Date()
     });
 
-    // Save Activity Log
+    
     await addDoc(collection(db, "ActivityLogs"), {
       timestamp: new Date(),
       activity: "Added Category",
@@ -308,7 +308,7 @@ document.getElementById('categoryForm')?.addEventListener('submit', async (e) =>
       description: `Added category "${name}" with legend "${legend}".`
     });
 
-    // ✅ Update StaticDataVersions/GlobalInfo
+    
     const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
     await updateDoc(staticDataRef, {
       categories_updated: true,
@@ -324,14 +324,14 @@ document.getElementById('categoryForm')?.addEventListener('submit', async (e) =>
     console.error("Error adding category:", err);
     showModal('error', 'Failed to save category. Please try again.');
   } finally {
-    // 🔄 Restore original button
+    
     submitBtn.innerHTML = originalBtnHTML;
     submitBtn.disabled = false;
   }
 });
 
 
-// ----------- Populate Legend Dropdown (A–Z) -----------
+
 async function populateLegendDropdown() {
   const legendSelect = document.getElementById("categoryLegend");
   legendSelect.innerHTML = "<option value=''>Select a letter</option>";
@@ -349,7 +349,7 @@ async function populateLegendDropdown() {
       option.textContent = letter;
 
       if (usedLetters.includes(letter)) {
-        option.disabled = true; // Disable if already used
+        option.disabled = true; 
         option.textContent = `${letter} (used)`;
       }
 
@@ -360,12 +360,12 @@ async function populateLegendDropdown() {
   }
 }
 
-// Call the function when the modal or form loads
+
 document.addEventListener("DOMContentLoaded", populateLegendDropdown);
 
 
 
-// ----------- Populate Category Dropdown for Infrastructure -----------
+
 async function populateCategoryDropdownForInfra() {
     const categorySelect = document.querySelector("#addInfraModal select");
     if (!categorySelect) return;
@@ -380,7 +380,7 @@ async function populateCategoryDropdownForInfra() {
             const option = document.createElement("option");
             option.value = data.category_id;
             option.textContent = data.name;
-            option.dataset.name = data.name; // ✅ save category name here
+            option.dataset.name = data.name; 
             categorySelect.appendChild(option);
         }
     });
@@ -388,9 +388,9 @@ async function populateCategoryDropdownForInfra() {
 
 
 
-// ======================= INFRASTRUCTURE SECTION =========================
 
-// ----------- Modal Controls -----------
+
+
 function showInfraModal() {
     document.getElementById('addInfraModal').style.display = 'flex';
     generateNextInfraId();
@@ -401,7 +401,7 @@ function hideInfraModal() {
 window.showInfraModal = showInfraModal;
 window.hideInfraModal = hideInfraModal;
 
-// ----------- Auto-Increment Infra ID -----------
+
 async function generateNextInfraId() {
     const q = query(collection(db, "Infrastructure"));
     const snapshot = await getDocs(q);
@@ -419,7 +419,7 @@ async function generateNextInfraId() {
     document.getElementById("infraId").value = nextId;
 }
 
-// ---------- Upload & Open Edit Modal ----------
+
 const uploadInput = document.getElementById("uploadImage");
 const uploadBox = document.querySelector(".upload-box");
 
@@ -442,9 +442,9 @@ let redoStack = [];
 let drawing = false;
 let startX = 0, startY = 0;
 
-const MAX_DIMENSION = 1024; // resize image to max 1024px width/height to stay under Firestore limit
+const MAX_DIMENSION = 1024; 
 
-// ---------- Open image ----------
+
 function openEditImageModal(file) {
     const url = URL.createObjectURL(file);
     originalImage = new Image();
@@ -469,14 +469,14 @@ uploadInput.addEventListener("change", () => {
     openEditImageModal(file);
 });
 
-// ---------- State management ----------
+
 function saveState() {
     undoStack.push(ctx.getImageData(0, 0, editCanvas.width, editCanvas.height));
     redoStack = [];
 }
 function restoreState(state) { ctx.putImageData(state, 0, 0); }
 
-// ---------- Draw overlay ----------
+
 function drawOverlay() {
     clearCanvas();
     ctx.drawImage(originalImage, 0, 0, editCanvas.width, editCanvas.height);
@@ -488,7 +488,7 @@ function drawOverlay() {
     ctx.restore();
 }
 
-// ---------- Apply blur ----------
+
 function blurRegion(x, y, w, h, blurPx) {
     const temp = document.createElement('canvas');
     temp.width = w; temp.height = h;
@@ -499,7 +499,7 @@ function blurRegion(x, y, w, h, blurPx) {
     ctx.drawImage(temp, 0, 0, w, h, x, y, w, h);
 }
 
-// ---------- Mouse Events ----------
+
 editCanvas.addEventListener('mousedown', e => {
     drawing = true;
     const rect = editCanvas.getBoundingClientRect();
@@ -531,7 +531,7 @@ window.addEventListener('mouseup', () => {
     }
 });
 
-// ---------- Undo / Redo ----------
+
 undoBtn.addEventListener('click', () => {
     if (undoStack.length > 1) {
         redoStack.push(undoStack.pop());
@@ -547,13 +547,13 @@ redoBtn.addEventListener('click', () => {
     appliedBlurs = [];
 });
 
-// ---------- Save ----------
+
 saveEditedImageBtn.addEventListener('click', () => {
     appliedBlurs.forEach(r => blurRegion(r.x, r.y, r.w, r.h, r.blur));
     manualRects = [];
     drawOverlay();
 
-    // Resize before saving to reduce Base64 size
+    
     const tempCanvas = document.createElement('canvas');
     const MAX_SAVE_DIM = 1024;
     let scale = Math.min(1, MAX_SAVE_DIM / Math.max(editCanvas.width, editCanvas.height));
@@ -562,7 +562,7 @@ saveEditedImageBtn.addEventListener('click', () => {
     const tctx = tempCanvas.getContext('2d');
     tctx.drawImage(editCanvas, 0, 0, tempCanvas.width, tempCanvas.height);
 
-    const base64 = tempCanvas.toDataURL('image/jpeg', 0.8); // compress 80%
+    const base64 = tempCanvas.toDataURL('image/jpeg', 0.8); 
     let existingImg = uploadBox.querySelector('img');
     if (!existingImg) {
         existingImg = document.createElement('img');
@@ -579,13 +579,13 @@ saveEditedImageBtn.addEventListener('click', () => {
     editImageModal.style.display = 'none';
 });
 
-// ---------- Cancel ----------
+
 cancelEditImageBtn.addEventListener('click', () => { editImageModal.style.display = 'none'; });
 
-// ---------- Blur range display ----------
+
 blurRange.addEventListener('input', () => { blurValue.textContent = blurRange.value + 'px'; });
 
-// ---------- Helpers ----------
+
 function clearCanvas() { ctx.clearRect(0, 0, editCanvas.width, editCanvas.height); }
 function dataURLtoFile(dataurl, filename) {
     const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1];
@@ -594,7 +594,7 @@ function dataURLtoFile(dataurl, filename) {
     return new File([u8arr], filename, { type: mime });
 }
 
-// ---------- Keyboard shortcuts ----------
+
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'z') undoBtn.click();
     if (e.ctrlKey && e.key === 'y') redoBtn.click();
@@ -606,10 +606,10 @@ document.querySelector("#addInfraModal form")?.addEventListener("submit", async 
     const submitBtn = e.target.querySelector(".save-btn");
     if (!submitBtn) return;
 
-    // 🌀 Save original button content
+    
     const originalBtnHTML = submitBtn.innerHTML;
 
-    // 🟢 Show spinner + "Saving..." text + disable button
+    
     submitBtn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Saving...</span>
@@ -667,7 +667,7 @@ document.querySelector("#addInfraModal form")?.addEventListener("submit", async 
         console.error("Error adding infrastructure:", err);
         showModal('error', 'Failed to save infrastructure. Please try again.');
     } finally {
-        // 🔄 Restore original button
+        
         submitBtn.innerHTML = originalBtnHTML;
         submitBtn.disabled = false;
     }
@@ -693,9 +693,9 @@ document.querySelector("#addInfraModal form")?.addEventListener("submit", async 
 
 
 
-let infraTableData = []; // Store loaded infra for filtering
+let infraTableData = []; 
 
-// Update renderInfraTable to store data for filtering
+
 async function renderInfraTable() {
     const tbody = document.querySelector(".infra-table tbody");
     if (!tbody) return;
@@ -726,20 +726,20 @@ async function renderInfraTable() {
             categories = (await catRes.json()).filter(d => !d.is_deleted);
         }
 
-        // Sort infrastructure by createdAt
+        
         infras.sort((a, b) => {
             const timeA = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
             const timeB = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
             return timeA - timeB;
         });
 
-        // Create category map
+        
         const catMap = {};
         categories.forEach(c => {
             catMap[c.category_id || c.id] = c.name;
         });
 
-        // Store for filtering
+        
         infraTableData = infras.map(data => ({
             ...data,
             categoryName: catMap[data.category_id] || "N/A"
@@ -754,7 +754,7 @@ async function renderInfraTable() {
     }
 }
 
-// Helper to render rows based on filtered data
+
 function renderInfraTableRows(data) {
     const tbody = document.querySelector(".infra-table tbody");
     if (!tbody) return;
@@ -783,7 +783,7 @@ document.getElementById("sortCategory").addEventListener("change", function() {
     if (sortVal) {
         filtered = filtered.filter(d => String(d.category_id).trim() === sortVal);
     }
-    // If search is active, filter by search too
+    
     const searchVal = document.getElementById("searchInput").value.trim().toLowerCase();
     if (searchVal) {
         filtered = filtered.filter(d =>
@@ -811,14 +811,14 @@ document.getElementById("sortCategory").addEventListener("change", function() {
 
 
 
-// Call on page load
+
 document.addEventListener("DOMContentLoaded", renderInfraTable);
 
 
 
-// ======================= ROOM SECTION =========================
 
-// ----------- Modal Controls -----------
+
+
 function showRoomModal() {
     document.getElementById('addRoomModal').style.display = 'flex';
     generateNextRoomId();
@@ -830,7 +830,7 @@ function hideRoomModal() {
 window.showRoomModal = showRoomModal;
 window.hideRoomModal = hideRoomModal;
 
-// ----------- Auto-Increment Indoor ID (always IND) -----------
+
 async function generateNextRoomId() {
   const q = query(collection(db, "IndoorInfrastructure"));
   const snapshot = await getDocs(q);
@@ -839,20 +839,20 @@ async function generateNextRoomId() {
   snapshot.forEach(doc => {
     const data = doc.data();
     if (data.room_id) {
-      // Always strip RM- or IND- just in case old data exists
+      
       const num = parseInt(data.room_id.replace(/^RM-|^IND-/, ""));
       if (!isNaN(num) && num > maxNum) maxNum = num;
     }
   });
 
-  // Always use IND as prefix
+  
   const nextId = `IND-${String(maxNum + 1).padStart(3, "0")}`;
   document.getElementById("roomId").value = nextId;
 }
 
 
 
-// ----------- Populate Infrastructure Dropdown for Rooms -----------
+
 async function populateInfraDropdownForRooms() {
     const select = document.querySelector("#addRoomModal select");
     if (!select) return;
@@ -860,7 +860,7 @@ async function populateInfraDropdownForRooms() {
     select.innerHTML = `<option value="">Select an infrastructure</option>`;
 
     try {
-        // Step 1: Fetch categories so we can translate IDs → names
+        
         const categoriesSnapshot = await getDocs(collection(db, "Categories"));
         const categoryMap = {};
         categoriesSnapshot.forEach(doc => {
@@ -870,17 +870,17 @@ async function populateInfraDropdownForRooms() {
             }
         });
 
-        // Step 2: Fetch infrastructures
+        
         const q = query(collection(db, "Infrastructure"), orderBy("createdAt", "asc"));
         const snapshot = await getDocs(q);
 
         snapshot.forEach(doc => {
             const data = doc.data();
 
-            // Look up category name using category_id
+            
             const categoryName = categoryMap[data.category_id] || null;
 
-            // ✅ Only include if under Academics or Administration Offices
+            
             if (
                 data.infra_id &&
                 data.name &&
@@ -889,8 +889,8 @@ async function populateInfraDropdownForRooms() {
                 const option = document.createElement("option");
                 option.value = data.infra_id;
                 option.textContent = data.name;
-                option.dataset.name = data.name; // ✅ save infra name
-                option.dataset.category = categoryName; // ✅ save category too
+                option.dataset.name = data.name; 
+                option.dataset.category = categoryName; 
                 select.appendChild(option);
             }
         });
@@ -909,28 +909,28 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
 
     const originalBtnHTML = submitBtn.innerHTML;
 
-    // 🟢 Show spinner + "Saving..." text + disable button
+    
     submitBtn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Saving...</span>
     `;
     submitBtn.disabled = true;
 
-    // Indoor Infrastructure Name
+    
     const name = document.querySelector('#addRoomModal input[placeholder="e.g. Lecture Room 1"]')?.value.trim();
 
-    // Indoor Infrastructure ID
+    
     const roomId = document.querySelector('#addRoomModal input[name="room_id"]')?.value.trim();
 
-    // Infrastructure dropdown
+    
     const infraSelect = document.querySelectorAll('#addRoomModal select')[0];
     const infraId = infraSelect?.value || "";
     const infraName = infraSelect?.selectedOptions[0]?.dataset.name || infraId;
 
-    // Indoor Type dropdown
+    
     const indoorType = document.querySelectorAll('#addRoomModal select')[1]?.value || "";
 
-    // Validation
+    
     if (!name || !roomId || !infraId || !indoorType) {
         showModal('error', 'Please fill in all required fields.');
         submitBtn.innerHTML = originalBtnHTML;
@@ -939,7 +939,7 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
     }
 
     try {
-        // Save into IndoorInfrastructure collection
+        
         await addDoc(collection(db, "IndoorInfrastructure"), {
             room_id: roomId,
             name: name,
@@ -949,7 +949,13 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
             createdAt: new Date()
         });
 
-        // Save Activity Log
+        
+        const staticDocRef = doc(db, "StaticDataVersions", "GlobalInfo");
+        await updateDoc(staticDocRef, {
+            indoor_infrastructure_updated: true
+        });
+
+        
         await addDoc(collection(db, "ActivityLogs"), {
             timestamp: new Date(),
             activity: "Added Indoor Infrastructure",
@@ -957,11 +963,11 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
             description: `Added "${name}" under infrastructure "${infraName}" (Type: ${indoorType}).`
         });
 
-        // ✅ Clear form fields
+        
         e.target.reset();
         document.querySelector('#addRoomModal input[name="room_id"]').value = "";
 
-        // ✅ Hide modal + refresh table
+        
         hideRoomModal();
         renderRoomsTable();
 
@@ -971,7 +977,7 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
         console.error("Error adding infrastructure:", err);
         showModal('error', 'Failed to save room. Please try again.');
     } finally {
-        // 🔄 Restore button
+        
         submitBtn.innerHTML = originalBtnHTML;
         submitBtn.disabled = false;
     }
@@ -981,14 +987,15 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
 
 
 
+
 let roomsTableData = [];
 
-// ----------- Load Indoor Infrastructure Table (ignore deleted) -----------
+
 async function renderRoomsTable() {
   const tbody = document.querySelector(".rooms-table tbody");
   if (!tbody) return;
 
-  // 🌀 STEP 1: Show loader before anything else
+  
   tbody.innerHTML = `
     <tr>
       <td colspan="5" class="table-loader">
@@ -998,19 +1005,38 @@ async function renderRoomsTable() {
   `;
 
   try {
-    // Load Indoor Infrastructure
-    const indoorSnap = await getDocs(collection(db, "IndoorInfrastructure"));
-    const rooms = indoorSnap.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(r => !r.is_deleted);
+    let rooms = [];
+    let infrastructures = [];
 
-    // Load Infrastructure
-    const infraSnap = await getDocs(collection(db, "Infrastructure"));
-    const infrastructures = infraSnap.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(i => !i.is_deleted);
+    
+    if (navigator.onLine) {
+      const indoorSnap = await getDocs(collection(db, "IndoorInfrastructure"));
+      rooms = indoorSnap.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(r => !r.is_deleted);
 
-    // Build infra map
+      const infraSnap = await getDocs(collection(db, "Infrastructure"));
+      infrastructures = infraSnap.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .filter(i => !i.is_deleted);
+    } 
+    
+    else {
+      const [indoorRes, infraRes] = await Promise.all([
+        fetch("../assets/firestore/IndoorInfrastructure.json"),
+        fetch("../assets/firestore/Infrastructure.json"),
+      ]);
+
+      const [indoorData, infraData] = await Promise.all([
+        indoorRes.json(),
+        infraRes.json(),
+      ]);
+
+      rooms = indoorData.filter(r => !r.is_deleted);
+      infrastructures = infraData.filter(i => !i.is_deleted);
+    }
+
+    
     const infraMap = {};
     infrastructures.forEach(infra => {
       const key = infra.infra_id?.trim() || infra.id;
@@ -1019,7 +1045,7 @@ async function renderRoomsTable() {
       }
     });
 
-    // Store for filtering/searching
+    
     roomsTableData = rooms.map(room => {
       const infraKey =
         room.infra_id?.trim() || room.infrastructure_id?.trim() || "";
@@ -1029,7 +1055,7 @@ async function renderRoomsTable() {
       };
     });
 
-    // Sort by createdAt
+    
     roomsTableData.sort((a, b) => {
       const timeA = a.createdAt?.seconds
         ? a.createdAt.seconds * 1000
@@ -1044,7 +1070,7 @@ async function renderRoomsTable() {
       return timeA - timeB;
     });
 
-    // STEP 2: Render table rows after data loads
+    
     renderRoomsTableRows(roomsTableData);
   } catch (err) {
     console.error("❌ Error loading Indoor Infrastructure: ", err);
@@ -1077,10 +1103,10 @@ function renderRoomsTableRows(data) {
   data.forEach(room => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${room.room_id}</td>
-      <td>${room.name}</td>
-      <td>${room.infraName}</td>
-      <td>${room.indoor_type || ""}</td>
+      <td>${room.room_id || room.id || "—"}</td>
+      <td>${room.name || "—"}</td>
+      <td>${room.infraName || "—"}</td>
+      <td>${room.indoor_type || "—"}</td>
       <td class="actions">
         <button class="edit"><i class="fas fa-edit"></i></button>
         <button class="delete"><i class="fas fa-trash"></i></button>
@@ -1090,7 +1116,7 @@ function renderRoomsTableRows(data) {
   });
 }
 
-// Call on page load
+
 document.addEventListener("DOMContentLoaded", renderRoomsTable);
 
 
@@ -1099,7 +1125,8 @@ document.addEventListener("DOMContentLoaded", renderRoomsTable);
 
 
 
-// ----------- Edit Room Modal Open Handler with Loading Icon -----------
+
+
 document.querySelector(".rooms-table").addEventListener("click", async (e) => {
     const button = e.target.closest("button.edit");
     const icon = e.target.closest("i.fa-edit");
@@ -1112,7 +1139,7 @@ document.querySelector(".rooms-table").addEventListener("click", async (e) => {
     const roomId = row.querySelector("td")?.textContent?.trim();
     if (!roomId) return;
 
-    // 🌀 Replace icon with spinner
+    
     const originalIconHTML = icon?.outerHTML || button?.innerHTML;
     if (icon) {
         icon.outerHTML = `<div class="spinner"></div>`;
@@ -1121,7 +1148,7 @@ document.querySelector(".rooms-table").addEventListener("click", async (e) => {
     }
 
     try {
-        // Fetch room data from IndoorInfrastructure
+        
         const roomQ = query(collection(db, "IndoorInfrastructure"), where("room_id", "==", roomId));
         const snap = await getDocs(roomQ);
 
@@ -1133,7 +1160,7 @@ document.querySelector(".rooms-table").addEventListener("click", async (e) => {
         const docSnap = snap.docs[0];
         const roomData = docSnap.data();
 
-        // Populate dropdowns and set values
+        
         await populateEditRoomInfraDropdown(roomData.infra_id);
         document.getElementById("editRoomInfra").value = roomData.infra_id ?? "";
         document.getElementById("editRoomType").value = roomData.indoor_type ?? "";
@@ -1141,20 +1168,20 @@ document.querySelector(".rooms-table").addEventListener("click", async (e) => {
         document.getElementById("editRoomName").value = roomData.name ?? "";
         document.getElementById("editRoomForm").dataset.docId = docSnap.id;
 
-        // Show modal
+        
         document.getElementById("editRoomModal").style.display = "flex";
     } catch (err) {
         console.error("Error opening edit room modal:", err);
         showModal('error', 'Failed to load room data.');
     } finally {
-        // 🔄 Restore original icon
+        
         if (icon) icon.outerHTML = originalIconHTML;
         if (button) button.innerHTML = originalIconHTML;
     }
 });
 
 
-// ----------- Populate Infrastructure Dropdown for Edit Room Modal -----------
+
 async function populateEditRoomInfraDropdown(selectedId) {
     const select = document.getElementById("editRoomInfra");
     if (!select) return;
@@ -1170,7 +1197,7 @@ async function populateEditRoomInfraDropdown(selectedId) {
             select.appendChild(option);
         }
     });
-    // Set selected value after options are loaded
+    
     if (selectedId) select.value = selectedId;
 }
 
@@ -1181,7 +1208,7 @@ async function populateEditRoomInfraDropdown(selectedId) {
 
 
 
-// ----------- Save Edited Room with Loading Button -----------
+
 document.getElementById("editRoomForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -1203,7 +1230,7 @@ document.getElementById("editRoomForm").addEventListener("submit", async (e) => 
         return;
     }
 
-    // 🌀 Show loading on the button
+    
     const originalBtnHTML = saveBtn.innerHTML;
     saveBtn.innerHTML = `<div class="spinner"></div> Saving...`;
     saveBtn.disabled = true;
@@ -1227,7 +1254,7 @@ document.getElementById("editRoomForm").addEventListener("submit", async (e) => 
         showModal('error', 'Failed to update room. Please try again.');
         console.error(err);
     } finally {
-        // 🔄 Restore button
+        
         saveBtn.innerHTML = originalBtnHTML;
         saveBtn.disabled = false;
         saveBtn.style.opacity = 1;
@@ -1258,13 +1285,13 @@ document.getElementById("cancelEditRoomBtn").addEventListener("click", () => {
 
 
 
-// ======================= MAPS SECTION =========================
 
-// ----------- Modal Controls -----------
+
+
 async function showMapModal() {
     document.getElementById('addMapModal').style.display = 'flex';
 
-    // ✅ Generate next ID and put it in the input
+    
     const nextId = await generateNextMapId();
     document.getElementById("mapId").value = nextId;
 
@@ -1278,7 +1305,7 @@ function hideMapModal() {
 window.showMapModal = showMapModal;
 window.hideMapModal = hideMapModal;
 
-// ----------- Auto-Increment Map ID (safe + numeric) -----------
+
 async function generateNextMapId() {
     const snapshot = await getDocs(collection(db, "MapVersions"));
 
@@ -1293,13 +1320,13 @@ async function generateNextMapId() {
         }
     });
 
-    // ✅ If no maps exist, return MAP-01, otherwise increment
+    
     return `MAP-${String(maxNum + 1).padStart(2, "0")}`;
 }
 
 
 
-// ----------- Populate Campus Included Select -----------
+
 async function populateCampusIncludedSelect() {
     const select = document.getElementById("campusIncludedSelect");
     if (!select) return;
@@ -1329,7 +1356,7 @@ async function populateCampusIncludedSelect() {
 
 
 
-// ----------- Add Map Handler with Loading Spinner + Saving Text -----------
+
 document.querySelector("#addMapModal form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -1338,7 +1365,7 @@ document.querySelector("#addMapModal form")?.addEventListener("submit", async (e
 
     const originalBtnHTML = submitBtn.innerHTML;
 
-    // 🟢 Show spinner + "Saving..." text + disable button
+    
     submitBtn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Saving...</span>
@@ -1358,7 +1385,7 @@ document.querySelector("#addMapModal form")?.addEventListener("submit", async (e
     }
 
     try {
-        // Generate next document ID
+        
         const mapsSnap = await getDocs(collection(db, "MapVersions"));
         const existingDocNumbers = mapsSnap.docs
             .map(doc => doc.id)
@@ -1368,7 +1395,7 @@ document.querySelector("#addMapModal form")?.addEventListener("submit", async (e
         const nextNum = existingDocNumbers.length > 0 ? Math.max(...existingDocNumbers) + 1 : 1;
         const newDocId = `MAP-${nextNum.toString().padStart(2, "0")}`;
 
-        // Create the new document
+        
         const mapRef = doc(db, "MapVersions", newDocId);
         await setDoc(mapRef, {
             map_id: newDocId,
@@ -1378,13 +1405,13 @@ document.querySelector("#addMapModal form")?.addEventListener("submit", async (e
             current_version: "v1.0.0"
         });
 
-        // Initial version
+        
         await setDoc(doc(db, "MapVersions", newDocId, "versions", "v1.0.0"), {
             nodes: [],
             edges: []
         });
 
-        // Add simplified record
+        
         await addDoc(collection(db, "Maps"), {
             map_id: newDocId,
             map_name: mapName,
@@ -1392,7 +1419,7 @@ document.querySelector("#addMapModal form")?.addEventListener("submit", async (e
             createdAt: new Date()
         });
 
-        // Activity Log
+        
         await addDoc(collection(db, "ActivityLogs"), {
             timestamp: new Date(),
             activity: "Added Map",
@@ -1402,7 +1429,7 @@ document.querySelector("#addMapModal form")?.addEventListener("submit", async (e
 
         e.target.reset();
 
-        // Reset dropdown UI
+        
         document.getElementById("selectedCampuses").textContent = "Select campuses...";
         campusDropdown?.querySelectorAll(".option").forEach(opt => opt.classList.remove("selected"));
 
@@ -1413,7 +1440,7 @@ document.querySelector("#addMapModal form")?.addEventListener("submit", async (e
         console.error("Error creating map:", err);
         showModal('error', 'Failed to save Map. Please try again.');
     } finally {
-        // 🔄 Restore button
+        
         submitBtn.innerHTML = originalBtnHTML;
         submitBtn.disabled = false;
     }
@@ -1433,7 +1460,7 @@ async function populateCampusDropdown() {
   optionsList.innerHTML = "";
   let selectedValues = [];
 
-  // Fetch campuses
+  
   const q = query(collection(db, "Campus"), orderBy("createdAt", "asc"));
   const snapshot = await getDocs(q);
 
@@ -1458,7 +1485,7 @@ async function populateCampusDropdown() {
           selectedValues = selectedValues.filter(v => v !== value);
         }
 
-        // Update display
+        
         selectedDisplay.textContent =
           selectedValues.length > 0
             ? selectedValues.join(", ")
@@ -1469,21 +1496,21 @@ async function populateCampusDropdown() {
     }
   });
 
-  // Toggle open/close
+  
   container.addEventListener("click", (e) => {
     if (!e.target.closest(".options-list")) {
       container.classList.toggle("open");
     }
   });
 
-  // Close if click outside
+  
   document.addEventListener("click", (e) => {
     if (!container.contains(e.target)) {
       container.classList.remove("open");
     }
   });
 
-  // Expose getter
+  
   container.getSelectedValues = () => selectedValues;
 }
 
@@ -1492,12 +1519,12 @@ populateCampusDropdown();
 
 let mapsTableData = [];
 
-// ----------- Load Maps Table (with current_version) -----------
+
 async function renderMapsTable() {
   const tbody = document.querySelector(".maps-table tbody");
   if (!tbody) return;
 
-  // 🌀 Show table loader before fetching
+  
   tbody.innerHTML = `
     <tr>
       <td colspan="5" class="table-loader">
@@ -1527,7 +1554,7 @@ async function renderMapsTable() {
       campuses = await campusRes.json();
     }
 
-    // ===== Sort maps by createdAt =====
+    
     maps.sort((a, b) => {
       const tA = a.createdAt?.seconds
         ? a.createdAt.seconds * 1000
@@ -1538,11 +1565,11 @@ async function renderMapsTable() {
       return tA - tB;
     });
 
-    // ===== Build campus lookup =====
+    
     const campusMap = {};
     campuses.forEach(c => (campusMap[c.campus_id || c.id] = c.campus_name));
 
-    // ===== Store for search/filter =====
+    
     mapsTableData = maps.map(data => ({
       ...data,
       campusNames:
@@ -1565,7 +1592,7 @@ async function renderMapsTable() {
   }
 }
 
-// ----------- Render Rows -----------
+
 function renderMapsTableRows(data) {
   const tbody = document.querySelector(".maps-table tbody");
   if (!tbody) return;
@@ -1598,15 +1625,15 @@ function renderMapsTableRows(data) {
   });
 }
 
-// Call on page load
+
 document.addEventListener("DOMContentLoaded", renderMapsTable);
 
 
 
 
-// ======================= CAMPUS SECTION =========================
 
-// ----------- Modal Controls -----------
+
+
 function showCampusModal() {
     document.getElementById('addCampusModal').style.display = 'flex';
     generateNextCampusId();
@@ -1618,7 +1645,7 @@ function hideCampusModal() {
 window.showCampusModal = showCampusModal;
 window.hideCampusModal = hideCampusModal;
 
-// ----------- Auto-Increment Campus ID -----------
+
 async function generateNextCampusId() {
     const q = query(collection(db, "Campus"));
     const snapshot = await getDocs(q);
@@ -1636,7 +1663,7 @@ async function generateNextCampusId() {
     document.getElementById("campusId").value = nextId;
 }
 
-// ----------- Populate Map Select -----------
+
 async function populateMapSelect() {
     const select = document.getElementById("mapSelect");
     if (!select) return;
@@ -1649,13 +1676,13 @@ async function populateMapSelect() {
             const option = document.createElement("option");
             option.value = data.map_id;
             option.textContent = data.map_name;
-            option.dataset.mapName = data.map_name; // ✅ keep map name for logging
+            option.dataset.mapName = data.map_name; 
             select.appendChild(option);
         }
     });
 }
 
-// ----------- Add Campus Handler with Loading Spinner + Saving Text -----------
+
 document.querySelector("#addCampusModal form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -1664,7 +1691,7 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
 
     const originalBtnHTML = submitBtn.innerHTML;
 
-    // 🟢 Show spinner + "Saving..." text + disable button
+    
     submitBtn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Saving...</span>
@@ -1685,7 +1712,7 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
     }
 
     try {
-        // ✅ Save Campus
+        
         await addDoc(collection(db, "Campus"), {
             campus_id: campusId,
             campus_name: campusName,
@@ -1693,7 +1720,7 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
             createdAt: new Date()
         });
 
-        // ✅ Save Activity Log
+        
         await addDoc(collection(db, "ActivityLogs"), {
             timestamp: new Date(),
             activity: "Added Campus",
@@ -1701,7 +1728,7 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
             description: `Added campus "${campusName}" under map "${mapName}".`
         });
 
-        // ✅ Update StaticDataVersions/GlobalInfo after saving
+        
         const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
         await updateDoc(staticDataRef, { campus_updated: true });
 
@@ -1713,7 +1740,7 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
         console.error("Error saving campus:", err);
         showModal('error', 'Failed to save campus. Please try again.');
     } finally {
-        // 🔄 Restore button
+        
         submitBtn.innerHTML = originalBtnHTML;
         submitBtn.disabled = false;
     }
@@ -1725,12 +1752,12 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
 
 let campusTableData = [];
 
-// ----------- Load Campus Table -----------
+
 async function renderCampusTable() {
   const tbody = document.querySelector(".campus-table tbody");
   if (!tbody) return;
 
-  // 🌀 Show table loader before fetching
+  
   tbody.innerHTML = `
     <tr>
       <td colspan="4" class="table-loader">
@@ -1762,7 +1789,7 @@ async function renderCampusTable() {
       maps = (await mapsRes.json()).filter(m => !m.is_deleted);
     }
 
-    // ===== Sort campuses by createdAt =====
+    
     campuses.sort((a, b) => {
       const tA = a.createdAt?.seconds
         ? a.createdAt.seconds * 1000
@@ -1773,11 +1800,11 @@ async function renderCampusTable() {
       return tA - tB;
     });
 
-    // ===== Build map lookup =====
+    
     const mapMap = {};
     maps.forEach(m => (mapMap[m.map_id || m.id] = m.map_name));
 
-    // ===== Store for search/filter =====
+    
     campusTableData = campuses.map(data => ({
       ...data,
       mapName: mapMap[data.map_id] || data.map_id || "—",
@@ -1797,7 +1824,7 @@ async function renderCampusTable() {
   }
 }
 
-// ----------- Render Rows -----------
+
 function renderCampusTableRows(data) {
   const tbody = document.querySelector(".campus-table tbody");
   if (!tbody) return;
@@ -1829,7 +1856,7 @@ function renderCampusTableRows(data) {
   });
 }
 
-// Call on page load
+
 document.addEventListener("DOMContentLoaded", renderCampusTable);
 
 
@@ -1838,9 +1865,9 @@ document.addEventListener("DOMContentLoaded", renderCampusTable);
 
 
 
-// ======================= EDIT CATEGORY SECTION =========================
 
-// ----------- Open Edit Category Modal on Table Click (with Loading Icon) -----------
+
+
 document.querySelector("#categoriesTableBody").addEventListener("click", async (e) => {
     const button = e.target.closest("button.edit");
     const icon = e.target.closest("i.fa-edit");
@@ -1850,10 +1877,10 @@ document.querySelector("#categoriesTableBody").addEventListener("click", async (
     const row = e.target.closest("tr");
     if (!row) return;
 
-    const docId = row.dataset.id; // ✅ direct from row
+    const docId = row.dataset.id; 
     if (!docId) return;
 
-    // 🌀 Replace icon with spinner
+    
     const originalIconHTML = icon?.outerHTML || button?.innerHTML;
     if (icon) {
         icon.outerHTML = `<div class="spinner"></div>`;
@@ -1868,19 +1895,19 @@ document.querySelector("#categoriesTableBody").addEventListener("click", async (
         if (!docSnap.exists()) return;
         const data = docSnap.data();
 
-        // Prefill form fields
+        
         document.getElementById("editCategoryName").value = data.name ?? "";
         document.getElementById("editCategoryColor").value = data.color ?? "#000000";
 
-        // Store docId in form for update
+        
         document.getElementById("editCategoryForm").dataset.docId = docId;
 
-        // Show modal
+        
         document.getElementById("editCategoryModal").style.display = "flex";
     } catch (err) {
         console.error("Error opening edit category modal:", err);
     } finally {
-        // 🔄 Restore original icon
+        
         if (icon) icon.outerHTML = originalIconHTML;
         if (button) button.innerHTML = originalIconHTML;
     }
@@ -1888,7 +1915,7 @@ document.querySelector("#categoriesTableBody").addEventListener("click", async (
 
 
 
-// ----------- Save Edited Category with Loading Button -----------
+
 document.getElementById("editCategoryForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -1908,7 +1935,7 @@ document.getElementById("editCategoryForm").addEventListener("submit", async (e)
         return;
     }
 
-    // 🌀 Show loading spinner and "Saving..." text
+    
     const originalBtnHTML = saveBtn.innerHTML;
     saveBtn.innerHTML = `<div class="spinner"></div><span class="saving-text">Saving...</span>`;
     saveBtn.disabled = true;
@@ -1933,7 +1960,7 @@ document.getElementById("editCategoryForm").addEventListener("submit", async (e)
         showModal('error', 'Failed to update category. Please try again.');
         console.error(err);
     } finally {
-        // 🔄 Restore button
+        
         saveBtn.innerHTML = originalBtnHTML;
         saveBtn.disabled = false;
         saveBtn.style.opacity = 1;
@@ -1941,12 +1968,12 @@ document.getElementById("editCategoryForm").addEventListener("submit", async (e)
     }
 });
 
-// ----------- Cancel Button for Edit Modal -----------
+
 document.getElementById("cancelEditCategoryBtn").addEventListener("click", () => {
     document.getElementById("editCategoryModal").style.display = "none";
 });
 
-// ----------- Close Modal When Clicking Outside -----------
+
 document.getElementById("editCategoryModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("editCategoryModal")) {
         document.getElementById("editCategoryModal").style.display = "none";
@@ -1968,9 +1995,9 @@ document.getElementById("editCategoryModal").addEventListener("click", (e) => {
 
 
 
-// ======================= EDIT MAP SECTION =========================
 
-// ----------- Open Edit Map Modal (with Loading Icon) -----------
+
+
 document.querySelector(".maps-table tbody").addEventListener("click", async (e) => {
     const button = e.target.closest("button.edit");
     const icon = e.target.closest("i.fa-edit");
@@ -1983,7 +2010,7 @@ document.querySelector(".maps-table tbody").addEventListener("click", async (e) 
     const mapId = button?.dataset.id || row.dataset.id;
     if (!mapId) return;
 
-    // 🌀 Replace icon with spinner
+    
     const originalIconHTML = icon?.outerHTML || button?.innerHTML;
     if (icon) {
         icon.outerHTML = `<div class="spinner"></div>`;
@@ -1998,35 +2025,35 @@ document.querySelector(".maps-table tbody").addEventListener("click", async (e) 
 
         const mapData = mapSnap.data();
 
-        // Prefill Map Name
+        
         document.getElementById("editMapName").value = mapData.map_name || "";
 
-        // Populate Campus Dropdown and preselect included campuses
+        
         await populateEditCampusDropdown(mapData.campus_included || []);
 
-        // Store docId for saving
+        
         document.getElementById("editMapForm").dataset.docId = mapId;
 
-        // Show modal
+        
         document.getElementById("editMapModal").style.display = "flex";
     } catch (err) {
         console.error("Error opening edit map modal:", err);
     } finally {
-        // 🔄 Restore original icon
+        
         if (icon) icon.outerHTML = originalIconHTML;
         if (button) button.innerHTML = originalIconHTML;
     }
 });
 
 
-// ----------- Populate Campus Dropdown for Edit Modal (same as your Add Map dropdown) -----------
+
 async function populateEditCampusDropdown(selectedCampuses = []) {
     const container = document.getElementById("editCampusDropdown");
     const optionsList = document.getElementById("editCampusOptions");
     const selectedDisplay = document.getElementById("editSelectedCampuses");
 
     optionsList.innerHTML = "";
-    let selectedValues = [...selectedCampuses]; // preselected
+    let selectedValues = [...selectedCampuses]; 
 
     const q = query(collection(db, "Campus"), orderBy("createdAt", "asc"));
     const snapshot = await getDocs(q);
@@ -2061,14 +2088,14 @@ async function populateEditCampusDropdown(selectedCampuses = []) {
         }
     });
 
-    // Toggle dropdown open/close
+    
     container.addEventListener("click", (e) => {
         if (!e.target.closest(".options-list")) {
             container.classList.toggle("open");
         }
     });
 
-    // Close if click outside
+    
     document.addEventListener("click", (e) => {
         if (!container.contains(e.target)) container.classList.remove("open");
     });
@@ -2079,7 +2106,7 @@ async function populateEditCampusDropdown(selectedCampuses = []) {
 }
 
 
-// ----------- Save Edited Map with Loading Button -----------
+
 document.getElementById("editMapForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -2094,7 +2121,7 @@ document.getElementById("editMapForm").addEventListener("submit", async (e) => {
 
     if (!mapName) return showModal('error', 'Please enter a map name.');
 
-    // 🌀 Show loading spinner and "Saving..." text
+    
     const originalBtnHTML = saveBtn.innerHTML;
     saveBtn.innerHTML = `<div class="spinner"></div><span class="saving-text">Saving...</span>`;
     saveBtn.disabled = true;
@@ -2116,7 +2143,7 @@ document.getElementById("editMapForm").addEventListener("submit", async (e) => {
         showModal('error', 'Failed to update map. Please try again.');
         console.error(err);
     } finally {
-        // 🔄 Restore button
+        
         saveBtn.innerHTML = originalBtnHTML;
         saveBtn.disabled = false;
         saveBtn.style.opacity = 1;
@@ -2125,12 +2152,12 @@ document.getElementById("editMapForm").addEventListener("submit", async (e) => {
 });
 
 
-// ----------- Cancel Button -----------
+
 document.getElementById("cancelEditMapBtn").addEventListener("click", () => {
     document.getElementById("editMapModal").style.display = "none";
 });
 
-// ----------- Close Modal on Outside Click -----------
+
 document.getElementById("editMapModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("editMapModal")) {
         document.getElementById("editMapModal").style.display = "none";
@@ -2140,7 +2167,7 @@ document.getElementById("editMapModal").addEventListener("click", (e) => {
 
 
 
-// ----------- Open Edit Campus Modal (with Loading Icon) -----------
+
 document.querySelector(".campus-table tbody").addEventListener("click", async (e) => {
     const button = e.target.closest("button.edit");
     const icon = e.target.closest("i.fa-edit");
@@ -2153,7 +2180,7 @@ document.querySelector(".campus-table tbody").addEventListener("click", async (e
     const campusId = row.querySelector("td")?.textContent?.trim();
     if (!campusId) return;
 
-    // 🌀 Replace icon with spinner
+    
     const originalIconHTML = icon?.outerHTML || button?.innerHTML;
     if (icon) {
         icon.outerHTML = `<div class="spinner"></div>`;
@@ -2169,36 +2196,36 @@ document.querySelector(".campus-table tbody").addEventListener("click", async (e
         const docSnap = snap.docs[0];
         const data = docSnap.data();
 
-        // Prefill fields
+        
         document.getElementById("editCampusId").value = data.campus_id || "";
         document.getElementById("editCampusName").value = data.campus_name || "";
 
-        // Populate map dropdown and preselect current map
+        
         await populateEditMapSelect(data.map_id);
 
-        // Store docId for updating
+        
         document.getElementById("editCampusForm").dataset.docId = docSnap.id;
 
-        // ✅ Update StaticDataVersions/GlobalInfo after saving or updating a node
+        
         const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
         await updateDoc(staticDataRef, {
             campus_updated: true,
         });
 
-        // Show modal
+        
         document.getElementById("editCampusModal").style.display = "flex";
     } catch (err) {
         console.error("Error opening edit campus modal:", err);
         showModal('error', 'PError opening edit campus modal.');
     } finally {
-        // 🔄 Restore original icon
+        
         if (icon) icon.outerHTML = originalIconHTML;
         if (button) button.innerHTML = originalIconHTML;
     }
 });
 
 
-// ----------- Populate Map Dropdown for Edit Modal -----------
+
 async function populateEditMapSelect(selectedMapId = "") {
     const select = document.getElementById("editMapSelect");
     if (!select) return;
@@ -2220,7 +2247,7 @@ async function populateEditMapSelect(selectedMapId = "") {
     });
 }
 
-// ----------- Save Edited Campus with Loading Button -----------
+
 document.getElementById("editCampusForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -2239,7 +2266,7 @@ document.getElementById("editCampusForm").addEventListener("submit", async (e) =
         return;
     }
 
-    // 🌀 Show loading spinner and "Saving..." text
+    
     const originalBtnHTML = saveBtn.innerHTML;
     saveBtn.innerHTML = `<div class="spinner"></div><span class="saving-text">Saving...</span>`;
     saveBtn.disabled = true;
@@ -2253,7 +2280,7 @@ document.getElementById("editCampusForm").addEventListener("submit", async (e) =
             updatedAt: new Date()
         });
 
-        // Log activity
+        
         await addDoc(collection(db, "ActivityLogs"), {
             timestamp: new Date(),
             activity: "Edited Campus",
@@ -2269,7 +2296,7 @@ document.getElementById("editCampusForm").addEventListener("submit", async (e) =
         showModal('error', 'Failed to update campus. Please try again.');
         console.error(err);
     } finally {
-        // 🔄 Restore button
+        
         saveBtn.innerHTML = originalBtnHTML;
         saveBtn.disabled = false;
         saveBtn.style.opacity = 1;
@@ -2278,12 +2305,12 @@ document.getElementById("editCampusForm").addEventListener("submit", async (e) =
 });
 
 
-// ----------- Cancel Button -----------
+
 document.getElementById("cancelEditCampusBtn").addEventListener("click", () => {
     document.getElementById("editCampusModal").style.display = "none";
 });
 
-// ----------- Close Modal on Outside Click -----------
+
 document.getElementById("editCampusModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("editCampusModal")) {
         document.getElementById("editCampusModal").style.display = "none";
@@ -2309,9 +2336,9 @@ document.getElementById("editCampusModal").addEventListener("click", (e) => {
 
 
 
-// ======================= UI & TAB CONTROLS =========================
 
-// ----------- Initial Data Load -----------
+
+
 window.onload = () => {
     populateCategoryDropdownForInfra();
 
@@ -2320,7 +2347,7 @@ window.onload = () => {
     renderCampusTable();
 };
 
-// ----------- Tab Switching Logic -----------
+
 const tabs = document.querySelectorAll('.tab');
 const tables = {
     infratbl: document.querySelector('.infratbl'),
@@ -2328,7 +2355,7 @@ const tables = {
     categoriestbl: document.querySelector('.categoriestbl')
 };
 const addButton = document.querySelector('.addbtn button');
-const breadcrumbDetail = document.querySelector('.span-details'); // breadcrumb span
+const breadcrumbDetail = document.querySelector('.span-details'); 
 
 const buttonTexts = {
     infratbl: 'Add Infrastructure',
@@ -2336,14 +2363,14 @@ const buttonTexts = {
     categoriestbl: 'Add Category'
 };
 
-// Add to your tables and buttonTexts objects:
+
 tables.maptbl = document.querySelector('.maptbl');
 tables.campustbl = document.querySelector('.campustbl');
 
 buttonTexts.maptbl = 'Add Map';
 buttonTexts.campustbl = 'Add Campus';
 
-// New object for breadcrumb text
+
 const breadcrumbTexts = {
     infratbl: 'Infrastructure',
     roomstbl: 'Indoor Infrastructure',
@@ -2363,12 +2390,12 @@ tabs.forEach(tab => {
         if (tables[target]) tables[target].style.display = '';
         if (buttonTexts[target]) addButton.textContent = buttonTexts[target];
 
-        // ✅ Update breadcrumb text with a space before
+        
         if (breadcrumbTexts[target]) breadcrumbDetail.textContent = ' ' + breadcrumbTexts[target];
     });
 });
 
-// ----------- Add Button Handler -----------
+
 addButton.addEventListener('click', () => {
     if (addButton.textContent === 'Add Infrastructure') {
         showInfraModal();
@@ -2384,7 +2411,7 @@ addButton.addEventListener('click', () => {
 });
 
 
-// ----------- Modal Cancel Button Handlers -----------
+
 const cancelInfraBtn = document.querySelector('#addInfraModal .cancel-btn');
 const cancelRoomBtn = document.querySelector('#addRoomModal .cancel-btn');
 const cancelCategoryBtn = document.querySelector('#addCategoryModal .cancel-btn');
@@ -2397,14 +2424,14 @@ cancelCategoryBtn.addEventListener('click', hideCategoryModal);
 cancelMapBtn.addEventListener('click', hideMapModal);
 cancelCampusBtn.addEventListener('click', hideCampusModal);
 
-// ----------- Close Modal When Clicking Outside -----------
+
 [document.getElementById('addInfraModal'), document.getElementById('addRoomModal')].forEach(modal => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.style.display = 'none';
     });
 });
 
-// Close Modal When Clicking Outside:
+
 [document.getElementById('addMapModal'), document.getElementById('addCampusModal')].forEach(modal => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.style.display = 'none';
@@ -2461,16 +2488,16 @@ async function convertFileToBase64(file, maxWidth = 800, maxHeight = 800) {
 
 
 
-// ======================= EDIT INFRASTRUCTURE SECTION =========================
 
-// ---------------- Edit Infra Image Upload + Blur Editor ----------------
 
-// Get elements
+
+
+
 const editUploadInput = document.getElementById("editInfraImage");
 const editUploadBox = document.getElementById("editUploadBox");
 const editPreview = document.getElementById("editInfraPreview");
 
-// ====== Blur Editor Elements ======
+
 const editInfraBlurModal = document.getElementById("editInfraImageModal");
 const editInfraBlurCanvas = document.getElementById("editInfraCanvas");
 
@@ -2494,7 +2521,7 @@ let editInfraStartX = 0,
 
 const EDIT_INFRA_MAX_DIM = 1024;
 
-// ====== Open Blur Editor ======
+
 function openEditInfraBlurModal(file) {
     const url = URL.createObjectURL(file);
     editInfraOriginalImage = new Image();
@@ -2530,7 +2557,7 @@ function openEditInfraBlurModal(file) {
     editInfraOriginalImage.src = url;
 }
 
-// ====== State Management ======
+
 function saveEditInfraState() {
     editInfraUndoStack.push(
         editInfraCtx.getImageData(
@@ -2546,7 +2573,7 @@ function restoreEditInfraState(state) {
     editInfraCtx.putImageData(state, 0, 0);
 }
 
-// ====== Draw Overlay ======
+
 function drawEditInfraOverlay() {
     clearEditInfraCanvas();
     editInfraCtx.drawImage(
@@ -2574,30 +2601,30 @@ function drawEditInfraOverlay() {
 function blurEditInfraRegion(x, y, w, h, blurPx) {
   if (!editInfraBlurCanvas || !editInfraCtx) return;
 
-  // Clamp rectangle
+  
   x = Math.max(0, x);
   y = Math.max(0, y);
   w = Math.max(1, w);
   h = Math.max(1, h);
 
-  // Temporary canvas just for this rectangle
+  
   const temp = document.createElement("canvas");
   const tctx = temp.getContext("2d");
 
   temp.width = w;
   temp.height = h;
 
-  // Copy region from main canvas
+  
   tctx.clearRect(0, 0, w, h);
   tctx.drawImage(editInfraBlurCanvas, x, y, w, h, 0, 0, w, h);
 
-  // Apply blur to that isolated region
+  
   tctx.save();
   tctx.filter = `blur(${blurPx}px)`;
   tctx.drawImage(temp, 0, 0);
   tctx.restore();
 
-  // Paste blurred region back to main canvas
+  
   editInfraCtx.drawImage(temp, 0, 0, w, h, x, y, w, h);
 }
 
@@ -2605,7 +2632,7 @@ function blurEditInfraRegion(x, y, w, h, blurPx) {
 
 
 
-// ====== Mouse Events ======
+
 editInfraBlurCanvas.addEventListener("mousedown", (e) => {
     editInfraDrawing = true;
     const rect = editInfraBlurCanvas.getBoundingClientRect();
@@ -2649,7 +2676,7 @@ window.addEventListener("mouseup", () => {
     }
 });
 
-// ====== Undo / Redo ======
+
 editInfraUndoBtn.addEventListener("click", () => {
     if (editInfraUndoStack.length > 1) {
         editInfraRedoStack.push(editInfraUndoStack.pop());
@@ -2668,13 +2695,13 @@ editInfraRedoBtn.addEventListener("click", () => {
 });
 
 editInfraSaveBtn.addEventListener("click", () => {
-  // apply all blur regions directly
+  
   editInfraAppliedBlurs.forEach((r) =>
     blurEditInfraRegion(r.x, r.y, r.w, r.h, r.blur)
   );
   editInfraManualRects = [];
 
-  // export the final blurred result
+  
   const tempCanvas = document.createElement("canvas");
   const MAX_SAVE_DIM = 1024;
   const scale = Math.min(
@@ -2692,22 +2719,22 @@ editInfraSaveBtn.addEventListener("click", () => {
   editInfraBlurModal.style.display = "none";
   const label = editUploadBox.querySelector(".upload-label");
   label.style.display = "none";
-  // clear the file input so it doesn’t re-upload the original
+  
   editUploadInput.value = "";
 });
 
 
-// ====== Cancel ======
+
 editInfraCancelBtn.addEventListener("click", () => {
     editInfraBlurModal.style.display = "none";
 });
 
-// ====== Blur Range ======
+
 editInfraBlurRange.addEventListener("input", () => {
     editInfraBlurValue.textContent = editInfraBlurRange.value + "px";
 });
 
-// ====== Helpers ======
+
 function clearEditInfraCanvas() {
     editInfraCtx.clearRect(
         0,
@@ -2717,7 +2744,7 @@ function clearEditInfraCanvas() {
     );
 }
 
-// ====== Trigger Blur Modal After Upload ======
+
 editPreview.addEventListener("click", () => {
     editUploadInput.click();
 });
@@ -2727,12 +2754,12 @@ editUploadInput.addEventListener("change", () => {
     openEditInfraBlurModal(file);
 });
 
-// =============================================================
-// Existing edit infra modal logic (unchanged)
-// =============================================================
 
-// ...existing code...
-    // Populate modal when editing
+
+
+
+
+    
     document
       .querySelector(".infra-table")
       .addEventListener("click", async (e) => {
@@ -2747,7 +2774,7 @@ editUploadInput.addEventListener("change", () => {
         const infraId = row.querySelector("td")?.textContent?.trim();
         if (!infraId) return;
 
-        // 🌀 Replace icon with spinner
+        
         const originalIconHTML = icon?.outerHTML || button?.innerHTML;
         if (icon) {
           icon.outerHTML = `<div class="spinner"></div>`;
@@ -2783,7 +2810,7 @@ editUploadInput.addEventListener("change", () => {
           document.getElementById("editInfraEmail").value =
             infraData.email ?? "";
 
-          // Show existing image inside upload box
+          
           if (infraData.image_url) {
             editPreview.src = infraData.image_url;
             editPreview.style.display = "block";
@@ -2796,10 +2823,10 @@ editUploadInput.addEventListener("change", () => {
 
           document.getElementById("editInfraForm").dataset.docId = docSnap.id;
 
-          // Reset the edit modal save button to a known good state (prevents leftover spinner)
+          
           const editSaveBtn = document.querySelector("#editInfraForm .save-btn");
           if (editSaveBtn) {
-            // If your UI uses an icon inside the button replace the string below with proper HTML
+            
             editSaveBtn.innerHTML = "Save";
             editSaveBtn.disabled = false;
             editSaveBtn.style.opacity = 1;
@@ -2811,7 +2838,7 @@ editUploadInput.addEventListener("change", () => {
           console.error("Error opening edit modal:", err);
           showModal('error', 'Error loading infrastructure details. Please try again.');
         } finally {
-          // 🔄 Restore original icon
+          
           if (icon) icon.outerHTML = originalIconHTML;
           if (button) button.innerHTML = originalIconHTML;
         }
@@ -2821,7 +2848,7 @@ editUploadInput.addEventListener("change", () => {
 
 
 
-// Cancel
+
 document
     .getElementById("cancelEditInfraBtn")
     .addEventListener("click", () => {
@@ -2856,7 +2883,7 @@ document
 
 
 
-// ----------- Populate Category Dropdown for Edit Modal -----------
+
 async function populateEditInfraCategoryDropdown(selectedId) {
     const select = document.getElementById("editInfraCategory");
     if (!select) return;
@@ -2872,11 +2899,11 @@ async function populateEditInfraCategoryDropdown(selectedId) {
             select.appendChild(option);
         }
     });
-    // Set selected value after options are loaded
+    
     if (selectedId) select.value = selectedId;
 }
 
-// ----------- Save Edited Infrastructure (with Loading Button) -----------
+
 document.getElementById("editInfraForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -2889,7 +2916,7 @@ document.getElementById("editInfraForm").addEventListener("submit", async (e) =>
     const saveBtn = form.querySelector(".save-btn");
     const originalBtnHTML = saveBtn.innerHTML;
 
-    // 🌀 Show loading in button
+    
     saveBtn.innerHTML = `<div class="spinner"></div> Saving...`;
     saveBtn.disabled = true;
     saveBtn.style.opacity = 0.7;
@@ -2899,7 +2926,7 @@ document.getElementById("editInfraForm").addEventListener("submit", async (e) =>
     const phone = document.getElementById("editInfraPhone").value.trim();
     const email = document.getElementById("editInfraEmail").value.trim();
 
-    // Handle image update (optional)
+    
     let imageUrl = document.getElementById("editInfraPreview").src || "";
     const imageFile = document.getElementById("editInfraImage").files[0];
     if (imageFile) {
@@ -2931,7 +2958,7 @@ document.getElementById("editInfraForm").addEventListener("submit", async (e) =>
         showModal('error', 'Failed to update infrastructure. Please try again.');
         console.error(err);
     } finally {
-        // 🔄 Restore button state
+        
         saveBtn.innerHTML = originalBtnHTML;
         saveBtn.disabled = false;
         saveBtn.style.opacity = 1;
@@ -2939,12 +2966,12 @@ document.getElementById("editInfraForm").addEventListener("submit", async (e) =>
 });
 
 
-// ----------- Cancel Button for Edit Modal -----------
+
 document.getElementById("cancelEditInfraBtn").addEventListener("click", () => {
     document.getElementById("editInfraModal").style.display = "none";
 });
 
-// ----------- Close Modal When Clicking Outside -----------
+
 document.getElementById("editInfraModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("editInfraModal")) {
         document.getElementById("editInfraModal").style.display = "none";
@@ -2965,11 +2992,11 @@ document.getElementById("editInfraModal").addEventListener("click", (e) => {
 
 
 
-// ----------- Delete Infrastructure Modal Logic -----------
 
-let infraToDelete = null; // Will hold {docId, name} for deletion
 
-// Open delete modal when clicking the delete icon (with loading spinner)
+let infraToDelete = null; 
+
+
 document.querySelector(".infra-table").addEventListener("click", async (e) => {
     const button = e.target.closest("button.delete");
     const icon = e.target.closest("i.fa-trash");
@@ -2983,7 +3010,7 @@ document.querySelector(".infra-table").addEventListener("click", async (e) => {
     const infraName = row.children[1]?.textContent?.trim() || "";
     if (!infraId) return;
 
-    // 🌀 Replace icon with spinner
+    
     const originalHTML = icon?.outerHTML || button?.innerHTML;
     if (icon) icon.outerHTML = `<div class="spinner"></div>`;
     if (button && !icon) button.innerHTML = `<div class="spinner"></div>`;
@@ -3000,17 +3027,17 @@ document.querySelector(".infra-table").addEventListener("click", async (e) => {
         const docSnap = snap.docs[0];
         infraToDelete = { docId: docSnap.id, name: infraName };
 
-        // Set prompt text
+        
         document.getElementById("deleteInfraPrompt").textContent =
             `Are you sure you want to permanently delete "${infraName}"?`;
 
-        // Show modal
+        
         document.getElementById("deleteInfraModal").style.display = "flex";
     } catch (err) {
         console.error("Error preparing delete modal:", err);
         showModal('error', 'Failed to prepare delete modal. Please try again.');
     } finally {
-        // 🔄 Restore original icon after modal is rendered
+        
         requestAnimationFrame(() => {
             if (icon) icon.outerHTML = originalHTML;
             if (button && !icon) button.innerHTML = originalHTML;
@@ -3020,35 +3047,35 @@ document.querySelector(".infra-table").addEventListener("click", async (e) => {
 
 
 
-// ----------- Confirm Infrastructure Deletion -----------
+
 document.getElementById("confirmDeleteInfraBtn")?.addEventListener("click", async (e) => {
   if (!infraToDelete) return;
 
   const btn = e.target;
   const originalHTML = btn.innerHTML;
 
-  // 🌀 Show spinner + disable button
+  
   btn.innerHTML = `<div class="spinner"></div> <span class="loading-text">Deleting...</span>`;
   btn.disabled = true;
   btn.style.opacity = 0.7;
   btn.style.cursor = "not-allowed";
 
   try {
-    // 🔥 Delete document from Firestore
+    
     await deleteDoc(doc(db, "Infrastructure", infraToDelete.docId));
 
-    // 🧹 Close modal and refresh table
+    
     document.getElementById("deleteInfraModal").style.display = "none";
     infraToDelete = null;
     renderInfraTable();
 
-    // ✅ Success modal
+    
     showModal('success', 'Infrastructure deleted successfully!');
   } catch (err) {
     console.error("Error deleting infrastructure:", err);
     showModal('error', 'Failed to delete infrastructure. Please try again.');
   } finally {
-    // 🔄 Restore original button
+    
     btn.innerHTML = originalHTML;
     btn.disabled = false;
     btn.style.opacity = 1;
@@ -3058,13 +3085,13 @@ document.getElementById("confirmDeleteInfraBtn")?.addEventListener("click", asyn
 
 
 
-// Cancel deletion
+
 document.getElementById("cancelDeleteInfraBtn").addEventListener("click", () => {
     document.getElementById("deleteInfraModal").style.display = "none";
     infraToDelete = null;
 });
 
-// Close modal when clicking outside
+
 document.getElementById("deleteInfraModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("deleteInfraModal")) {
         document.getElementById("deleteInfraModal").style.display = "none";
@@ -3075,11 +3102,11 @@ document.getElementById("deleteInfraModal").addEventListener("click", (e) => {
 
 
 
-// ======================= DELETE ROOM SECTION =========================
 
-let roomToDelete = null; // Will store {docId, name}
 
-// Open delete modal when clicking the delete icon (with loading spinner)
+let roomToDelete = null; 
+
+
 document.querySelector(".rooms-table").addEventListener("click", async (e) => {
     const button = e.target.closest("button.delete");
     const icon = e.target.closest("i.fa-trash");
@@ -3093,7 +3120,7 @@ document.querySelector(".rooms-table").addEventListener("click", async (e) => {
     const roomName = row.children[1]?.textContent?.trim() || "";
     if (!roomId) return;
 
-    // 🌀 Replace icon/button with spinner
+    
     const originalHTML = icon?.outerHTML || button?.innerHTML;
     if (icon) icon.outerHTML = `<div class="spinner"></div>`;
     if (button && !icon) button.innerHTML = `<div class="spinner"></div>`;
@@ -3110,17 +3137,17 @@ document.querySelector(".rooms-table").addEventListener("click", async (e) => {
         const docSnap = snap.docs[0];
         roomToDelete = { docId: docSnap.id, name: roomName };
 
-        // Set prompt text
+        
         document.getElementById("deleteRoomPrompt").textContent =
             `Are you sure you want to delete "${roomName}"?`;
 
-        // Show modal
+        
         document.getElementById("deleteRoomModal").style.display = "flex";
     } catch (err) {
         console.error("Error preparing delete modal:", err);
         showModal('error', 'Failed to prepare delete modal. Please try again.');
     } finally {
-        // 🔄 Restore original icon/button after modal opens
+        
         requestAnimationFrame(() => {
             if (icon) icon.outerHTML = originalHTML;
             if (button && !icon) button.innerHTML = originalHTML;
@@ -3128,14 +3155,14 @@ document.querySelector(".rooms-table").addEventListener("click", async (e) => {
     }
 });
 
-// Confirm deletion with spinner + deleting text
+
 document.getElementById("confirmDeleteRoomBtn").addEventListener("click", async (e) => {
     if (!roomToDelete) return;
 
     const btn = e.target;
     const originalHTML = btn.innerHTML;
 
-    // Show loading + text
+    
     btn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Deleting...</span>
@@ -3156,20 +3183,20 @@ document.getElementById("confirmDeleteRoomBtn").addEventListener("click", async 
         showModal('error', 'Failed to delete room. Please try again.');
         console.error(err);
     } finally {
-        // Restore button
+        
         btn.innerHTML = originalHTML;
         btn.disabled = false;
     }
 });
 
 
-// Cancel deletion
+
 document.getElementById("cancelDeleteRoomBtn").addEventListener("click", () => {
     document.getElementById("deleteRoomModal").style.display = "none";
     roomToDelete = null;
 });
 
-// Close modal when clicking outside
+
 document.getElementById("deleteRoomModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("deleteRoomModal")) {
         document.getElementById("deleteRoomModal").style.display = "none";
@@ -3181,12 +3208,12 @@ document.getElementById("deleteRoomModal").addEventListener("click", (e) => {
 
 
 
-// ======================= DELETE CATEGORY SECTION =========================
 
-// ----------- Delete Category Modal Logic -----------
-let categoryToDelete = null; // Will store {docId, name}
 
-// Open delete modal when clicking the delete icon (with spinner)
+
+let categoryToDelete = null; 
+
+
 document.querySelector(".categories-table").addEventListener("click", async (e) => {
     const button = e.target.closest("button.delete");
     const icon = e.target.closest("i.fa-trash");
@@ -3198,7 +3225,7 @@ document.querySelector(".categories-table").addEventListener("click", async (e) 
 
     const categoryName = row.children[1]?.textContent?.trim() || "";
 
-    // 🌀 Replace icon/button with spinner
+    
     const originalHTML = icon?.outerHTML || button?.innerHTML;
     if (icon) icon.outerHTML = `<div class="spinner"></div>`;
     if (button && !icon) button.innerHTML = `<div class="spinner"></div>`;
@@ -3215,17 +3242,17 @@ document.querySelector(".categories-table").addEventListener("click", async (e) 
         const docSnap = snap.docs[0];
         categoryToDelete = { docId: docSnap.id, name: categoryName };
 
-        // Set prompt text
+        
         document.getElementById("deleteCategoryPrompt").textContent =
             `Are you sure you want to delete category "${categoryName}"?`;
 
-        // Show modal
+        
         document.getElementById("deleteCategoryModal").style.display = "flex";
     } catch (err) {
         console.error("Error preparing delete modal:", err);
         showModal('error', 'Failed to prepare delete modal. Please try again.');
     } finally {
-        // 🔄 Restore original icon/button after modal opens
+        
         requestAnimationFrame(() => {
             if (icon) icon.outerHTML = originalHTML;
             if (button && !icon) button.innerHTML = originalHTML;
@@ -3233,14 +3260,14 @@ document.querySelector(".categories-table").addEventListener("click", async (e) 
     }
 });
 
-// Confirm deletion with spinner + deleting text
+
 document.getElementById("confirmDeleteCategoryBtn").addEventListener("click", async (e) => {
     if (!categoryToDelete) return;
 
     const btn = e.target;
     const originalHTML = btn.innerHTML;
 
-    // Show loading + text
+    
     btn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Deleting...</span>
@@ -3261,20 +3288,20 @@ document.getElementById("confirmDeleteCategoryBtn").addEventListener("click", as
         showModal('error', 'Failed to delete category. Please try again.');
         console.error(err);
     } finally {
-        // Restore button
+        
         btn.innerHTML = originalHTML;
         btn.disabled = false;
     }
 });
 
 
-// Cancel deletion
+
 document.getElementById("cancelDeleteCategoryBtn").addEventListener("click", () => {
     document.getElementById("deleteCategoryModal").style.display = "none";
     categoryToDelete = null;
 });
 
-// Close modal when clicking outside
+
 document.getElementById("deleteCategoryModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("deleteCategoryModal")) {
         document.getElementById("deleteCategoryModal").style.display = "none";
@@ -3288,7 +3315,7 @@ document.getElementById("deleteCategoryModal").addEventListener("click", (e) => 
 
 let mapToDelete = null;
 
-// ----------- Map Delete Modal Logic with spinner -----------
+
 function setupMapDeleteHandlers() {
     const tbody = document.querySelector(".maps-table tbody");
     if (!tbody) return;
@@ -3299,7 +3326,7 @@ function setupMapDeleteHandlers() {
             const mapName = tr.children[1]?.textContent || "";
             const docId = btn.dataset.id;
 
-            // 🌀 Replace button with spinner
+            
             const originalHTML = btn.innerHTML;
             btn.innerHTML = `<div class="spinner"></div>`;
             btn.disabled = true;
@@ -3313,7 +3340,7 @@ function setupMapDeleteHandlers() {
                 console.error("Error preparing delete modal:", err);
                 showModal('error', 'Failed to prepare delete modal. Please try again.');
             } finally {
-                // Restore button after modal opens
+                
                 requestAnimationFrame(() => {
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;
@@ -3323,14 +3350,14 @@ function setupMapDeleteHandlers() {
     });
 }
 
-// ----------- Confirm Map Deletion with spinner + deleting text -----------
+
 document.getElementById("confirmDeleteMapBtn").addEventListener("click", async (e) => {
     if (!mapToDelete) return;
 
     const btn = e.target;
     const originalHTML = btn.innerHTML;
 
-    // Show loading + text
+    
     btn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Deleting...</span>
@@ -3338,14 +3365,14 @@ document.getElementById("confirmDeleteMapBtn").addEventListener("click", async (
     btn.disabled = true;
 
     try {
-        // ✅ Hard delete the document
+        
         await deleteDoc(doc(db, "MapVersions", mapToDelete.docId));
 
-        // Optional: soft delete (commented out)
-        // await updateDoc(doc(db, "MapVersions", mapToDelete.docId), {
-        //     is_deleted: true,
-        //     deletedAt: new Date()
-        // });
+        
+        
+        
+        
+        
 
         document.getElementById("deleteMapModal").style.display = "none";
         mapToDelete = null;
@@ -3355,20 +3382,20 @@ document.getElementById("confirmDeleteMapBtn").addEventListener("click", async (
         showModal('error', 'Failed to delete map. Please try again.');
         console.error(err);
     } finally {
-        // Restore button
+        
         btn.innerHTML = originalHTML;
         btn.disabled = false;
     }
 });
 
 
-// ----------- Cancel Map Deletion -----------
+
 document.getElementById("cancelDeleteMapBtn").addEventListener("click", () => {
     document.getElementById("deleteMapModal").style.display = "none";
     mapToDelete = null;
 });
 
-// ----------- Close modal if click outside -----------
+
 document.getElementById("deleteMapModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("deleteMapModal")) {
         document.getElementById("deleteMapModal").style.display = "none";
@@ -3381,7 +3408,7 @@ document.getElementById("deleteMapModal").addEventListener("click", (e) => {
 
 let campusToDelete = null;
 
-// ----------- Campus Delete Modal Logic with spinner -----------
+
 function setupCampusDeleteHandlers() {
     const tbody = document.querySelector(".campus-table tbody");
     if (!tbody) return;
@@ -3395,7 +3422,7 @@ function setupCampusDeleteHandlers() {
             const docId = btn.dataset.id;
             if (!docId) return;
 
-            // 🌀 Replace button with spinner
+            
             const originalHTML = btn.innerHTML;
             btn.innerHTML = `<div class="spinner"></div>`;
             btn.disabled = true;
@@ -3409,7 +3436,7 @@ function setupCampusDeleteHandlers() {
                 console.error("Error preparing delete modal:", err);
                 showModal('error', 'Failed to prepare delete modal. Please try again.');
             } finally {
-                // Restore button after modal opens
+                
                 requestAnimationFrame(() => {
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;
@@ -3419,14 +3446,14 @@ function setupCampusDeleteHandlers() {
     });
 }
 
-// ----------- Confirm Campus Deletion with spinner + deleting text -----------
+
 document.getElementById("confirmDeleteCampusBtn").addEventListener("click", async (e) => {
     if (!campusToDelete) return;
 
     const btn = e.target;
     const originalHTML = btn.innerHTML;
 
-    // Show loading + text
+    
     btn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Deleting...</span>
@@ -3434,14 +3461,14 @@ document.getElementById("confirmDeleteCampusBtn").addEventListener("click", asyn
     btn.disabled = true;
 
     try {
-        // ✅ Hard delete the document
+        
         await deleteDoc(doc(db, "Campus", campusToDelete.docId));
 
-        // Optional: soft delete (commented out)
-        // await updateDoc(doc(db, "Campus", campusToDelete.docId), {
-        //     is_deleted: true,
-        //     deletedAt: new Date()
-        // });
+        
+        
+        
+        
+        
 
         document.getElementById("deleteCampusModal").style.display = "none";
         campusToDelete = null;
@@ -3451,7 +3478,7 @@ document.getElementById("confirmDeleteCampusBtn").addEventListener("click", asyn
         showModal('error', 'Failed to delete campus. Please try again.');
         console.error(err);
     } finally {
-        // Restore button
+        
         btn.innerHTML = originalHTML;
         btn.disabled = false;
     }
@@ -3459,13 +3486,13 @@ document.getElementById("confirmDeleteCampusBtn").addEventListener("click", asyn
 
 
 
-// ----------- Cancel Campus Deletion -----------
+
 document.getElementById("cancelDeleteCampusBtn").addEventListener("click", () => {
     document.getElementById("deleteCampusModal").style.display = "none";
     campusToDelete = null;
 });
 
-// ----------- Close modal if click outside -----------
+
 document.getElementById("deleteCampusModal").addEventListener("click", (e) => {
     if (e.target === document.getElementById("deleteCampusModal")) {
         document.getElementById("deleteCampusModal").style.display = "none";
@@ -3524,7 +3551,7 @@ document.addEventListener("DOMContentLoaded", populateSortDropdown);
 document.getElementById("searchInput").addEventListener("input", function() {
     const val = this.value.trim().toLowerCase();
 
-    // Infrastructure tab
+    
     if (tables.infratbl.style.display !== "none") {
         let filtered = infraTableData.filter(d =>
             d.name.toLowerCase().includes(val) ||
@@ -3539,7 +3566,7 @@ document.getElementById("searchInput").addEventListener("input", function() {
         }
         renderInfraTableRows(filtered);
 
-    // Room tab
+    
     } else if (tables.roomstbl.style.display !== "none") {
         let filtered = roomsTableData.filter(r =>
             r.name.toLowerCase().includes(val) ||
@@ -3598,11 +3625,11 @@ function showModal(type, message) {
   const msg = document.getElementById("jModal-message");
   const btn = document.getElementById("jModal-btn");
 
-  // Reset
+  
   box.classList.remove("jModal-success", "jModal-error");
   icon.innerHTML = "";
 
-  // Decide content based on type
+  
   let titleText = "";
   let iconSVG = "";
 
@@ -3626,15 +3653,15 @@ function showModal(type, message) {
       </svg>`;
   }
 
-  // Apply content
+  
   icon.innerHTML = iconSVG;
   title.textContent = titleText;
   msg.textContent = message;
 
-  // Show modal
+  
   overlay.classList.add("jModal-active");
 
-  // Close button
+  
   btn.onclick = () => {
     overlay.classList.remove("jModal-active");
   };

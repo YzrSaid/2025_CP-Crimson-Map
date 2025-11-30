@@ -8,3 +8,4 @@ node_modules/
 .env
 
 # /assets/firestore/*.json
+/assets/apk/*.apk

@@ -1,9 +1,10 @@
 [
   {
     "id": "GlobalInfo",
+    "last_check": 1762565658,
     "campus_updated": false,
     "categories_updated": false,
-    "last_check": 1761395176,
-    "infrastructure_updated": false
+    "infrastructure_updated": true,
+    "indoor_infrastructure_updated": false
   }
 ]

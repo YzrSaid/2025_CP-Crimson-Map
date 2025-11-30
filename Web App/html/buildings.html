@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="container">
-    <!-- Sidebar -->
+
     <div class="left">
         <div class="logo">
             <img src="/assets/imgs/CrimsonMap Logo 1.png" alt="CrimsonMap Logo">
@@ -51,7 +51,7 @@
                     </a>
                 </li> 
                 <li class="logout-item">
-                    <a href="/login.html">
+                    <a href="../login.html">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </a>
                 </li> 
@@ -61,9 +61,9 @@
     </div>
 
 
-    <!-- Main Content -->
+
     <div class="right">
-        <!-- Topbar -->
+ 
         <div class="topbar">
             <div class="topbar-left">
                 <div class="menu-icon">&#9776;</div>
@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <!-- Breadcrumb -->
+
         <div class="breadcrumb">
             <h2>Manage Buildings</h2>
             <div class="breadcrumb-path">
@@ -80,9 +80,9 @@
         </div>
 
 
-        <!-- Main content -->
+ 
         <div class="main-content">
-            <!-- Tabs -->
+           
             <div class="tabs">
                 <button class="tab active" data-target="infratbl">Infrastructure</button>
                 <button class="tab" data-target="roomstbl">Indoor Infrastructure</button>
@@ -91,17 +91,17 @@
                 <button class="tab" data-target="campustbl">Campus</button>
             </div>
 
-            <!-- Search, Sort, Add Button -->
+           
             <div class="controls">
                 <div class="g1">
-                    <!-- Add IDs for JS targeting -->
+              
                     <div class="searchbar">
                         <input type="text" id="searchInput" placeholder="Search...">
                     </div>
                     <div class="sort">
                         <select id="sortCategory">
                             <option value="">Sort by Category</option>
-                            <!-- JS will populate categories here -->
+                            
                         </select>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                 </div>
             </div>
 
-            <!-- Tables -->
+         
             <div class="infratbl">
                 <table class="infra-table">
                     <thead>
@@ -127,20 +127,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- JS will populate this -->
+                    
                     </tbody>
                 </table>
             </div>
             
-            <!-- Updated Table -->
+          
             <div class="roomstbl" style="display:none;">
                 <table class="rooms-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th> <!-- updated label -->
+                            <th>Name</th>
                             <th>Infrastructure</th>
-                            <th>Indoor Type</th> <!-- replaced Coordinates with Indoor Type -->
+                            <th>Indoor Type</th> 
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -162,32 +162,32 @@
                         </tr>
                     </thead>
                     <tbody id="categoriesTableBody">
-                        <!-- rows will be inserted here -->
+                        
                          
                     </tbody>
                 </table>
             </div>
 
-            <!-- Maps Table -->
+           
             <div class="maptbl" style="display:none;">
                 <table class="maps-table">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Map Name</th>
-                            <th>Current Version</th> <!-- ✅ new column -->
+                            <th>Current Version</th>
                             <th>Campus Included</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        <!-- JS will populate this -->
+                       
                     </tbody>
                 </table>
             </div>
 
-            <!-- Campus Table -->
+           
             <div class="campustbl" style="display:none;">
                 <table class="campus-table">
                     <thead>
@@ -199,7 +199,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- JS will populate this -->
+                        
                     </tbody>
                 </table>
             </div>
@@ -210,12 +210,12 @@
 
 
 
-<!-- Infrastructure Modal Overlay -->
+
 <div id="addInfraModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Add Infrastructure</h2>
         <form>
-            <!-- Name + ID -->
+           
             <div class="form-row">
                 <div class="form-group">
                     <label>Infrastructure Name</label>
@@ -226,14 +226,14 @@
                     <input id="infraId" type="text" disabled>
                 </div>
             </div>
-            <!-- Category -->
+            
             <div class="form-group">
                 <label>Category</label>
                 <select>
                     <option value="">Select a category</option>
                 </select>
             </div>
-            <!-- Contact Info -->
+           
             <h3>Contact Information</h3>
             <div class="form-group">
                 <label>Contact Number</label>
@@ -243,7 +243,7 @@
                 <label>Email</label>
                 <input type="email" placeholder="e.g. info@domain.com">
             </div>
-            <!-- Upload Image -->
+          
             <div class="form-group">
                 <label>Upload Image (Upload new image)</label>
                 <div class="upload-box">
@@ -265,7 +265,7 @@
 
 
 
-<!-- Edit Image Modal -->
+
 <div id="editImageModal" class="edit-modal">
   <div class="edit-modal-content">
     <h2>Edit Image (Blur Faces)</h2>
@@ -296,25 +296,25 @@
 
 
 
-<!-- Add Room Modal Overlay -->
+
 <div id="addRoomModal" class="modal-overlay" style="display:none;">
     <div class="modal">
-        <h2>Add Indoor Infrastructure</h2> <!-- updated title -->
+        <h2>Add Indoor Infrastructure</h2> 
 
         <form> 
-            <!-- Room Name + Room ID (same row) --> 
+           
             <div class="form-row"> 
                 <div class="form-group">
-                    <label>Indoor Infra Name</label> <!-- updated label -->
+                    <label>Indoor Infra Name</label> 
                     <input type="text" placeholder="e.g. Lecture Room 1">
                 </div>
                 <div class="form-group">
-                    <label>Indoor Infra ID</label> <!-- updated label -->
+                    <label>Indoor Infra ID</label> 
                     <input type="text" id="roomId" name="room_id" disabled>
                 </div>
             </div>
 
-            <!-- Infrastructure Dropdown -->
+           
             <div class="form-group">
                 <label>Infrastructure</label>
                 <select>
@@ -322,7 +322,7 @@
                 </select>
             </div>
 
-            <!-- Indoor Type Dropdown (new) -->
+            
             <div class="form-group">
                 <label>Indoor Type</label>
                 <select>
@@ -330,12 +330,14 @@
                     <option value="room">Room</option>
                     <option value="stairs">Stairs</option>
                     <option value="fire_exit">Fire Exit</option>
+                    <option value="entrance">Entrance</option>
+                    <option value="indoorinter">Indoor Intermediate</option>
                 </select>
             </div>
 
 
 
-            <!-- Actions --> 
+            
             <div class="modal-actions"> 
                 <button type="submit" class="save-btn">Save</button>  
                 <button type="button" class="cancel-btn">Cancel</button>  
@@ -347,7 +349,7 @@
 
 
 
-<!-- Add Category Modal Overlay -->
+
 <div id="addCategoryModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Add Category</h2>
@@ -368,7 +370,7 @@
     </div>
 </div>
 
-<!-- Add Map Modal -->
+
 <div id="addMapModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Add Map</h2>
@@ -399,7 +401,7 @@
     </div>
 </div>
 
-<!-- Add Campus Modal -->
+
 <div id="addCampusModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Add Campus</h2>
@@ -417,7 +419,7 @@
             <div class="form-group">
                 <label>Map</label>
                 <select id="mapSelect">
-                    <!-- JS will populate this -->
+                   
                 </select>
             </div>
             <div class="modal-actions">
@@ -429,12 +431,12 @@
 </div>
 
 
-<!-- Edit Infrastructure Modal Overlay -->
+
 <div id="editInfraModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Edit Infrastructure</h2>
         <form id="editInfraForm">
-            <!-- Name + ID -->
+           
             <div class="form-row">
                 <div class="form-group">
                     <label>Infrastructure Name</label>
@@ -445,14 +447,14 @@
                     <input id="editInfraId" type="text" disabled>
                 </div>
             </div>
-            <!-- Category -->
+           
             <div class="form-group">
                 <label>Category</label>
                 <select id="editInfraCategory" required>
                     <option value="">Select a category</option>
                 </select>
             </div>
-            <!-- Contact Info -->
+          
             <h3>Contact Information</h3>
             <div class="form-group">
                 <label>Contact Number</label>
@@ -462,8 +464,7 @@
                 <label>Email</label>
                 <input type="email" id="editInfraEmail" placeholder="e.g. info@domain.com">
             </div>
-            <!-- Upload Image -->
-            <!-- Upload Image -->
+            
             <div class="form-group">
                 <label>Upload Image <em style="font-weight: 100;">(Click the image to change it)</em></label>
                 <div class="upload-box" id="editUploadBox">
@@ -472,7 +473,7 @@
                         <span class="plus-icon">+</span>
                         <p>(Accepted Formats: jpeg, png, jpg)</p>
                     </label>
-                    <!-- Move preview inside the box -->
+                   
                     <img id="editInfraPreview" src="" alt="Preview" style="display:none; position:absolute; top:-8px; left:0; width:100%; height:100%; object-fit:cover; border-radius:8px;">
                 </div>
             </div>
@@ -487,7 +488,7 @@
 
 
 
-<!-- 🔴 Edit Infra Blur Editor Modal -->
+
 <div id="editInfraImageModal" class="edit-infra-image-modal">
   <div class="edit-infra-modal-content">
     <h2>Edit Infra Image (Blur)</h2>
@@ -519,7 +520,7 @@
 
 
 
-<!-- Edit Category Modal Overlay -->
+
 <div id="editCategoryModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Edit Category</h2>
@@ -542,19 +543,18 @@
 
 
 
-<!-- Edit Map Modal Overlay -->
 <div id="editMapModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Edit Map</h2>
 
         <form id="editMapForm">
-            <!-- Map Name -->
+          
             <div class="form-group">
                 <label>Map Name</label>
                 <input type="text" id="editMapName" placeholder="Map Name" required>
             </div>
 
-            <!-- Campus Included Multi-select -->
+           
             <div class="form-group">
                 <label>Campus Included</label>
                 <div id="editCampusDropdown" class="custom-multiselect">
@@ -563,7 +563,7 @@
                 </div>
             </div>
 
-            <!-- Actions -->
+            
             <div class="modal-actions">
                 <button type="submit" class="save-btn">Save</button>
                 <button type="button" class="cancel-btn" id="cancelEditMapBtn">Cancel</button>
@@ -574,7 +574,7 @@
 
 
 
-<!-- Edit Campus Modal Overlay -->
+
 <div id="editCampusModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Edit Campus</h2>
@@ -592,7 +592,7 @@
             <div class="form-group">
                 <label>Map</label>
                 <select id="editMapSelect">
-                    <!-- JS will populate this -->
+                   
                 </select>
             </div>
             <div class="modal-actions">
@@ -604,7 +604,7 @@
 </div>
 
 
-<!-- Edit Room Modal Overlay -->
+
 <div id="editRoomModal" class="modal-overlay" style="display:none;">
     <div class="modal">
         <h2>Edit Indoor Infrastructure</h2>
@@ -647,7 +647,7 @@
 
 
 
-<!-- Delete Confirmation Modal Overlay -->
+
 <div id="deleteInfraModal" class="modal-overlay" style="display:none;">
   <div class="modal" style="max-width:400px;">
     <h2 style="color:#b41c1c;">Confirm Deletion</h2>
@@ -661,7 +661,7 @@
 
 
 
-<!-- Delete Room Modal Overlay -->
+
 <div id="deleteRoomModal" class="modal-overlay" style="display:none;">
   <div class="modal" style="max-width:400px;">
     <h2 style="color:#b41c1c;">Confirm Deletion</h2>
@@ -675,7 +675,7 @@
 
 
 
-<!-- Delete Category Modal Overlay -->
+
 <div id="deleteCategoryModal" class="modal-overlay" style="display:none;">
   <div class="modal" style="max-width:400px;">
     <h2 style="color:#b41c1c;">Confirm Deletion</h2>
@@ -688,7 +688,7 @@
 </div>
 
 
-<!-- Delete Map Modal Overlay -->
+
 <div id="deleteMapModal" class="modal-overlay" style="display:none;">
   <div class="modal" style="max-width:400px;">
     <h2 style="color:#b41c1c;">Confirm Deletion</h2>
@@ -701,7 +701,7 @@
 </div>
 
 
-<!-- Delete Campus Modal Overlay -->
+
 <div id="deleteCampusModal" class="modal-overlay" style="display:none;">
   <div class="modal" style="max-width:400px;">
     <h2 style="color:#b41c1c;">Confirm Deletion</h2>

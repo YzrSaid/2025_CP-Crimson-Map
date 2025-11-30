@@ -1,0 +1,703 @@
+[
+  {
+    "id": "4sCLqnwY5xeYjkJETEg2",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395777,
+      "nanoseconds": 467000000
+    },
+    "infra_id": "INFRA-03",
+    "name": "CSM 205",
+    "room_id": "IND-047",
+    "indoor_type": "room",
+    "is_deleted": false
+  },
+  {
+    "id": "4yGH3q5i1z91ukfFc0VK",
+    "room_id": "IND-041",
+    "indoor_type": "stairs",
+    "name": "Floor 2 Stairs CSM",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395617,
+      "nanoseconds": 447000000
+    },
+    "infra_id": "INFRA-03"
+  },
+  {
+    "id": "7fXOOGNre1qgR3cglgr3",
+    "room_id": "IND-035",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395455,
+      "nanoseconds": 246000000
+    },
+    "indoor_type": "room",
+    "infra_id": "INFRA-03",
+    "is_deleted": false,
+    "name": "LSS Office"
+  },
+  {
+    "id": "8RapT9ISmE1EINoYbhVm",
+    "infra_id": "INFRA-14",
+    "indoor_type": "room",
+    "room_id": "IND-009",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138935,
+      "nanoseconds": 512000000
+    },
+    "is_deleted": false,
+    "name": "Lecture Room 2"
+  },
+  {
+    "id": "AxpjIRLvVaOcM3dgzQYi",
+    "is_deleted": false,
+    "indoor_type": "room",
+    "infra_id": "INFRA-03",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395351,
+      "nanoseconds": 896000000
+    },
+    "room_id": "IND-031",
+    "name": "Department of Bio Sciences Faculty"
+  },
+  {
+    "id": "CfLuXB8Z405kviPf17gh",
+    "indoor_type": "room",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395222,
+      "nanoseconds": 392000000
+    },
+    "room_id": "IND-027",
+    "name": "CSM 101 Lab Room Ground Floor",
+    "infra_id": "INFRA-03"
+  },
+  {
+    "id": "Chl1gFvi8u1T5QiWOiAt",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395495,
+      "nanoseconds": 313000000
+    },
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395476,
+      "nanoseconds": 809000000
+    },
+    "name": "Stairs 2 CSM",
+    "infra_id": "INFRA-03",
+    "room_id": "IND-036",
+    "is_deleted": false,
+    "indoor_type": "stairs"
+  },
+  {
+    "id": "DKgQIAqYNDjnL5oy5qCw",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395249,
+      "nanoseconds": 734000000
+    },
+    "is_deleted": false,
+    "room_id": "IND-028",
+    "indoor_type": "room",
+    "infra_id": "INFRA-03",
+    "name": "Physical Plant Facilities Office"
+  },
+  {
+    "id": "DtYJVSr2qNgPsNN0adLk",
+    "name": "Deoartment of Information Technology",
+    "infra_id": "INFRA-14",
+    "indoor_type": "room",
+    "room_id": "IND-002",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138834,
+      "nanoseconds": 347000000
+    }
+  },
+  {
+    "id": "EcagbSOlzCkkGezT3AFw",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759139497,
+      "nanoseconds": 494000000
+    },
+    "room_id": "IND-010",
+    "indoor_type": "room",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759139605,
+      "nanoseconds": 485000000
+    },
+    "infra_id": "INFRA-14",
+    "is_deleted": false,
+    "name": "Guidance Office"
+  },
+  {
+    "id": "FpFUiE4VVjnCVZgaW0vO",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395728,
+      "nanoseconds": 575000000
+    },
+    "name": "CSM 204",
+    "infra_id": "INFRA-03",
+    "indoor_type": "room",
+    "is_deleted": false,
+    "room_id": "IND-045"
+  },
+  {
+    "id": "GolXjAaFhDrqF5usNOIk",
+    "room_id": "IND-046",
+    "infra_id": "INFRA-03",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395753,
+      "nanoseconds": 674000000
+    },
+    "is_deleted": false,
+    "indoor_type": "room",
+    "name": "Office of the Dean CSM"
+  },
+  {
+    "id": "GxqiuzrdxezQzGB0dUWQ",
+    "name": "BSCD Department",
+    "infra_id": "INFRA-13",
+    "is_deleted": false,
+    "room_id": "IND-025",
+    "indoor_type": "room",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761388866,
+      "nanoseconds": 326000000
+    }
+  },
+  {
+    "id": "J96F64VT7f3eGK1r4Dxv",
+    "indoor_type": "stairs",
+    "is_deleted": false,
+    "room_id": "IND-007",
+    "name": "Floor 2 Stairs",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138913,
+      "nanoseconds": 55000000
+    },
+    "infra_id": "INFRA-14"
+  },
+  {
+    "id": "K50guWGrRrsO6C8ZAt4W",
+    "infra_id": "INFRA-03",
+    "is_deleted": false,
+    "name": "College Student Council Office CSM",
+    "indoor_type": "room",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395519,
+      "nanoseconds": 303000000
+    },
+    "room_id": "IND-037"
+  },
+  {
+    "id": "LDX05viUXXQbjs1HKqyD",
+    "infra_id": "INFRA-13",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761388783,
+      "nanoseconds": 550000000
+    },
+    "indoor_type": "room",
+    "room_id": "IND-022",
+    "is_deleted": false,
+    "name": "Social work"
+  },
+  {
+    "id": "MhF9RVWs3gaTScam7O5d",
+    "room_id": "IND-043",
+    "infra_id": "INFRA-03",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395684,
+      "nanoseconds": 85000000
+    },
+    "name": "CSM 202",
+    "indoor_type": "room",
+    "is_deleted": false
+  },
+  {
+    "id": "MkUfGSTOeZ2UPvajwyf7",
+    "room_id": "IND-040",
+    "is_deleted": false,
+    "infra_id": "INFRA-03",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395636,
+      "nanoseconds": 275000000
+    },
+    "name": "Stairs 1 CSM",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395598,
+      "nanoseconds": 940000000
+    },
+    "indoor_type": "stairs"
+  },
+  {
+    "id": "ONDJvdQJKNge9X2ZiOCl",
+    "name": "Faculty Room Math and Stats",
+    "is_deleted": false,
+    "room_id": "IND-051",
+    "indoor_type": "room",
+    "infra_id": "INFRA-03",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395905,
+      "nanoseconds": 622000000
+    }
+  },
+  {
+    "id": "PKMp02eLXL9R5YPOpeLL",
+    "is_deleted": false,
+    "indoor_type": "stairs",
+    "infra_id": "INFRA-14",
+    "name": "Floor 1 Stairs",
+    "room_id": "IND-006",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138896,
+      "nanoseconds": 497000000
+    }
+  },
+  {
+    "id": "QlkmEvxZ3l8ReCYKtfV9",
+    "infra_id": "INFRA-03",
+    "room_id": "IND-048",
+    "name": "CSM 206",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395795,
+      "nanoseconds": 246000000
+    },
+    "indoor_type": "room"
+  },
+  {
+    "id": "RAArcOOw9biiabIRWlCH",
+    "name": "Laboratory 2",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138880,
+      "nanoseconds": 703000000
+    },
+    "infra_id": "INFRA-14",
+    "indoor_type": "room",
+    "room_id": "IND-005",
+    "is_deleted": false
+  },
+  {
+    "id": "SI2hAkCnwWszDBibYD0y",
+    "room_id": "IND-034",
+    "indoor_type": "room",
+    "name": "CSM 105 Analytical Services RM",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395433,
+      "nanoseconds": 743000000
+    },
+    "infra_id": "INFRA-03"
+  },
+  {
+    "id": "T9s62KzM6SYZmA90nZLG",
+    "infra_id": "INFRA-17",
+    "room_id": "IND-016",
+    "name": "TEC Office",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383444,
+      "nanoseconds": 947000000
+    },
+    "indoor_type": "room"
+  },
+  {
+    "id": "UdPhyUiWkCdDuglN2MqV",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759139885,
+      "nanoseconds": 470000000
+    },
+    "is_deleted": false,
+    "infra_id": "INFRA-14",
+    "room_id": "IND-011",
+    "indoor_type": "fire_exit",
+    "name": "Fire Exit"
+  },
+  {
+    "id": "Uv66JIcRZJ832XX7rqCm",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395576,
+      "nanoseconds": 488000000
+    },
+    "indoor_type": "room",
+    "is_deleted": false,
+    "name": "CSM Back Room",
+    "room_id": "IND-039",
+    "infra_id": "INFRA-03"
+  },
+  {
+    "id": "VvZD38aXcTxcUbhKp3sp",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395278,
+      "nanoseconds": 123000000
+    },
+    "name": "Stockroom",
+    "room_id": "IND-029",
+    "infra_id": "INFRA-03",
+    "indoor_type": "room",
+    "is_deleted": false
+  },
+  {
+    "id": "YSoWfXDSZaajiQohhacO",
+    "name": "PhiCCS",
+    "infra_id": "INFRA-14",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759153460,
+      "nanoseconds": 744000000
+    },
+    "is_deleted": false,
+    "room_id": "IND-013",
+    "indoor_type": "room"
+  },
+  {
+    "id": "b0HUUyzH6AQK7kugnBIk",
+    "name": "Laboratory 1",
+    "room_id": "IND-004",
+    "infra_id": "INFRA-14",
+    "indoor_type": "room",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138867,
+      "nanoseconds": 11000000
+    }
+  },
+  {
+    "id": "c9nhWuAV7lEvaRLUsXnM",
+    "infra_id": "INFRA-17",
+    "name": "Audio Visual Room",
+    "is_deleted": false,
+    "room_id": "IND-020",
+    "indoor_type": "room",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383572,
+      "nanoseconds": 308000000
+    }
+  },
+  {
+    "id": "daJi261Ksehb28yUgBLN",
+    "is_deleted": false,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383697,
+      "nanoseconds": 307000000
+    },
+    "infra_id": "INFRA-17",
+    "room_id": "IND-014",
+    "name": "Floor 1 Stairs (Old Building)",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383391,
+      "nanoseconds": 311000000
+    },
+    "indoor_type": "stairs"
+  },
+  {
+    "id": "dog74zRj5h0Ou5xv2TYN",
+    "room_id": "IND-026",
+    "name": "Floor 1 Stairs (Social Work)",
+    "infra_id": "INFRA-13",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761388891,
+      "nanoseconds": 29000000
+    },
+    "indoor_type": "stairs",
+    "is_deleted": false
+  },
+  {
+    "id": "ffWEBlyrX8UNJQ8Kp0aB",
+    "name": "Student Council Office",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383587,
+      "nanoseconds": 831000000
+    },
+    "is_deleted": false,
+    "indoor_type": "room",
+    "infra_id": "INFRA-17",
+    "room_id": "IND-021"
+  },
+  {
+    "id": "gGhev7gdw2X47uWYYjJH",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383555,
+      "nanoseconds": 773000000
+    },
+    "indoor_type": "room",
+    "is_deleted": false,
+    "room_id": "IND-019",
+    "infra_id": "INFRA-17",
+    "name": "Room 22"
+  },
+  {
+    "id": "gJ5BjCnH049zEmbpH9nw",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395858,
+      "nanoseconds": 970000000
+    },
+    "is_deleted": false,
+    "name": "Stairs CSM 2nd Floor Near Room 207",
+    "infra_id": "INFRA-03",
+    "indoor_type": "room",
+    "room_id": "IND-050"
+  },
+  {
+    "id": "imiztPwotsAVR7oRZslh",
+    "is_deleted": false,
+    "indoor_type": "room",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395707,
+      "nanoseconds": 56000000
+    },
+    "room_id": "IND-044",
+    "name": "CSM 203",
+    "infra_id": "INFRA-03"
+  },
+  {
+    "id": "ktGJDDwj45NzZe45ZX1t",
+    "indoor_type": "room",
+    "room_id": "IND-030",
+    "is_deleted": false,
+    "infra_id": "INFRA-03",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395324,
+      "nanoseconds": 970000000
+    },
+    "name": "CSM 102 Lab Room"
+  },
+  {
+    "id": "ln6pR9evq1XEOYUYqJ26",
+    "indoor_type": "stairs",
+    "name": "Floor 2 Stairs (Old Building)",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383713,
+      "nanoseconds": 667000000
+    },
+    "room_id": "IND-018",
+    "infra_id": "INFRA-17",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383530,
+      "nanoseconds": 10000000
+    }
+  },
+  {
+    "id": "nGFLMvgNVOVDjDeDIt2J",
+    "indoor_type": "room",
+    "is_deleted": false,
+    "room_id": "IND-032",
+    "name": "Microbiology CSM10",
+    "infra_id": "INFRA-03",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395378,
+      "nanoseconds": 860000000
+    }
+  },
+  {
+    "id": "o2CU8Ps2wim7LyA2RC8a",
+    "is_deleted": false,
+    "indoor_type": "room",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383485,
+      "nanoseconds": 992000000
+    },
+    "room_id": "IND-017",
+    "infra_id": "INFRA-17",
+    "name": "COA"
+  },
+  {
+    "id": "oqtqXjyk7KkAMRe1LYxx",
+    "infra_id": "INFRA-14",
+    "room_id": "IND-008",
+    "is_deleted": false,
+    "name": "Lecture Room 1",
+    "indoor_type": "room",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138925,
+      "nanoseconds": 644000000
+    }
+  },
+  {
+    "id": "oueVetTXYgKvDPmvEYLE",
+    "indoor_type": "room",
+    "is_deleted": false,
+    "infra_id": "INFRA-17",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761383418,
+      "nanoseconds": 476000000
+    },
+    "name": "Testing and Evaluation Center",
+    "room_id": "IND-015"
+  },
+  {
+    "id": "piihDg5qs8fkMi2zxyui",
+    "name": "CSM 207",
+    "infra_id": "INFRA-03",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395816,
+      "nanoseconds": 818000000
+    },
+    "indoor_type": "room",
+    "room_id": "IND-049"
+  },
+  {
+    "id": "roUujaSfmhWu425b8UvR",
+    "infra_id": "INFRA-03",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395409,
+      "nanoseconds": 166000000
+    },
+    "name": "CSM 104 Lab Room",
+    "room_id": "IND-033",
+    "is_deleted": false,
+    "indoor_type": "room"
+  },
+  {
+    "id": "ruBPRWvbcxowjgm1ZB4U",
+    "name": "Department of Computer Science",
+    "infra_id": "INFRA-14",
+    "indoor_type": "room",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138813,
+      "nanoseconds": 615000000
+    },
+    "is_deleted": false,
+    "room_id": "IND-001"
+  },
+  {
+    "id": "tpkdWtgpjaRUqPUhKcoN",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395537,
+      "nanoseconds": 431000000
+    },
+    "room_id": "IND-038",
+    "is_deleted": false,
+    "name": "CSM and IB Lec Room",
+    "infra_id": "INFRA-03",
+    "indoor_type": "room"
+  },
+  {
+    "id": "vFWIIk4W7Q5dunxUMIA1",
+    "indoor_type": "room",
+    "room_id": "IND-052",
+    "name": "Department of Math and Statistics",
+    "infra_id": "INFRA-03",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395926,
+      "nanoseconds": 640000000
+    },
+    "is_deleted": false
+  },
+  {
+    "id": "wYqOOXtThYDcpdWWCeaX",
+    "room_id": "IND-042",
+    "name": "CSM 201",
+    "is_deleted": false,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761395662,
+      "nanoseconds": 606000000
+    },
+    "infra_id": "INFRA-03",
+    "indoor_type": "room"
+  },
+  {
+    "id": "wskEGKupJUIJVwHs0LH9",
+    "is_deleted": false,
+    "indoor_type": "room",
+    "name": "Comdev",
+    "infra_id": "INFRA-13",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761388803,
+      "nanoseconds": 61000000
+    },
+    "room_id": "IND-023"
+  },
+  {
+    "id": "x74PLYWAJgsqftuysUTl",
+    "name": "Entrance (Social Work)",
+    "room_id": "IND-024",
+    "infra_id": "INFRA-13",
+    "is_deleted": false,
+    "indoor_type": "room",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1761388852,
+      "nanoseconds": 53000000
+    }
+  },
+  {
+    "id": "yXLM7e2WD7AOC3GLs00y",
+    "infra_id": "INFRA-14",
+    "is_deleted": false,
+    "room_id": "IND-012",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759153214,
+      "nanoseconds": 607000000
+    },
+    "name": "Auditorium",
+    "indoor_type": "room"
+  },
+  {
+    "id": "ytGJG6AVweoleIdHdiN6",
+    "is_deleted": false,
+    "name": "Deans Office",
+    "infra_id": "INFRA-14",
+    "room_id": "IND-003",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1759138844,
+      "nanoseconds": 749000000
+    },
+    "indoor_type": "room"
+  }
+]

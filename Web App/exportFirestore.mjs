@@ -23,9 +23,11 @@ const collections = [
   "Categories",
   "Edges",
   "Infrastructure",
+  "IndoorInfrastructure",
   "MapVersions", // this one has nested data
   "Maps",
   "Nodes",
+  "NodeQRCodes",
   "Rooms",
   "StaticDataVersions",
   "Users"

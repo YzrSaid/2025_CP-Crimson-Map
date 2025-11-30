@@ -1,18 +1,14 @@
-/* =======================================
-   🌍 Universal Inline Stat Loader
-   ======================================= */
-
 const StatLoader = {
-  // Start loading animation on a list of elements
+  
   start(selector) {
     document.querySelectorAll(selector).forEach(el => {
-      // Skip if already loading
+      
       if (el.dataset.loading === "true") return;
 
       el.dataset.originalText = el.textContent;
       el.dataset.loading = "true";
 
-      // Replace content with shimmer
+      
       el.textContent = "";
       const shimmer = document.createElement("span");
       shimmer.classList.add("stat-loading");
@@ -20,7 +16,7 @@ const StatLoader = {
     });
   },
 
-  // Stop loading and restore content
+  
   stop(selector, values = {}) {
     document.querySelectorAll(selector).forEach(el => {
       const key = el.dataset.stat;
@@ -34,19 +30,19 @@ const StatLoader = {
 
 
 
-// 🔹 Show a universal loader inside any container
+
 function showUniversalLoader(container, type = "default") {
   if (!container) return;
 
-  // Clear existing content
+  
   container.innerHTML = "";
 
-  // If it's a table body, show a single centered row
+  
   if (type === "table") {
     const tr = document.createElement("tr");
     tr.classList.add("table-loader");
     const td = document.createElement("td");
-    td.colSpan = 10; // cover all columns
+    td.colSpan = 10; 
     td.innerHTML = `<div class="universal-loader"><div class="spinner"></div></div>`;
     tr.appendChild(td);
     container.appendChild(tr);
@@ -55,7 +51,7 @@ function showUniversalLoader(container, type = "default") {
   }
 }
 
-// 🔹 Hide the loader and clear it
+
 function hideUniversalLoader(container) {
   if (container) container.innerHTML = "";
 }
@@ -63,15 +59,15 @@ function hideUniversalLoader(container) {
 
 
 
-// 🔄 Universal Map Loader Utilities
+
 function showMapLoader(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   
-  // Ensure parent is positioned for overlay
+  
   container.style.position = "relative";
 
-  // Create loader overlay if it doesn’t exist
+  
   let loader = container.querySelector(".map-loading-overlay");
   if (!loader) {
     loader = document.createElement("div");
@@ -93,7 +89,7 @@ function hideMapLoader(containerId) {
 
 
 
-// 🔄 Universal Dropdown Loader Utilities
+
 function showDropdownLoader(selectId) {
   const select = document.getElementById(selectId);
   if (!select) return;

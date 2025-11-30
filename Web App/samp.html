@@ -1,146 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Migrate Node Coordinates</title>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-      doc,
-      getDoc,
-      updateDoc,
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-import { firebaseConfig } from "/firebaseConfig.js";
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // 🟢 Reference node (0,0)
-    const origin = {
-      node_id: "ND-045",
-      lat: 6.91463,
-      lon: 122.11927,
-    };
-
-    // 🟢 Target nodes to migrate
-    const targetNodeIds = ["ND-046", "ND-047", "ND-048", "ND-127", "ND-128"];
-
-    // 🧮 Convert latitude/longitude to x,y (meters)
-    function latLonToXY(lat, lon, originLat, originLon) {
-      const dx =
-        (lon - originLon) * Math.cos((originLat * Math.PI) / 180) * 111320;
-      const dy = (lat - originLat) * 110540;
-      return { x: dx, y: dy };
-    }
-
-    async function migrateNodes() {
-      const btn = document.getElementById("migrateBtn");
-      btn.disabled = true;
-      btn.innerHTML = "Migrating... ⏳";
-
-      try {
-        const mapVersionsSnap = await getDocs(collection(db, "MapVersions"));
-        for (const mapDoc of mapVersionsSnap.docs) {
-          const mapData = mapDoc.data();
-          const currentCampus = mapData.current_active_campus;
-          const currentVersion = mapData.current_version;
-          if (!currentCampus || !currentVersion) continue;
-
-          const versionRef = doc(
-            db,
-            "MapVersions",
-            mapDoc.id,
-            "versions",
-            currentVersion
-          );
-          const versionSnap = await getDoc(versionRef);
-          if (!versionSnap.exists()) continue;
-
-          const versionData = versionSnap.data();
-          const nodes = Array.isArray(versionData.nodes)
-            ? versionData.nodes
-            : [];
-
-          let updated = false;
-
-          const updatedNodes = nodes.map((node) => {
-            if (
-              node.campus_id === currentCampus &&
-              targetNodeIds.includes(node.node_id)
-            ) {
-              const { x, y } = latLonToXY(
-                node.latitude,
-                node.longitude,
-                origin.lat,
-                origin.lon
-              );
-              console.log(
-                `🧭 ${node.name} (${node.node_id}) → x=${x.toFixed(
-                  4
-                )}, y=${y.toFixed(4)}`
-              );
-              node.x_coordinate = x;
-              node.y_coordinate = y;
-              updated = true;
-            }
-            return node;
-          });
-
-          if (updated) {
-            await updateDoc(versionRef, { nodes: updatedNodes });
-            console.log(`✅ Updated nodes in version ${currentVersion}`);
-          }
-        }
-
-        alert("🎯 Migration complete! Coordinates updated.");
-      } catch (err) {
-        console.error("❌ Migration failed:", err);
-        alert("Migration failed. Check console for details.");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = "Migrate Coordinates";
-      }
-    }
-
-    window.migrateNodes = migrateNodes;
-  </script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: #f8f9fa;
-    }
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    button:hover:not(:disabled) {
-      background: #0056b3;
-    }
-    button:disabled {
-      background: #6c757d;
-      cursor: not-allowed;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Indoor Infrastructure</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:2rem; }
+  h1 { color:#a3001e; text-align:center; }
+  form { background:#fff; padding:2rem; border-radius:12px; max-width:600px; margin:auto; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+  .input-block { border:1px solid #ccc; padding:1rem; border-radius:8px; margin-bottom:1rem; }
+  .form-group { margin-bottom:0.5rem; }
+  label { display:block; margin-bottom:0.3rem; font-weight:bold; }
+  input, select { width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:6px; box-sizing:border-box; }
+  button { padding:0.5rem 1rem; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+  .save-btn { background:#a3001e; color:#fff; margin-top:1rem; }
+  .cancel-btn { background:#ccc; color:#000; margin-left:1rem; margin-top:1rem; }
+  .add-btn { background:#f5c542; color:#000; border-radius:6px; padding:0.3rem 0.8rem; font-weight:bold; cursor:pointer; margin-bottom:1rem; display:block; }
+  .spinner { border:3px solid #f3f3f3; border-top:3px solid #a3001e; border-radius:50%; width:18px; height:18px; animation: spin 1s linear infinite; display:inline-block; vertical-align:middle; margin-right:5px; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
-  <h2>🗺️ Node Coordinate Migration</h2>
-  <p>This will update the x and y coordinates of 5 nodes using Bahay Ni Aldrin Main Door as (0,0).</p>
-  <button id="migrateBtn" onclick="migrateNodes()">Migrate Coordinates</button>
+
+<h1>Add Indoor Infrastructure</h1>
+
+<form id="addRoomForm">
+  <button type="button" class="add-btn" id="addBlockBtn">+ Add Another Indoor Infrastructure</button>
+  <div id="inputContainer"></div>
+  <button type="submit" class="save-btn">Save All</button>
+  <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
+</form>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy, addDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { firebaseConfig } from "../firebaseConfig.js";
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let categoriesMap = {};
+
+// Fetch categories once
+async function fetchCategories() {
+  const categoriesSnapshot = await getDocs(collection(db, "Categories"));
+  categoriesSnapshot.forEach(doc => {
+    const cat = doc.data();
+    if (cat.category_id && cat.name) categoriesMap[cat.category_id] = cat.name;
+  });
+}
+
+// Generate next Room ID
+async function generateNextRoomId() {
+  const q = query(collection(db, "IndoorInfrastructure"));
+  const snapshot = await getDocs(q);
+  let maxNum = 0;
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.room_id) {
+      const num = parseInt(data.room_id.replace(/^RM-|^IND-/, ""));
+      if (!isNaN(num) && num > maxNum) maxNum = num;
+    }
+  });
+  return maxNum + 1;
+}
+
+// Populate Infrastructure dropdown
+async function createInfraSelect() {
+  const select = document.createElement("select");
+  select.required = true;
+  select.innerHTML = `<option value="">Select an infrastructure</option>`;
+
+  const infraSnapshot = await getDocs(query(collection(db, "Infrastructure"), orderBy("createdAt", "asc")));
+  infraSnapshot.forEach(doc => {
+    const data = doc.data();
+    const categoryName = categoriesMap[data.category_id] || null;
+    if (data.infra_id && data.name && (categoryName === "Academics" || categoryName === "Administration Offices")) {
+      const option = document.createElement("option");
+      option.value = data.infra_id;
+      option.textContent = data.name;
+      option.dataset.name = data.name;
+      option.dataset.category = categoryName;
+      select.appendChild(option);
+    }
+  });
+
+  return select;
+}
+
+// Add new input block
+async function addInputBlock() {
+  const nextNum = await generateNextRoomId();
+  const roomId = `IND-${String(nextNum).padStart(3, "0")}`;
+
+  const container = document.getElementById("inputContainer");
+  const block = document.createElement("div");
+  block.className = "input-block";
+
+  block.innerHTML = `
+    <div class="form-group">
+      <label>Indoor Infra Name</label>
+      <input type="text" placeholder="e.g. Lecture Room 1" required>
+    </div>
+    <div class="form-group">
+      <label>Indoor Infra ID</label>
+      <input type="text" name="room_id" value="${roomId}" disabled>
+    </div>
+    <div class="form-group">
+      <label>Infrastructure</label>
+    </div>
+    <div class="form-group">
+      <label>Indoor Type</label>
+      <select required>
+        <option value="">Select type</option>
+        <option value="room">Room</option>
+        <option value="stairs">Stairs</option>
+        <option value="fire_exit">Fire Exit</option>
+        <option value="entrance">Entrance</option>
+        <option value="indoorinter">Indoor Intermediate</option>
+      </select>
+    </div>
+  `;
+
+  const infraSelect = await createInfraSelect();
+  block.querySelectorAll(".form-group")[2].appendChild(infraSelect);
+  container.appendChild(block);
+}
+
+// Initialize
+await fetchCategories();
+await addInputBlock();
+
+// Add block button
+document.getElementById("addBlockBtn").addEventListener("click", addInputBlock);
+
+// Form submission
+document.getElementById("addRoomForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const saveBtn = e.target.querySelector(".save-btn");
+  const originalHTML = saveBtn.innerHTML;
+  saveBtn.innerHTML = `<div class="spinner"></div>Saving...`;
+  saveBtn.disabled = true;
+
+  const blocks = document.querySelectorAll(".input-block");
+  try {
+    for (const block of blocks) {
+      const name = block.querySelector('input[placeholder]').value.trim();
+      const roomId = block.querySelector('input[name="room_id"]').value.trim();
+      const infraSelect = block.querySelectorAll("select")[0];
+      const infraId = infraSelect.value;
+      const infraName = infraSelect.selectedOptions[0]?.dataset.name || infraId;
+      const indoorType = block.querySelectorAll("select")[1].value;
+
+      if (!name || !roomId || !infraId || !indoorType) {
+        alert("Please fill all fields in all blocks.");
+        saveBtn.innerHTML = originalHTML;
+        saveBtn.disabled = false;
+        return;
+      }
+
+      await addDoc(collection(db, "IndoorInfrastructure"), {
+        room_id: roomId,
+        name: name,
+        infra_id: infraId,
+        indoor_type: indoorType,
+        is_deleted: false,
+        createdAt: new Date()
+      });
+
+      await updateDoc(doc(db, "StaticDataVersions", "GlobalInfo"), { indoor_infrastructure_updated: true });
+
+      await addDoc(collection(db, "ActivityLogs"), {
+        timestamp: new Date(),
+        activity: "Added Indoor Infrastructure",
+        item: `Indoor ${roomId}`,
+        description: `Added "${name}" under infrastructure "${infraName}" (Type: ${indoorType}).`
+      });
+    }
+
+    alert("All indoor infrastructures saved successfully!");
+    document.getElementById("inputContainer").innerHTML = "";
+    await addInputBlock();
+
+  } catch (err) {
+    console.error(err);
+    alert("Error saving data. Please try again.");
+  } finally {
+    saveBtn.innerHTML = originalHTML;
+    saveBtn.disabled = false;
+  }
+});
+
+// Cancel button
+document.getElementById("cancelBtn").addEventListener("click", () => {
+  document.getElementById("inputContainer").innerHTML = "";
+  addInputBlock();
+});
+</script>
 </body>
 </html>
