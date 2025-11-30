@@ -21145,6 +21145,8 @@ MonoBehaviour:
   outdoorPanel: {fileID: 0}
   outdoorPanelContent: {fileID: 0}
   indoorPanel: {fileID: 0}
+  scrollviewOutdoor: {fileID: 0}
+  viewportOutdoor: {fileID: 0}
 --- !u!1 &1529212187
 GameObject:
   m_ObjectHideFlags: 0
@@ -25895,8 +25897,10 @@ MonoBehaviour:
   - {fileID: 1458340289}
   isCategoryPanelToggler: 1
   outdoorPanel: {fileID: 1458340289}
-  outdoorPanelContent: {fileID: 0}
+  outdoorPanelContent: {fileID: 97322316}
   indoorPanel: {fileID: 1144366682}
+  scrollviewOutdoor: {fileID: 1065543453}
+  viewportOutdoor: {fileID: 1009610695}
 --- !u!114 &1826757340
 MonoBehaviour:
   m_ObjectHideFlags: 0

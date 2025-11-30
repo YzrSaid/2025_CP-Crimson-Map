@@ -13908,8 +13908,10 @@ MonoBehaviour:
   - {fileID: 1686185376}
   isCategoryPanelToggler: 1
   outdoorPanel: {fileID: 1686185376}
-  outdoorPanelContent: {fileID: 0}
+  outdoorPanelContent: {fileID: 441353723}
   indoorPanel: {fileID: 2085044935}
+  scrollviewOutdoor: {fileID: 1178033568}
+  viewportOutdoor: {fileID: 2010721438}
 --- !u!1 &1172265916
 GameObject:
   m_ObjectHideFlags: 0
@@ -14182,7 +14184,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1178033569
 RectTransform:
   m_ObjectHideFlags: 0

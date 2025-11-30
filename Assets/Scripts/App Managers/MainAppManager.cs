@@ -97,6 +97,11 @@ public class MainAppManager : MonoBehaviour
         homePanel.SetActive(true);
         explorePanel.SetActive(false);
         settingsPanel.SetActive(false);
+
+        if (lockPanel != null)
+        {
+            lockPanel.SetActive(true);
+        }
     }
 
     void OnNavigateButtonClicked()
@@ -113,6 +118,12 @@ public class MainAppManager : MonoBehaviour
         explorePanel.SetActive(true);
         settingsPanel.SetActive(false);
 
+
+        if (lockPanel != null)
+        {
+            lockPanel.SetActive(false);
+        }
+
     }
 
     void OnSettingsButtonClicked()
@@ -128,6 +139,12 @@ public class MainAppManager : MonoBehaviour
         homePanel.SetActive(false);
         explorePanel.SetActive(false);
         settingsPanel.SetActive(true);
+
+        if (lockPanel != null)
+        {
+            lockPanel.SetActive(false);
+        }
+
     }
 
     private void CheckGPSStrength()

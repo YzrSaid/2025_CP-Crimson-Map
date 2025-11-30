@@ -14,6 +14,8 @@ public class PanelToggler : MonoBehaviour
     public GameObject outdoorPanel;
     public GameObject outdoorPanelContent;
     public GameObject indoorPanel;
+    public GameObject scrollviewOutdoor;
+    public GameObject viewportOutdoor;
 
     private Button button;
     private Dictionary<GameObject, Vector3> originalScales = new Dictionary<GameObject, Vector3>();
@@ -36,6 +38,14 @@ public class PanelToggler : MonoBehaviour
             if (outdoorPanel != null && !originalScales.ContainsKey(outdoorPanel))
             {
                 originalScales.Add(outdoorPanel, outdoorPanel.transform.localScale);
+            }
+            if (scrollviewOutdoor != null && !originalScales.ContainsKey(scrollviewOutdoor))
+            {
+                originalScales.Add(scrollviewOutdoor, scrollviewOutdoor.transform.localScale);
+            }
+            if (viewportOutdoor != null && !originalScales.ContainsKey(viewportOutdoor))
+            {
+                originalScales.Add(viewportOutdoor, viewportOutdoor.transform.localScale);
             }
             if (outdoorPanelContent != null && !originalScales.ContainsKey(outdoorPanelContent))
             {
@@ -109,6 +119,16 @@ public class PanelToggler : MonoBehaviour
                 outdoorPanel.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack)
                     .OnComplete(() => outdoorPanel.SetActive(false));
             }
+            if (scrollviewOutdoor != null && scrollviewOutdoor.activeSelf)
+            {
+                scrollviewOutdoor.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack)
+                    .OnComplete(() => scrollviewOutdoor.SetActive(false));
+            }
+            if (viewportOutdoor != null && viewportOutdoor.activeSelf)
+            {
+                viewportOutdoor.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack)
+                    .OnComplete(() => viewportOutdoor.SetActive(false));
+            }
             if (outdoorPanelContent != null && outdoorPanelContent.activeSelf)
             {
                 outdoorPanelContent.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack)
@@ -129,6 +149,34 @@ public class PanelToggler : MonoBehaviour
                     outdoorPanel.SetActive(true);
                     outdoorPanel.transform.localScale = Vector3.zero;
                     outdoorPanel.transform.DOScale(originalScales[outdoorPanel], 0.18f).SetEase(Ease.OutBack);
+                }
+            }
+            if (scrollviewOutdoor != null)
+            {
+                if (scrollviewOutdoor.activeSelf)
+                {
+                    scrollviewOutdoor.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack)
+                        .OnComplete(() => scrollviewOutdoor.SetActive(false));
+                }
+                else
+                {
+                    scrollviewOutdoor.SetActive(true);
+                    scrollviewOutdoor.transform.localScale = Vector3.zero;
+                    scrollviewOutdoor.transform.DOScale(originalScales[scrollviewOutdoor], 0.18f).SetEase(Ease.OutBack);
+                }
+            }
+            if (viewportOutdoor != null)
+            {
+                if (viewportOutdoor.activeSelf)
+                {
+                    viewportOutdoor.transform.DOScale(Vector3.zero, 0.18f).SetEase(Ease.InBack)
+                        .OnComplete(() => viewportOutdoor.SetActive(false));
+                }
+                else
+                {
+                    viewportOutdoor.SetActive(true);
+                    viewportOutdoor.transform.localScale = Vector3.zero;
+                    viewportOutdoor.transform.DOScale(originalScales[viewportOutdoor], 0.18f).SetEase(Ease.OutBack);
                 }
             }
             if (outdoorPanelContent != null)
