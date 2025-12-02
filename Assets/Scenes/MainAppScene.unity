@@ -5475,7 +5475,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arSceneName: ARScene
-  directARButton: {fileID: 451805400}
   arNavigationButton: {fileID: 0}
   pathFindingPanel: {fileID: 0}
   readQRCodeButton: {fileID: 0}
@@ -6827,7 +6826,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arSceneName: ReadQRCode
-  directARButton: {fileID: 0}
   arNavigationButton: {fileID: 0}
   pathFindingPanel: {fileID: 0}
   readQRCodeButton: {fileID: 571506451}
@@ -15134,7 +15132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114478715909612932, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 3}
       propertyPath: _options.locationOptions.zoom
-      value: 17.2
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 114478715909612932, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 3}
       propertyPath: _previewOptions.isPreviewEnabled
@@ -19406,7 +19404,7 @@ MonoBehaviour:
   mapboxMap: {fileID: 1699060734}
   dragSensitivity: 0.000002
   zoomSensitivity: 0.5
-  minZoom: 16
+  minZoom: 17
   maxZoom: 23
   dragThreshold: 0.5
   pinchZoomSensitivity: 2

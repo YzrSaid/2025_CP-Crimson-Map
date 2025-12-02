@@ -401,6 +401,7 @@ public class BarrierSpawner : MonoBehaviour
 
     private IEnumerator SpawnEdges(List<Edge> edges)
     {
+        yield return new WaitForSeconds(0.5f);
         int spawnedCount = 0;
         foreach (var edge in edges)
         {
@@ -441,6 +442,8 @@ public class BarrierSpawner : MonoBehaviour
                 yield return null;
             }
         }
+        yield return new WaitForEndOfFrame();
+        ForceUpdateAllEdges();
     }
 
     public void ClearSpawnedNodes()
@@ -552,21 +555,25 @@ public class BarrierEdge : MonoBehaviour
 
         if (map != null)
         {
-            referenceZoomLevel = map.Zoom;
-
-            Node fromNodeData = fromNode.GetNodeData();
-            Node toNodeData = toNode.GetNodeData();
-
-            // FIXED: Changed false to true - get positions relative to map
-            referenceFromPos = map.GeoToWorldPosition(new Vector2d(fromNodeData.latitude, fromNodeData.longitude), true);
-            referenceToPos = map.GeoToWorldPosition(new Vector2d(toNodeData.latitude, toNodeData.longitude), true);
-            referenceDistance = Vector3.Distance(referenceFromPos, referenceToPos);
-
+            RecalculateReferenceValues();
             isInitialized = true;
         }
 
         ApplyColorToEdge();
         UpdateEdgeTransform();
+    }
+    private void RecalculateReferenceValues()
+    {
+        if (map == null || fromNode == null || toNode == null) return;
+
+        Node fromNodeData = fromNode.GetNodeData();
+        Node toNodeData = toNode.GetNodeData();
+        if (fromNodeData == null || toNodeData == null) return;
+
+        referenceZoomLevel = map.Zoom;
+        referenceFromPos = map.GeoToWorldPosition(new Vector2d(fromNodeData.latitude, fromNodeData.longitude), true);
+        referenceToPos = map.GeoToWorldPosition(new Vector2d(toNodeData.latitude, toNodeData.longitude), true);
+        referenceDistance = Vector3.Distance(referenceFromPos, referenceToPos);
     }
 
     private void ApplyColorToEdge()
@@ -598,7 +605,6 @@ public class BarrierEdge : MonoBehaviour
         Node toNodeData = toNode.GetNodeData();
         if (fromNodeData == null || toNodeData == null) return;
 
-        // FIXED: Changed false to true - get positions relative to map
         Vector3 fromPos = map.GeoToWorldPosition(new Vector2d(fromNodeData.latitude, fromNodeData.longitude), true);
         Vector3 toPos = map.GeoToWorldPosition(new Vector2d(toNodeData.latitude, toNodeData.longitude), true);
 
@@ -633,6 +639,7 @@ public class BarrierEdge : MonoBehaviour
     {
         if (map != null && isInitialized)
         {
+            RecalculateReferenceValues();
             UpdateEdgeTransform();
         }
     }

@@ -13,8 +13,8 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
     [Header("Interaction Settings")]
     public float dragSensitivity = 0.000002f;
     public float zoomSensitivity = 0.5f;
-    public int minZoom = 18;
-    public int maxZoom = 21;
+    public int minZoom = 16;
+    public int maxZoom = 23;
 
     [Header("Drag Threshold")]
     public float dragThreshold = 0.5f;

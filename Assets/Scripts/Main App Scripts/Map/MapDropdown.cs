@@ -10,18 +10,18 @@ public class MapDropdown : MonoBehaviour
 {
     [Header("UI References")]
     public Button dropdownButton;
-    public GameObject panel; 
+    public GameObject panel;
     public GameObject panelForBG;
     public GameObject mapButtonPrefab;
     public Transform buttonContainer;
-    
+
     [Header("Mapbox Reference")]
     public AbstractMap mapboxMap;
-    
+
     // NEW: Add reference to loading manager
     [Header("Loading Manager")]
     public HomePageLoadingManager loadingManager;
-    
+
     private List<MapInfo> availableMaps = new List<MapInfo>();
     private bool isDataLoaded = false;
 
@@ -31,13 +31,13 @@ public class MapDropdown : MonoBehaviour
         {
             mapboxMap = FindObjectOfType<AbstractMap>();
         }
-        
+
         // NEW: Find loading manager if not assigned
         if (loadingManager == null)
         {
             loadingManager = FindObjectOfType<HomePageLoadingManager>();
         }
-        
+
         dropdownButton.onClick.AddListener(TogglePanel);
         StartCoroutine(WaitForMapManagerData());
         panel.SetActive(false);
@@ -111,7 +111,7 @@ public class MapDropdown : MonoBehaviour
             {
                 loadingManager.TriggerMapChangeLoading();
             }
-            
+
             MapManager.Instance.LoadMap(map);
             UpdateMapboxCenter(map);
         }
@@ -122,8 +122,8 @@ public class MapDropdown : MonoBehaviour
         if (mapboxMap != null)
         {
             Vector2d newCenter = new Vector2d(map.center_lat, map.center_lng);
-            mapboxMap.SetCenterLatitudeLongitude(newCenter);
-            mapboxMap.UpdateMap();
+            float defaultZoom = 17f;
+            mapboxMap.UpdateMap(newCenter, defaultZoom);
         }
     }
 

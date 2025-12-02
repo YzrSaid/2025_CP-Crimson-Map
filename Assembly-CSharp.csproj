@@ -97,7 +97,6 @@
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Factories/TerrainFactoryBase.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Platform/IAsyncRequest.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Data/KdTree/NearestNeighbour.cs" />
-    <Compile Include="Assets/Scripts/Main App Scripts/MapButtonsAndControlsScript.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Factories/TerrainStrategies/LowPolyTerrainStrategy.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/Spawners/CompassDebugUI.cs" />
     <Compile Include="Assets/Mapbox/Examples/Scripts/LoadingPanelController.cs" />

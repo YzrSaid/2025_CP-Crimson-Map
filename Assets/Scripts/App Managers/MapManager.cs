@@ -195,6 +195,7 @@ public class MapManager : MonoBehaviour
         OnMapChanged?.Invoke(currentMap);
 
         UpdateMapboxCenter(currentMap);
+        yield return new WaitForSeconds(0.5f);
 
         yield return StartCoroutine(ClearAllSpawnedObjects());
 
