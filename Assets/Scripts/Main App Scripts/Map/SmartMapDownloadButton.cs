@@ -14,18 +14,18 @@ public class SmartMapDownloadButton : MonoBehaviour
     public TextMeshProUGUI progressText;
     public Button cancelButton;
     public TextMeshProUGUI cancelButtonText;
-    
+
     [Header("Background Panel")]
     public GameObject backgroundPanel;
-    
+
     [Header("Animation Settings")]
     public float animationDuration = 0.3f;
     public Ease easeType = Ease.OutBack;
-    
+
     [Header("Internet Retry Settings")]
     public float internetCheckInterval = 2f;
     public float maxWaitTimeForInternet = 20f;
-    
+
     private OfflineCacheCoordinator coordinator;
     private MapboxOfflineManager offlineManager;
     private MapDropdown mapDropdown;
@@ -33,49 +33,49 @@ public class SmartMapDownloadButton : MonoBehaviour
     private string lastCheckedMapId = "";
     private bool isDownloadCancelled = false;
     private bool isWaitingForInternet = false;
-    
+
     private Dictionary<GameObject, Vector3> originalScales = new Dictionary<GameObject, Vector3>();
-    
+
     void Start()
     {
         coordinator = FindObjectOfType<OfflineCacheCoordinator>();
         offlineManager = FindObjectOfType<MapboxOfflineManager>();
         mapDropdown = FindObjectOfType<MapDropdown>();
-        
+
         if (coordinator == null || offlineManager == null)
         {
             return;
         }
-        
+
         StoreOriginalScale(progressPanel);
-        
+
         if (downloadButton != null)
         {
             downloadButton.onClick.AddListener(OnDownloadClicked);
         }
-        
+
         if (cancelButton != null)
         {
             cancelButton.onClick.AddListener(OnCancelClicked);
         }
-        
+
         if (progressPanel != null)
         {
             progressPanel.SetActive(false);
         }
-        
+
         if (backgroundPanel != null)
         {
             backgroundPanel.SetActive(false);
         }
-        
+
         offlineManager.OnCacheProgress += OnCacheProgress;
         offlineManager.OnCacheComplete += OnCacheComplete;
         offlineManager.OnCacheError += OnCacheError;
-        
+
         StartCoroutine(WaitAndUpdateButtons());
     }
-    
+
     void StoreOriginalScale(GameObject panel)
     {
         if (panel != null && !originalScales.ContainsKey(panel))
@@ -83,13 +83,13 @@ public class SmartMapDownloadButton : MonoBehaviour
             originalScales.Add(panel, panel.transform.localScale);
         }
     }
-    
+
     System.Collections.IEnumerator WaitAndUpdateButtons()
     {
         yield return new WaitUntil(() => MapManager.Instance != null && MapManager.Instance.IsReady());
-        
+
         yield return new WaitUntil(() => coordinator.isInitialized);
-        
+
         MapInfo currentMap = MapManager.Instance.GetCurrentMap();
         if (currentMap != null)
         {
@@ -97,10 +97,10 @@ public class SmartMapDownloadButton : MonoBehaviour
             lastCheckedMapId = currentMapId;
             coordinator.SetCurrentMap(currentMapId);
         }
-        
+
         UpdateButtonStates();
     }
-    
+
     void OnDestroy()
     {
         if (offlineManager != null)
@@ -109,54 +109,54 @@ public class SmartMapDownloadButton : MonoBehaviour
             offlineManager.OnCacheComplete -= OnCacheComplete;
             offlineManager.OnCacheError -= OnCacheError;
         }
-        
+
         if (progressPanel != null)
         {
             progressPanel.transform.DOKill();
         }
     }
-    
+
     void OpenPanel(GameObject panel, GameObject background = null)
     {
         if (panel == null) return;
-        
+
         GameObject bgToUse = background ?? backgroundPanel;
-        
+
         if (bgToUse != null && !bgToUse.activeSelf)
         {
             bgToUse.SetActive(true);
         }
-        
+
         panel.SetActive(true);
-        
+
         panel.transform.localScale = Vector3.zero;
-        
+
         Vector3 targetScale = originalScales.ContainsKey(panel) ? originalScales[panel] : Vector3.one;
         panel.transform.DOScale(targetScale, animationDuration)
             .SetEase(easeType)
             .SetUpdate(true);
     }
-    
+
     void ClosePanel(GameObject panel, GameObject background = null)
     {
         if (panel == null) return;
-        
+
         GameObject bgToUse = background ?? backgroundPanel;
-        
+
         panel.transform.DOScale(Vector3.zero, animationDuration)
             .SetEase(Ease.InBack)
             .SetUpdate(true)
             .OnComplete(() =>
             {
                 panel.SetActive(false);
-                
+
                 if (bgToUse != null && progressPanel != null && !progressPanel.activeSelf)
                 {
                     bgToUse.SetActive(false);
                 }
             });
     }
-    
+
     public void OnMapChanged(string newMapId)
     {
         if (coordinator != null)
@@ -167,96 +167,103 @@ public class SmartMapDownloadButton : MonoBehaviour
             UpdateButtonStates();
         }
     }
-    
+
     void UpdateButtonStates()
     {
         if (string.IsNullOrEmpty(currentMapId)) return;
-        
+
         bool isDownloaded = coordinator.IsMapDownloaded(currentMapId);
         bool isDownloading = offlineManager.isCaching;
         bool hasInternet = Application.internetReachability != NetworkReachability.NotReachable;
-        
+
         if (downloadButton != null)
         {
             downloadButton.gameObject.SetActive(!isDownloaded);
             downloadButton.interactable = !isDownloading && hasInternet;
         }
-        
+
         if (statusImage != null)
         {
             statusImage.SetActive(isDownloaded);
         }
     }
-    
+
     void OnDownloadClicked()
     {
         if (string.IsNullOrEmpty(currentMapId)) return;
-        
+
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             OpenPanel(progressPanel);
-            
+
             if (progressText != null)
             {
                 progressText.text = "No Internet Connection\nTry Again";
             }
-            
+
             if (progressBar != null)
             {
                 progressBar.value = 0f;
             }
-            
+
             if (cancelButtonText != null)
             {
                 cancelButtonText.text = "Okay";
             }
-            
+
             return;
         }
-        
+
         isDownloadCancelled = false;
         isWaitingForInternet = false;
-        
+
         OpenPanel(progressPanel);
-        
+
         if (cancelButtonText != null)
         {
             cancelButtonText.text = "Cancel";
         }
-        
+
         coordinator.DownloadMapForOffline(currentMapId);
-        
+
         StartCoroutine(MonitorInternetDuringDownload());
-        
+
         UpdateButtonStates();
     }
-    
+
     void OnCancelClicked()
     {
         if (isWaitingForInternet || Application.internetReachability == NetworkReachability.NotReachable)
         {
             ClosePanel(progressPanel);
-            
+
             isWaitingForInternet = false;
             isDownloadCancelled = false;
-            
+
             UpdateButtonStates();
             return;
         }
-        
+
         isDownloadCancelled = true;
-        
-        StopAllCoroutines();
-        
-        ClosePanel(progressPanel);
-        
-        UpdateButtonStates();
+
+        if (offlineManager != null)
+        {
+            offlineManager.CancelCaching();
+        }
+
+        ClosePanel(progressPanel, backgroundPanel);
+
+        if (progressBar != null)
+            progressBar.value = 0;
+
+        if (progressText != null)
+            progressText.text = "Download cancelled";
     }
-    
+
     System.Collections.IEnumerator MonitorInternetDuringDownload()
     {
         float timeWithoutInternet = 0f;
-        
+
         while (offlineManager.isCaching && !isDownloadCancelled)
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
@@ -265,40 +272,40 @@ public class SmartMapDownloadButton : MonoBehaviour
                 {
                     isWaitingForInternet = true;
                     timeWithoutInternet = 0f;
-                    
+
                     if (progressText != null)
                     {
                         progressText.text = "Internet connection lost\nWaiting...";
                     }
                 }
-                
+
                 timeWithoutInternet += internetCheckInterval;
-                
+
                 if (progressText != null)
                 {
                     int secondsLeft = Mathf.CeilToInt(maxWaitTimeForInternet - timeWithoutInternet);
                     progressText.text = $"Internet connection lost\nRetrying... ({secondsLeft}s)";
                 }
-                
+
                 if (timeWithoutInternet >= maxWaitTimeForInternet)
                 {
                     StopAllCoroutines();
-                    
+
                     if (progressText != null)
                     {
                         progressText.text = "No Internet Connection\nTry Again";
                     }
-                    
+
                     if (progressBar != null)
                     {
                         progressBar.value = 0f;
                     }
-                    
+
                     if (cancelButtonText != null)
                     {
                         cancelButtonText.text = "Okay";
                     }
-                    
+
                     yield break;
                 }
             }
@@ -307,18 +314,18 @@ public class SmartMapDownloadButton : MonoBehaviour
                 if (isWaitingForInternet)
                 {
                     isWaitingForInternet = false;
-                    
+
                     if (cancelButtonText != null)
                     {
                         cancelButtonText.text = "Cancel";
                     }
                 }
             }
-            
+
             yield return new WaitForSeconds(internetCheckInterval);
         }
     }
-    
+
     void OnCacheProgress(float progress)
     {
         if (!isWaitingForInternet)
@@ -327,7 +334,7 @@ public class SmartMapDownloadButton : MonoBehaviour
             {
                 progressBar.value = progress;
             }
-            
+
             if (progressText != null && MapManager.Instance != null)
             {
                 MapInfo currentMap = MapManager.Instance.GetCurrentMap();
@@ -336,50 +343,50 @@ public class SmartMapDownloadButton : MonoBehaviour
             }
         }
     }
-    
+
     void OnCacheComplete()
     {
         StopAllCoroutines();
-        
+
         isDownloadCancelled = false;
         isWaitingForInternet = false;
-        
+
         ClosePanel(progressPanel);
-        
+
         if (cancelButtonText != null)
         {
             cancelButtonText.text = "Cancel";
         }
-        
+
         UpdateButtonStates();
     }
-    
+
     void OnCacheError(string error)
     {
         StopAllCoroutines();
-        
+
         if (isDownloadCancelled)
         {
             return;
         }
-        
+
         isWaitingForInternet = false;
-        
-        bool isInternetError = error.Contains("internet") || error.Contains("connection") || 
+
+        bool isInternetError = error.Contains("internet") || error.Contains("connection") ||
                                Application.internetReachability == NetworkReachability.NotReachable;
-        
+
         if (isInternetError)
         {
             if (progressText != null)
             {
                 progressText.text = "No Internet Connection\nTry Again";
             }
-            
+
             if (progressBar != null)
             {
                 progressBar.value = 0f;
             }
-            
+
             if (cancelButtonText != null)
             {
                 cancelButtonText.text = "Okay";
@@ -388,16 +395,16 @@ public class SmartMapDownloadButton : MonoBehaviour
         else
         {
             ClosePanel(progressPanel);
-            
+
             if (cancelButtonText != null)
             {
                 cancelButtonText.text = "Cancel";
             }
         }
-        
+
         UpdateButtonStates();
     }
-    
+
     void Update()
     {
         if (MapManager.Instance != null && MapManager.Instance.IsReady())
@@ -407,13 +414,13 @@ public class SmartMapDownloadButton : MonoBehaviour
             {
                 currentMapId = currentMap.map_id;
                 lastCheckedMapId = currentMapId;
-                
+
                 coordinator.SetCurrentMap(currentMapId);
-                
+
                 UpdateButtonStates();
             }
         }
-        
+
         if (Time.frameCount % 60 == 0)
         {
             UpdateButtonStates();

@@ -18579,7 +18579,7 @@ MonoBehaviour:
   progressBar: {fileID: 1752954960}
   progressText: {fileID: 937182224}
   cancelButton: {fileID: 1228554910}
-  cancelButtonText: {fileID: 1664784864}
+  cancelButtonText: {fileID: 1414605537}
   backgroundPanel: {fileID: 1259183061}
   animationDuration: 0.3
   easeType: 27

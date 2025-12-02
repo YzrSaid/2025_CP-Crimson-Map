@@ -513,8 +513,6 @@ public class DirectionDisplayManager : MonoBehaviour
     {
         if (successPanel == null)
             return;
-
-        string originalToId = PlayerPrefs.GetString("ARNavigation_OriginalToNodeId", "");
         bool toIsIndoor = PlayerPrefs.GetInt("ARNavigation_ToIsIndoor", 0) == 1;
 
         if (successBodyText != null)

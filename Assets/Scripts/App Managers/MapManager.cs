@@ -164,13 +164,12 @@ public class MapManager : MonoBehaviour
         StartCoroutine(LoadMapCoroutine());
     }
 
-    private void UpdateMapboxCenter(MapInfo mapInfo)
+    public void SnapToCurrentMapCenter(float zoom = 17f)
     {
-        if (mapboxMap != null)
-        {
-            Vector2d newCenter = new Vector2d(mapInfo.center_lat, mapInfo.center_lng);
-            mapboxMap.UpdateMap(newCenter);
-        }
+        if (currentMap == null || mapboxMap == null) return;
+
+        Vector2d newCenter = new Vector2d(currentMap.center_lat, currentMap.center_lng);
+        mapboxMap.UpdateMap(newCenter, zoom);
     }
 
     private void SaveCurrentMapToPlayerPrefs()
@@ -194,7 +193,7 @@ public class MapManager : MonoBehaviour
         OnMapLoadingStarted?.Invoke();
         OnMapChanged?.Invoke(currentMap);
 
-        UpdateMapboxCenter(currentMap);
+        SnapToCurrentMapCenter();
         yield return new WaitForSeconds(0.5f);
 
         yield return StartCoroutine(ClearAllSpawnedObjects());

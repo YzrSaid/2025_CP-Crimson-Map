@@ -827,6 +827,17 @@
   },
   {
     "phone": "09123456789",
+    "name": "College of Engineering 2",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "image_url": "",
+    "email": "sample@gmail.com",
+    "createdAt": {},
+    "category_id": "CAT-01",
+    "id": "wRM8Ue8Yf14HaP1B3C8k"
+  },
+  {
+    "phone": "09123456789",
     "name": "Elementary",
     "updatedAt": {},
     "is_deleted": false,

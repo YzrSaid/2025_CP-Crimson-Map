@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using System.Collections;
 using Mapbox.Unity.Map;
-using Mapbox.Utils;
 
 public class MapDropdown : MonoBehaviour
 {
@@ -15,9 +14,6 @@ public class MapDropdown : MonoBehaviour
     public GameObject mapButtonPrefab;
     public Transform buttonContainer;
 
-    [Header("Mapbox Reference")]
-    public AbstractMap mapboxMap;
-
     [Header("Loading Manager")]
     public HomePageLoadingManager loadingManager;
 
@@ -26,11 +22,6 @@ public class MapDropdown : MonoBehaviour
 
     void Start()
     {
-        if (mapboxMap == null)
-        {
-            mapboxMap = FindObjectOfType<AbstractMap>();
-        }
-
         if (loadingManager == null)
         {
             loadingManager = FindObjectOfType<HomePageLoadingManager>();
@@ -45,9 +36,7 @@ public class MapDropdown : MonoBehaviour
     IEnumerator WaitForMapManagerData()
     {
         while (MapManager.Instance == null || !MapManager.Instance.IsReady())
-        {
             yield return new WaitForSeconds(0.1f);
-        }
 
         availableMaps = MapManager.Instance.GetAvailableMaps();
         isDataLoaded = true;
@@ -56,10 +45,7 @@ public class MapDropdown : MonoBehaviour
 
     void TogglePanel()
     {
-        if (!isDataLoaded)
-        {
-            return;
-        }
+        if (!isDataLoaded) return;
 
         bool isActive = !panel.activeSelf;
         panel.SetActive(isActive);
@@ -69,25 +55,17 @@ public class MapDropdown : MonoBehaviour
     void PopulatePanel()
     {
         foreach (Transform child in buttonContainer)
-        {
             Destroy(child.gameObject);
-        }
 
         foreach (var map in availableMaps)
         {
             GameObject btnObj = Instantiate(mapButtonPrefab, buttonContainer);
 
-            TMPro.TextMeshProUGUI tmpText = btnObj.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            if (tmpText != null)
-            {
-                tmpText.text = map.map_name;
-            }
-            else
-            {
-                Text regularText = btnObj.GetComponentInChildren<Text>();
-                if (regularText != null)
-                    regularText.text = map.map_name;
-            }
+            var tmpText = btnObj.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            if (tmpText != null) tmpText.text = map.map_name;
+
+            var regularText = btnObj.GetComponentInChildren<Text>();
+            if (regularText != null) regularText.text = map.map_name;
 
             Button button = btnObj.GetComponent<Button>();
             if (button != null)
@@ -106,32 +84,16 @@ public class MapDropdown : MonoBehaviour
         if (MapManager.Instance != null && MapManager.Instance.IsReady())
         {
             if (loadingManager != null)
-            {
                 loadingManager.TriggerMapChangeLoading();
-            }
 
             MapManager.Instance.LoadMap(map);
-            UpdateMapboxCenter(map);
-        }
-    }
-
-    void UpdateMapboxCenter(MapInfo map)
-    {
-        if (mapboxMap != null)
-        {
-            Vector2d newCenter = new Vector2d(map.center_lat, map.center_lng);
-            float defaultZoom = 17f;
-            mapboxMap.UpdateMap(newCenter, defaultZoom);
+            MapManager.Instance.SnapToCurrentMapCenter(); 
         }
     }
 
     public MapInfo GetCurrentlySelectedMap()
     {
-        if (MapManager.Instance != null)
-        {
-            return MapManager.Instance.GetCurrentMap();
-        }
-        return null;
+        return MapManager.Instance?.GetCurrentMap();
     }
 
     public void RefreshMapList()
@@ -147,22 +109,17 @@ public class MapDropdown : MonoBehaviour
     {
         MapInfo targetMap = availableMaps.Find(m => m.map_id == mapId);
         if (targetMap != null)
-        {
             SelectMap(targetMap);
-        }
     }
 
     public void SelectDefaultMap()
     {
         if (availableMaps.Count > 0)
-        {
             SelectMap(availableMaps[0]);
-        }
     }
 
     void OnDestroy()
     {
-        if (dropdownButton != null)
-            dropdownButton.onClick.RemoveAllListeners();
+        dropdownButton?.onClick.RemoveAllListeners();
     }
 }
