@@ -24143,6 +24143,8 @@ MonoBehaviour:
     infrastructures: []
   indoorList:
     indoors: []
+  nodeList:
+    nodes: []
   useSearchableDropdown: 1
   useAccordionUI: 0
   maxWaitTime: 30

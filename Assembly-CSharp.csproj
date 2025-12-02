@@ -417,6 +417,7 @@
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Data/KdTreeCollection.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/GameObjectModifier.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Factories/TerrainStrategies/FlatSphereTerrainStrategy.cs" />
+    <Compile Include="Assets/Scripts/App Managers/ExitConfirmationManager.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Directions/Response/DirectionsResponse.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/Logging/LocationLogReader.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/GameObjectModifiers/AddMonoBehavioursModifierType.cs" />

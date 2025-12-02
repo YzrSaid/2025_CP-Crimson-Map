@@ -18,7 +18,6 @@ public class MapDropdown : MonoBehaviour
     [Header("Mapbox Reference")]
     public AbstractMap mapboxMap;
 
-    // NEW: Add reference to loading manager
     [Header("Loading Manager")]
     public HomePageLoadingManager loadingManager;
 
@@ -32,7 +31,6 @@ public class MapDropdown : MonoBehaviour
             mapboxMap = FindObjectOfType<AbstractMap>();
         }
 
-        // NEW: Find loading manager if not assigned
         if (loadingManager == null)
         {
             loadingManager = FindObjectOfType<HomePageLoadingManager>();
