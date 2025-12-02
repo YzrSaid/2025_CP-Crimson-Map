@@ -18289,11 +18289,12 @@ GameObject:
   - component: {fileID: 1465186281}
   - component: {fileID: 1465186283}
   - component: {fileID: 1465186285}
+  - component: {fileID: 1465186302}
   - component: {fileID: 1465186286}
-  - component: {fileID: 1465186287}
   - component: {fileID: 1465186288}
   - component: {fileID: 1465186292}
   - component: {fileID: 1465186293}
+  - component: {fileID: 1465186287}
   - component: {fileID: 1465186294}
   - component: {fileID: 1465186297}
   - component: {fileID: 1465186296}
@@ -18302,7 +18303,6 @@ GameObject:
   - component: {fileID: 1465186299}
   - component: {fileID: 1465186300}
   - component: {fileID: 1465186301}
-  - component: {fileID: 1465186302}
   - component: {fileID: 1465186303}
   m_Layer: 0
   m_Name: MainAppManager

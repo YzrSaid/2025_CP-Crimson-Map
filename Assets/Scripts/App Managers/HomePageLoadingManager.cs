@@ -21,7 +21,7 @@ public class HomePageLoadingManager : MonoBehaviour
     void Start()
     {
         bool returningFromAR = GlobalManager.ShouldSkipFullInitialization();
-        
+
         if (returningFromAR || !GlobalManager.Instance.isDataInitialized)
         {
             ShowLoaderAndWait();
@@ -89,11 +89,11 @@ public class HomePageLoadingManager : MonoBehaviour
     private IEnumerator WaitForMapChangeComplete()
     {
         Debug.Log("[LoadingManager] Waiting for map change to complete...");
-        
+
         yield return StartCoroutine(WaitForMapLoadingComplete());
-        
+
         yield return StartCoroutine(WaitForSpawnersToFinish());
-        
+
         yield return StartCoroutine(WaitForInfrastructurePopulator());
 
         float elapsedTime = Time.time - loadingStartTime;
@@ -116,11 +116,11 @@ public class HomePageLoadingManager : MonoBehaviour
         yield return StartCoroutine(WaitForGlobalManager());
 
         yield return StartCoroutine(WaitForMapManager());
-        
+
         yield return StartCoroutine(WaitForMapLoadingComplete());
-        
+
         yield return StartCoroutine(WaitForSpawnersToFinish());
-        
+
         yield return StartCoroutine(WaitForInfrastructurePopulator());
 
         float elapsedTime = Time.time - loadingStartTime;
@@ -140,7 +140,7 @@ public class HomePageLoadingManager : MonoBehaviour
     private IEnumerator WaitForGlobalManager()
     {
         float waitTime = 0f;
-        
+
         while (GlobalManager.Instance == null || !GlobalManager.Instance.IsSystemReady())
         {
             if (waitTime >= maxWaitTime)
@@ -194,7 +194,7 @@ public class HomePageLoadingManager : MonoBehaviour
             waitTime += checkInterval;
             yield return new WaitForSeconds(checkInterval);
         }
-        
+
         Debug.Log("[LoadingManager] Map loading complete");
     }
 
@@ -210,7 +210,7 @@ public class HomePageLoadingManager : MonoBehaviour
             infrastructureSpawner = FindObjectOfType<InfrastructureSpawner>();
 
         yield return new WaitForSeconds(0.5f);
-        
+
         Debug.Log("[LoadingManager] Spawners finished");
     }
 
@@ -222,7 +222,7 @@ public class HomePageLoadingManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.5f);
-        
+
         Debug.Log("[LoadingManager] Infrastructure populator ready");
     }
 

@@ -196,7 +196,7 @@ public class DirectionDisplayManager : MonoBehaviour
 
         PopulateDirectionItems();
 
-        if (allDirections.Count > 0 && ARModeHelper.IsARMode())
+        if (allDirections.Count > 0)
         {
             StartNavigation();
         }

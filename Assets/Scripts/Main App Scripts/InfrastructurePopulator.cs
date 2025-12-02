@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,20 +34,38 @@ public class InfrastructurePopulator : MonoBehaviour
     private string selectedDestinationType = null;
 
     private MapManager mapManager;
+    private ARMapManager arMapManager;
+    private bool isARMode = false;
+
     private string currentMapId;
     private List<string> currentCampusIds = new List<string>();
     private HashSet<string> validInfraIds = new HashSet<string>();
 
     void Start()
     {
-        mapManager = MapManager.Instance;
+        isARMode = ARModeHelper.IsARMode();
+        Debug.Log($"[InfraPopulator] Starting in {(isARMode ? "AR" : "Normal")} mode");
 
-        if (mapManager != null)
+        if (isARMode && arMapManager != null)
         {
-            mapManager.OnMapChanged += OnMapChangedHandler;
+            arMapManager = ARMapManager.Instance;
+            ARMapManager.OnSpawningComplete += OnARSpawningComplete;
+        }
+        else
+        {
+            ARModeHelper.DisableARMode();
+            Debug.Log("Hey disable ka muna");
+            mapManager = MapManager.Instance;
+            if (mapManager != null) mapManager.OnMapChanged += OnMapChangedHandler;
         }
 
         StartCoroutine(WaitForDataInitializationThenLoad());
+    }
+
+    private void OnARSpawningComplete()
+    {
+        Debug.Log("[InfraPopulator] AR Spawning complete, refreshing data");
+        RefreshForNewMap();
     }
 
     private void OnMapChangedHandler(MapInfo newMap)
@@ -58,19 +77,40 @@ public class InfrastructurePopulator : MonoBehaviour
     {
         float waitTime = 0f;
 
-        while (mapManager == null && waitTime < maxWaitTime)
+        if (isARMode)
         {
-            mapManager = MapManager.Instance;
-            waitTime += Time.deltaTime;
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        if (mapManager != null)
-        {
-            while (!mapManager.IsReady() && waitTime < maxWaitTime)
+            while (arMapManager == null && waitTime < maxWaitTime)
             {
+                arMapManager = ARMapManager.Instance;
                 waitTime += Time.deltaTime;
                 yield return new WaitForSeconds(0.1f);
+            }
+
+            if (arMapManager != null)
+            {
+                while (!arMapManager.IsSpawningComplete() && waitTime < maxWaitTime)
+                {
+                    waitTime += Time.deltaTime;
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+        }
+        else
+        {
+            while (mapManager == null && waitTime < maxWaitTime)
+            {
+                mapManager = MapManager.Instance;
+                waitTime += Time.deltaTime;
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            if (mapManager != null)
+            {
+                while (!mapManager.IsReady() && waitTime < maxWaitTime)
+                {
+                    waitTime += Time.deltaTime;
+                    yield return new WaitForSeconds(0.1f);
+                }
             }
         }
 
@@ -82,7 +122,6 @@ public class InfrastructurePopulator : MonoBehaviour
                 yield return StartCoroutine(LoadAllData());
                 yield break;
             }
-
             waitTime += Time.deltaTime;
             yield return new WaitForSeconds(0.1f);
         }
@@ -93,25 +132,14 @@ public class InfrastructurePopulator : MonoBehaviour
     private bool IsDataInitializationComplete()
     {
         string infraPath = GetJsonFilePath("infrastructure.json");
-
-        if (!File.Exists(infraPath))
-        {
-            return false;
-        }
+        if (!File.Exists(infraPath)) return false;
 
         try
         {
             string infraContent = File.ReadAllText(infraPath);
-
-            if (string.IsNullOrEmpty(infraContent) || infraContent.Length < 10)
-            {
-                return false;
-            }
+            if (string.IsNullOrEmpty(infraContent) || infraContent.Length < 10) return false;
         }
-        catch
-        {
-            return false;
-        }
+        catch { return false; }
 
         return true;
     }
@@ -120,26 +148,35 @@ public class InfrastructurePopulator : MonoBehaviour
     {
 #if UNITY_EDITOR
         string streamingPath = Path.Combine(Application.streamingAssetsPath, fileName);
-        if (File.Exists(streamingPath))
-        {
-            return streamingPath;
-        }
+        if (File.Exists(streamingPath)) return streamingPath;
 #endif
         return Path.Combine(Application.persistentDataPath, fileName);
     }
 
     private IEnumerator LoadAllData()
     {
-        if (mapManager != null && mapManager.GetCurrentMap() != null)
+        if (isARMode)
         {
-            currentMapId = mapManager.GetCurrentMap().map_id;
-            currentCampusIds = mapManager.GetCurrentCampusIds();
-            Debug.Log($"[InfraPopulator] Loading data for Map: {currentMapId}, Campuses: {string.Join(", ", currentCampusIds)}");
+            currentMapId = PlayerPrefs.GetString("ARScene_MapId", "MAP-01");
+            string campusIdsStr = PlayerPrefs.GetString("ARScene_CampusIds", "");
+            currentCampusIds = string.IsNullOrEmpty(campusIdsStr)
+                ? new List<string>()
+                : new List<string>(campusIdsStr.Split(','));
+            Debug.Log($"[InfraPopulator] AR Mode - Loading data for Map: {currentMapId}, Campuses: {string.Join(", ", currentCampusIds)}");
         }
         else
         {
-            Debug.LogWarning("[InfraPopulator] MapManager not ready or no map loaded. Loading all data without filtering.");
-            currentMapId = PlayerPrefs.GetString("ARScene_MapId", "MAP-01"); // Fallback
+            if (mapManager != null && mapManager.GetCurrentMap() != null)
+            {
+                currentMapId = mapManager.GetCurrentMap().map_id;
+                currentCampusIds = mapManager.GetCurrentCampusIds();
+                Debug.Log($"[InfraPopulator] Normal Mode - Loading data for Map: {currentMapId}, Campuses: {string.Join(", ", currentCampusIds)}");
+            }
+            else
+            {
+                Debug.LogWarning("[InfraPopulator] MapManager not ready or no map loaded. Loading all data without filtering.");
+                currentMapId = PlayerPrefs.GetString("ARScene_MapId", "MAP-01");
+            }
         }
 
         bool infraLoaded = false;
@@ -197,28 +234,19 @@ public class InfrastructurePopulator : MonoBehaviour
 
         BuildInfraToRoomsMapping();
 
-        if (useSearchableDropdown && searchableDropdownTo != null)
-        {
-            InitializeSearchableDropdown();
-        }
-        else if (useAccordionUI && destinationScrollView != null && destinationListContent != null)
-        {
-            PopulateAccordionUI();
-        }
-        else if (dropdownTo != null)
-        {
-            PopulateDropdown(dropdownTo);
-        }
+        if (useSearchableDropdown && searchableDropdownTo != null) InitializeSearchableDropdown();
+        else if (useAccordionUI && destinationScrollView != null && destinationListContent != null) PopulateAccordionUI();
+        else if (dropdownTo != null) PopulateDropdown(dropdownTo);
 
         Debug.Log($"[InfraPopulator] Loaded {infrastructureList?.infrastructures?.Length ?? 0} infrastructures, {indoorList?.indoors?.Length ?? 0} indoor items");
     }
+
     private void OnNodesDataLoaded(string jsonContent)
     {
         try
         {
             Node[] nodes = JsonHelper.FromJson<Node>(jsonContent);
             nodeList = new NodeList { nodes = nodes.ToList() };
-
             validInfraIds.Clear();
 
             foreach (var node in nodes)
@@ -226,18 +254,12 @@ public class InfrastructurePopulator : MonoBehaviour
                 if (node.is_active && !string.IsNullOrEmpty(node.related_infra_id))
                 {
                     if (currentCampusIds.Count == 0 || currentCampusIds.Contains(node.campus_id))
-                    {
                         validInfraIds.Add(node.related_infra_id);
-                    }
                 }
             }
-
             Debug.Log($"[InfraPopulator] Found {validInfraIds.Count} valid infrastructure IDs for current map");
         }
-        catch (Exception ex)
-        {
-            Debug.LogError($"[InfraPopulator] Error parsing nodes: {ex.Message}");
-        }
+        catch (Exception ex) { Debug.LogError($"[InfraPopulator] Error parsing nodes: {ex.Message}"); }
     }
 
     private void OnInfrastructureDataLoaded(string jsonContent)
@@ -248,27 +270,17 @@ public class InfrastructurePopulator : MonoBehaviour
             InfrastructureList fullList = JsonUtility.FromJson<InfrastructureList>(wrappedJson);
             if (validInfraIds.Count > 0)
             {
-                var filteredInfras = fullList.infrastructures
-                    .Where(infra => !infra.is_deleted && validInfraIds.Contains(infra.infra_id))
-                    .ToArray();
-
+                var filteredInfras = fullList.infrastructures.Where(infra => !infra.is_deleted && validInfraIds.Contains(infra.infra_id)).ToArray();
                 infrastructureList = new InfrastructureList { infrastructures = filteredInfras };
-
                 Debug.Log($"[InfraPopulator] Filtered to {filteredInfras.Length} infrastructures for map {currentMapId}");
             }
             else
             {
-                infrastructureList = new InfrastructureList
-                {
-                    infrastructures = fullList.infrastructures.Where(i => !i.is_deleted).ToArray()
-                };
+                infrastructureList = new InfrastructureList { infrastructures = fullList.infrastructures.Where(i => !i.is_deleted).ToArray() };
                 Debug.LogWarning("[InfraPopulator] No valid infra IDs found, loading all infrastructures");
             }
         }
-        catch (Exception ex)
-        {
-            Debug.LogError($"[InfraPopulator] Error parsing infrastructures: {ex.Message}");
-        }
+        catch (Exception ex) { Debug.LogError($"[InfraPopulator] Error parsing infrastructures: {ex.Message}"); }
     }
 
     private void OnIndoorDataLoaded(string jsonContent)
@@ -276,104 +288,63 @@ public class InfrastructurePopulator : MonoBehaviour
         try
         {
             IndoorInfrastructure[] indoorArray = JsonHelper.FromJson<IndoorInfrastructure>(jsonContent);
-
             if (validInfraIds.Count > 0)
             {
-                var filteredIndoors = indoorArray
-                    .Where(indoor => !indoor.is_deleted && validInfraIds.Contains(indoor.infra_id))
-                    .ToArray();
-
+                var filteredIndoors = indoorArray.Where(indoor => !indoor.is_deleted && validInfraIds.Contains(indoor.infra_id)).ToArray();
                 indoorList = new IndoorInfrastructureList { indoors = filteredIndoors };
-
                 Debug.Log($"[InfraPopulator] Filtered to {filteredIndoors.Length} indoor items for map {currentMapId}");
             }
             else
             {
-                indoorList = new IndoorInfrastructureList
-                {
-                    indoors = indoorArray.Where(i => !i.is_deleted).ToArray()
-                };
+                indoorList = new IndoorInfrastructureList { indoors = indoorArray.Where(i => !i.is_deleted).ToArray() };
                 Debug.LogWarning("[InfraPopulator] No valid infra IDs found, loading all indoor items");
             }
         }
-        catch (Exception ex)
-        {
-            Debug.LogError($"[InfraPopulator] Error parsing indoor infrastructures: {ex.Message}");
-        }
+        catch (Exception ex) { Debug.LogError($"[InfraPopulator] Error parsing indoor infrastructures: {ex.Message}"); }
     }
 
     private void BuildInfraToRoomsMapping()
     {
         infraToRoomsMap.Clear();
-
-        if (indoorList == null || indoorList.indoors == null)
-        {
-            return;
-        }
+        if (indoorList == null || indoorList.indoors == null) return;
 
         foreach (var indoor in indoorList.indoors)
         {
-            if (indoor.is_deleted)
-                continue;
+            if (indoor.is_deleted) continue;
             string indoorType = indoor.indoor_type?.ToLower();
-            if (indoorType != "room" && indoorType != "fire_exit")
-                continue;
+            if (indoorType != "room" && indoorType != "fire_exit") continue;
+            if (validInfraIds.Count > 0 && !validInfraIds.Contains(indoor.infra_id)) continue;
 
-            if (validInfraIds.Count > 0 && !validInfraIds.Contains(indoor.infra_id))
-                continue;
-
-            if (!infraToRoomsMap.ContainsKey(indoor.infra_id))
-            {
-                infraToRoomsMap[indoor.infra_id] = new List<IndoorInfrastructure>();
-            }
-
+            if (!infraToRoomsMap.ContainsKey(indoor.infra_id)) infraToRoomsMap[indoor.infra_id] = new List<IndoorInfrastructure>();
             infraToRoomsMap[indoor.infra_id].Add(indoor);
         }
-
         Debug.Log($"[InfraPopulator] Built mapping for {infraToRoomsMap.Count} infrastructures with rooms");
     }
 
     void OnDestroy()
     {
-        if (mapManager != null)
-        {
-            mapManager.OnMapChanged -= OnMapChangedHandler;
-        }
+        if (isARMode) ARMapManager.OnSpawningComplete -= OnARSpawningComplete;
+        else if (mapManager != null) mapManager.OnMapChanged -= OnMapChangedHandler;
     }
 
     private void InitializeSearchableDropdown()
     {
-        if (searchableDropdownTo == null)
-        {
-            return;
-        }
-
+        if (searchableDropdownTo == null) return;
         searchableDropdownTo.Initialize(infrastructureList, infraToRoomsMap);
-
         searchableDropdownTo.OnDestinationSelected += (id, type, displayName) =>
         {
             selectedDestinationId = id;
             selectedDestinationType = type;
-
             PathfindingController pathfinding = FindObjectOfType<PathfindingController>();
-            if (pathfinding != null)
-            {
-                pathfinding.SetDestination(id, type);
-            }
+            if (pathfinding != null) pathfinding.SetDestination(id, type);
         };
     }
 
     private void PopulateAccordionUI()
     {
-        if (destinationListContent == null)
-        {
-            return;
-        }
+        if (destinationListContent == null) return;
 
-        foreach (Transform child in destinationListContent)
-        {
-            Destroy(child.gameObject);
-        }
+        foreach (Transform child in destinationListContent) Destroy(child.gameObject);
         accordionInstances.Clear();
 
         if (infrastructureList == null || infrastructureList.infrastructures.Length == 0)
@@ -384,9 +355,7 @@ public class InfrastructurePopulator : MonoBehaviour
 
         foreach (var infra in infrastructureList.infrastructures)
         {
-            bool hasRooms = infraToRoomsMap.ContainsKey(infra.infra_id) &&
-                           infraToRoomsMap[infra.infra_id].Count > 0;
-
+            bool hasRooms = infraToRoomsMap.ContainsKey(infra.infra_id) && infraToRoomsMap[infra.infra_id].Count > 0;
             GameObject infraButton = CreateInfrastructureButton(infra.name, hasRooms);
             infraButton.transform.SetParent(destinationListContent, false);
 
@@ -415,21 +384,18 @@ public class InfrastructurePopulator : MonoBehaviour
 
                 ContentSizeFitter fitter = roomsContainer.AddComponent<ContentSizeFitter>();
                 fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
                 roomsContainer.SetActive(false);
 
                 foreach (var room in infraToRoomsMap[infra.infra_id])
                 {
                     GameObject roomButton = CreateRoomButton(room.name);
                     roomButton.transform.SetParent(roomsContainer.transform, false);
-
                     Button roomBtn = roomButton.GetComponent<Button>();
                     string roomId = room.room_id;
                     roomBtn.onClick.AddListener(() => OnDestinationSelected(roomId, "indoorinfra", room.name));
                 }
 
                 accordionInstances[infra.infra_id] = roomsContainer;
-
                 string infraId = infra.infra_id;
                 btn.onClick.AddListener(() => ToggleAccordion(infraId, arrowIcon));
             }
@@ -446,7 +412,6 @@ public class InfrastructurePopulator : MonoBehaviour
     private GameObject CreateInfrastructureButton(string text, bool hasArrow)
     {
         GameObject buttonObj = new GameObject("Infra_" + text);
-
         RectTransform rect = buttonObj.AddComponent<RectTransform>();
         rect.anchorMin = new Vector2(0, 1);
         rect.anchorMax = new Vector2(1, 1);
@@ -473,7 +438,6 @@ public class InfrastructurePopulator : MonoBehaviour
 
         GameObject textObj = new GameObject("Text");
         textObj.transform.SetParent(buttonObj.transform, false);
-
         TextMeshProUGUI textComp = textObj.AddComponent<TextMeshProUGUI>();
         textComp.text = text;
         textComp.fontSize = 16;
@@ -491,7 +455,6 @@ public class InfrastructurePopulator : MonoBehaviour
         {
             GameObject arrowObj = new GameObject("Arrow");
             arrowObj.transform.SetParent(buttonObj.transform, false);
-
             TextMeshProUGUI arrowText = arrowObj.AddComponent<TextMeshProUGUI>();
             arrowText.text = "▶";
             arrowText.fontSize = 14;
@@ -513,7 +476,6 @@ public class InfrastructurePopulator : MonoBehaviour
     private GameObject CreateRoomButton(string text)
     {
         GameObject buttonObj = new GameObject("Room_" + text);
-
         RectTransform rect = buttonObj.AddComponent<RectTransform>();
         rect.anchorMin = new Vector2(0, 1);
         rect.anchorMax = new Vector2(1, 1);
@@ -539,7 +501,6 @@ public class InfrastructurePopulator : MonoBehaviour
 
         GameObject textObj = new GameObject("Text");
         textObj.transform.SetParent(buttonObj.transform, false);
-
         TextMeshProUGUI textComp = textObj.AddComponent<TextMeshProUGUI>();
         textComp.text = text;
         textComp.fontSize = 14;
@@ -555,33 +516,22 @@ public class InfrastructurePopulator : MonoBehaviour
 
     private void ToggleAccordion(string infraId, GameObject arrowIcon)
     {
-        if (!accordionInstances.ContainsKey(infraId))
-            return;
+        if (!accordionInstances.ContainsKey(infraId)) return;
 
         GameObject roomsContainer = accordionInstances[infraId];
         bool isOpen = roomsContainer.activeSelf;
 
-        foreach (var kvp in accordionInstances)
-        {
-            kvp.Value.SetActive(false);
-        }
-
+        foreach (var kvp in accordionInstances) kvp.Value.SetActive(false);
         roomsContainer.SetActive(!isOpen);
 
         if (arrowIcon != null)
         {
             TextMeshProUGUI arrowText = arrowIcon.GetComponent<TextMeshProUGUI>();
-            if (arrowText != null)
-            {
-                arrowText.text = roomsContainer.activeSelf ? "▼" : "▶";
-            }
+            if (arrowText != null) arrowText.text = roomsContainer.activeSelf ? "▼" : "▶";
         }
 
         Canvas.ForceUpdateCanvases();
-        if (destinationScrollView != null)
-        {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(destinationListContent as RectTransform);
-        }
+        if (destinationScrollView != null) LayoutRebuilder.ForceRebuildLayoutImmediate(destinationListContent as RectTransform);
     }
 
     private void OnDestinationSelected(string id, string type, string displayName)
@@ -590,55 +540,35 @@ public class InfrastructurePopulator : MonoBehaviour
         selectedDestinationType = type;
 
         PathfindingController pathfinding = FindObjectOfType<PathfindingController>();
-        if (pathfinding != null)
-        {
-            pathfinding.SetDestination(id, type);
-        }
+        if (pathfinding != null) pathfinding.SetDestination(id, type);
     }
 
     private void PopulateDropdown(TMP_Dropdown dropdown)
     {
         dropdown.ClearOptions();
-
-        if (infrastructureList == null || infrastructureList.infrastructures.Length == 0)
-        {
-            return;
-        }
+        if (infrastructureList == null || infrastructureList.infrastructures.Length == 0) return;
 
         List<string> options = new List<string>();
-
         foreach (var infra in infrastructureList.infrastructures)
         {
             options.Add(infra.name);
-
             if (infraToRoomsMap.ContainsKey(infra.infra_id))
-            {
                 foreach (var room in infraToRoomsMap[infra.infra_id])
-                {
                     options.Add("    " + room.name);
-                }
-            }
         }
-
         dropdown.AddOptions(options);
     }
 
     public Infrastructure GetSelectedInfrastructure(TMP_Dropdown dropdown)
     {
         int index = dropdown.value;
-        if (index >= 0 && index < infrastructureList.infrastructures.Length)
-        {
-            return infrastructureList.infrastructures[index];
-        }
+        if (index >= 0 && index < infrastructureList.infrastructures.Length) return infrastructureList.infrastructures[index];
         return null;
     }
 
     public (string id, string type) GetSelectedDestinationFromDropdown(TMP_Dropdown dropdown)
     {
-        if (dropdown == null || infrastructureList == null)
-        {
-            return (null, null);
-        }
+        if (dropdown == null || infrastructureList == null) return (null, null);
 
         int selectedIndex = dropdown.value;
         string selectedText = dropdown.options[selectedIndex].text;
@@ -646,33 +576,21 @@ public class InfrastructurePopulator : MonoBehaviour
         if (selectedText.StartsWith("    "))
         {
             string roomName = selectedText.Trim();
-
             if (indoorList != null && indoorList.indoors != null)
-            {
                 foreach (var indoor in indoorList.indoors)
-                {
                     if (!indoor.is_deleted && indoor.name == roomName)
-                    {
                         return (indoor.room_id, "indoorinfra");
-                    }
-                }
-            }
-
             return (null, null);
         }
         else
         {
             foreach (var infra in infrastructureList.infrastructures)
-            {
                 if (infra.name == selectedText)
-                {
                     return (infra.infra_id, "infrastructure");
-                }
-            }
-
             return (null, null);
         }
     }
+
     public (string id, string type) GetSelectedDestination()
     {
         if (useSearchableDropdown && searchableDropdownTo != null)
@@ -680,18 +598,16 @@ public class InfrastructurePopulator : MonoBehaviour
             var selection = searchableDropdownTo.GetSelectedDestination();
             return (selection.id, selection.type);
         }
-
         return (selectedDestinationId, selectedDestinationType);
     }
 
     public void RefreshForNewMap()
     {
-        Debug.Log("[InfraPopulator] Refreshing for new map...");
+        Debug.Log($"[InfraPopulator] Refreshing for new map in {(isARMode ? "AR" : "Normal")} mode...");
 
         infraToRoomsMap.Clear();
         accordionInstances.Clear();
         validInfraIds.Clear();
-
         selectedDestinationId = null;
         selectedDestinationType = null;
 
