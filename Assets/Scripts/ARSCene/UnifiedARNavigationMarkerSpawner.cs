@@ -259,7 +259,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     {
         if (node.type == "indoorinfra") return false;
         float distance = CalculateDistance(node, isIndoor);
-        return distance <= maxVisibleDistance && distance >= minMarkerDistance;
+        return distance <= maxVisibleDistance;
     }
 
     private void CreateMarkerForNode(Node node, bool isIndoor)

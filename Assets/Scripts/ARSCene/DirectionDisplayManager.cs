@@ -28,11 +28,10 @@ public class DirectionDisplayManager : MonoBehaviour
 
     [Header("Success Panel")]
     public GameObject successPanel;
-    public TextMeshProUGUI successTitleText;
     public TextMeshProUGUI successBodyText;
     public Button successCloseButton;
-    public GameObject successPanelBackground; // NEW: Background for success panel
-    
+    public GameObject successPanelBackground;
+
     [Header("Success Panel Animation")]
     public float successAnimationDuration = 0.3f;
     public Ease successEaseType = Ease.OutBack;
@@ -52,7 +51,7 @@ public class DirectionDisplayManager : MonoBehaviour
     private bool hasAutoProgressed = false;
 
     private UnifiedARManager arManager;
-    private Vector3 successPanelOriginalScale; 
+    private Vector3 successPanelOriginalScale;
 
     void Start()
     {
@@ -68,10 +67,10 @@ public class DirectionDisplayManager : MonoBehaviour
 
         if (successPanel != null)
         {
-            successPanelOriginalScale = successPanel.transform.localScale; 
+            successPanelOriginalScale = successPanel.transform.localScale;
             successPanel.SetActive(false);
         }
-        
+
         if (successPanelBackground != null)
             successPanelBackground.SetActive(false);
 
@@ -297,7 +296,7 @@ public class DirectionDisplayManager : MonoBehaviour
             }
 
             hasAutoProgressed = false;
-            
+
             UpdateDirectionItemsStatus();
             return;
         }
@@ -506,7 +505,7 @@ public class DirectionDisplayManager : MonoBehaviour
             compassArrow.SetActive(false);
 
         UpdateDirectionItemsStatus();
-        
+
         ShowSuccessPanel();
     }
 
@@ -518,43 +517,26 @@ public class DirectionDisplayManager : MonoBehaviour
         string originalToId = PlayerPrefs.GetString("ARNavigation_OriginalToNodeId", "");
         bool toIsIndoor = PlayerPrefs.GetInt("ARNavigation_ToIsIndoor", 0) == 1;
 
-        if (successTitleText != null)
-        {
-            successTitleText.text = "🎉 Destination Reached!";
-        }
-
         if (successBodyText != null)
         {
             if (toIsIndoor)
             {
-                string roomName = PlayerPrefs.GetString($"ARNavigation_Direction_{allDirections.Count - 1}_DestNode", "your destination");
-                
-                successBodyText.text = 
-                    $"<b>Congratulations!</b> You've arrived at the building.\n\n" +
-                    $"<b>{roomName}</b> is located inside this building. " +
-                    $"Check the directions panel to see which floor the room is on.\n\n" +
-                    $"<b>Next Steps:</b>\n" +
-                    $"• Tap the <b>Indoor Map</b> button to switch to the indoor map view\n" +
-                    $"• Navigate inside the building using the floor map\n" +
-                    $"• Find your room on the indicated floor\n\n" +
-                    $"You can stop AR navigation now or continue exploring!";
+                successBodyText.text =
+                    $"<b>Congratulations!</b> You've arrived at the building. " +
+                    $"Check the directions panel to see which floor the room is on, and use the indoor map to navigate inside building.";
             }
             else
             {
-                successBodyText.text = 
-                    $"<b>Congratulations!</b> You've successfully reached your destination!\n\n" +
-                    $"You can now stop AR navigation or explore other locations on campus.\n\n" +
-                    $"Thank you for using CRIMSON Navigation! 🎯";
+                successBodyText.text =
+                    $"<b>Congratulations!</b> You've successfully reached your destination! " +
+                    $"You can now stop AR navigation or explore other locations on campus. ";
             }
         }
-
-        // NEW: Show background first (instantly)
         if (successPanelBackground != null)
         {
             successPanelBackground.SetActive(true);
         }
 
-        // NEW: Animate the success panel with DOTween
         successPanel.SetActive(true);
         successPanel.transform.localScale = Vector3.zero;
         successPanel.transform.DOScale(successPanelOriginalScale, successAnimationDuration)
@@ -566,15 +548,13 @@ public class DirectionDisplayManager : MonoBehaviour
     {
         if (successPanel != null)
         {
-            // NEW: Animate the panel closing
             successPanel.transform.DOScale(Vector3.zero, successAnimationDuration)
                 .SetEase(Ease.InBack)
                 .SetUpdate(true)
                 .OnComplete(() =>
                 {
                     successPanel.SetActive(false);
-                    
-                    // Hide background after panel closes
+
                     if (successPanelBackground != null)
                     {
                         successPanelBackground.SetActive(false);
@@ -619,7 +599,7 @@ public class DirectionDisplayManager : MonoBehaviour
 
         if (successPanel != null)
             successPanel.SetActive(false);
-        
+
         if (successPanelBackground != null)
             successPanelBackground.SetActive(false);
 
