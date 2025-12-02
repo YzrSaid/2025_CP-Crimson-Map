@@ -44,3 +44,5 @@ It includes an **Admin Web App** that allows easy configuration of building posi
 - **A\* Algorithm** for route optimization
 - **HTML/CSS/JavaScript** (Admin Web App)
 - **JSON** for data handling between systems
+
+[![wakatime](https://wakatime.com/badge/github/YzrSaid/2025_CP-Crimson-Map.svg)](https://wakatime.com/badge/github/YzrSaid/2025_CP-Crimson-Map)
