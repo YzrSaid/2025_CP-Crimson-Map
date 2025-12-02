@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Aura Material
+  m_Name: Aura (Journey) Material
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -118,9 +118,9 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 0.9254902, g: 0.6901961, b: 0.20392153, a: 0.36078432}
-    - _Color: {r: 0.9254902, g: 0.6901961, b: 0.2039215, a: 0.36078432}
-    - _EmissionColor: {r: 1.8509804, g: 1.3803922, b: 0.40784314, a: 1}
+    - _BaseColor: {r: 0.72156864, g: 0.0627451, b: 0.07450981, a: 1}
+    - _Color: {r: 0.72156864, g: 0.06274508, b: 0.07450979, a: 1}
+    - _EmissionColor: {r: 0.72156864, g: 0.0627451, b: 0.07450981, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &1914401531938385919
