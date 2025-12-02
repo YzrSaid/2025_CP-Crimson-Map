@@ -80,9 +80,14 @@ public class SearchableDropdown : MonoBehaviour
     {
         ClearDropdown();
 
+        if (infrastructureList == null || infrastructureList.infrastructures == null)
+        {
+            Debug.LogWarning("[SearchableDropdown] No infrastructures to initialize");
+            return;
+        }
+
         foreach (var infra in infrastructureList.infrastructures)
         {
-
             bool hasRooms = infraToRoomsMap.ContainsKey(infra.infra_id) &&
                            infraToRoomsMap[infra.infra_id].Count > 0;
 
@@ -101,6 +106,8 @@ public class SearchableDropdown : MonoBehaviour
 
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(contentContainer as RectTransform);
+
+        Debug.Log($"[SearchableDropdown] Initialized with {infraItems.Count} infrastructures");
     }
 
     public void SelectDestination(string id, string type, string displayName)
@@ -264,7 +271,8 @@ public class SearchableDropdown : MonoBehaviour
         }
     }
 
-    private void ClearDropdown()
+    // NEW: Clear dropdown (called when map changes)
+    public void ClearDropdown()
     {
         foreach (var item in allInstantiatedItems)
         {
@@ -276,6 +284,18 @@ public class SearchableDropdown : MonoBehaviour
 
         allInstantiatedItems.Clear();
         infraItems.Clear();
+
+        // Reset selection
+        selectedId = null;
+        selectedType = null;
+        selectedDisplayName = null;
+
+        if (searchField != null)
+        {
+            searchField.text = "";
+        }
+
+        Debug.Log("[SearchableDropdown] Dropdown cleared");
     }
 
     void OnDestroy()

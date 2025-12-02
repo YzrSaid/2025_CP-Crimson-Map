@@ -1,3 +1,52 @@
 [
-
+{
+        "y_coordinate": 10426.3034917537,
+        "x_coordinate": -15585.7963423322,
+        "node_id": "ND-233",
+        "is_active": true,
+        "related_room_id": null,
+        "indoor": null,
+        "type": "infrastructure",
+        "name": "WMSU San Ramon Gate",
+        "latitude": 7.007107,
+        "created_at": "2025-11-29T15:21:09.847Z",
+        "related_infra_id": "INFRA-78",
+        "longitude": 121.9225,
+        "campus_id": "CAMP-03"
+    },
+{
+        "longitude": 121.926774,
+        "campus_id": "CAMP-03",
+        "related_infra_id": "INFRA-79",
+        "updated_at": "2025-11-29T16:27:48.816Z",
+        "created_at": "2025-11-29T15:36:04.702Z",
+        "latitude": 7.007572,
+        "name": "Building 1",
+        "type": "infrastructure",
+        "indoor": null,
+        "related_room_id": "",
+        "is_active": true,
+        "node_id": "ND-234",
+        "y_coordinate": 10426.3034917537,
+        "x_coordinate": -15585.7963423322
+    },
+{
+        "y_coordinate": null,
+        "x_coordinate": null,
+        "node_id": "ND-278",
+        "is_active": true,
+        "related_room_id": "IND-168",
+        "indoor": {
+            "y": 5,
+            "x": 10,
+            "floor": "4"
+        },
+        "type": "indoorinfra",
+        "name": "Room 4 (4th floor)",
+        "latitude": null,
+        "created_at": "2025-11-30T08:11:17.902Z",
+        "related_infra_id": null,
+        "longitude": null,
+        "campus_id": "CAMP-03"
+    }
 ]

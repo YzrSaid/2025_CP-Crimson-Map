@@ -1,3 +1,13 @@
 [
-
+{
+        "to_node": "ND-234",
+        "path_type": "via_gate",
+        "is_deleted": false,
+        "is_active": true,
+        "from_node": "ND-233",
+        "elevations": "flat",
+        "edge_id": "EDG-001",
+        "distance": 474.52,
+        "created_at": "2025-11-29T16:45:51.721Z"
+    }
 ]

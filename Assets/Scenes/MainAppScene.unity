@@ -2323,7 +2323,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 179569006}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
   m_Name: 
@@ -17593,7 +17593,6 @@ GameObject:
   - component: {fileID: 1465186286}
   - component: {fileID: 1465186287}
   - component: {fileID: 1465186288}
-  - component: {fileID: 1465186289}
   - component: {fileID: 1465186292}
   - component: {fileID: 1465186293}
   - component: {fileID: 1465186294}
@@ -17680,6 +17679,7 @@ MonoBehaviour:
   mapButtonPrefab: {fileID: 3037807014215756060, guid: 09ec938df77e6ce35b6d2258b8973e4b, type: 3}
   buttonContainer: {fileID: 166517715}
   mapboxMap: {fileID: 1699060734}
+  loadingManager: {fileID: 0}
 --- !u!114 &1465186283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17757,6 +17757,8 @@ MonoBehaviour:
     infrastructures: []
   indoorList:
     indoors: []
+  nodeList:
+    nodes: []
   useSearchableDropdown: 1
   useAccordionUI: 0
   maxWaitTime: 30
@@ -17785,22 +17787,6 @@ MonoBehaviour:
   maxWaitTimeForGlobalManager: 10
   isInitialized: 0
   hasError: 0
---- !u!114 &1465186289
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1465186272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0726866e53d3cc5b88199b07a5ee00ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scrollToReload: {fileID: 179569011}
-  reinitializeData: 1
-  reloadCurrentScene: 1
-  reloadDelay: 1
 --- !u!114 &1465186292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18061,6 +18047,7 @@ MonoBehaviour:
   barrierSpawner: {fileID: 1699060737}
   pathRenderer: {fileID: 1699060741}
   infrastructureSpawner: {fileID: 1699060740}
+  infrastructurePopulator: {fileID: 1465186287}
   minimumLoadingTime: 1
   checkInterval: 0.1
   maxWaitTime: 30

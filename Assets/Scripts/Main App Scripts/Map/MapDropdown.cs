@@ -18,6 +18,10 @@ public class MapDropdown : MonoBehaviour
     [Header("Mapbox Reference")]
     public AbstractMap mapboxMap;
     
+    // NEW: Add reference to loading manager
+    [Header("Loading Manager")]
+    public HomePageLoadingManager loadingManager;
+    
     private List<MapInfo> availableMaps = new List<MapInfo>();
     private bool isDataLoaded = false;
 
@@ -26,6 +30,12 @@ public class MapDropdown : MonoBehaviour
         if (mapboxMap == null)
         {
             mapboxMap = FindObjectOfType<AbstractMap>();
+        }
+        
+        // NEW: Find loading manager if not assigned
+        if (loadingManager == null)
+        {
+            loadingManager = FindObjectOfType<HomePageLoadingManager>();
         }
         
         dropdownButton.onClick.AddListener(TogglePanel);
@@ -97,6 +107,11 @@ public class MapDropdown : MonoBehaviour
 
         if (MapManager.Instance != null && MapManager.Instance.IsReady())
         {
+            if (loadingManager != null)
+            {
+                loadingManager.TriggerMapChangeLoading();
+            }
+            
             MapManager.Instance.LoadMap(map);
             UpdateMapboxCenter(map);
         }

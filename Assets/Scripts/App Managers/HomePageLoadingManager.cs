@@ -9,6 +9,7 @@ public class HomePageLoadingManager : MonoBehaviour
     public BarrierSpawner barrierSpawner;
     public PathRenderer pathRenderer;
     public InfrastructureSpawner infrastructureSpawner;
+    public InfrastructurePopulator infrastructurePopulator;
 
     public float minimumLoadingTime = 1f;
     public float checkInterval = 0.1f;
@@ -68,6 +69,48 @@ public class HomePageLoadingManager : MonoBehaviour
         StartCoroutine(WaitForAllSystemsReady());
     }
 
+    public void TriggerMapChangeLoading()
+    {
+        if (isLoading)
+            return;
+
+        isLoading = true;
+
+        if (loaderPanel != null)
+        {
+            loaderPanel.SetActive(true);
+        }
+
+        loadingStartTime = Time.time;
+
+        StartCoroutine(WaitForMapChangeComplete());
+    }
+
+    private IEnumerator WaitForMapChangeComplete()
+    {
+        Debug.Log("[LoadingManager] Waiting for map change to complete...");
+        
+        yield return StartCoroutine(WaitForMapLoadingComplete());
+        
+        yield return StartCoroutine(WaitForSpawnersToFinish());
+        
+        yield return StartCoroutine(WaitForInfrastructurePopulator());
+
+        float elapsedTime = Time.time - loadingStartTime;
+        if (elapsedTime < minimumLoadingTime)
+        {
+            yield return new WaitForSeconds(minimumLoadingTime - elapsedTime);
+        }
+
+        if (loaderPanel != null)
+        {
+            loaderPanel.SetActive(false);
+        }
+
+        isLoading = false;
+        Debug.Log("[LoadingManager] Map change loading complete!");
+    }
+
     private IEnumerator WaitForAllSystemsReady()
     {
         yield return StartCoroutine(WaitForGlobalManager());
@@ -77,6 +120,8 @@ public class HomePageLoadingManager : MonoBehaviour
         yield return StartCoroutine(WaitForMapLoadingComplete());
         
         yield return StartCoroutine(WaitForSpawnersToFinish());
+        
+        yield return StartCoroutine(WaitForInfrastructurePopulator());
 
         float elapsedTime = Time.time - loadingStartTime;
         if (elapsedTime < minimumLoadingTime)
@@ -142,12 +187,15 @@ public class HomePageLoadingManager : MonoBehaviour
         {
             if (waitTime >= maxWaitTime)
             {
+                Debug.LogWarning("[LoadingManager] Map loading timeout!");
                 yield break;
             }
 
             waitTime += checkInterval;
             yield return new WaitForSeconds(checkInterval);
         }
+        
+        Debug.Log("[LoadingManager] Map loading complete");
     }
 
     private IEnumerator WaitForSpawnersToFinish()
@@ -161,7 +209,21 @@ public class HomePageLoadingManager : MonoBehaviour
         if (infrastructureSpawner == null)
             infrastructureSpawner = FindObjectOfType<InfrastructureSpawner>();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
+        
+        Debug.Log("[LoadingManager] Spawners finished");
+    }
+
+    private IEnumerator WaitForInfrastructurePopulator()
+    {
+        if (infrastructurePopulator == null)
+        {
+            infrastructurePopulator = FindObjectOfType<InfrastructurePopulator>();
+        }
+
+        yield return new WaitForSeconds(0.5f);
+        
+        Debug.Log("[LoadingManager] Infrastructure populator ready");
     }
 
     public void TriggerLoading()

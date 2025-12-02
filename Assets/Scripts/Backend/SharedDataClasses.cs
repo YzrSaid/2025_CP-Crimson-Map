@@ -159,6 +159,12 @@ public class IndoorInfrastructure
     public string room_id;
 }
 
+[System.Serializable]
+public class IndoorInfrastructureList
+{
+    public IndoorInfrastructure[] indoors;
+}
+
 // Indoor Edges Data
 [System.Serializable]
 public class IndoorEdge
