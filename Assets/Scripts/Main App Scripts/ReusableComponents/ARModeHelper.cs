@@ -1,29 +1,65 @@
 using UnityEngine;
-// This is a helper class to determine the AR Mode for the system
+
+/// <summary>
+/// Helper class to determine if the app is in AR mode or not
+/// </summary>
 public static class ARModeHelper
 {
-    public enum ARMode { DirectAR, Navigation }
+    private const string AR_MODE_KEY = "IsARMode";
 
-    public static ARMode GetCurrentARMode()
+    /// <summary>
+    /// Check if currently in AR mode
+    /// </summary>
+    public static bool IsARMode()
     {
-        string arModeString = PlayerPrefs.GetString("ARMode");
-        Debug.Log($"ang mode karon ay part two{arModeString}");
-        return arModeString == "Navigation" ? ARMode.Navigation : ARMode.DirectAR;
+        return PlayerPrefs.GetInt(AR_MODE_KEY, 0) == 1;
     }
 
-    public static bool IsNavigationMode()
+    /// <summary>
+    /// Check if currently NOT in AR mode (in map/home view)
+    /// </summary>
+    public static bool IsNotARMode()
     {
-        return GetCurrentARMode() == ARMode.Navigation;
+        return !IsARMode();
     }
 
-    public static bool IsDirectARMode()
+    /// <summary>
+    /// Enable AR mode
+    /// </summary>
+    public static void EnableARMode()
     {
-        return GetCurrentARMode() == ARMode.DirectAR;
-    }
-
-    public static void SetARMode(ARMode mode)
-    {
-        PlayerPrefs.SetString("ARMode", mode.ToString());
+        PlayerPrefs.SetInt(AR_MODE_KEY, 1);
         PlayerPrefs.Save();
+        Debug.Log("[ARModeHelper] AR Mode enabled");
+    }
+
+    /// <summary>
+    /// Disable AR mode (return to map view)
+    /// </summary>
+    public static void DisableARMode()
+    {
+        PlayerPrefs.SetInt(AR_MODE_KEY, 0);
+        PlayerPrefs.Save();
+        Debug.Log("[ARModeHelper] AR Mode disabled");
+    }
+
+    /// <summary>
+    /// Set AR mode directly
+    /// </summary>
+    public static void SetARMode(bool isARMode)
+    {
+        PlayerPrefs.SetInt(AR_MODE_KEY, isARMode ? 1 : 0);
+        PlayerPrefs.Save();
+        Debug.Log($"[ARModeHelper] AR Mode set to: {isARMode}");
+    }
+
+    /// <summary>
+    /// Clear AR mode setting (resets to map mode)
+    /// </summary>
+    public static void ClearARMode()
+    {
+        PlayerPrefs.DeleteKey(AR_MODE_KEY);
+        PlayerPrefs.Save();
+        Debug.Log("[ARModeHelper] AR Mode cleared");
     }
 }

@@ -664,7 +664,7 @@ public class ARPathfindingController : MonoBehaviour
             PlayerPrefs.SetInt($"ARNavigation_Direction_{i}_IsIndoorDirection", dir.isIndoorDirection ? 1 : 0);
         }
 
-        PlayerPrefs.SetString("ARMode", "Navigation");
+        ARModeHelper.SetARMode(true);
         PlayerPrefs.Save();
     }
 }

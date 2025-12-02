@@ -62,7 +62,7 @@ public class ARLoadingManager : MonoBehaviour
 
         yield return StartCoroutine(WaitForCameraSetup());
 
-        if (ARModeHelper.IsNavigationMode())
+        if (ARModeHelper.IsARMode())
         {
             yield return StartCoroutine(WaitForNavigationMarkers());
         }
@@ -185,6 +185,6 @@ public class ARLoadingManager : MonoBehaviour
     public bool IsLoadingComplete()
     {
         return isARReady && isMapReady && isCameraSetupReady &&
-               (!ARModeHelper.IsNavigationMode() || isNavigationReady);
+               (!ARModeHelper.IsARMode() || isNavigationReady);
     }
 }

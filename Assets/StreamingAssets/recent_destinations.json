@@ -115,6 +115,122 @@
                     "isIndoorDirection": false
                 }
             ]
+        },
+        {
+            "timestamp": "2025-12-02 11:43:17",
+            "startNodeId": "ND-015",
+            "endNodeId": "ND-002",
+            "startNodeName": "College of Computing Studies",
+            "endNodeName": "Park",
+            "totalDistance": 152.95999145507813,
+            "formattedDistance": "153.0m",
+            "walkingTime": "2 minutes",
+            "viaMode": "Via Walkway",
+            "pathNodes": [
+                "ND-015",
+                "ND-028",
+                "ND-117",
+                "ND-012",
+                "ND-009",
+                "ND-007",
+                "ND-004",
+                "ND-002"
+            ],
+            "edges": [
+                {
+                    "fromNode": "ND-015",
+                    "toNode": "ND-028"
+                },
+                {
+                    "fromNode": "ND-028",
+                    "toNode": "ND-117"
+                },
+                {
+                    "fromNode": "ND-117",
+                    "toNode": "ND-012"
+                },
+                {
+                    "fromNode": "ND-012",
+                    "toNode": "ND-009"
+                },
+                {
+                    "fromNode": "ND-009",
+                    "toNode": "ND-007"
+                },
+                {
+                    "fromNode": "ND-007",
+                    "toNode": "ND-004"
+                },
+                {
+                    "fromNode": "ND-004",
+                    "toNode": "ND-002"
+                }
+            ],
+            "directions": [
+                {
+                    "instruction": "Head straight to Intermediate 5 (12m)",
+                    "turn": "Straight",
+                    "distance": 11.939834594726563,
+                    "destNodeId": "ND-028",
+                    "destNode": "Intermediate 5",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn left toward Intermediate 3 (10m)",
+                    "turn": "Left",
+                    "distance": 9.603863716125489,
+                    "destNodeId": "ND-117",
+                    "destNode": "Intermediate 3",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn right toward Department of Mathematics and Statistics (7m)",
+                    "turn": "Right",
+                    "distance": 6.953888416290283,
+                    "destNodeId": "ND-012",
+                    "destNode": "Department of Mathematics and Statistics",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Head straight to CSM Office of the Dean (6m)",
+                    "turn": "Straight",
+                    "distance": 5.982210636138916,
+                    "destNodeId": "ND-009",
+                    "destNode": "CSM Office of the Dean",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn right toward Department of Biological Sciences (5m)",
+                    "turn": "Right",
+                    "distance": 5.051547527313232,
+                    "destNodeId": "ND-007",
+                    "destNode": "Department of Biological Sciences",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn left toward College of Sciences and Mathematics (8m)",
+                    "turn": "Left",
+                    "distance": 8.435917854309082,
+                    "destNodeId": "ND-004",
+                    "destNode": "College of Sciences and Mathematics",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                },
+                {
+                    "instruction": "Turn right toward Park (3m)",
+                    "turn": "Right",
+                    "distance": 2.570773124694824,
+                    "destNodeId": "ND-002",
+                    "destNode": "Park",
+                    "isIndoorGrouped": false,
+                    "isIndoorDirection": false
+                }
+            ]
         }
     ]
 }

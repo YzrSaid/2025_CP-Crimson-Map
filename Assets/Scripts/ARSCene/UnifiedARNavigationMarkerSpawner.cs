@@ -48,7 +48,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
     private Vector2 userLocation;
     private DirectionDisplayManager directionManager;
-    private bool isARNavigationMode = false;
+    private bool isARMode = false;
     private bool isExitingAR = false;
 
     private Vector2 userXY;
@@ -81,24 +81,17 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         if (compassArrow == null)
             compassArrow = FindObjectOfType<CompassNavigationArrow>();
 
-        DetermineNavigationMode();
+        isARMode = ARModeHelper.IsARMode();
 
-        if (isARNavigationMode)
+        if (isARMode)
         {
             LoadJourneyNodeIds();
             
-            // FIXED: Set ground plane to 0 for proper marker spawning
             groundPlaneY = 0f;
             Debug.Log($"[MarkerSpawner] Ground Plane Y initialized to: {groundPlaneY}");
             
             StartCoroutine(InitializeMarkerSystem());
         }
-    }
-
-    private void DetermineNavigationMode()
-    {
-        string arMode = PlayerPrefs.GetString("ARMode", "DirectAR");
-        isARNavigationMode = (arMode == "Navigation");
     }
 
     private void LoadJourneyNodeIds()
@@ -207,7 +200,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
     private void UpdateMarkerSystem()
     {
-        if (!isARNavigationMode || !markersInitialized)
+        if (!isARMode || !markersInitialized)
             return;
 
         if (unifiedARManager != null)
@@ -466,7 +459,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-        if (isARNavigationMode && allNodes.Count > 0)
+        if (isARMode && allNodes.Count > 0)
         {
             yield return StartCoroutine(InitializeMarkerSystem());
         }

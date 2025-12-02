@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class ButtonSceneLoader : MonoBehaviour
 {
-    [SerializeField] private Button targetButton;   // assign in Inspector
-    [SerializeField] private string sceneName;      // type your scene name
+    [SerializeField] private Button targetButton;  
+    [SerializeField] private string sceneName;     
 
     private void Awake()
     {
@@ -21,7 +21,6 @@ public class ButtonSceneLoader : MonoBehaviour
 
     private void LoadScene()
     {
-        // Stop any existing AR session
         if (FindObjectOfType<UnityEngine.XR.ARFoundation.ARSession>() != null)
         {
             FindObjectOfType<UnityEngine.XR.ARFoundation.ARSession>().Reset();

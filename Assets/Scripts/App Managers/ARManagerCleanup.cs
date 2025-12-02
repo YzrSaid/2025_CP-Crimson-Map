@@ -8,9 +8,6 @@ public class ARManagerCleanup : MonoBehaviour
     [Header("AR Scene Settings")]
     [SerializeField] private string arSceneName = "ARScene";
 
-    [Header("Direct AR Button (Optional)")]
-    [SerializeField] private Button directARButton;
-
     [Header("AR Navigation Button (Optional)")]
     [SerializeField] private Button arNavigationButton;
     [SerializeField] private GameObject pathFindingPanel;
@@ -26,11 +23,6 @@ public class ARManagerCleanup : MonoBehaviour
 
     private void Awake()
     {
-        if (directARButton != null)
-        {
-            directARButton.onClick.RemoveAllListeners();
-            directARButton.onClick.AddListener(LoadDirectAR);
-        }
         if (arNavigationButton != null)
         {
             arNavigationButton.onClick.RemoveAllListeners();
@@ -43,24 +35,13 @@ public class ARManagerCleanup : MonoBehaviour
         }
     }
 
-    public void LoadDirectAR()
-    {
-        PlayerPrefs.SetString("ARMode", "DirectAR");
-        PlayerPrefs.Save();
-        StartCoroutine(CleanupAndLoadAR());
-    }
-
     public void LoadARNavigation()
     {
-        PlayerPrefs.SetString("ARMode", "Navigation");
-        PlayerPrefs.Save();
         StartCoroutine(CleanupAndLoadAR());
     }
 
     public void LoadARNavigationWithScene(string sceneName)
     {
-        PlayerPrefs.SetString("ARMode", "Navigation");
-        PlayerPrefs.Save();
         StartCoroutine(CleanupAndLoadAR(sceneName));
     }
 

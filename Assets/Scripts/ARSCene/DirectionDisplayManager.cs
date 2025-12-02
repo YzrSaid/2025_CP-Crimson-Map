@@ -52,11 +52,7 @@ public class DirectionDisplayManager : MonoBehaviour
     private bool hasAutoProgressed = false;
 
     private UnifiedARManager arManager;
-    private Vector3 successPanelOriginalScale; // NEW: Store original scale
-
-    public enum ARMode { DirectAR, Navigation }
-
-    private ARModeHelper.ARMode currentARMode;
+    private Vector3 successPanelOriginalScale; 
 
     void Start()
     {
@@ -72,7 +68,7 @@ public class DirectionDisplayManager : MonoBehaviour
 
         if (successPanel != null)
         {
-            successPanelOriginalScale = successPanel.transform.localScale; // NEW: Store original scale
+            successPanelOriginalScale = successPanel.transform.localScale; 
             successPanel.SetActive(false);
         }
         
@@ -200,7 +196,7 @@ public class DirectionDisplayManager : MonoBehaviour
 
         PopulateDirectionItems();
 
-        if (allDirections.Count > 0 && ARModeHelper.IsNavigationMode())
+        if (allDirections.Count > 0 && ARModeHelper.IsARMode())
         {
             StartNavigation();
         }

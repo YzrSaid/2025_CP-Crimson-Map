@@ -21,8 +21,7 @@ public class SceneTransitionWithoutLoading : MonoBehaviour
     public static void GoToTargetSceneSimple(string sceneName)
     {
         GlobalManager.SetSkipFullInitialization(true);
-        // Check if its in Navigation Mode (AR MODE) if yes, then save and delete the route data)
-        if (GlobalManager.Instance != null && ARModeHelper.IsNavigationMode())
+        if (GlobalManager.Instance != null && ARModeHelper.IsARMode())
         {
             // Save and delete the navigation data
             ARNavigationDataHelper.SaveAndClearARNavigationData();
@@ -31,9 +30,10 @@ public class SceneTransitionWithoutLoading : MonoBehaviour
             {
                 ARMapManager.Instance.ClearNavigationHighlights();
             }
+            ARModeHelper.DisableARMode();
             GlobalManager.Instance.StartCoroutine(GlobalManager.Instance.SafeARCleanupAndExit(sceneName));
         }
-        else if (GlobalManager.Instance != null && ARModeHelper.IsDirectARMode())
+        else if (GlobalManager.Instance != null && ARModeHelper.IsNotARMode())
         {
             GlobalManager.Instance.StartCoroutine(GlobalManager.Instance.SafeARCleanupAndExit(sceneName));
         }

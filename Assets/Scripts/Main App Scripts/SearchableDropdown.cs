@@ -270,8 +270,6 @@ public class SearchableDropdown : MonoBehaviour
             kvp.Value.CollapseRooms();
         }
     }
-
-    // NEW: Clear dropdown (called when map changes)
     public void ClearDropdown()
     {
         foreach (var item in allInstantiatedItems)
@@ -285,7 +283,6 @@ public class SearchableDropdown : MonoBehaviour
         allInstantiatedItems.Clear();
         infraItems.Clear();
 
-        // Reset selection
         selectedId = null;
         selectedType = null;
         selectedDisplayName = null;
@@ -294,8 +291,6 @@ public class SearchableDropdown : MonoBehaviour
         {
             searchField.text = "";
         }
-
-        Debug.Log("[SearchableDropdown] Dropdown cleared");
     }
 
     void OnDestroy()

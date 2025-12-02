@@ -260,6 +260,13 @@ public class UnifiedARManager : MonoBehaviour
 
         isExitingAR = true;
 
+        if (GPSManager.Instance != null)
+        {
+            GPSManager.Instance.UnlockLocationForPathfinding();
+            Debug.Log("[UnifiedARManager] Exiting AR - GPS unlocked");
+        }
+
+
         CancelInvoke();
 
         if (GlobalManager.Instance != null)
@@ -305,6 +312,10 @@ public class UnifiedARManager : MonoBehaviour
             if (fromNode != null && fromNode.type != "indoorinfra")
             {
                 referenceGPS = new Vector2(fromNode.latitude, fromNode.longitude);
+                if (GPSManager.Instance != null)
+                {
+                    GPSManager.Instance.LockLocationForPathfinding(fromNode.latitude, fromNode.longitude);
+                }
             }
             else
             {
@@ -495,6 +506,11 @@ public class UnifiedARManager : MonoBehaviour
             if (gpsLockTimer <= 0)
             {
                 isGPSLocked = false;
+                if (GPSManager.Instance != null)
+                {
+                    GPSManager.Instance.UnlockLocationForPathfinding();
+                    Debug.Log("[UnifiedARManager] GPS lock timer expired - GPS unlocked in GPSManager");
+                }
             }
         }
 

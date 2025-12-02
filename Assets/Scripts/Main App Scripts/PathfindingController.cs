@@ -332,16 +332,7 @@ public class PathfindingController : MonoBehaviour
             }
 
             UpdateLocationLockUI(true);
-
-            if (node.type == "indoorinfra")
-            {
-                string buildingName = GetBuildingNameFromInfraId(node.related_infra_id);
-                UpdateLocationDisplayTextIndoor(node, buildingName);
-            }
-            else
-            {
-                UpdateLocationDisplayText(node);
-            }
+            UpdateLocationDisplayText(node);
         }
     }
 
@@ -354,7 +345,6 @@ public class PathfindingController : MonoBehaviour
             selectedFromNodeId = currentNearestNode.node_id;
             isLocationLocked = true;
 
-            // ✅ NEW: Tell GPSManager to lock this location
             if (GPSManager.Instance != null)
             {
                 GPSManager.Instance.LockLocationForPathfinding(
@@ -376,7 +366,6 @@ public class PathfindingController : MonoBehaviour
         lockedNode = null;
         qrScannedNode = null;
 
-        // ✅ NEW: Tell GPSManager to unlock
         if (GPSManager.Instance != null)
         {
             GPSManager.Instance.UnlockLocationForPathfinding();
@@ -451,6 +440,17 @@ public class PathfindingController : MonoBehaviour
     private void OnMapChanged(MapInfo mapInfo)
     {
         ClearCurrentPath();
+
+        if (!isLocationLocked && useGPSForFromLocation && !useStaticTesting)
+        {
+            currentNearestNode = null;
+            selectedFromNodeId = null;
+
+            if (locationLockText != null)
+            {
+                locationLockText.text = "Loading new map...";
+            }
+        }
     }
 
     public IEnumerator InitializeForMap(string mapId, List<string> campusIds)
@@ -463,6 +463,7 @@ public class PathfindingController : MonoBehaviour
         yield return StartCoroutine(LoadIndoorData());
 
         yield return StartCoroutine(BuildInfrastructureNodeMapping());
+        yield return new WaitForSeconds(1f);
 
         if (nodesLoaded)
         {
@@ -568,7 +569,7 @@ public class PathfindingController : MonoBehaviour
         {
             if (locationLockText != null)
             {
-                locationLockText.text = "Initializing GPS... 📍";
+                locationLockText.text = "Initializing GPS...";
             }
             return;
         }
@@ -577,7 +578,7 @@ public class PathfindingController : MonoBehaviour
         {
             if (locationLockText != null)
             {
-                locationLockText.text = "Loading map data... 📍";
+                locationLockText.text = "Loading map data...";
             }
             return;
         }
@@ -593,6 +594,14 @@ public class PathfindingController : MonoBehaviour
 
         if (nearestNode != null)
         {
+            if (nearestNode.type == "barrier")
+            {
+                if (locationLockText != null)
+                {
+                    locationLockText.text = "Searching for location...";
+                }
+                return;
+            }
             selectedFromNodeId = nearestNode.node_id;
             currentNearestNode = nearestNode;
 
@@ -602,7 +611,7 @@ public class PathfindingController : MonoBehaviour
         {
             if (locationLockText != null)
             {
-                locationLockText.text = "Searching for location... 📍";
+                locationLockText.text = "Searching for location...";
             }
         }
     }
@@ -620,6 +629,11 @@ public class PathfindingController : MonoBehaviour
         foreach (var kvp in allNodes)
         {
             Node node = kvp.Value;
+
+            if (node.type == "barrier")
+            {
+                continue;
+            }
 
             float distance = CalculateDistance(latitude, longitude, node.latitude, node.longitude);
 
@@ -927,12 +941,12 @@ public class PathfindingController : MonoBehaviour
         string pathStartNodeId = fromNodeId;
         string pathEndNodeId = toNodeId;
 
-        Node fromNode = allNodes[fromNodeId]; 
+        Node fromNode = allNodes[fromNodeId];
         Node toNode = allNodes[toNodeId];
 
         if (fromIsIndoor)
         {
-            string buildingName = GetBuildingNameFromInfraId(fromNode.related_infra_id); 
+            string buildingName = GetBuildingNameFromInfraId(fromNode.related_infra_id);
 
             ShowConfirmationError($"Please exit {buildingName} first before navigating to another location. Use the outdoor map to start navigation from outside the building.");
             if (findPathButton != null) findPathButton.interactable = true;
@@ -1218,6 +1232,9 @@ public class PathfindingController : MonoBehaviour
 
         SaveRouteDataForAR(selectedRoute, directions);
 
+        isLocationLocked = false;
+        lockedNode = null;
+
         ARManagerCleanup arCleanup = FindObjectOfType<ARManagerCleanup>();
         if (arCleanup != null)
         {
@@ -1295,22 +1312,9 @@ public class PathfindingController : MonoBehaviour
             PlayerPrefs.SetInt($"ARNavigation_Direction_{i}_IsIndoorDirection", dir.isIndoorDirection ? 1 : 0);
         }
 
-        Debug.Log($"✅ Saved {directions.Count} directions");
+        Debug.Log($"Saved {directions.Count} directions");
 
-        PlayerPrefs.SetString("ARMode", "Navigation");
-
-        PlayerPrefs.Save();
-
-        Debug.Log("✅ PlayerPrefs.Save() called!");
-
-        // VERIFY DATA WAS SAVED
-        Debug.Log("=============== VERIFICATION ===============");
-        Debug.Log($"PathNodeCount: {PlayerPrefs.GetInt("ARNavigation_PathNodeCount", -1)}");
-        Debug.Log($"EdgeCount: {PlayerPrefs.GetInt("ARNavigation_EdgeCount", -1)}");
-        Debug.Log($"DirectionCount: {PlayerPrefs.GetInt("ARNavigation_DirectionCount", -1)}");
-        Debug.Log($"StartNodeId: {PlayerPrefs.GetString("ARNavigation_StartNodeId", "NOT FOUND")}");
-        Debug.Log($"ARMode: {PlayerPrefs.GetString("ARMode", "NOT FOUND")}");
-        Debug.Log("=============== SAVE ROUTE DATA END ===============");
+        ARModeHelper.SetARMode(true);
     }
     public void HideResults()
     {
