@@ -36,6 +36,25 @@ public class DirectionDisplayManager : MonoBehaviour
     public float successAnimationDuration = 0.3f;
     public Ease successEaseType = Ease.OutBack;
 
+    [Header("Lookahead & Off-Route Detection")]
+    public float lookaheadDistanceThreshold = 5f; // ≤5m = passed node
+    public float offRouteDistanceThreshold = 25f; // >25m = off route
+    public float destinationOvershootThreshold = 10f; // >10m past destination = passed
+    public int maxLookaheadCount = 3; // Check next 3 nodes
+
+    [Header("Off-Route Panel")]
+    public GameObject offRoutePanel;
+    public TextMeshProUGUI offRouteTitle;
+    public TextMeshProUGUI offRouteBody;
+    public Button offRouteContinueButton;
+    public GameObject offRouteBackground;
+
+    // Internal tracking
+    private bool hasPassedDestination = false;
+    private Vector2 destinationGPS;
+    private bool isDestinationNode = false;
+    private Node currentDestinationNode;
+
     [Header("Settings")]
     public bool enableKeyboardTesting = true;
     public float autoProgressDistance = 5f;
@@ -56,7 +75,7 @@ public class DirectionDisplayManager : MonoBehaviour
 
     private UnifiedARManager arManager;
     private Vector3 successPanelOriginalScale;
-    
+
     private UnifiedARNavigationMarkerSpawner markerSpawner;
 
     void Start()
@@ -84,6 +103,18 @@ public class DirectionDisplayManager : MonoBehaviour
         if (successCloseButton != null)
             successCloseButton.onClick.AddListener(OnSuccessCloseClicked);
 
+        // ======== NEW: Initialize off-route panel ========
+        if (offRoutePanel != null)
+        {
+            offRoutePanel.SetActive(false);
+        }
+
+        if (offRouteBackground != null)
+        {
+            offRouteBackground.SetActive(false);
+        }
+        // =================================================
+
         LoadDirectionsFromPlayerPrefs();
 
         if (allDirections.Count > 0)
@@ -103,14 +134,240 @@ public class DirectionDisplayManager : MonoBehaviour
         }
 
         UpdateUserLocation();
+
+        // ======== NEW DETECTION SYSTEMS ========
+        if (currentDirectionIndex < allDirections.Count - 1)
+        {
+            // Lookahead: Check if user passed ANY upcoming nodes
+            CheckIfPassedAnyUpcomingNodes();
+
+            // Off-route: Check if user is far from ALL route nodes
+            CheckIfOffRoute();
+        }
+        else if (currentDirectionIndex == allDirections.Count - 1)
+        {
+            // User is at final direction (destination)
+            CheckDestinationOvershoot();
+        }
+        // =======================================
+
         UpdateDistanceToTarget();
         CheckAutoProgress();
-        
+
         if (Time.time - lastDistanceUpdateTime >= distanceUpdateInterval)
         {
             UpdateDirectionTextWithDistance();
             lastDistanceUpdateTime = Time.time;
         }
+    }
+
+    /// <summary>
+    /// Lookahead Detection: Check if user passed ANY upcoming route nodes
+    /// </summary>
+    private void CheckIfPassedAnyUpcomingNodes()
+    {
+        if (currentDirectionIndex >= allDirections.Count - 1)
+            return;
+
+        int lookaheadCount = Mathf.Min(maxLookaheadCount, allDirections.Count - currentDirectionIndex - 1);
+
+        for (int i = 1; i <= lookaheadCount; i++)
+        {
+            int checkIndex = currentDirectionIndex + i;
+            NavigationDirection checkDir = allDirections[checkIndex];
+
+            if (checkDir.destinationNode == null || checkDir.isIndoorGrouped)
+                continue;
+
+            Vector2 targetGPS = new Vector2(checkDir.destinationNode.latitude, checkDir.destinationNode.longitude);
+            float distanceToNode = CalculateDistanceGPS(userLocation, targetGPS);
+
+            Debug.Log($"[Lookahead] Distance to upcoming node {checkDir.destinationNode.name}: {distanceToNode:F1}m (threshold: {lookaheadDistanceThreshold}m)");
+
+            if (distanceToNode <= lookaheadDistanceThreshold)
+            {
+                Debug.Log($"[Lookahead] ✅ User passed upcoming node {checkDir.destinationNode.name} at index {checkIndex}");
+
+                // Jump to this node's direction
+                int oldIndex = currentDirectionIndex;
+                currentDirectionIndex = checkIndex;
+
+                // Hide markers for skipped nodes
+                HideSkippedMarkers(oldIndex, checkIndex);
+
+                DisplayCurrentDirection();
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Off-Route Detection: Check if user is far from ALL route nodes
+    /// </summary>
+    private void CheckIfOffRoute()
+    {
+        float minDistance = float.MaxValue;
+        Node closestNode = null;
+
+        // Check distance to ALL upcoming route nodes
+        for (int i = currentDirectionIndex; i < allDirections.Count; i++)
+        {
+            NavigationDirection dir = allDirections[i];
+            if (dir.destinationNode == null || dir.isIndoorGrouped)
+                continue;
+
+            Vector2 nodeGPS = new Vector2(dir.destinationNode.latitude, dir.destinationNode.longitude);
+            float distance = CalculateDistanceGPS(userLocation, nodeGPS);
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestNode = dir.destinationNode;
+            }
+        }
+
+        Debug.Log($"[OffRoute] Closest route node: {closestNode?.name} at {minDistance:F1}m (threshold: {offRouteDistanceThreshold}m)");
+
+        if (minDistance > offRouteDistanceThreshold)
+        {
+            Debug.Log($"[OffRoute] ⚠️ User is off route! {minDistance:F1}m from nearest node");
+            ShowOffRoutePanel(closestNode, minDistance);
+        }
+    }
+
+    /// <summary>
+    /// Destination Overshoot Detection: Check if user passed destination
+    /// </summary>
+    private void CheckDestinationOvershoot()
+    {
+        if (hasPassedDestination || currentDestinationNode == null)
+            return;
+
+        if (!isDestinationNode)
+        {
+            // Set destination info when we first reach final direction
+            NavigationDirection lastDir = allDirections[allDirections.Count - 1];
+            if (lastDir.destinationNode != null)
+            {
+                currentDestinationNode = lastDir.destinationNode;
+                destinationGPS = new Vector2(currentDestinationNode.latitude, currentDestinationNode.longitude);
+                isDestinationNode = true;
+            }
+            return;
+        }
+
+        float distanceFromDestination = CalculateDistanceGPS(userLocation, destinationGPS);
+
+        Debug.Log($"[Destination] Distance from destination {currentDestinationNode.name}: {distanceFromDestination:F1}m (threshold: {destinationOvershootThreshold}m)");
+
+        if (distanceFromDestination > destinationOvershootThreshold)
+        {
+            Debug.Log($"[Destination] ⚠️ User passed destination by {distanceFromDestination:F1}m!");
+            hasPassedDestination = true;
+            ShowPassedDestinationPanel(distanceFromDestination);
+        }
+    }
+
+    /// <summary>
+    /// Hide markers for nodes that were skipped (when jumping ahead)
+    /// </summary>
+    private void HideSkippedMarkers(int fromIndex, int toIndex)
+    {
+        if (markerSpawner == null) return;
+
+        Debug.Log($"[DirectionManager] Hiding markers for skipped nodes {fromIndex} to {toIndex}");
+
+        for (int i = fromIndex; i < toIndex; i++)
+        {
+            if (i < allDirections.Count)
+            {
+                NavigationDirection dir = allDirections[i];
+                if (dir.destinationNode != null && !dir.isIndoorGrouped)
+                {
+                    markerSpawner.HideMarkerForNode(dir.destinationNode.node_id);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Show off-route panel
+    /// </summary>
+    private void ShowOffRoutePanel(Node nearestNode, float distance)
+    {
+        if (offRoutePanel == null)
+        {
+            CreateSimpleOffRoutePanel(nearestNode, distance);
+            return;
+        }
+
+        if (offRouteTitle != null)
+            offRouteTitle.text = "You're Off Route";
+
+        if (offRouteBody != null)
+        {
+            string nodeName = nearestNode != null ? nearestNode.name : "the nearest point";
+            offRouteBody.text = $"You are {Mathf.RoundToInt(distance)} meters away from {nodeName}.\n\nClick OK to continue navigation.";
+        }
+
+        if (offRouteBackground != null)
+            offRouteBackground.SetActive(true);
+
+        offRoutePanel.SetActive(true);
+
+        // Setup buttons
+        if (offRouteContinueButton != null)
+            offRouteContinueButton.onClick.RemoveAllListeners();
+
+        if (offRouteContinueButton != null)
+            offRouteContinueButton.onClick.AddListener(HideOffRoutePanel);
+    }
+
+    /// <summary>
+    /// Show passed destination panel
+    /// </summary>
+    private void ShowPassedDestinationPanel(float distancePassed)
+    {
+        // Use the same off-route panel but with different message
+        if (offRoutePanel == null) return;
+
+        if (offRouteTitle != null)
+            offRouteTitle.text = "Passed Destination";
+
+        if (offRouteBody != null)
+        {
+            offRouteBody.text = $"You have passed your destination by {Mathf.RoundToInt(distancePassed)} meters.\n\nYou are now beyond your intended stopping point.";
+        }
+
+        if (offRouteBackground != null)
+            offRouteBackground.SetActive(true);
+
+        offRoutePanel.SetActive(true);
+
+        // Setup buttons differently for passed destination
+        if (offRouteContinueButton != null)
+        {
+            offRouteContinueButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit AR";
+            offRouteContinueButton.onClick.RemoveAllListeners();
+            offRouteContinueButton.onClick.AddListener(() =>
+            {
+                if (arManager != null) arManager.ExitARScene();
+            });
+        }
+    }
+
+    private void HideOffRoutePanel()
+    {
+        if (offRoutePanel != null)
+            offRoutePanel.SetActive(false);
+        if (offRouteBackground != null)
+            offRouteBackground.SetActive(false);
+    }
+
+    private void CreateSimpleOffRoutePanel(Node nearestNode, float distance)
+    {
+        // Fallback if no panel is assigned
+        Debug.LogWarning($"[DirectionManager] Off-route panel not assigned! User is {distance:F1}m from {nearestNode?.name}");
     }
 
     private void UpdateUserLocation()
@@ -327,7 +584,7 @@ public class DirectionDisplayManager : MonoBehaviour
         }
 
         currentTargetNode = currentDir.destinationNode;
-        
+
         UpdateDirectionTextWithDistance();
 
         ShowTurnIcon(currentDir.turn);
@@ -348,18 +605,18 @@ public class DirectionDisplayManager : MonoBehaviour
             return;
 
         NavigationDirection currentDir = allDirections[currentDirectionIndex];
-        
+
         if (currentDir.isIndoorGrouped)
             return;
 
         string baseInstruction = currentDir.instruction;
-        
+
         float realTimeDistance = distanceToTarget;
-        
+
         string updatedInstruction = $"{baseInstruction} ({FormatDistance(realTimeDistance)})";
-        
+
         directionText.text = updatedInstruction;
-        
+
         Debug.Log($"[DirectionManager] Updated distance: {FormatDistance(realTimeDistance)} to {currentDir.destinationNode?.name}");
     }
 
@@ -451,7 +708,7 @@ public class DirectionDisplayManager : MonoBehaviour
             if (reachedDir.destinationNode != null && !reachedDir.isIndoorGrouped)
             {
                 string nodeId = reachedDir.destinationNode.node_id;
-                
+
                 if (markerSpawner != null)
                 {
                     markerSpawner.HideMarkerForNode(nodeId);
@@ -502,23 +759,133 @@ public class DirectionDisplayManager : MonoBehaviour
 
     public void OnNodeReached(string nodeId)
     {
+        Debug.Log($"[DirectionManager] QR Recalibration triggered for node: {nodeId}");
+
+        // First check if this node is in our route
         int targetIndex = FindDirectionIndexByNodeId(nodeId);
 
         if (targetIndex == -1)
+        {
+            Debug.Log($"[DirectionManager] Node {nodeId} not in route. Finding closest route node...");
+
+            // Load node info
+            Node scannedNode = LoadNodeById(nodeId);
+            if (scannedNode == null)
+            {
+                Debug.LogWarning($"[DirectionManager] Could not load node {nodeId}");
+                return;
+            }
+
+            // Find closest upcoming route node to scanned location
+            FindClosestUpcomingNode(scannedNode);
             return;
+        }
+
+        Debug.Log($"[DirectionManager] Found node at index {targetIndex}, current is {currentDirectionIndex}");
 
         if (targetIndex < currentDirectionIndex)
+        {
+            Debug.Log($"[DirectionManager] Node already passed, ignoring");
             return;
+        }
 
         if (targetIndex > currentDirectionIndex)
         {
+            Debug.Log($"[DirectionManager] Jumping ahead to direction index {targetIndex}");
+            int oldIndex = currentDirectionIndex;
             currentDirectionIndex = targetIndex;
+
+            // Hide markers for skipped nodes
+            HideSkippedMarkers(oldIndex, targetIndex);
+
             DisplayCurrentDirection();
         }
         else
         {
+            Debug.Log($"[DirectionManager] Moving to next direction");
             MoveToNextDirection();
         }
+    }
+
+    /// <summary>
+    /// Find closest upcoming route node to a scanned node (for QR at non-route location)
+    /// </summary>
+    private void FindClosestUpcomingNode(Node scannedNode)
+    {
+        Vector2 scannedGPS = new Vector2(scannedNode.latitude, scannedNode.longitude);
+
+        float minDistance = float.MaxValue;
+        int closestIndex = -1;
+        Node closestNode = null;
+
+        // Find which upcoming route node is closest to scanned location
+        for (int i = currentDirectionIndex; i < allDirections.Count; i++)
+        {
+            NavigationDirection dir = allDirections[i];
+            if (dir.destinationNode == null || dir.isIndoorGrouped)
+                continue;
+
+            Vector2 nodeGPS = new Vector2(dir.destinationNode.latitude, dir.destinationNode.longitude);
+            float distance = CalculateDistanceGPS(scannedGPS, nodeGPS);
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestIndex = i;
+                closestNode = dir.destinationNode;
+            }
+        }
+
+        Debug.Log($"[DirectionManager] Scanned node is {minDistance:F1}m from route node {closestNode?.name} at index {closestIndex}");
+
+        if (closestIndex != -1)
+        {
+            if (minDistance <= lookaheadDistanceThreshold)
+            {
+                // Close enough to consider as "passed"
+                Debug.Log($"[DirectionManager] ✅ Close enough ({minDistance:F1}m), jumping to index {closestIndex}");
+                int oldIndex = currentDirectionIndex;
+                currentDirectionIndex = closestIndex;
+                HideSkippedMarkers(oldIndex, closestIndex);
+                DisplayCurrentDirection();
+            }
+            else if (minDistance > offRouteDistanceThreshold)
+            {
+                // Too far - show off-route panel
+                Debug.Log($"[DirectionManager] ⚠️ Too far ({minDistance:F1}m), showing off-route panel");
+                ShowOffRoutePanel(closestNode, minDistance);
+            }
+            else
+            {
+                // Somewhat close but not enough to jump
+                Debug.Log($"[DirectionManager] Somewhat close ({minDistance:F1}m), staying at current direction");
+                // Stay at current direction
+            }
+        }
+        else
+        {
+            Debug.Log($"[DirectionManager] No route nodes found!");
+        }
+    }
+
+    /// <summary>
+    /// Helper to load a node by ID (you might need to implement this based on your data structure)
+    /// </summary>
+    private Node LoadNodeById(string nodeId)
+    {
+        // This is a simplified version - you might need to load from your nodes list
+        // or get it from ARSceneQRRecalibration which already has the scanned node
+
+        // Check if we have this node in our allDirections
+        foreach (var dir in allDirections)
+        {
+            if (dir.destinationNode != null && dir.destinationNode.node_id == nodeId)
+                return dir.destinationNode;
+        }
+
+        // If not found in directions, you might need to load from your nodes database
+        Debug.LogWarning($"[DirectionManager] Could not load node {nodeId} from directions");
+        return null;
     }
 
     private int FindDirectionIndexByNodeId(string nodeId)
@@ -639,6 +1006,8 @@ public class DirectionDisplayManager : MonoBehaviour
     {
         currentDirectionIndex = 0;
         isNavigationActive = false;
+        hasPassedDestination = false;
+        isDestinationNode = false;
 
         if (directionPanel != null)
             directionPanel.SetActive(false);
@@ -654,9 +1023,16 @@ public class DirectionDisplayManager : MonoBehaviour
         if (successPanelBackground != null)
             successPanelBackground.SetActive(false);
 
+        // ======== NEW: Hide off-route panel ========
+        if (offRoutePanel != null)
+            offRoutePanel.SetActive(false);
+
+        if (offRouteBackground != null)
+            offRouteBackground.SetActive(false);
+        // ===========================================
+
         UpdateDirectionItemsStatus();
     }
-
     public void ReloadDirections()
     {
         allDirections.Clear();
