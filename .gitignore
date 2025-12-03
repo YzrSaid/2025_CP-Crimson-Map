@@ -17,8 +17,8 @@ Assets/Animated Loading Icons
 Assets/LoadingScreenAsset.meta
 
 #GIF Player/GIFtoUnity
-Assets/GIFtoUnity
-Assets/GIFtoUnity.meta
+Assets/GifToUnity
+Assets/GifToUnity.meta
 
 # Firebase configs (DO NOT push to public repos)
 Assets/Firebase Config/google-services.json
