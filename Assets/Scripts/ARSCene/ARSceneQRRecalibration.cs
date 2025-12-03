@@ -146,6 +146,7 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
         if (arCameraManager == null)
         {
+            Debug.LogError("[ARQRRecalibration] AR Camera Manager not found!");
             yield break;
         }
 
@@ -158,6 +159,7 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
         if (!arCameraManager.enabled)
         {
+            Debug.LogError("[ARQRRecalibration] AR Camera Manager failed to initialize!");
             yield break;
         }
 
@@ -168,6 +170,8 @@ public class ARSceneQRRecalibration : MonoBehaviour
         {
             StartScanning();
         }
+
+        Debug.Log("[ARQRRecalibration] Scanner initialized successfully");
     }
 
     IEnumerator LoadAvailableMaps()
@@ -187,14 +191,17 @@ public class ARSceneQRRecalibration : MonoBehaviour
                         {
                             availableMapIds.Add(map.map_id);
                         }
+                        Debug.Log($"[ARQRRecalibration] Loaded {availableMapIds.Count} available maps");
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Debug.LogError($"[ARQRRecalibration] Error loading maps: {ex.Message}");
                 }
             },
             (error) =>
             {
+                Debug.LogError($"[ARQRRecalibration] Failed to load maps.json: {error}");
             }
         ));
     }
@@ -249,8 +256,9 @@ public class ARSceneQRRecalibration : MonoBehaviour
                 OnQRCodeScanned(result.Text);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Debug.LogError($"[ARQRRecalibration] Error processing frame: {ex.Message}");
         }
     }
 
@@ -258,13 +266,17 @@ public class ARSceneQRRecalibration : MonoBehaviour
     {
         isScanningActive = false;
 
+        Debug.Log($"[ARQRRecalibration] QR Code scanned: {qrData}");
+
         if (!ValidateQRCode(qrData, out string nodeId))
         {
+            Debug.LogWarning("[ARQRRecalibration] Invalid QR code format");
             StartCoroutine(ShowErrorAndResume("Invalid QR code. Please scan a valid CRIMSON campus QR code."));
             return;
         }
 
         scannedNodeId = nodeId;
+        Debug.Log($"[ARQRRecalibration] Valid node ID extracted: {nodeId}");
         StartCoroutine(SearchNodeInLocalFiles(scannedNodeId));
     }
 
@@ -312,11 +324,13 @@ public class ARSceneQRRecalibration : MonoBehaviour
                         {
                             scannedNodeInfo = foundNodeInfo;
                             foundNode = true;
+                            Debug.Log($"[ARQRRecalibration] Node found: {foundNodeInfo.name} ({foundNodeInfo.node_id})");
                         }
                         searchComplete = true;
                     },
                     (error) =>
                     {
+                        Debug.LogWarning($"[ARQRRecalibration] Could not load {nodesFileName}: {error}");
                         searchComplete = true;
                     }
                 ));
@@ -337,11 +351,13 @@ public class ARSceneQRRecalibration : MonoBehaviour
             }
             else
             {
+                Debug.LogWarning($"[ARQRRecalibration] Node type is not infrastructure: {scannedNodeInfo.type}");
                 StartCoroutine(ShowErrorAndResume("This QR code is not for an outdoor location."));
             }
         }
         else
         {
+            Debug.LogWarning($"[ARQRRecalibration] Node not found: {nodeId}");
             StartCoroutine(ShowErrorAndResume("Location not found. This QR code may not be registered in the system."));
         }
     }
@@ -358,8 +374,9 @@ public class ARSceneQRRecalibration : MonoBehaviour
                 return foundNode;
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Debug.LogError($"[ARQRRecalibration] Error searching node in JSON: {ex.Message}");
         }
 
         return null;
@@ -383,12 +400,8 @@ public class ARSceneQRRecalibration : MonoBehaviour
         }
 
         string coordinateInfo = $"GPS: {scannedNodeInfo.latitude:F6}, {scannedNodeInfo.longitude:F6}";
-
         string titleText = "<b>Recalibrate GPS Position</b>";
-
-        string bodyText = $"<b>{scannedNodeInfo.name}</b>\n\n" +
-            $"{coordinateInfo}";
-
+        string bodyText = $"<b>{scannedNodeInfo.name}</b>\n\n{coordinateInfo}";
         string noteText = "Your GPS position will be updated to this location.";
 
         if (confirmationTitle != null)
@@ -399,11 +412,13 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
         if (confirmationNote != null)
             confirmationNote.text = noteText;
+
+        Debug.Log($"[ARQRRecalibration] Showing confirmation for: {scannedNodeInfo.name}");
     }
 
     IEnumerator ShowErrorAndResume(string errorMessage)
     {
-        Debug.LogWarning($"QR Scan Error: {errorMessage}");
+        Debug.LogWarning($"[ARQRRecalibration] Error: {errorMessage}");
         yield return new WaitForSeconds(2f);
         ResumeScanning();
     }
@@ -414,35 +429,89 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
         if (qrFrameContainer != null)
             qrFrameContainer.SetActive(true);
+
+        Debug.Log("[ARQRRecalibration] Resuming scanning");
     }
 
     void OnConfirmRecalibration()
     {
-        if (GPSManager.Instance != null && scannedNodeInfo != null)
+        Debug.Log("=============== QR RECALIBRATION START ===============");
+        Debug.Log($"[ARQRRecalibration] Confirming recalibration to: {scannedNodeInfo.name}");
+        Debug.Log($"[ARQRRecalibration] Coordinates: ({scannedNodeInfo.latitude}, {scannedNodeInfo.longitude})");
+
+        if (GPSManager.Instance != null)
         {
+            Debug.Log("[ARQRRecalibration] Step 1: Clearing existing location lock...");
+            GPSManager.Instance.UnlockLocationForPathfinding();
+            
+            Debug.Log("[ARQRRecalibration] Step 2: Clearing any previous QR override...");
+            GPSManager.Instance.ClearQRLocationOverride();
+            
+            Debug.Log("[ARQRRecalibration] Step 3: Setting new QR location override...");
             GPSManager.Instance.SetQRLocationOverride(
                 scannedNodeInfo.latitude,
                 scannedNodeInfo.longitude,
                 0f
             );
+            
+            Vector2 newCoords = GPSManager.Instance.GetCoordinates();
+            Debug.Log($"[ARQRRecalibration] Verification - GPS now reports: ({newCoords.x}, {newCoords.y})");
+            
+            if (Mathf.Abs(newCoords.x - scannedNodeInfo.latitude) < 0.00001f && 
+                Mathf.Abs(newCoords.y - scannedNodeInfo.longitude) < 0.00001f)
+            {
+                Debug.Log("[ARQRRecalibration] ✅ GPS recalibration successful!");
+            }
+            else
+            {
+                Debug.LogWarning($"[ARQRRecalibration] ⚠️ GPS recalibration mismatch! Expected: ({scannedNodeInfo.latitude}, {scannedNodeInfo.longitude}), Got: ({newCoords.x}, {newCoords.y})");
+            }
         }
+        else
+        {
+            Debug.LogError("[ARQRRecalibration] ❌ GPSManager.Instance is null!");
+        }
+
+        Debug.Log("[ARQRRecalibration] Step 4: Saving recalibration to PlayerPrefs...");
+        PlayerPrefs.SetString("ScannedNodeID", scannedNodeInfo.node_id);
+        PlayerPrefs.SetString("ScannedLocationName", scannedNodeInfo.name);
+        PlayerPrefs.SetFloat("ScannedLat", scannedNodeInfo.latitude);
+        PlayerPrefs.SetFloat("ScannedLng", scannedNodeInfo.longitude);
+        PlayerPrefs.Save();
 
         if (unifiedARManager != null)
         {
+            Debug.Log("[ARQRRecalibration] Step 5: Notifying UnifiedARManager...");
             unifiedARManager.OnQRCodeScanned(scannedNodeInfo);
+        }
+        else
+        {
+            Debug.LogWarning("[ARQRRecalibration] UnifiedARManager not found");
         }
 
         DirectionDisplayManager directionManager = FindObjectOfType<DirectionDisplayManager>();
         if (directionManager != null)
         {
+            Debug.Log("[ARQRRecalibration] Step 6: Notifying DirectionDisplayManager...");
             directionManager.OnNodeReached(scannedNodeInfo.node_id);
+        }
+        else
+        {
+            Debug.LogWarning("[ARQRRecalibration] DirectionDisplayManager not found");
         }
 
         UserIndicator arUserIndicator = FindObjectOfType<UserIndicator>();
         if (arUserIndicator != null)
         {
+            Debug.Log("[ARQRRecalibration] Step 7: Force updating UserIndicator...");
             arUserIndicator.ForceUpdate();
         }
+        else
+        {
+            Debug.LogWarning("[ARQRRecalibration] UserIndicator not found");
+        }
+
+        Debug.Log("=============== QR RECALIBRATION COMPLETE ===============");
 
         if (confirmationPanel != null)
         {
@@ -461,6 +530,8 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
     void OnCancelRecalibration()
     {
+        Debug.Log("[ARQRRecalibration] Recalibration cancelled");
+
         if (confirmationPanel != null)
         {
             CanvasGroup canvasGroup = confirmationPanel.GetComponent<CanvasGroup>();
@@ -492,5 +563,7 @@ public class ARSceneQRRecalibration : MonoBehaviour
         {
             Destroy(cameraImageTexture);
         }
+
+        Debug.Log("[ARQRRecalibration] Scanner destroyed");
     }
 }
