@@ -228,14 +228,33 @@ public class UserIndicator : MonoBehaviour
 
     void UpdateUserIndicatorPosition()
     {
-        Vector2 gpsCoords = GPSManager.Instance.GetSmoothedCoordinates();
+        if (!isInitialized || GPSManager.Instance == null || userIndicatorInstance == null || mapboxMap == null)
+            return;
+
+        Vector2 gpsCoords;
+
+        if (GPSManager.Instance.IsUsingQROverride())
+        {
+            gpsCoords = GPSManager.Instance.GetCoordinates();
+            Debug.Log($"[UserIndicator] Using QR Override: ({gpsCoords.x:F6}, {gpsCoords.y:F6})");
+        }
+        else
+        {
+            gpsCoords = GPSManager.Instance.GetRawSmoothedGPSCoordinates();
+
+            if (gpsCoords.magnitude < 0.0001f)
+            {
+                return;
+            }
+
+            Debug.Log($"[UserIndicator] Using Raw GPS: ({gpsCoords.x:F6}, {gpsCoords.y:F6})");
+        }
 
         Vector3 worldPos = mapboxMap.GeoToWorldPosition(new Vector2d(gpsCoords.x, gpsCoords.y), false);
         worldPos.y = heightOffset;
 
         userIndicatorInstance.transform.position = worldPos;
     }
-
     void UpdateUserIndicatorRotation()
     {
         if (!GPSManager.Instance.IsCompassReady())
@@ -279,16 +298,30 @@ public class UserIndicator : MonoBehaviour
 
     public void ForceUpdate()
     {
-        if (isInitialized)
+        if (isInitialized && GPSManager.Instance != null && userIndicatorInstance != null && mapboxMap != null)
         {
             lastUpdateTime = 0f;
-            
-            Vector2 gpsCoords = GPSManager.Instance.GetSmoothedCoordinates();
+
+            Vector2 gpsCoords;
+            if (GPSManager.Instance.IsUsingQROverride())
+            {
+                gpsCoords = GPSManager.Instance.GetCoordinates();
+            }
+            else
+            {
+                gpsCoords = GPSManager.Instance.GetRawSmoothedGPSCoordinates();
+
+                if (gpsCoords.magnitude < 0.0001f)
+                {
+                    return;
+                }
+            }
+
             Vector3 worldPos = mapboxMap.GeoToWorldPosition(new Vector2d(gpsCoords.x, gpsCoords.y), false);
             worldPos.y = heightOffset;
-            
+
             userIndicatorInstance.transform.position = worldPos;
-            
+
             UpdateUserIndicatorRotation();
             UpdateDirectionShadow();
         }

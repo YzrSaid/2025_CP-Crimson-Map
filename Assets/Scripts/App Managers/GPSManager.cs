@@ -19,6 +19,15 @@ public class GPSManager : MonoBehaviour
     private List<Vector2> recentCoordinates = new List<Vector2>();
     private int maxHistorySize = 3;
 
+    [Header("GPS Accuracy Settings")]
+    public float strongGPSThreshold = 10f; 
+    public float weakGPSThreshold = 15f;   
+
+    [Header("QR Calibration")]
+    public float qrCalibrationSmoothTime = 7f;
+    private float qrCalibrationStartTime = -1f;
+    private bool isQRCalibrating = false;
+
     [Header("Compass Debug")]
     public bool enableCompassDebug = true;
 
@@ -79,13 +88,11 @@ public class GPSManager : MonoBehaviour
         }
         catch (System.Exception)
         {
-            // Handle exception as needed
         }
     }
 
     private void LoadLockStateFromPlayerPrefs()
     {
-        // Loading logic remains but without debug logs
         bool isLocked = PlayerPrefs.GetInt(PREF_LOCATION_LOCKED, 0) == 1;
         bool hasQROverride = PlayerPrefs.GetInt(PREF_QR_OVERRIDE, 0) == 1;
     }
@@ -122,13 +129,6 @@ public class GPSManager : MonoBehaviour
 
     public Vector2 GetCoordinates()
     {
-        if (PlayerPrefs.GetInt(PREF_LOCATION_LOCKED, 0) == 1)
-        {
-            float lat = PlayerPrefs.GetFloat(PREF_LOCKED_LAT, 0f);
-            float lng = PlayerPrefs.GetFloat(PREF_LOCKED_LNG, 0f);
-            return new Vector2(lat, lng);
-        }
-
         if (PlayerPrefs.GetInt(PREF_QR_OVERRIDE, 0) == 1)
         {
             float lat = PlayerPrefs.GetFloat(PREF_QR_LAT, 0f);
@@ -136,6 +136,18 @@ public class GPSManager : MonoBehaviour
             return new Vector2(lat, lng);
         }
 
+        if (PlayerPrefs.GetInt(PREF_LOCATION_LOCKED, 0) == 1)
+        {
+            float lat = PlayerPrefs.GetFloat(PREF_LOCKED_LAT, 0f);
+            float lng = PlayerPrefs.GetFloat(PREF_LOCKED_LNG, 0f);
+            return new Vector2(lat, lng);
+        }
+
+        return GetRealGPSCoordinates();
+    }
+
+    public Vector2 GetRealGPSCoordinates()
+    {
 #if UNITY_EDITOR
         if (useMockLocationInEditor)
         {
@@ -151,6 +163,24 @@ public class GPSManager : MonoBehaviour
         {
             return new Vector2(mockLatitude, mockLongitude);
         }
+    }
+
+    public Vector2 GetRawSmoothedGPSCoordinates()
+    {
+        Vector2 rawCoords = GetRealGPSCoordinates();
+
+        if (rawCoords.magnitude < 0.0001f)
+            return rawCoords;
+
+        recentCoordinates.Add(rawCoords);
+        if (recentCoordinates.Count > maxHistorySize)
+            recentCoordinates.RemoveAt(0);
+
+        Vector2 sum = Vector2.zero;
+        foreach (var coord in recentCoordinates)
+            sum += coord;
+
+        return sum / recentCoordinates.Count;
     }
 
     public float GetHeading()
@@ -221,6 +251,7 @@ public class GPSManager : MonoBehaviour
         PlayerPrefs.SetFloat(PREF_LOCKED_LAT, latitude);
         PlayerPrefs.SetFloat(PREF_LOCKED_LNG, longitude);
         PlayerPrefs.Save();
+        Debug.Log($"[GPS] Location LOCKED for pathfinding: ({latitude}, {longitude})");
     }
 
     public void UnlockLocationForPathfinding()
@@ -229,6 +260,7 @@ public class GPSManager : MonoBehaviour
         PlayerPrefs.DeleteKey(PREF_LOCKED_LAT);
         PlayerPrefs.DeleteKey(PREF_LOCKED_LNG);
         PlayerPrefs.Save();
+        Debug.Log("[GPS] Location UNLOCKED for pathfinding");
     }
 
     public bool IsLocationLocked()
@@ -244,6 +276,11 @@ public class GPSManager : MonoBehaviour
         PlayerPrefs.SetFloat(PREF_QR_LAT, location.x);
         PlayerPrefs.SetFloat(PREF_QR_LNG, location.y);
         PlayerPrefs.Save();
+        
+        isQRCalibrating = true;
+        qrCalibrationStartTime = Time.time;
+        
+        Debug.Log($"[GPS] QR Override SET: ({location.x}, {location.y}) - Calibration started");
     }
 
     public void SetQRLocationOverride(float latitude, float longitude, float heading = 0f)
@@ -257,11 +294,75 @@ public class GPSManager : MonoBehaviour
         PlayerPrefs.DeleteKey(PREF_QR_LAT);
         PlayerPrefs.DeleteKey(PREF_QR_LNG);
         PlayerPrefs.Save();
+        
+        isQRCalibrating = false;
+        qrCalibrationStartTime = -1f;
+        
+        Debug.Log("[GPS] QR Override CLEARED");
     }
 
     public bool IsUsingQROverride()
     {
         return PlayerPrefs.GetInt(PREF_QR_OVERRIDE, 0) == 1;
+    }
+
+    public bool IsGPSAccurate()
+    {
+#if UNITY_EDITOR
+        if (useMockLocationInEditor)
+        {
+            return true;
+        }
+#endif
+
+        if (Input.location.status == LocationServiceStatus.Running)
+        {
+            float accuracy = Input.location.lastData.horizontalAccuracy;
+            
+            bool isAccurate = accuracy > 0 && accuracy <= strongGPSThreshold;
+            
+            Debug.Log($"[GPS] Accuracy check: {accuracy:F1}m - {(isAccurate ? "GOOD ✅" : "WEAK ⚠️")}");
+            return isAccurate;
+        }
+        
+        Debug.Log("[GPS] Accuracy check: No GPS signal ❌");
+        return false;
+    }
+
+    public float GetGPSAccuracy()
+    {
+#if UNITY_EDITOR
+        if (useMockLocationInEditor)
+        {
+            return 5f;
+        }
+#endif
+
+        if (Input.location.status == LocationServiceStatus.Running)
+        {
+            return Input.location.lastData.horizontalAccuracy;
+        }
+        
+        return -1f;
+    }
+
+    public float GetQRCalibrationProgress()
+    {
+        if (!isQRCalibrating || qrCalibrationStartTime < 0f)
+            return 1f;
+
+        float elapsed = Time.time - qrCalibrationStartTime;
+        float progress = Mathf.Clamp01(elapsed / qrCalibrationSmoothTime);
+        
+        return progress;
+    }
+
+    public bool IsQRCalibrationComplete()
+    {
+        if (!isQRCalibrating)
+            return true;
+
+        return GetQRCalibrationProgress() >= 1f;
     }
 
     public Vector2 GetSmoothedCoordinates()
@@ -304,7 +405,6 @@ public class GPSManager : MonoBehaviour
 #if UNITY_EDITOR
         if (useMockLocationInEditor && Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
         {
-            // Handle G key press if needed
         }
 
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)

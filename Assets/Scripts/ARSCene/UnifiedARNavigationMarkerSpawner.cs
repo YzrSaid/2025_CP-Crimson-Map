@@ -25,7 +25,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
     [Header("Marker Settings")]
     public float markerHeightOffset = 0.1f;
-    public float maxVisibleDistance = 200f;
+    public float maxVisibleDistance = 100f;
     public float minMarkerDistance = 2f;
 
     [Header("Journey Marker Animation")]
@@ -62,6 +62,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     private Vector2 userXY;
     private float groundPlaneY = 0f;
     private bool markersInitialized = false;
+    private bool allMarkersSpawned = false;
 
     private List<ARRaycastHit> arRaycastHits = new List<ARRaycastHit>();
 
@@ -102,7 +103,8 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         for (int i = 0; i < pathNodeCount; i++)
         {
             string nodeId = PlayerPrefs.GetString($"ARNavigation_PathNode_{i}", "");
-            if (!string.IsNullOrEmpty(nodeId) && nodeId != fromNodeId && nodeId != toNodeId) journeyNodeIds.Add(nodeId);
+            if (!string.IsNullOrEmpty(nodeId) && nodeId != fromNodeId && nodeId != toNodeId) 
+                journeyNodeIds.Add(nodeId);
         }
         Debug.Log($"[MarkerSpawner] Loaded {journeyNodeIds.Count} intermediate journey nodes");
     }
@@ -110,9 +112,11 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     private IEnumerator InitializeMarkerSystem()
     {
         yield return new WaitForSeconds(0.5f);
-        CancelInvoke(nameof(UpdateMarkerSystem));
+        CancelInvoke(nameof(UpdateMarkerVisibility));
+        
         yield return new WaitUntil(() => unifiedARManager != null);
         yield return new WaitForSeconds(0.5f);
+        
         yield return StartCoroutine(LoadAllNodesAndInfrastructure());
 
         referenceGPS = unifiedARManager.GetReferenceGPS();
@@ -120,8 +124,11 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         Debug.Log($"[MarkerSpawner] Reference GPS: {referenceGPS}");
         Debug.Log($"[MarkerSpawner] Reference AR World Position: {referenceARWorldPosition}");
 
+        yield return StartCoroutine(SpawnAllMarkersOnce());
+
         markersInitialized = true;
-        InvokeRepeating(nameof(UpdateMarkerSystem), 0.5f, 0.2f);
+        
+        InvokeRepeating(nameof(UpdateMarkerVisibility), 0.5f, 0.2f);
     }
 
     private IEnumerator LoadAllNodesAndInfrastructure()
@@ -143,8 +150,12 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
                 try
                 {
                     Node[] nodes = JsonHelper.FromJson<Node>(jsonContent);
-                    allNodes = nodes.Where(n => (n.type == "infrastructure" || n.type == "intermediate") && n.is_active).ToList();
-                    Debug.Log($"[MarkerSpawner] Loaded {allNodes.Count} nodes");
+                    allNodes = nodes.Where(n => 
+                        (n.type == "infrastructure" || n.type == "intermediate") && 
+                        n.is_active &&
+                        n.type != "indoorinfra"
+                    ).ToList();
+                    Debug.Log($"[MarkerSpawner] Loaded {allNodes.Count} outdoor nodes");
                     loadComplete = true;
                 }
                 catch (System.Exception ex)
@@ -194,75 +205,129 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         yield return new WaitUntil(() => loadComplete);
     }
 
-    private void UpdateMarkerSystem()
+    private IEnumerator SpawnAllMarkersOnce()
     {
-        if (!isARMode || !markersInitialized) return;
+        Debug.Log("[MarkerSpawner] ============ SPAWNING ALL MARKERS ============");
+        Debug.Log($"[MarkerSpawner] Total nodes to spawn: {allNodes.Count}");
 
-        if (unifiedARManager != null) userLocation = unifiedARManager.GetUserXY();
-        else if (GPSManager.Instance != null) userLocation = GPSManager.Instance.GetSmoothedCoordinates();
+        int spawnedCount = 0;
+        
+        foreach (Node node in allNodes)
+        {
+            if (node.type == "indoorinfra") continue;
+            if (spawnedMarkers.ContainsKey(node.node_id)) continue;
 
-        if (userLocation.magnitude < 0.0001f) return;
+            GameObject marker = CreateMarkerForNode(node);
+            
+            if (marker != null)
+            {
+                spawnedMarkers[node.node_id] = marker;
+                spawnedCount++;
+                
+                marker.SetActive(false);
+            }
+
+            if (spawnedCount % 5 == 0)
+                yield return null;
+        }
+
+        allMarkersSpawned = true;
+        Debug.Log($"[MarkerSpawner] ✅ Spawned {spawnedCount} markers successfully!");
+        Debug.Log("[MarkerSpawner] ============================================");
+    }
+
+    private void UpdateMarkerVisibility()
+    {
+        if (!isARMode || !markersInitialized || !allMarkersSpawned)
+            return;
+
+        UpdateUserLocation();
+
+        if (userLocation.magnitude < 0.0001f)
+            return;
+
+        bool isIndoor = (unifiedARManager != null && unifiedARManager.IsIndoorMode());
+
+        foreach (var kvp in spawnedMarkers)
+        {
+            string nodeId = kvp.Key;
+            GameObject marker = kvp.Value;
+
+            if (marker == null) continue;
+
+            Node node = allNodes.FirstOrDefault(n => n.node_id == nodeId);
+            if (node == null) continue;
+
+            float distance = CalculateDistance(node, isIndoor);
+            bool shouldBeVisible = distance <= maxVisibleDistance;
+
+            if (marker.activeSelf != shouldBeVisible)
+            {
+                marker.SetActive(shouldBeVisible);
+                
+                if (shouldBeVisible)
+                {
+                    Debug.Log($"[MarkerSpawner] Showing marker: {node.name} (distance: {distance:F1}m)");
+                }
+            }
+
+            if (shouldBeVisible && arCamera != null)
+            {
+                marker.transform.LookAt(arCamera.transform);
+                marker.transform.Rotate(0, 180, 0);
+            }
+        }
 
         UpdateCompassArrow();
-        if (showMarkers) UpdateAllMarkers();
+    }
+
+    private void UpdateUserLocation()
+    {
+        if (GPSManager.Instance == null)
+        {
+            Debug.LogWarning("[MarkerSpawner] GPSManager.Instance is null!");
+            return;
+        }
+
+        if (GPSManager.Instance.IsUsingQROverride())
+        {
+            Vector2 qrLocation = GPSManager.Instance.GetCoordinates();
+            userLocation = qrLocation;
+            Debug.Log($"[MarkerSpawner] Using QR Override location: ({userLocation.x:F6}, {userLocation.y:F6})");
+        }
+        else
+        {
+            Vector2 rawGPS = GPSManager.Instance.GetRawSmoothedGPSCoordinates();
+            
+            if (rawGPS.magnitude > 0.0001f)
+            {
+                userLocation = rawGPS;
+            }
+            else
+            {
+                if (unifiedARManager != null)
+                {
+                    userLocation = unifiedARManager.GetUserXY();
+                }
+            }
+        }
     }
 
     private void UpdateCompassArrow()
     {
-        if (compassArrow == null || directionManager == null) return;
+        if (compassArrow == null || directionManager == null) 
+            return;
 
         NavigationDirection currentDir = directionManager.GetCurrentDirection();
-        if (currentDir == null || currentDir.destinationNode == null) return;
+        if (currentDir == null || currentDir.destinationNode == null) 
+            return;
 
         Node targetNode = currentDir.destinationNode;
         compassArrow.SetTargetNode(targetNode);
         compassArrow.SetActive(true);
     }
 
-    private void UpdateAllMarkers()
-    {
-        if (buildingMarkerPrefab == null && journeyMarkerPrefab == null && startEndMarkerPrefab == null) return;
-
-        bool isIndoor = (unifiedARManager != null && unifiedARManager.IsIndoorMode());
-        List<string> markersToRemove = new List<string>();
-
-        foreach (var kvp in spawnedMarkers)
-        {
-            Node node = allNodes.FirstOrDefault(n => n.node_id == kvp.Key);
-            if (node == null || !ShouldShowMarker(node, isIndoor))
-            {
-                if (kvp.Value != null) Destroy(kvp.Value);
-                markersToRemove.Add(kvp.Key);
-            }
-        }
-
-        foreach (string nodeId in markersToRemove) spawnedMarkers.Remove(nodeId);
-
-        foreach (Node node in allNodes)
-        {
-            if (node.type == "indoorinfra") continue;
-            if (spawnedMarkers.ContainsKey(node.node_id)) continue;
-            if (ShouldShowMarker(node, isIndoor)) CreateMarkerForNode(node, isIndoor);
-        }
-
-        foreach (var marker in spawnedMarkers.Values)
-        {
-            if (marker != null && arCamera != null)
-            {
-                marker.transform.LookAt(arCamera.transform);
-                marker.transform.Rotate(0, 180, 0);
-            }
-        }
-    }
-
-    private bool ShouldShowMarker(Node node, bool isIndoor)
-    {
-        if (node.type == "indoorinfra") return false;
-        float distance = CalculateDistance(node, isIndoor);
-        return distance <= maxVisibleDistance;
-    }
-
-    private void CreateMarkerForNode(Node node, bool isIndoor)
+    private GameObject CreateMarkerForNode(Node node)
     {
         GameObject prefabToUse = null;
         bool needsAnimation = false;
@@ -272,78 +337,74 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         {
             prefabToUse = startEndMarkerPrefab;
             needsAnimation = true;
-            Debug.Log($"[MarkerSpawner] Spawning START marker for node: {node.node_id} ({(node.node_id == fromNodeId ? "FROM" : "TO")})");
+            Debug.Log($"[MarkerSpawner] Creating START marker for: {node.node_id}");
         }
         else if (node.node_id == toNodeId)
         {
             prefabToUse = startEndMarkerPrefab;
             needsAnimation = true;
             isStartEnd = true;
-            Debug.Log($"[MarkerSpawner] Spawning START marker for node: {node.node_id} ({(node.node_id == fromNodeId ? "FROM" : "TO")})");
+            Debug.Log($"[MarkerSpawner] Creating END marker for: {node.node_id}");
         }
         else if (journeyNodeIds.Contains(node.node_id))
         {
             prefabToUse = journeyMarkerPrefab;
             needsAnimation = true;
-            Debug.Log($"[MarkerSpawner] Spawning JOURNEY marker for node: {node.node_id}");
         }
         else
         {
             prefabToUse = buildingMarkerPrefab;
-            Debug.Log($"[MarkerSpawner] Spawning BUILDING marker for node: {node.node_id}");
         }
 
         if (prefabToUse == null)
         {
-            Debug.LogWarning($"[MarkerSpawner] No prefab assigned for marker type. Node: {node.node_id}");
-            return;
+            Debug.LogWarning($"[MarkerSpawner] No prefab for node: {node.node_id}");
+            return null;
         }
 
         Infrastructure infra = allInfrastructures.FirstOrDefault(i => i.infra_id == node.related_infra_id);
         if (infra == null && node.type == "infrastructure")
         {
-            Debug.LogWarning($"[MarkerSpawner] No infrastructure found for node: {node.node_id}");
-            return;
+            Debug.LogWarning($"[MarkerSpawner] No infrastructure for node: {node.node_id}");
+            return null;
         }
 
+        bool isIndoor = (unifiedARManager != null && unifiedARManager.IsIndoorMode());
         Vector3 worldPos = GetNodeWorldPosition(node, isIndoor);
+        
         float floorHeight = 0f;
-
         if (isIndoor && node.indoor != null && !string.IsNullOrEmpty(node.indoor.floor))
         {
-            if (int.TryParse(node.indoor.floor, out int parsedFloor) && parsedFloor > 1) floorHeight = (parsedFloor - 1) * floorHeightMeters;
+            if (int.TryParse(node.indoor.floor, out int parsedFloor) && parsedFloor > 1)
+                floorHeight = (parsedFloor - 1) * floorHeightMeters;
         }
 
-        if (isIndoor) worldPos = GetGroundPosition(worldPos);
-        else worldPos.y = groundPlaneY + markerHeightOffset;
+        if (isIndoor) 
+            worldPos = GetGroundPosition(worldPos);
+        else 
+            worldPos.y = groundPlaneY + markerHeightOffset;
 
         worldPos.y += floorHeight;
 
         GameObject marker = Instantiate(prefabToUse, worldPos, Quaternion.identity);
 
-        if (infra != null)
-        {
-            string displayName = infra.name;
-            if (node.node_id == fromNodeId) displayName = "START: " + displayName;
-            else if (node.node_id == toNodeId) displayName = "END: " + displayName;
-            UpdateMarkerText(marker, displayName);
-        }
-        else
-        {
-            string displayName = node.name;
-            if (node.node_id == fromNodeId) displayName = "START: " + displayName;
-            else if (node.node_id == toNodeId) displayName = "END: " + displayName;
-            UpdateMarkerText(marker, displayName);
-        }
+        string displayName = infra != null ? infra.name : node.name;
+        if (node.node_id == fromNodeId) 
+            displayName = "START: " + displayName;
+        else if (node.node_id == toNodeId) 
+            displayName = "END: " + displayName;
+            
+        UpdateMarkerText(marker, displayName);
 
         if (needsAnimation)
         {
-            if (isStartEnd) StartCoroutine(AnimateStartEndMarker(marker));
-            else StartCoroutine(AnimateJourneyMarker(marker));
+            if (isStartEnd)
+                StartCoroutine(AnimateStartEndMarker(marker));
+            else
+                StartCoroutine(AnimateJourneyMarker(marker));
         }
 
-        spawnedMarkers[node.node_id] = marker;
-        Debug.Log($"[MarkerSpawner] Successfully spawned marker for node: {node.node_id} at position: {worldPos}");
+        return marker;
     }
 
     private IEnumerator AnimateJourneyMarker(GameObject marker)
@@ -353,18 +414,27 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         Transform auraTransform = marker.transform.Find("Aura");
         Renderer auraRenderer = auraTransform?.GetComponent<Renderer>();
 
-        while (marker != null)
+        while (marker != null && !isExitingAR)
         {
-            float pulsate = Mathf.Lerp(pulsateMinScale, pulsateMaxScale, (Mathf.Sin(Time.time * pulsateSpeed + timeOffset) + 1f) / 2f);
+            if (!marker.activeSelf)
+            {
+                yield return null;
+                continue;
+            }
+
+            float pulsate = Mathf.Lerp(pulsateMinScale, pulsateMaxScale, 
+                (Mathf.Sin(Time.time * pulsateSpeed + timeOffset) + 1f) / 2f);
             marker.transform.localScale = baseScale * pulsate;
 
             if (auraRenderer != null && auraRenderer.material != null)
             {
-                float alpha = Mathf.Lerp(0f, auraMaxAlpha, (Mathf.Sin(Time.time * auraSpeed + timeOffset) + 1f) / 2f);
+                float alpha = Mathf.Lerp(0f, auraMaxAlpha, 
+                    (Mathf.Sin(Time.time * auraSpeed + timeOffset) + 1f) / 2f);
                 Color auraColor = auraRenderer.material.color;
                 auraColor.a = alpha;
                 auraRenderer.material.color = auraColor;
             }
+            
             yield return null;
         }
     }
@@ -376,25 +446,29 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         Transform auraTransform = marker.transform.Find("Aura");
         Renderer auraRenderer = auraTransform?.GetComponent<Renderer>();
 
-        while (marker != null)
+        while (marker != null && !isExitingAR)
         {
-            float pulsate = Mathf.Lerp(startEndPulsateMinScale, startEndPulsateMaxScale, (Mathf.Sin(Time.time * startEndPulsateSpeed + timeOffset) + 1f) / 2f);
+            if (!marker.activeSelf)
+            {
+                yield return null;
+                continue;
+            }
+
+            float pulsate = Mathf.Lerp(startEndPulsateMinScale, startEndPulsateMaxScale, 
+                (Mathf.Sin(Time.time * startEndPulsateSpeed + timeOffset) + 1f) / 2f);
             marker.transform.localScale = baseScale * pulsate;
 
             if (auraRenderer != null && auraRenderer.material != null)
             {
-                float alpha = Mathf.Lerp(0f, auraMaxAlpha, (Mathf.Sin(Time.time * auraSpeed + timeOffset) + 1f) / 2f);
+                float alpha = Mathf.Lerp(0f, auraMaxAlpha, 
+                    (Mathf.Sin(Time.time * auraSpeed + timeOffset) + 1f) / 2f);
                 Color auraColor = auraRenderer.material.color;
                 auraColor.a = alpha;
                 auraRenderer.material.color = auraColor;
             }
+            
             yield return null;
         }
-    }
-
-    void UpdateMarkerText(GameObject marker, Infrastructure infra)
-    {
-        UpdateMarkerText(marker, infra.name);
     }
 
     void UpdateMarkerText(GameObject marker, string displayName)
@@ -404,7 +478,8 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         {
             textMeshPro.text = displayName;
             textMeshPro.fontSize = 8;
-            if (gameObject != null && gameObject.activeInHierarchy && !isExitingAR) StartCoroutine(UpdateTextRotation(textMeshPro.transform));
+            if (gameObject != null && gameObject.activeInHierarchy && !isExitingAR) 
+                StartCoroutine(UpdateTextRotation(textMeshPro.transform));
         }
 
         Text nameText = marker.GetComponentInChildren<Text>();
@@ -419,7 +494,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     {
         while (textTransform != null && !isExitingAR && gameObject != null && gameObject.activeInHierarchy)
         {
-            if (arCamera != null)
+            if (arCamera != null && textTransform.gameObject.activeInHierarchy)
             {
                 textTransform.LookAt(arCamera.transform);
                 textTransform.Rotate(0, 180, 0);
@@ -430,10 +505,11 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
     public void ReloadPathNodes()
     {
-        CancelInvoke(nameof(UpdateMarkerSystem));
+        CancelInvoke(nameof(UpdateMarkerVisibility));
         ClearAllMarkers();
         spawnedMarkers.Clear();
         markersInitialized = false;
+        allMarkersSpawned = false;
         LoadNavigationData();
         StartCoroutine(ReinitializeAfterReload());
     }
@@ -441,7 +517,8 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     private IEnumerator ReinitializeAfterReload()
     {
         yield return new WaitForSeconds(0.5f);
-        if (isARMode && allNodes.Count > 0) yield return StartCoroutine(InitializeMarkerSystem());
+        if (isARMode && allNodes.Count > 0) 
+            yield return StartCoroutine(InitializeMarkerSystem());
     }
 
     private float CalculateDistance(Node node, bool isIndoor)
@@ -449,8 +526,10 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         if (isIndoor)
         {
             Vector2 nodeXY;
-            if (node.indoor != null) nodeXY = new Vector2(node.indoor.x, node.indoor.y);
-            else nodeXY = new Vector2(node.x_coordinate, node.y_coordinate);
+            if (node.indoor != null) 
+                nodeXY = new Vector2(node.indoor.x, node.indoor.y);
+            else 
+                nodeXY = new Vector2(node.x_coordinate, node.y_coordinate);
             return CalculateDistanceXY(userLocation, nodeXY);
         }
         else
@@ -470,11 +549,15 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
             int floor = 1;
             if (node.indoor != null && !string.IsNullOrEmpty(node.indoor.floor))
             {
-                if (int.TryParse(node.indoor.floor, out int parsedFloor)) floor = parsedFloor;
+                if (int.TryParse(node.indoor.floor, out int parsedFloor)) 
+                    floor = parsedFloor;
             }
             return XYToWorldPositionWithFloor(nodeX, nodeY, floor);
         }
-        else return GPSToWorldPosition(node.latitude, node.longitude);
+        else 
+        {
+            return GPSToWorldPosition(node.latitude, node.longitude);
+        }
     }
 
     private Vector3 GetGroundPosition(Vector3 targetWorldPos)
@@ -575,7 +658,8 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         worldPos.x += deltaX;
         worldPos.z += deltaY;
 
-        if (floor > 1) worldPos.y += (floor - 1) * floorHeightMeters;
+        if (floor > 1) 
+            worldPos.y += (floor - 1) * floorHeightMeters;
         return worldPos;
     }
 
@@ -600,6 +684,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         CancelInvoke();
         ClearAllMarkers();
         StopAllCoroutines();
-        if (compassArrow != null) compassArrow.SetActive(false);
+        if (compassArrow != null) 
+            compassArrow.SetActive(false);
     }
 }

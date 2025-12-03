@@ -6034,7 +6034,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 272.93954, y: -271.4689}
+  m_AnchoredPosition: {x: 272.93954, y: -305.44876}
   m_SizeDelta: {x: 543.29, y: 77.0905}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &489400072
@@ -11371,7 +11371,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 272.93954, y: -189.08958}
+  m_AnchoredPosition: {x: 272.93954, y: -213.3609}
   m_SizeDelta: {x: 383.0935, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &937182224
@@ -18378,7 +18378,6 @@ MonoBehaviour:
   panelForBG: {fileID: 1259183061}
   mapButtonPrefab: {fileID: 3037807014215756060, guid: 09ec938df77e6ce35b6d2258b8973e4b, type: 3}
   buttonContainer: {fileID: 166517715}
-  mapboxMap: {fileID: 1699060734}
   loadingManager: {fileID: 0}
 --- !u!114 &1465186283
 MonoBehaviour:
@@ -18412,6 +18411,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useMockLocationInEditor: 1
   enableCompassDebug: 0
+  qrCalibrationSmoothTime: 7
 --- !u!114 &1465186286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18630,6 +18630,7 @@ MonoBehaviour:
   maxZoomLevel: 18
   gridSize: 5
   cachingSpeed: 0.5
+  mapboxMap: {fileID: 0}
   isCaching: 0
   cachingProgress: 0
 --- !u!114 &1465186298
@@ -22463,7 +22464,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 272.93954, y: -131.49696}
+  m_AnchoredPosition: {x: 272.93954, y: -146.05974}
   m_SizeDelta: {x: 401.0853, y: 27.5171}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1752954960
@@ -26110,7 +26111,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 272.93954, y: -54.160686}
+  m_AnchoredPosition: {x: 272.93954, y: -59.014946}
   m_SizeDelta: {x: 543.29, y: 89.4873}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2016923116

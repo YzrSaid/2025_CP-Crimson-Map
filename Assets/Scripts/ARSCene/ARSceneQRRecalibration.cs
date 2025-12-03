@@ -33,6 +33,14 @@ public class ARSceneQRRecalibration : MonoBehaviour
     public Button confirmButton;
     public Button cancelButton;
 
+    [Header("Calibration Panel")]
+    public GameObject calibrationPanel;
+    public TextMeshProUGUI calibrationTitle;
+    public TextMeshProUGUI calibrationInstruction;
+    public Image calibrationProgressFill;
+    public TextMeshProUGUI calibrationProgressText;
+    public GameObject figure8Animation; 
+    public Button calibrationExitButton; 
     [Header("Security Settings")]
     public string qrSignature = "CRIMSON";
     public string qrDelimiter = "_";
@@ -40,6 +48,9 @@ public class ARSceneQRRecalibration : MonoBehaviour
     [Header("Scanning Settings")]
     public bool autoScanMode = false;
     public int frameSkip = 2;
+
+    [Header("Calibration Settings")]
+    public int maxCalibrationAttempts = 3;
 
     [Header("Test Mode (Editor Only)")]
     public bool enableTestMode = false;
@@ -52,6 +63,7 @@ public class ARSceneQRRecalibration : MonoBehaviour
     private List<string> availableMapIds = new List<string>();
     private Texture2D cameraImageTexture;
     private int frameCount = 0;
+    private int calibrationAttemptCount = 0;
 
     private IBarcodeReader barcodeReader = new BarcodeReader
     {
@@ -76,6 +88,9 @@ public class ARSceneQRRecalibration : MonoBehaviour
         if (confirmationPanel != null)
             confirmationPanel.SetActive(false);
 
+        if (calibrationPanel != null)
+            calibrationPanel.SetActive(false);
+
         if (qrFrameContainer != null)
             qrFrameContainer.SetActive(false);
 
@@ -84,6 +99,12 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
         if (cancelButton != null)
             cancelButton.onClick.AddListener(OnCancelRecalibration);
+
+        if (calibrationExitButton != null)
+        {
+            calibrationExitButton.onClick.AddListener(OnCalibrationExit);
+            calibrationExitButton.gameObject.SetActive(false);
+        }
 
         if (scanTriggerButton != null)
         {
@@ -104,6 +125,11 @@ public class ARSceneQRRecalibration : MonoBehaviour
             OnQRCodeScanned(simulatedQRData);
         }
 #endif
+
+        if (calibrationPanel != null && calibrationPanel.activeSelf && GPSManager.Instance != null)
+        {
+            UpdateCalibrationProgress();
+        }
     }
 
     public void ToggleScanMode()
@@ -439,6 +465,27 @@ public class ARSceneQRRecalibration : MonoBehaviour
         Debug.Log($"[ARQRRecalibration] Confirming recalibration to: {scannedNodeInfo.name}");
         Debug.Log($"[ARQRRecalibration] Coordinates: ({scannedNodeInfo.latitude}, {scannedNodeInfo.longitude})");
 
+        calibrationAttemptCount = 0;
+
+        if (confirmationPanel != null)
+        if (confirmationPanel != null)
+        {
+            CanvasGroup canvasGroup = confirmationPanel.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+                canvasGroup = confirmationPanel.AddComponent<CanvasGroup>();
+
+            canvasGroup.DOFade(0, 0.3f).SetEase(Ease.OutQuad).OnComplete(() =>
+            {
+                confirmationPanel.SetActive(false);
+                
+                ShowCalibrationPanel();
+            });
+        }
+        else
+        {
+            ShowCalibrationPanel();
+        }
+
         if (GPSManager.Instance != null)
         {
             Debug.Log("[ARQRRecalibration] Step 1: Clearing existing location lock...");
@@ -456,16 +503,6 @@ public class ARSceneQRRecalibration : MonoBehaviour
             
             Vector2 newCoords = GPSManager.Instance.GetCoordinates();
             Debug.Log($"[ARQRRecalibration] Verification - GPS now reports: ({newCoords.x}, {newCoords.y})");
-            
-            if (Mathf.Abs(newCoords.x - scannedNodeInfo.latitude) < 0.00001f && 
-                Mathf.Abs(newCoords.y - scannedNodeInfo.longitude) < 0.00001f)
-            {
-                Debug.Log("[ARQRRecalibration] ✅ GPS recalibration successful!");
-            }
-            else
-            {
-                Debug.LogWarning($"[ARQRRecalibration] ⚠️ GPS recalibration mismatch! Expected: ({scannedNodeInfo.latitude}, {scannedNodeInfo.longitude}), Got: ({newCoords.x}, {newCoords.y})");
-            }
         }
         else
         {
@@ -484,10 +521,6 @@ public class ARSceneQRRecalibration : MonoBehaviour
             Debug.Log("[ARQRRecalibration] Step 5: Notifying UnifiedARManager...");
             unifiedARManager.OnQRCodeScanned(scannedNodeInfo);
         }
-        else
-        {
-            Debug.LogWarning("[ARQRRecalibration] UnifiedARManager not found");
-        }
 
         DirectionDisplayManager directionManager = FindObjectOfType<DirectionDisplayManager>();
         if (directionManager != null)
@@ -495,37 +528,217 @@ public class ARSceneQRRecalibration : MonoBehaviour
             Debug.Log("[ARQRRecalibration] Step 6: Notifying DirectionDisplayManager...");
             directionManager.OnNodeReached(scannedNodeInfo.node_id);
         }
-        else
-        {
-            Debug.LogWarning("[ARQRRecalibration] DirectionDisplayManager not found");
-        }
 
-        UserIndicator arUserIndicator = FindObjectOfType<UserIndicator>();
-        if (arUserIndicator != null)
+        UserIndicator userIndicator = FindObjectOfType<UserIndicator>();
+        if (userIndicator != null)
         {
             Debug.Log("[ARQRRecalibration] Step 7: Force updating UserIndicator...");
-            arUserIndicator.ForceUpdate();
-        }
-        else
-        {
-            Debug.LogWarning("[ARQRRecalibration] UserIndicator not found");
+            userIndicator.ForceUpdate();
         }
 
         Debug.Log("=============== QR RECALIBRATION COMPLETE ===============");
+    }
 
-        if (confirmationPanel != null)
+    void ShowCalibrationPanel()
+    {
+        calibrationAttemptCount++;
+
+        if (calibrationPanel == null)
         {
-            CanvasGroup canvasGroup = confirmationPanel.GetComponent<CanvasGroup>();
+            float calibrationTime = GPSManager.Instance != null ? GPSManager.Instance.qrCalibrationSmoothTime : 7f;
+            StartCoroutine(CheckGPSAfterCalibration(calibrationTime));
+            StopScanning();
+            return;
+        }
+
+        calibrationPanel.SetActive(true);
+
+        if (calibrationTitle != null)
+        {
+            if (calibrationAttemptCount >= maxCalibrationAttempts)
+            {
+                calibrationTitle.text = "<b><color=red>GPS Unavailable</color></b>";
+            }
+            else
+            {
+                calibrationTitle.text = $"<b>Calibrating GPS... (Attempt {calibrationAttemptCount}/{maxCalibrationAttempts})</b>";
+            }
+        }
+
+        if (calibrationInstruction != null)
+        {
+            if (calibrationAttemptCount >= maxCalibrationAttempts)
+            {
+                calibrationInstruction.text = "GPS signal is too weak to navigate safely. Please try again later when you have better signal.";
+            }
+            else
+            {
+                calibrationInstruction.text = "Move your device in a figure-8 pattern to help GPS lock onto your location.";
+            }
+        }
+
+        if (calibrationProgressFill != null)
+            calibrationProgressFill.fillAmount = 0f;
+
+        if (calibrationProgressText != null)
+            calibrationProgressText.text = "0%";
+
+        if (figure8Animation != null)
+        {
+            figure8Animation.SetActive(calibrationAttemptCount < maxCalibrationAttempts);
+        }
+        if (calibrationExitButton != null)
+        {
+            calibrationExitButton.gameObject.SetActive(calibrationAttemptCount >= maxCalibrationAttempts);
+        }
+        CanvasGroup canvasGroup = calibrationPanel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+            canvasGroup = calibrationPanel.AddComponent<CanvasGroup>();
+
+        canvasGroup.alpha = 0;
+        canvasGroup.DOFade(1, 0.5f).SetEase(Ease.OutQuad);
+
+        if (calibrationAttemptCount < maxCalibrationAttempts)
+        {
+            float calibrationTime = GPSManager.Instance != null ? GPSManager.Instance.qrCalibrationSmoothTime : 7f;
+            StartCoroutine(CheckGPSAfterCalibration(calibrationTime));
+        }
+        
+        StopScanning();
+    }
+
+    IEnumerator CheckGPSAfterCalibration(float delay)
+    {
+        Debug.Log($"[QR Calibration] Starting {delay}s calibration wait...");
+        if (GPSManager.Instance != null)
+        {
+            Debug.Log($"[QR Calibration] Current GPS Thresholds: Strong={GPSManager.Instance.strongGPSThreshold}m, Weak={GPSManager.Instance.weakGPSThreshold}m");
+        }
+        
+        yield return new WaitForSeconds(delay);
+
+        bool isGPSGood = false;
+        float currentAccuracy = -1f;
+        
+        if (GPSManager.Instance != null)
+        {
+            isGPSGood = GPSManager.Instance.IsGPSAccurate();
+            currentAccuracy = GPSManager.Instance.GetGPSAccuracy();
+            
+            Debug.Log("========== GPS CALIBRATION CHECK ==========");
+            Debug.Log($"GPS Accuracy: {currentAccuracy:F1}m");
+            Debug.Log($"Strong Threshold: {GPSManager.Instance.strongGPSThreshold}m");
+            Debug.Log($"Is GPS Good? {(isGPSGood ? "YES ✅" : "NO ❌")}");
+            Debug.Log($"Attempt: {calibrationAttemptCount}/{maxCalibrationAttempts}");
+            Debug.Log("==========================================");
+        }
+        else
+        {
+            Debug.LogError("[QR Calibration] ❌ GPSManager.Instance is NULL!");
+        }
+
+        if (isGPSGood)
+        {
+            Debug.Log("[QR Calibration] ✅ GPS signal improved! Continuing navigation...");
+            Debug.Log($"[QR Calibration] Final accuracy: {currentAccuracy:F1}m (threshold: {GPSManager.Instance.strongGPSThreshold}m)");
+            
+            if (GPSManager.Instance != null)
+            {
+                GPSManager.Instance.ClearQRLocationOverride();
+                Debug.Log("[QR Calibration] QR override cleared - now using real GPS");
+            }
+            
+            HideCalibrationPanel();
+        }
+        else
+        {
+            Debug.Log($"[QR Calibration] ⚠️ GPS still weak: {currentAccuracy:F1}m (need: {GPSManager.Instance.strongGPSThreshold}m)");
+            
+            if (calibrationAttemptCount < maxCalibrationAttempts)
+            {
+                Debug.Log($"[QR Calibration] Retrying... ({calibrationAttemptCount}/{maxCalibrationAttempts})");
+                
+                if (calibrationPanel != null)
+                {
+                    CanvasGroup canvasGroup = calibrationPanel.GetComponent<CanvasGroup>();
+                    if (canvasGroup == null)
+                        canvasGroup = calibrationPanel.AddComponent<CanvasGroup>();
+
+                    canvasGroup.DOFade(0, 0.3f).SetEase(Ease.OutQuad).OnComplete(() =>
+                    {
+                        ShowCalibrationPanel();
+                    });
+                }
+                else
+                {
+                    ShowCalibrationPanel();
+                }
+            }
+            else
+            {
+                Debug.LogError("[QR Calibration] ❌ GPS signal unavailable after all attempts!");
+                Debug.LogError($"[QR Calibration] Final accuracy: {currentAccuracy:F1}m (needed: {GPSManager.Instance.strongGPSThreshold}m)");
+                
+                if (calibrationPanel != null && calibrationPanel.activeSelf)
+                {
+                    if (calibrationTitle != null)
+                        calibrationTitle.text = "<b><color=red>GPS Unavailable</color></b>";
+                    
+                    if (calibrationInstruction != null)
+                        calibrationInstruction.text = "GPS signal is too weak to navigate safely. Please try again later when you have better signal.";
+                    
+                    if (figure8Animation != null)
+                        figure8Animation.SetActive(false);
+                    
+                    if (calibrationExitButton != null)
+                        calibrationExitButton.gameObject.SetActive(true);
+                }
+            }
+        }
+    }
+
+    void UpdateCalibrationProgress()
+    {
+        if (GPSManager.Instance == null)
+            return;
+
+        if (calibrationAttemptCount >= maxCalibrationAttempts)
+            return;
+
+        float progress = GPSManager.Instance.GetQRCalibrationProgress();
+
+        if (calibrationProgressFill != null)
+            calibrationProgressFill.fillAmount = progress;
+
+        if (calibrationProgressText != null)
+            calibrationProgressText.text = $"{(progress * 100f):F0}%";
+    }
+
+    void HideCalibrationPanel()
+    {
+        if (calibrationPanel != null && calibrationPanel.activeSelf)
+        {
+            CanvasGroup canvasGroup = calibrationPanel.GetComponent<CanvasGroup>();
             if (canvasGroup == null)
-                canvasGroup = confirmationPanel.AddComponent<CanvasGroup>();
+                canvasGroup = calibrationPanel.AddComponent<CanvasGroup>();
 
             canvasGroup.DOFade(0, 0.5f).SetEase(Ease.OutQuad).OnComplete(() =>
             {
-                confirmationPanel.SetActive(false);
+                calibrationPanel.SetActive(false);
             });
         }
+    }
 
-        StopScanning();
+    void OnCalibrationExit()
+    {
+        Debug.Log("[ARQRRecalibration] User chose to exit due to GPS failure");
+        
+        if (unifiedARManager != null)
+        {
+            unifiedARManager.ExitARScene();
+        }
+        
+        HideCalibrationPanel();
     }
 
     void OnCancelRecalibration()

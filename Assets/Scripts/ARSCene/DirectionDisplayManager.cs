@@ -102,13 +102,25 @@ public class DirectionDisplayManager : MonoBehaviour
 
     private void UpdateUserLocation()
     {
-        if (arManager != null)
+        if (GPSManager.Instance == null)
         {
-            userLocation = arManager.GetUserXY();
+            return;
         }
-        else if (GPSManager.Instance != null)
+
+        if (GPSManager.Instance.IsUsingQROverride())
         {
-            userLocation = GPSManager.Instance.GetSmoothedCoordinates();
+            userLocation = GPSManager.Instance.GetCoordinates();
+            Debug.Log($"[DirectionManager] Using QR Override for distance: ({userLocation.x:F6}, {userLocation.y:F6})");
+        }
+        else
+        {
+            Vector2 rawGPS = GPSManager.Instance.GetRawSmoothedGPSCoordinates();
+
+            if (rawGPS.magnitude > 0.0001f)
+            {
+                userLocation = rawGPS;
+                Debug.Log($"[DirectionManager] Using Raw GPS for distance: ({userLocation.x:F6}, {userLocation.y:F6})");
+            }
         }
     }
 
