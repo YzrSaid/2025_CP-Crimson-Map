@@ -50,6 +50,8 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     private List<Infrastructure> allInfrastructures = new List<Infrastructure>();
     private Dictionary<string, GameObject> spawnedMarkers = new Dictionary<string, GameObject>();
     private HashSet<string> journeyNodeIds = new HashSet<string>();
+    
+    private HashSet<string> permanentlyHiddenMarkers = new HashSet<string>();
 
     private string fromNodeId = "";
     private string toNodeId = "";
@@ -255,6 +257,16 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
             if (marker == null) continue;
 
+            if (permanentlyHiddenMarkers.Contains(nodeId))
+            {
+                if (marker.activeSelf)
+                {
+                    marker.SetActive(false);
+                    Debug.Log($"[MarkerSpawner] Keeping marker hidden (already reached): {nodeId}");
+                }
+                continue;
+            }
+
             Node node = allNodes.FirstOrDefault(n => n.node_id == nodeId);
             if (node == null) continue;
 
@@ -279,6 +291,52 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         }
 
         UpdateCompassArrow();
+    }
+
+    public void HideMarkerForNode(string nodeId)
+    {
+        if (string.IsNullOrEmpty(nodeId))
+        {
+            Debug.LogWarning("[MarkerSpawner] Attempted to hide marker with empty nodeId");
+            return;
+        }
+
+        if (!permanentlyHiddenMarkers.Contains(nodeId))
+        {
+            permanentlyHiddenMarkers.Add(nodeId);
+            Debug.Log($"[MarkerSpawner] ✓ Marker permanently hidden for node: {nodeId}");
+        }
+
+        if (spawnedMarkers.ContainsKey(nodeId))
+        {
+            GameObject marker = spawnedMarkers[nodeId];
+            if (marker != null && marker.activeSelf)
+            {
+                marker.SetActive(false);
+                Debug.Log($"[MarkerSpawner] ✓ Marker visually hidden: {nodeId}");
+            }
+        }
+    }
+
+    public void ShowMarkerForNode(string nodeId)
+    {
+        if (string.IsNullOrEmpty(nodeId))
+        {
+            Debug.LogWarning("[MarkerSpawner] Attempted to show marker with empty nodeId");
+            return;
+        }
+
+        if (permanentlyHiddenMarkers.Contains(nodeId))
+        {
+            permanentlyHiddenMarkers.Remove(nodeId);
+            Debug.Log($"[MarkerSpawner] Marker unhidden for node: {nodeId}");
+        }
+    }
+
+    public void ResetHiddenMarkers()
+    {
+        permanentlyHiddenMarkers.Clear();
+        Debug.Log("[MarkerSpawner] All hidden markers reset");
     }
 
     private void UpdateUserLocation()
@@ -508,6 +566,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         CancelInvoke(nameof(UpdateMarkerVisibility));
         ClearAllMarkers();
         spawnedMarkers.Clear();
+        permanentlyHiddenMarkers.Clear();
         markersInitialized = false;
         allMarkersSpawned = false;
         LoadNavigationData();

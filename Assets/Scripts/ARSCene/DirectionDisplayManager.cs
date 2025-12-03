@@ -40,6 +40,10 @@ public class DirectionDisplayManager : MonoBehaviour
     public bool enableKeyboardTesting = true;
     public float autoProgressDistance = 5f;
 
+    [Header("Dynamic Distance Display")]
+    public float distanceUpdateInterval = 0.5f;
+    private float lastDistanceUpdateTime = 0f;
+
     private List<NavigationDirection> allDirections = new List<NavigationDirection>();
     private List<DirectionItemUI> directionItemInstances = new List<DirectionItemUI>();
     private int currentDirectionIndex = 0;
@@ -52,10 +56,13 @@ public class DirectionDisplayManager : MonoBehaviour
 
     private UnifiedARManager arManager;
     private Vector3 successPanelOriginalScale;
+    
+    private UnifiedARNavigationMarkerSpawner markerSpawner;
 
     void Start()
     {
         arManager = FindObjectOfType<UnifiedARManager>();
+        markerSpawner = FindObjectOfType<UnifiedARNavigationMarkerSpawner>();
 
         if (directionPanel != null)
             directionPanel.SetActive(false);
@@ -98,6 +105,12 @@ public class DirectionDisplayManager : MonoBehaviour
         UpdateUserLocation();
         UpdateDistanceToTarget();
         CheckAutoProgress();
+        
+        if (Time.time - lastDistanceUpdateTime >= distanceUpdateInterval)
+        {
+            UpdateDirectionTextWithDistance();
+            lastDistanceUpdateTime = Time.time;
+        }
     }
 
     private void UpdateUserLocation()
@@ -313,12 +326,11 @@ public class DirectionDisplayManager : MonoBehaviour
             return;
         }
 
-        if (directionText != null)
-            directionText.text = currentDir.instruction;
+        currentTargetNode = currentDir.destinationNode;
+        
+        UpdateDirectionTextWithDistance();
 
         ShowTurnIcon(currentDir.turn);
-
-        currentTargetNode = currentDir.destinationNode;
 
         if (compassArrow != null)
         {
@@ -328,6 +340,39 @@ public class DirectionDisplayManager : MonoBehaviour
 
         hasAutoProgressed = false;
         UpdateDirectionItemsStatus();
+    }
+
+    private void UpdateDirectionTextWithDistance()
+    {
+        if (directionText == null || currentDirectionIndex >= allDirections.Count)
+            return;
+
+        NavigationDirection currentDir = allDirections[currentDirectionIndex];
+        
+        if (currentDir.isIndoorGrouped)
+            return;
+
+        string baseInstruction = currentDir.instruction;
+        
+        float realTimeDistance = distanceToTarget;
+        
+        string updatedInstruction = $"{baseInstruction} ({FormatDistance(realTimeDistance)})";
+        
+        directionText.text = updatedInstruction;
+        
+        Debug.Log($"[DirectionManager] Updated distance: {FormatDistance(realTimeDistance)} to {currentDir.destinationNode?.name}");
+    }
+
+    private string FormatDistance(float distanceInMeters)
+    {
+        if (distanceInMeters < 1000f)
+        {
+            return $"{Mathf.RoundToInt(distanceInMeters)}m";
+        }
+        else
+        {
+            return $"{(distanceInMeters / 1000f):F1}km";
+        }
     }
 
     public void ShowTurnIconContainer()
@@ -400,6 +445,21 @@ public class DirectionDisplayManager : MonoBehaviour
         if (!isNavigationActive)
             return;
 
+        if (currentDirectionIndex < allDirections.Count)
+        {
+            NavigationDirection reachedDir = allDirections[currentDirectionIndex];
+            if (reachedDir.destinationNode != null && !reachedDir.isIndoorGrouped)
+            {
+                string nodeId = reachedDir.destinationNode.node_id;
+                
+                if (markerSpawner != null)
+                {
+                    markerSpawner.HideMarkerForNode(nodeId);
+                    Debug.Log($"[DirectionManager] Hiding marker for reached node: {nodeId}");
+                }
+            }
+        }
+
         if (currentDirectionIndex >= allDirections.Count - 1)
         {
             CompleteNavigation();
@@ -415,27 +475,8 @@ public class DirectionDisplayManager : MonoBehaviour
         if (currentTargetNode == null)
             return;
 
-        bool isIndoor = (arManager != null && arManager.IsIndoorMode()) ||
-                        currentTargetNode.type == "indoorinfra";
-
-        if (isIndoor)
-        {
-            Vector2 targetXY;
-            if (currentTargetNode.indoor != null)
-            {
-                targetXY = new Vector2(currentTargetNode.indoor.x, currentTargetNode.indoor.y);
-            }
-            else
-            {
-                targetXY = new Vector2(currentTargetNode.x_coordinate, currentTargetNode.y_coordinate);
-            }
-            distanceToTarget = CalculateDistanceXY(userLocation, targetXY);
-        }
-        else
-        {
-            Vector2 targetGPS = new Vector2(currentTargetNode.latitude, currentTargetNode.longitude);
-            distanceToTarget = CalculateDistanceGPS(userLocation, targetGPS);
-        }
+        Vector2 targetGPS = new Vector2(currentTargetNode.latitude, currentTargetNode.longitude);
+        distanceToTarget = CalculateDistanceGPS(userLocation, targetGPS);
     }
 
     private void CheckAutoProgress()
