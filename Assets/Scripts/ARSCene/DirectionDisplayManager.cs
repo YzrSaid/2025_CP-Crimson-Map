@@ -103,17 +103,17 @@ public class DirectionDisplayManager : MonoBehaviour
         if (successCloseButton != null)
             successCloseButton.onClick.AddListener(OnSuccessCloseClicked);
 
-        // ======== NEW: Initialize off-route panel ========
-        if (offRoutePanel != null)
-        {
-            offRoutePanel.SetActive(false);
-        }
+        // // ======== NEW: Initialize off-route panel ========
+        // if (offRoutePanel != null)
+        // {
+        //     offRoutePanel.SetActive(false);
+        // }
 
-        if (offRouteBackground != null)
-        {
-            offRouteBackground.SetActive(false);
-        }
-        // =================================================
+        // if (offRouteBackground != null)
+        // {
+        //     offRouteBackground.SetActive(false);
+        // }
+        // // =================================================
 
         LoadDirectionsFromPlayerPrefs();
 
@@ -135,21 +135,21 @@ public class DirectionDisplayManager : MonoBehaviour
 
         UpdateUserLocation();
 
-        // ======== NEW DETECTION SYSTEMS ========
-        if (currentDirectionIndex < allDirections.Count - 1)
-        {
-            // Lookahead: Check if user passed ANY upcoming nodes
-            CheckIfPassedAnyUpcomingNodes();
+        // // ======== NEW DETECTION SYSTEMS ========
+        // if (currentDirectionIndex < allDirections.Count - 1)
+        // {
+        //     // Lookahead: Check if user passed ANY upcoming nodes
+        //     CheckIfPassedAnyUpcomingNodes();
 
-            // Off-route: Check if user is far from ALL route nodes
-            CheckIfOffRoute();
-        }
-        else if (currentDirectionIndex == allDirections.Count - 1)
-        {
-            // User is at final direction (destination)
-            CheckDestinationOvershoot();
-        }
-        // =======================================
+        //     // Off-route: Check if user is far from ALL route nodes
+        //     CheckIfOffRoute();
+        // }
+        // else if (currentDirectionIndex == allDirections.Count - 1)
+        // {
+        //     // User is at final direction (destination)
+        //     CheckDestinationOvershoot();
+        // }
+        // // =======================================
 
         UpdateDistanceToTarget();
         CheckAutoProgress();
@@ -204,36 +204,36 @@ public class DirectionDisplayManager : MonoBehaviour
     /// <summary>
     /// Off-Route Detection: Check if user is far from ALL route nodes
     /// </summary>
-    private void CheckIfOffRoute()
-    {
-        float minDistance = float.MaxValue;
-        Node closestNode = null;
+    // private void CheckIfOffRoute()
+    // {
+    //     float minDistance = float.MaxValue;
+    //     Node closestNode = null;
 
-        // Check distance to ALL upcoming route nodes
-        for (int i = currentDirectionIndex; i < allDirections.Count; i++)
-        {
-            NavigationDirection dir = allDirections[i];
-            if (dir.destinationNode == null || dir.isIndoorGrouped)
-                continue;
+    //     // Check distance to ALL upcoming route nodes
+    //     for (int i = currentDirectionIndex; i < allDirections.Count; i++)
+    //     {
+    //         NavigationDirection dir = allDirections[i];
+    //         if (dir.destinationNode == null || dir.isIndoorGrouped)
+    //             continue;
 
-            Vector2 nodeGPS = new Vector2(dir.destinationNode.latitude, dir.destinationNode.longitude);
-            float distance = CalculateDistanceGPS(userLocation, nodeGPS);
+    //         Vector2 nodeGPS = new Vector2(dir.destinationNode.latitude, dir.destinationNode.longitude);
+    //         float distance = CalculateDistanceGPS(userLocation, nodeGPS);
 
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                closestNode = dir.destinationNode;
-            }
-        }
+    //         if (distance < minDistance)
+    //         {
+    //             minDistance = distance;
+    //             closestNode = dir.destinationNode;
+    //         }
+    //     }
 
-        Debug.Log($"[OffRoute] Closest route node: {closestNode?.name} at {minDistance:F1}m (threshold: {offRouteDistanceThreshold}m)");
+    //     Debug.Log($"[OffRoute] Closest route node: {closestNode?.name} at {minDistance:F1}m (threshold: {offRouteDistanceThreshold}m)");
 
-        if (minDistance > offRouteDistanceThreshold)
-        {
-            Debug.Log($"[OffRoute] ⚠️ User is off route! {minDistance:F1}m from nearest node");
-            ShowOffRoutePanel(closestNode, minDistance);
-        }
-    }
+    //     // if (minDistance > offRouteDistanceThreshold)
+    //     // {
+    //     //     Debug.Log($"[OffRoute] ⚠️ User is off route! {minDistance:F1}m from nearest node");
+    //     //     ShowOffRoutePanel(closestNode, minDistance);
+    //     // }
+    // }
 
     /// <summary>
     /// Destination Overshoot Detection: Check if user passed destination
@@ -260,12 +260,12 @@ public class DirectionDisplayManager : MonoBehaviour
 
         Debug.Log($"[Destination] Distance from destination {currentDestinationNode.name}: {distanceFromDestination:F1}m (threshold: {destinationOvershootThreshold}m)");
 
-        if (distanceFromDestination > destinationOvershootThreshold)
-        {
-            Debug.Log($"[Destination] ⚠️ User passed destination by {distanceFromDestination:F1}m!");
-            hasPassedDestination = true;
-            ShowPassedDestinationPanel(distanceFromDestination);
-        }
+        // if (distanceFromDestination > destinationOvershootThreshold)
+        // {
+        //     Debug.Log($"[Destination] ⚠️ User passed destination by {distanceFromDestination:F1}m!");
+        //     hasPassedDestination = true;
+        //     ShowPassedDestinationPanel(distanceFromDestination);
+        // }
     }
 
     /// <summary>
@@ -290,85 +290,85 @@ public class DirectionDisplayManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Show off-route panel
-    /// </summary>
-    private void ShowOffRoutePanel(Node nearestNode, float distance)
-    {
-        if (offRoutePanel == null)
-        {
-            CreateSimpleOffRoutePanel(nearestNode, distance);
-            return;
-        }
+    // /// <summary>
+    // /// Show off-route panel
+    // /// </summary>
+    // private void ShowOffRoutePanel(Node nearestNode, float distance)
+    // {
+    //     if (offRoutePanel == null)
+    //     {
+    //         CreateSimpleOffRoutePanel(nearestNode, distance);
+    //         return;
+    //     }
 
-        if (offRouteTitle != null)
-            offRouteTitle.text = "You're Off Route";
+    //     if (offRouteTitle != null)
+    //         offRouteTitle.text = "You're Off Route";
 
-        if (offRouteBody != null)
-        {
-            string nodeName = nearestNode != null ? nearestNode.name : "the nearest point";
-            offRouteBody.text = $"You are {Mathf.RoundToInt(distance)} meters away from {nodeName}.\n\nClick OK to continue navigation.";
-        }
+    //     if (offRouteBody != null)
+    //     {
+    //         string nodeName = nearestNode != null ? nearestNode.name : "the nearest point";
+    //         offRouteBody.text = $"You are {Mathf.RoundToInt(distance)} meters away from {nodeName}.\n\nClick OK to continue navigation.";
+    //     }
 
-        if (offRouteBackground != null)
-            offRouteBackground.SetActive(true);
+    //     if (offRouteBackground != null)
+    //         offRouteBackground.SetActive(true);
 
-        offRoutePanel.SetActive(true);
+    //     offRoutePanel.SetActive(true);
 
-        // Setup buttons
-        if (offRouteContinueButton != null)
-            offRouteContinueButton.onClick.RemoveAllListeners();
+    //     // Setup buttons
+    //     if (offRouteContinueButton != null)
+    //         offRouteContinueButton.onClick.RemoveAllListeners();
 
-        if (offRouteContinueButton != null)
-            offRouteContinueButton.onClick.AddListener(HideOffRoutePanel);
-    }
+    //     if (offRouteContinueButton != null)
+    //         offRouteContinueButton.onClick.AddListener(HideOffRoutePanel);
+    // }
 
-    /// <summary>
-    /// Show passed destination panel
-    /// </summary>
-    private void ShowPassedDestinationPanel(float distancePassed)
-    {
-        // Use the same off-route panel but with different message
-        if (offRoutePanel == null) return;
+    // /// <summary>
+    // /// Show passed destination panel
+    // /// </summary>
+    // private void ShowPassedDestinationPanel(float distancePassed)
+    // {
+    //     // Use the same off-route panel but with different message
+    //     if (offRoutePanel == null) return;
 
-        if (offRouteTitle != null)
-            offRouteTitle.text = "Passed Destination";
+    //     if (offRouteTitle != null)
+    //         offRouteTitle.text = "Passed Destination";
 
-        if (offRouteBody != null)
-        {
-            offRouteBody.text = $"You have passed your destination by {Mathf.RoundToInt(distancePassed)} meters.\n\nYou are now beyond your intended stopping point.";
-        }
+    //     if (offRouteBody != null)
+    //     {
+    //         offRouteBody.text = $"You have passed your destination by {Mathf.RoundToInt(distancePassed)} meters.\n\nYou are now beyond your intended stopping point.";
+    //     }
 
-        if (offRouteBackground != null)
-            offRouteBackground.SetActive(true);
+    //     if (offRouteBackground != null)
+    //         offRouteBackground.SetActive(true);
 
-        offRoutePanel.SetActive(true);
+    //     offRoutePanel.SetActive(true);
 
-        // Setup buttons differently for passed destination
-        if (offRouteContinueButton != null)
-        {
-            offRouteContinueButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit AR";
-            offRouteContinueButton.onClick.RemoveAllListeners();
-            offRouteContinueButton.onClick.AddListener(() =>
-            {
-                if (arManager != null) arManager.ExitARScene();
-            });
-        }
-    }
+    //     // Setup buttons differently for passed destination
+    //     if (offRouteContinueButton != null)
+    //     {
+    //         offRouteContinueButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit AR";
+    //         offRouteContinueButton.onClick.RemoveAllListeners();
+    //         offRouteContinueButton.onClick.AddListener(() =>
+    //         {
+    //             if (arManager != null) arManager.ExitARScene();
+    //         });
+    //     }
+    // }
 
-    private void HideOffRoutePanel()
-    {
-        if (offRoutePanel != null)
-            offRoutePanel.SetActive(false);
-        if (offRouteBackground != null)
-            offRouteBackground.SetActive(false);
-    }
+    // private void HideOffRoutePanel()
+    // {
+    //     if (offRoutePanel != null)
+    //         offRoutePanel.SetActive(false);
+    //     if (offRouteBackground != null)
+    //         offRouteBackground.SetActive(false);
+    // }
 
-    private void CreateSimpleOffRoutePanel(Node nearestNode, float distance)
-    {
-        // Fallback if no panel is assigned
-        Debug.LogWarning($"[DirectionManager] Off-route panel not assigned! User is {distance:F1}m from {nearestNode?.name}");
-    }
+    // private void CreateSimpleOffRoutePanel(Node nearestNode, float distance)
+    // {
+    //     // Fallback if no panel is assigned
+    //     Debug.LogWarning($"[DirectionManager] Off-route panel not assigned! User is {distance:F1}m from {nearestNode?.name}");
+    // }
 
     private void UpdateUserLocation()
     {
@@ -853,7 +853,7 @@ public class DirectionDisplayManager : MonoBehaviour
             {
                 // Too far - show off-route panel
                 Debug.Log($"[DirectionManager] ⚠️ Too far ({minDistance:F1}m), showing off-route panel");
-                ShowOffRoutePanel(closestNode, minDistance);
+                // ShowOffRoutePanel(closestNode, minDistance);
             }
             else
             {
