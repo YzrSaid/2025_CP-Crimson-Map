@@ -397,16 +397,17 @@ public class QRScanner : MonoBehaviour
         PlayerPrefs.SetFloat("ScannedX", scannedNodeInfo.x_coordinate);
         PlayerPrefs.SetFloat("ScannedY", scannedNodeInfo.y_coordinate);
         PlayerPrefs.SetString("ScannedCampusID", scannedNodeInfo.campus_id);
-        PlayerPrefs.Save();
 
         if (GPSManager.Instance != null)
         {
-            GPSManager.Instance.SetQRLocationOverride(
+            GPSManager.Instance.LockLocationForPathfinding(
                 scannedNodeInfo.latitude,
-                scannedNodeInfo.longitude,
-                0f
+                scannedNodeInfo.longitude
             );
+            Debug.Log($"[QRScanner] Location locked via GPSManager: {scannedNodeInfo.name}");
         }
+
+        PlayerPrefs.Save();
 
         SceneTransitionWithoutLoading.GoToTargetSceneSimple("MainAppScene");
     }

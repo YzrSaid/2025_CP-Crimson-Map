@@ -225,18 +225,15 @@ public class UserIndicator : MonoBehaviour
             UpdateDirectionShadow();
         }
     }
-
     void UpdateUserIndicatorPosition()
     {
         if (!isInitialized || GPSManager.Instance == null || userIndicatorInstance == null || mapboxMap == null)
             return;
 
         Vector2 gpsCoords;
-
-        if (GPSManager.Instance.IsUsingQROverride())
+        if (GPSManager.Instance.IsLocationLocked())
         {
             gpsCoords = GPSManager.Instance.GetCoordinates();
-            Debug.Log($"[UserIndicator] Using QR Override: ({gpsCoords.x:F6}, {gpsCoords.y:F6})");
         }
         else
         {
@@ -246,8 +243,6 @@ public class UserIndicator : MonoBehaviour
             {
                 return;
             }
-
-            Debug.Log($"[UserIndicator] Using Raw GPS: ({gpsCoords.x:F6}, {gpsCoords.y:F6})");
         }
 
         Vector3 worldPos = mapboxMap.GeoToWorldPosition(new Vector2d(gpsCoords.x, gpsCoords.y), false);
@@ -303,7 +298,7 @@ public class UserIndicator : MonoBehaviour
             lastUpdateTime = 0f;
 
             Vector2 gpsCoords;
-            if (GPSManager.Instance.IsUsingQROverride())
+            if (GPSManager.Instance.IsLocationLocked())
             {
                 gpsCoords = GPSManager.Instance.GetCoordinates();
             }

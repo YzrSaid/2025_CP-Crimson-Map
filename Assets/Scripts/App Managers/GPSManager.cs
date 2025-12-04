@@ -286,7 +286,6 @@ public class GPSManager : MonoBehaviour
         PlayerPrefs.SetFloat(PREF_LOCKED_LAT, latitude);
         PlayerPrefs.SetFloat(PREF_LOCKED_LNG, longitude);
         PlayerPrefs.Save();
-        Debug.Log($"[GPS] Location LOCKED for pathfinding: ({latitude}, {longitude})");
     }
 
     public void UnlockLocationForPathfinding()
@@ -295,7 +294,6 @@ public class GPSManager : MonoBehaviour
         PlayerPrefs.DeleteKey(PREF_LOCKED_LAT);
         PlayerPrefs.DeleteKey(PREF_LOCKED_LNG);
         PlayerPrefs.Save();
-        Debug.Log("[GPS] Location UNLOCKED for pathfinding");
     }
 
     public bool IsLocationLocked()

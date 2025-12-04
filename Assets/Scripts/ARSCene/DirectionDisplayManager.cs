@@ -611,13 +611,17 @@ public class DirectionDisplayManager : MonoBehaviour
 
         string baseInstruction = currentDir.instruction;
 
+        int lastOpenParen = baseInstruction.LastIndexOf('(');
+        if (lastOpenParen != -1)
+        {
+            baseInstruction = baseInstruction.Substring(0, lastOpenParen).TrimEnd();
+        }
+
         float realTimeDistance = distanceToTarget;
 
         string updatedInstruction = $"{baseInstruction} ({FormatDistance(realTimeDistance)})";
 
         directionText.text = updatedInstruction;
-
-        Debug.Log($"[DirectionManager] Updated distance: {FormatDistance(realTimeDistance)} to {currentDir.destinationNode?.name}");
     }
 
     private string FormatDistance(float distanceInMeters)
