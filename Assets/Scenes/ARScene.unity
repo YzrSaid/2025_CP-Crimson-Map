@@ -25144,6 +25144,7 @@ MonoBehaviour:
   buildingMarkerPrefab: {fileID: 2395739616877220581, guid: 9651b0f074c56f421b790ae228f60189, type: 3}
   journeyMarkerPrefab: {fileID: 2395739616877220581, guid: 7e8f96e99d2342ca49a101c4b8d8e7d5, type: 3}
   startEndMarkerPrefab: {fileID: 2395739616877220581, guid: 73089d13ad9504e81bbdb2f03492a4ef, type: 3}
+  journeyMarkerPassedPrefab: {fileID: 2395739616877220581, guid: 73089d13ad9504e81bbdb2f03492a4ef, type: 3}
   arCamera: {fileID: 331264287}
   arRaycastManager: {fileID: 331264289}
   arPlaneManager: {fileID: 331264290}
@@ -25191,7 +25192,7 @@ MonoBehaviour:
   strongGPSAccuracyThreshold: 10
   weakGPSAccuracyThreshold: 15
   gpsCheckInterval: 2
-  useDebugGPSStrength: 1
+  useDebugGPSStrength: 0
   debugGPSStrength: 0
   fromLocationText: {fileID: 1101261013}
   toDestinationText: {fileID: 1474220225}

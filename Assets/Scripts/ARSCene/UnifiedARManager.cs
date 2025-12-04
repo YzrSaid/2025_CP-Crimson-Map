@@ -87,7 +87,7 @@ public class UnifiedARManager : MonoBehaviour
     [Header("Position Tracking")]
     private Vector2 userLocation;
     private Node currentNearestNode;
-    private float currentGPSAccuracy = 0f;
+    private float currentGPSAccuracy = -1f;
 
     private bool isTrackingStarted = false;
     private bool isDebugPanelVisible = false;
@@ -486,6 +486,11 @@ public class UnifiedARManager : MonoBehaviour
 
     void Update()
     {
+        if (!arOriginInitialized || !gpsInitialized)
+        {
+            return;
+        }
+
         if (Time.time - lastGPSCheckTime >= gpsCheckInterval)
         {
             CheckGPSStrength();
@@ -630,7 +635,7 @@ public class UnifiedARManager : MonoBehaviour
 
     private void ShowRecalibrationPanel()
     {
-        if (recalibrationPanel == null || recalibrationPanelShown)
+        if (!gpsInitialized || recalibrationPanel == null || recalibrationPanelShown)
             return;
 
         recalibrationPanelShown = true;
