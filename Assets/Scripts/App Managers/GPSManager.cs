@@ -15,13 +15,16 @@ public class GPSManager : MonoBehaviour
     private float mockLongitude = 122.06359f;
     private float mockHeading = 0f;
 
+    private float arSceneCompassHeading = 0f;
+    private bool arCompassInitialized = false;
+
     [Header("GPS Smoothing")]
     private List<Vector2> recentCoordinates = new List<Vector2>();
     private int maxHistorySize = 3;
 
     [Header("GPS Accuracy Settings")]
-    public float strongGPSThreshold = 10f; 
-    public float weakGPSThreshold = 15f;   
+    public float strongGPSThreshold = 10f;
+    public float weakGPSThreshold = 15f;
 
     [Header("QR Calibration")]
     public float qrCalibrationSmoothTime = 7f;
@@ -59,7 +62,39 @@ public class GPSManager : MonoBehaviour
         }
 
         InitializeSensors();
-        LoadLockStateFromPlayerPrefs(); 
+        LoadLockStateFromPlayerPrefs();
+    }
+
+    public void InitializeARCompassHeading()
+    {
+        if (IsCompassReady())
+        {
+            arSceneCompassHeading = GetHeading();
+            arCompassInitialized = true;
+            Debug.Log($"[GPSManager] AR Scene Compass Initialized: {arSceneCompassHeading}°");
+        }
+        else
+        {
+            Debug.LogWarning("[GPSManager] Compass not ready for AR initialization");
+        }
+    }
+
+    public float GetARSceneCompassHeading()
+    {
+        return arCompassInitialized ? arSceneCompassHeading : GetHeading();
+    }
+
+    public bool IsARCompassInitialized()
+    {
+        return arCompassInitialized;
+    }
+
+    public float GetNorthCorrectionAngle()
+    {
+        if (!arCompassInitialized)
+            return 0f;
+
+        return arSceneCompassHeading;
     }
 
     private void InitializeSensors()
@@ -230,11 +265,11 @@ public class GPSManager : MonoBehaviour
             float roll = Mathf.Asin(accel.y / Mathf.Cos(pitch));
 
             float magX = magnetic.x * Mathf.Cos(pitch) + magnetic.z * Mathf.Sin(pitch);
-            float magY = -magnetic.x * Mathf.Sin(roll) * Mathf.Sin(pitch)  
+            float magY = -magnetic.x * Mathf.Sin(roll) * Mathf.Sin(pitch)
                          + magnetic.y * Mathf.Cos(roll)
                          + magnetic.z * Mathf.Sin(roll) * Mathf.Cos(pitch);
 
-            float heading = Mathf.Atan2(-magY, -magX) * Mathf.Rad2Deg + 90f; 
+            float heading = Mathf.Atan2(-magY, -magX) * Mathf.Rad2Deg + 90f;
             heading = (heading + 360f) % 360f;
 
             return heading;
@@ -276,10 +311,10 @@ public class GPSManager : MonoBehaviour
         PlayerPrefs.SetFloat(PREF_QR_LAT, location.x);
         PlayerPrefs.SetFloat(PREF_QR_LNG, location.y);
         PlayerPrefs.Save();
-        
+
         isQRCalibrating = true;
         qrCalibrationStartTime = Time.time;
-        
+
         Debug.Log($"[GPS] QR Override SET: ({location.x}, {location.y}) - Calibration started");
     }
 
@@ -294,10 +329,10 @@ public class GPSManager : MonoBehaviour
         PlayerPrefs.DeleteKey(PREF_QR_LAT);
         PlayerPrefs.DeleteKey(PREF_QR_LNG);
         PlayerPrefs.Save();
-        
+
         isQRCalibrating = false;
         qrCalibrationStartTime = -1f;
-        
+
         Debug.Log("[GPS] QR Override CLEARED");
     }
 
@@ -318,13 +353,13 @@ public class GPSManager : MonoBehaviour
         if (Input.location.status == LocationServiceStatus.Running)
         {
             float accuracy = Input.location.lastData.horizontalAccuracy;
-            
+
             bool isAccurate = accuracy > 0 && accuracy <= strongGPSThreshold;
-            
+
             Debug.Log($"[GPS] Accuracy check: {accuracy:F1}m - {(isAccurate ? "GOOD ✅" : "WEAK ⚠️")}");
             return isAccurate;
         }
-        
+
         Debug.Log("[GPS] Accuracy check: No GPS signal ❌");
         return false;
     }
@@ -342,7 +377,7 @@ public class GPSManager : MonoBehaviour
         {
             return Input.location.lastData.horizontalAccuracy;
         }
-        
+
         return -1f;
     }
 
@@ -353,7 +388,7 @@ public class GPSManager : MonoBehaviour
 
         float elapsed = Time.time - qrCalibrationStartTime;
         float progress = Mathf.Clamp01(elapsed / qrCalibrationSmoothTime);
-        
+
         return progress;
     }
 

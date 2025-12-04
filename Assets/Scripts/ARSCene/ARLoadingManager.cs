@@ -19,6 +19,7 @@ public class ARLoadingManager : MonoBehaviour
     private bool isMapReady = false;
     private bool isCameraSetupReady = false;
     private bool isNavigationReady = false;
+    private bool isCompassInitialized = false;
 
     void Awake()
     {
@@ -53,7 +54,10 @@ public class ARLoadingManager : MonoBehaviour
 
     private IEnumerator WaitForAllSystems()
     {
-        UpdateLoadingText("Initializing AR...");
+
+        yield return StartCoroutine(InitializeCompassForAR());
+
+        UpdateLoadingText("Initializing AR System...");
         yield return new WaitForSeconds(0.5f);
 
         yield return StartCoroutine(WaitForARManager());
@@ -69,9 +73,70 @@ public class ARLoadingManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        yield return new WaitForSeconds(2f);
-
         HideLoadingPanel();
+    }
+
+    private IEnumerator InitializeCompassForAR()
+    {
+        UpdateLoadingText("Initializing Compass...");
+
+        // Wait for GPSManager to be ready
+        float timeout = 5f;
+        float elapsed = 0f;
+
+        while (GPSManager.Instance == null && elapsed < timeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (GPSManager.Instance == null)
+        {
+            Debug.LogError("[ARLoading] GPSManager not found!");
+            yield break;
+        }
+
+        // Wait for compass to be ready
+        UpdateLoadingText("Waiting for Compass...");
+        elapsed = 0f;
+
+        while (!GPSManager.Instance.IsCompassReady() && elapsed < timeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (!GPSManager.Instance.IsCompassReady())
+        {
+            Debug.LogWarning("[ARLoading] Compass not ready, using default orientation");
+        }
+        else
+        {
+            // Show user instruction
+            UpdateLoadingText("Hold device steady\nCalibrating compass...");
+
+            // Wait 3 seconds for stabilization
+            float calibrationTime = 3f;
+            float timer = calibrationTime;
+
+            while (timer > 0)
+            {
+                timer -= Time.deltaTime;
+
+                // Update countdown text
+                int secondsLeft = Mathf.CeilToInt(timer);
+                UpdateLoadingText($"Hold device steady\nCalibrating compass... {secondsLeft}s");
+
+                yield return null;
+            }
+
+            // Initialize compass heading for AR scene
+            GPSManager.Instance.InitializeARCompassHeading();
+            isCompassInitialized = true;
+
+            UpdateLoadingText("✅ Compass calibrated!");
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     private IEnumerator WaitForARManager()
@@ -181,6 +246,12 @@ public class ARLoadingManager : MonoBehaviour
                 loadingAnimation.SetActive(true);
         }
     }
+
+    public bool IsCompassCalibrated()
+    {
+        return isCompassInitialized;
+    }
+
 
     public bool IsLoadingComplete()
     {

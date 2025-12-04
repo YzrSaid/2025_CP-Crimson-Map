@@ -328,8 +328,10 @@ public class UnifiedARManager : MonoBehaviour
         }
 
         referenceARWorldPosition = arCamera.transform.position;
-        referenceCompassHeading = GPSManager.Instance.GetHeading();
-
+        if (GPSManager.Instance != null && GPSManager.Instance.IsARCompassInitialized())
+        {
+            referenceCompassHeading = GPSManager.Instance.GetARSceneCompassHeading();
+        }
         userLocation = referenceGPS;
         lastStableGPSLocation = referenceGPS;
         gpsLocationHistory.Enqueue(referenceGPS);
