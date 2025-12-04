@@ -13,6 +13,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     public GameObject buildingMarkerPrefab;
     public GameObject journeyMarkerPrefab;
     public GameObject startEndMarkerPrefab;
+    public GameObject journeyMarkerPassedPrefab;
 
     private float northCorrectionAngle = 0f;
     private bool northCorrectionCalculated = false;
@@ -53,8 +54,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     private List<Infrastructure> allInfrastructures = new List<Infrastructure>();
     private Dictionary<string, GameObject> spawnedMarkers = new Dictionary<string, GameObject>();
     private HashSet<string> journeyNodeIds = new HashSet<string>();
-
-    private HashSet<string> permanentlyHiddenMarkers = new HashSet<string>();
+    private HashSet<string> passedJourneyNodes = new HashSet<string>();
 
     private string fromNodeId = "";
     private string toNodeId = "";
@@ -136,6 +136,125 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         Debug.Log($"- True North Heading: {trueNorthHeading:F1}°");
         Debug.Log($"- Unity Forward Angle: {unityForwardAngle:F1}°");
         Debug.Log($"- Correction Angle: {northCorrectionAngle:F1}°");
+    }
+
+    public void MarkJourneyNodeAsPassed(string nodeId)
+    {
+        if (!journeyNodeIds.Contains(nodeId) || passedJourneyNodes.Contains(nodeId))
+            return;
+
+        passedJourneyNodes.Add(nodeId);
+
+        // Update the marker if it exists
+        if (spawnedMarkers.ContainsKey(nodeId))
+        {
+            GameObject oldMarker = spawnedMarkers[nodeId];
+            if (oldMarker != null)
+            {
+                // Destroy old marker
+                Destroy(oldMarker);
+
+                // Create new marker with passed version
+                Node node = allNodes.FirstOrDefault(n => n.node_id == nodeId);
+                if (node != null)
+                {
+                    GameObject newMarker = CreateMarkerForNode(node, true); // true = passed
+                    if (newMarker != null)
+                    {
+                        spawnedMarkers[nodeId] = newMarker;
+                        newMarker.SetActive(oldMarker.activeSelf);
+                    }
+                }
+            }
+        }
+    }
+    private GameObject CreateMarkerForNode(Node node, bool isPassed = false)
+    {
+        GameObject prefabToUse = null;
+        bool needsAnimation = false;
+        bool isStartEnd = false;
+
+        if (node.node_id == fromNodeId)
+        {
+            prefabToUse = startEndMarkerPrefab;
+            needsAnimation = true;
+        }
+        else if (node.node_id == toNodeId)
+        {
+            prefabToUse = startEndMarkerPrefab;
+            needsAnimation = true;
+            isStartEnd = true;
+        }
+        else if (journeyNodeIds.Contains(node.node_id))
+        {
+            // NEW: Use different prefab for passed journey nodes
+            if (isPassed && journeyMarkerPassedPrefab != null)
+            {
+                prefabToUse = journeyMarkerPassedPrefab;
+            }
+            else
+            {
+                prefabToUse = journeyMarkerPrefab;
+            }
+            needsAnimation = true;
+        }
+        else
+        {
+            prefabToUse = buildingMarkerPrefab;
+        }
+
+        if (prefabToUse == null)
+        {
+            return null;
+        }
+
+        Infrastructure infra = allInfrastructures.FirstOrDefault(i => i.infra_id == node.related_infra_id);
+        if (infra == null && node.type == "infrastructure")
+        {
+            return null;
+        }
+
+        bool isIndoor = (unifiedARManager != null && unifiedARManager.IsIndoorMode());
+        Vector3 worldPos = GetNodeWorldPosition(node, isIndoor);
+
+        float floorHeight = 0f;
+        if (isIndoor && node.indoor != null && !string.IsNullOrEmpty(node.indoor.floor))
+        {
+            if (int.TryParse(node.indoor.floor, out int parsedFloor) && parsedFloor > 1)
+                floorHeight = (parsedFloor - 1) * floorHeightMeters;
+        }
+
+        if (isIndoor)
+            worldPos = GetGroundPosition(worldPos);
+        else
+            worldPos.y = groundPlaneY + markerHeightOffset;
+
+        worldPos.y += floorHeight;
+
+        GameObject marker = Instantiate(prefabToUse, worldPos, Quaternion.identity);
+
+        if (northCorrectionCalculated)
+        {
+            marker.transform.Rotate(0, northCorrectionAngle, 0, Space.World);
+        }
+
+        string displayName = infra != null ? infra.name : node.name;
+        if (node.node_id == fromNodeId)
+            displayName = "START: " + displayName;
+        else if (node.node_id == toNodeId)
+            displayName = "END: " + displayName;
+
+        UpdateMarkerText(marker, displayName);
+
+        if (needsAnimation)
+        {
+            if (isStartEnd)
+                StartCoroutine(AnimateStartEndMarker(marker));
+            else
+                StartCoroutine(AnimateJourneyMarker(marker));
+        }
+
+        return marker;
     }
 
 
@@ -299,16 +418,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
             GameObject marker = kvp.Value;
 
             if (marker == null) continue;
-
-            if (permanentlyHiddenMarkers.Contains(nodeId))
-            {
-                if (marker.activeSelf)
-                {
-                    marker.SetActive(false);
-                }
-                continue;
-            }
-
             Node node = allNodes.FirstOrDefault(n => n.node_id == nodeId);
             if (node == null) continue;
 
@@ -333,51 +442,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         }
 
         UpdateCompassArrow();
-    }
-
-    public void HideMarkerForNode(string nodeId)
-    {
-        if (string.IsNullOrEmpty(nodeId))
-        {
-            Debug.LogWarning("[MarkerSpawner] Attempted to hide marker with empty nodeId");
-            return;
-        }
-
-        if (!permanentlyHiddenMarkers.Contains(nodeId))
-        {
-            permanentlyHiddenMarkers.Add(nodeId);
-            Debug.Log($"[MarkerSpawner] ✓ Marker permanently hidden for node: {nodeId}");
-        }
-
-        if (spawnedMarkers.ContainsKey(nodeId))
-        {
-            GameObject marker = spawnedMarkers[nodeId];
-            if (marker != null && marker.activeSelf)
-            {
-                marker.SetActive(false);
-                Debug.Log($"[MarkerSpawner] ✓ Marker visually hidden: {nodeId}");
-            }
-        }
-    }
-
-    public void ShowMarkerForNode(string nodeId)
-    {
-        if (string.IsNullOrEmpty(nodeId))
-        {
-            Debug.LogWarning("[MarkerSpawner] Attempted to show marker with empty nodeId");
-            return;
-        }
-
-        if (permanentlyHiddenMarkers.Contains(nodeId))
-        {
-            permanentlyHiddenMarkers.Remove(nodeId);
-            Debug.Log($"[MarkerSpawner] Marker unhidden for node: {nodeId}");
-        }
-    }
-
-    public void ResetHiddenMarkers()
-    {
-        permanentlyHiddenMarkers.Clear();
     }
 
     private void UpdateUserLocation()
@@ -606,7 +670,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         CancelInvoke(nameof(UpdateMarkerVisibility));
         ClearAllMarkers();
         spawnedMarkers.Clear();
-        permanentlyHiddenMarkers.Clear();
         markersInitialized = false;
         allMarkersSpawned = false;
         LoadNavigationData();

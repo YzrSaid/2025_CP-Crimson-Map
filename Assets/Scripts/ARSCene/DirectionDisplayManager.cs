@@ -284,7 +284,7 @@ public class DirectionDisplayManager : MonoBehaviour
                 NavigationDirection dir = allDirections[i];
                 if (dir.destinationNode != null && !dir.isIndoorGrouped)
                 {
-                    markerSpawner.HideMarkerForNode(dir.destinationNode.node_id);
+
                 }
             }
         }
@@ -711,8 +711,7 @@ public class DirectionDisplayManager : MonoBehaviour
 
                 if (markerSpawner != null)
                 {
-                    markerSpawner.HideMarkerForNode(nodeId);
-                    Debug.Log($"[DirectionManager] Hiding marker for reached node: {nodeId}");
+                    markerSpawner.MarkJourneyNodeAsPassed(nodeId);
                 }
             }
         }
