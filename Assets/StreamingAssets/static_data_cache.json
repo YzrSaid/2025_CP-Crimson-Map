@@ -1,7 +1,7 @@
 {
-    "infrastructure_synced": true,
-    "categories_synced": true,
-    "campus_synced": true,
-    "indoor_synced": true,
-    "indoor_edges_synced": true
+    "infrastructure_version": "v1.0.2",
+    "categories_version": "v1.0.1",
+    "campus_version": "v1.0.1",
+    "indoor_version": "v0.0.0",
+    "indoor_edges_version": "v1.0.1"
 }

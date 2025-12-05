@@ -224,10 +224,11 @@ public class JSONFileManager : MonoBehaviour
     {
         var defaultData = new LocalStaticDataCache
         {
-            infrastructure_synced = false,
-            categories_synced = false,
-            campus_synced = false,
-            indoor_synced = false,
+            infrastructure_version = "v0.0.0",
+            categories_version = "v0.0.0",
+            campus_version = "v0.0.0",
+            indoor_version = "v0.0.0",
+            indoor_edges_version = "v0.0.0"
         };
         return JsonUtility.ToJson(defaultData, true);
     }
@@ -486,6 +487,24 @@ public class JSONFileManager : MonoBehaviour
         return null;
     }
 
+    public LocalStaticDataCache GetStaticDataCache()
+    {
+        string cacheContent = ReadJSONFile("static_data_cache.json");
+        
+        if (!string.IsNullOrEmpty(cacheContent))
+        {
+            try
+            {
+                return JsonUtility.FromJson<LocalStaticDataCache>(cacheContent);
+            }
+            catch (System.Exception)
+            {
+            }
+        }
+        
+        return null;
+    }
+
     public Dictionary<string, string> GetAllCachedMapVersions()
     {
         Dictionary<string, string> versions = new Dictionary<string, string>();
@@ -547,6 +566,7 @@ public class JSONFileManager : MonoBehaviour
     {
         List<string> mapIds = GetAvailableMapIds();
         Dictionary<string, string> versions = GetAllCachedMapVersions();
+        LocalStaticDataCache staticCache = GetStaticDataCache();
         
         string status = "=== JSON FILE MANAGER STATUS ===\n";
         status += $"Data Path: {dataPath}\n";
@@ -557,7 +577,21 @@ public class JSONFileManager : MonoBehaviour
             status += $"  - {mapId}: {versions.GetValueOrDefault(mapId, "unknown")}\n";
         }
         
-        status += "Base Files Status:\n";
+        status += "\nStatic Data Versions:\n";
+        if (staticCache != null)
+        {
+            status += $"  - Infrastructure: {staticCache.infrastructure_version}\n";
+            status += $"  - Categories: {staticCache.categories_version}\n";
+            status += $"  - Campus: {staticCache.campus_version}\n";
+            status += $"  - Indoor: {staticCache.indoor_version}\n";
+            status += $"  - Indoor Edges: {staticCache.indoor_edges_version}\n";
+        }
+        else
+        {
+            status += "  - No cache found\n";
+        }
+        
+        status += "\nBase Files Status:\n";
         
         foreach (string file in baseRequiredFiles)
         {
@@ -565,7 +599,7 @@ public class JSONFileManager : MonoBehaviour
             status += $"  - {file}: {(exists ? "OK" : "MISSING")}\n";
         }
         
-        status += "Versioned Files Status:\n";
+        status += "\nVersioned Files Status:\n";
         foreach (string mapId in mapIds)
         {
             status += $"  Map {mapId}:\n";

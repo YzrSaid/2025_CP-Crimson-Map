@@ -220,24 +220,24 @@ public class LocalVersionCache
     public long cache_timestamp;
 }
 
-[System.Serializable]
+[Serializable]
 public class StaticDataVersionInfo
 {
-    public bool infrastructure_updated;
-    public bool categories_updated;
-    public bool campus_updated;
-    public bool indoor_infrastructure_updated;
-    public bool indoor_edges_updated; 
+    public string infrastructure_version;
+    public string categories_version;
+    public string campus_version;
+    public string indoor_version;
+    public string indoor_edges_version;
 }
 
-[System.Serializable]
+[Serializable]
 public class LocalStaticDataCache
 {
-    public bool infrastructure_synced;
-    public bool categories_synced;
-    public bool campus_synced;
-    public bool indoor_synced;
-    public bool indoor_edges_synced;
+    public string infrastructure_version;
+    public string categories_version;
+    public string campus_version;
+    public string indoor_version;
+    public string indoor_edges_version;
 }
 
 [System.Serializable]

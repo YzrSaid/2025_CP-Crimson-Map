@@ -27,18 +27,13 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
     [Header("Confirmation Panel")]
     public GameObject confirmationPanel;
-    public TextMeshProUGUI confirmationTitle;
-    public TextMeshProUGUI confirmationBody;
     public TextMeshProUGUI confirmationNote;
     public Button confirmButton;
     public Button cancelButton;
 
     [Header("Calibration Panel")]
     public GameObject calibrationPanel;
-    public TextMeshProUGUI calibrationTitle;
     public TextMeshProUGUI calibrationInstruction;
-    public Image calibrationProgressFill;
-    public TextMeshProUGUI calibrationProgressText;
     public GameObject figure8Animation; 
     public Button calibrationExitButton; 
     [Header("Security Settings")]
@@ -426,15 +421,7 @@ public class ARSceneQRRecalibration : MonoBehaviour
         }
 
         string coordinateInfo = $"GPS: {scannedNodeInfo.latitude:F6}, {scannedNodeInfo.longitude:F6}";
-        string titleText = "<b>Recalibrate GPS Position</b>";
-        string bodyText = $"<b>{scannedNodeInfo.name}</b>\n\n{coordinateInfo}";
-        string noteText = "Your GPS position will be updated to this location.";
-
-        if (confirmationTitle != null)
-            confirmationTitle.text = titleText;
-
-        if (confirmationBody != null)
-            confirmationBody.text = bodyText;
+        string noteText = "Your GPS position will be updated to this location: " + $"<b>{scannedNodeInfo.name}</b>\n\n{coordinateInfo}";
 
         if (confirmationNote != null)
             confirmationNote.text = noteText;
@@ -553,18 +540,6 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
         calibrationPanel.SetActive(true);
 
-        if (calibrationTitle != null)
-        {
-            if (calibrationAttemptCount >= maxCalibrationAttempts)
-            {
-                calibrationTitle.text = "<b><color=red>GPS Unavailable</color></b>";
-            }
-            else
-            {
-                calibrationTitle.text = $"<b>Calibrating GPS... (Attempt {calibrationAttemptCount}/{maxCalibrationAttempts})</b>";
-            }
-        }
-
         if (calibrationInstruction != null)
         {
             if (calibrationAttemptCount >= maxCalibrationAttempts)
@@ -577,11 +552,6 @@ public class ARSceneQRRecalibration : MonoBehaviour
             }
         }
 
-        if (calibrationProgressFill != null)
-            calibrationProgressFill.fillAmount = 0f;
-
-        if (calibrationProgressText != null)
-            calibrationProgressText.text = "0%";
 
         if (figure8Animation != null)
         {
@@ -681,8 +651,6 @@ public class ARSceneQRRecalibration : MonoBehaviour
                 
                 if (calibrationPanel != null && calibrationPanel.activeSelf)
                 {
-                    if (calibrationTitle != null)
-                        calibrationTitle.text = "<b><color=red>GPS Unavailable</color></b>";
                     
                     if (calibrationInstruction != null)
                         calibrationInstruction.text = "GPS signal is too weak to navigate safely. Please try again later when you have better signal.";
@@ -706,12 +674,6 @@ public class ARSceneQRRecalibration : MonoBehaviour
             return;
 
         float progress = GPSManager.Instance.GetQRCalibrationProgress();
-
-        if (calibrationProgressFill != null)
-            calibrationProgressFill.fillAmount = progress;
-
-        if (calibrationProgressText != null)
-            calibrationProgressText.text = $"{(progress * 100f):F0}%";
     }
 
     void HideCalibrationPanel()
@@ -730,9 +692,7 @@ public class ARSceneQRRecalibration : MonoBehaviour
     }
 
     void OnCalibrationExit()
-    {
-        Debug.Log("[ARQRRecalibration] User chose to exit due to GPS failure");
-        
+    {        
         if (unifiedARManager != null)
         {
             unifiedARManager.ExitARScene();

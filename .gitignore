@@ -20,6 +20,9 @@ Assets/LoadingScreenAsset.meta
 Assets/GifToUnity
 Assets/GifToUnity.meta
 
+#GIF Files
+Assets/Resources/GIFs
+
 # Firebase configs (DO NOT push to public repos)
 Assets/Firebase Config/google-services.json
 Assets/Firebase Config/GoogleService-Info.plist

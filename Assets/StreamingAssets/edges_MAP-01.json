@@ -773,7 +773,8 @@
         "to_node": "ND-110",
         "path_type": "walkway",
         "is_deleted": false,
-        "is_active": true,
+        "is_active": false,
+        "updated_at": "2025-12-03T17:34:26.563Z",
         "from_node": "ND-111",
         "elevations": "flat",
         "edge_id": "EDG-071",
@@ -1993,5 +1994,38 @@
         "edge_id": "EDG-181",
         "distance": 12.16,
         "created_at": "2025-11-24T16:54:50.459Z"
+    },
+{
+        "to_node": "ND-288",
+        "path_type": "walkway",
+        "is_deleted": false,
+        "is_active": true,
+        "from_node": "ND-074",
+        "elevations": "flat",
+        "edge_id": "EDG-182",
+        "distance": 13.79,
+        "created_at": "2025-12-02T13:16:35.649Z"
+    },
+{
+        "to_node": "ND-288",
+        "path_type": "walkway",
+        "is_deleted": false,
+        "is_active": true,
+        "from_node": "ND-066",
+        "elevations": "flat",
+        "edge_id": "EDG-183",
+        "distance": 15.54,
+        "created_at": "2025-12-02T13:17:02.555Z"
+    },
+{
+        "to_node": "ND-289",
+        "path_type": "walkway",
+        "is_deleted": false,
+        "is_active": true,
+        "from_node": "ND-288",
+        "elevations": "flat",
+        "edge_id": "EDG-184",
+        "distance": 31.74,
+        "created_at": "2025-12-02T13:17:23.356Z"
     }
 ]

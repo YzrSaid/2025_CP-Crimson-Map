@@ -419,33 +419,21 @@ public class FirestoreManager : MonoBehaviour
 
                     StaticDataVersionInfo serverInfo = new StaticDataVersionInfo
                     {
-                        infrastructure_updated = data.ContainsKey("infrastructure_updated") ? (bool)data["infrastructure_updated"] : false,
-                        categories_updated = data.ContainsKey("categories_updated") ? (bool)data["categories_updated"] : false,
-                        campus_updated = data.ContainsKey("campus_updated") ? (bool)data["campus_updated"] : false,
-                        indoor_infrastructure_updated = data.ContainsKey("indoor_infrastructure_updated") ? (bool)data["indoor_infrastructure_updated"] : false,
-                        indoor_edges_updated = data.ContainsKey("indoor_edges_updated") ? (bool)data["indoor_edges_updated"] : false
+                        infrastructure_version = GetStringValue(data, "infrastructure_version") ?? "v0.0.0",
+                        categories_version = GetStringValue(data, "categories_version") ?? "v0.0.0",
+                        campus_version = GetStringValue(data, "campus_version") ?? "v0.0.0",
+                        indoor_version = GetStringValue(data, "indoor_version") ?? "v0.0.0",
+                        indoor_edges_version = GetStringValue(data, "indoor_edges_version") ?? "v0.0.0"
                     };
 
                     LocalStaticDataCache localCache = GetLocalStaticDataCache();
 
-                    bool bootstrapNeeded = localCache != null &&
-                         !localCache.infrastructure_synced &&
-                         !localCache.categories_synced &&
-                         !localCache.campus_synced &&
-                         !localCache.indoor_synced &&
-                         !localCache.indoor_edges_synced &&
-                         !serverInfo.infrastructure_updated &&
-                         !serverInfo.categories_updated &&
-                         !serverInfo.campus_updated &&
-                         !serverInfo.indoor_infrastructure_updated &&
-                         !serverInfo.indoor_edges_updated;
-
-                    bool needsUpdate = localCache == null || bootstrapNeeded ||
-                                       serverInfo.infrastructure_updated ||
-                                       serverInfo.categories_updated ||
-                                       serverInfo.campus_updated ||
-                                       serverInfo.indoor_infrastructure_updated ||
-                                       serverInfo.indoor_edges_updated;
+                    bool needsUpdate = localCache == null ||
+                                       IsVersionNewer(serverInfo.infrastructure_version, localCache.infrastructure_version) ||
+                                       IsVersionNewer(serverInfo.categories_version, localCache.categories_version) ||
+                                       IsVersionNewer(serverInfo.campus_version, localCache.campus_version) ||
+                                       IsVersionNewer(serverInfo.indoor_version, localCache.indoor_version) ||
+                                       IsVersionNewer(serverInfo.indoor_edges_version, localCache.indoor_edges_version);
 
                     onComplete?.Invoke(needsUpdate, serverInfo);
                 }
@@ -453,11 +441,11 @@ public class FirestoreManager : MonoBehaviour
                 {
                     StaticDataVersionInfo defaultInfo = new StaticDataVersionInfo
                     {
-                        infrastructure_updated = true,
-                        categories_updated = true,
-                        campus_updated = true,
-                        indoor_infrastructure_updated = true,
-                        indoor_edges_updated = true
+                        infrastructure_version = "v1.0.0",
+                        categories_version = "v1.0.0",
+                        campus_version = "v1.0.0",
+                        indoor_version = "v1.0.0",
+                        indoor_edges_version = "v1.0.0"
                     };
                     onComplete?.Invoke(true, defaultInfo);
                 }
@@ -469,47 +457,77 @@ public class FirestoreManager : MonoBehaviour
         });
     }
 
-    private IEnumerator SyncStaticDataSelectivelyCoroutine(StaticDataVersionInfo versionInfo, System.Action onComplete)
+    private bool IsVersionNewer(string serverVersion, string localVersion)
+    {
+        if (string.IsNullOrEmpty(localVersion))
+        {
+            return true;
+        }
+
+        if (string.IsNullOrEmpty(serverVersion))
+        {
+            return false;
+        }
+
+        string cleanServer = serverVersion.TrimStart('v', 'V');
+        string cleanLocal = localVersion.TrimStart('v', 'V');
+
+        string[] serverParts = cleanServer.Split('.');
+        string[] localParts = cleanLocal.Split('.');
+
+        for (int i = 0; i < Math.Max(serverParts.Length, localParts.Length); i++)
+        {
+            int serverNum = i < serverParts.Length && int.TryParse(serverParts[i], out int sNum) ? sNum : 0;
+            int localNum = i < localParts.Length && int.TryParse(localParts[i], out int lNum) ? lNum : 0;
+
+            if (serverNum > localNum)
+            {
+                return true;
+            }
+            else if (serverNum < localNum)
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private IEnumerator SyncStaticDataSelectivelyCoroutine(StaticDataVersionInfo serverInfo, System.Action onComplete)
     {
         List<string> collectionsToSync = new List<string>();
-        List<string> flagsToReset = new List<string>();
+        Dictionary<string, string> versionUpdates = new Dictionary<string, string>();
 
         LocalStaticDataCache localCache = GetLocalStaticDataCache();
-        bool hasLocalCache = localCache != null;
 
-        bool shouldSyncInfra = versionInfo.infrastructure_updated || !hasLocalCache || (hasLocalCache && !localCache.infrastructure_synced);
-        if (shouldSyncInfra)
+        if (IsVersionNewer(serverInfo.infrastructure_version, localCache?.infrastructure_version))
         {
             collectionsToSync.Add("Infrastructure");
-            flagsToReset.Add("infrastructure_updated");
+            versionUpdates["infrastructure_version"] = serverInfo.infrastructure_version;
         }
 
-        bool shouldSyncCats = versionInfo.categories_updated || !hasLocalCache || (hasLocalCache && !localCache.categories_synced);
-        if (shouldSyncCats)
+        if (IsVersionNewer(serverInfo.categories_version, localCache?.categories_version))
         {
             collectionsToSync.Add("Categories");
-            flagsToReset.Add("categories_updated");
+            versionUpdates["categories_version"] = serverInfo.categories_version;
         }
 
-        bool shouldSyncCampus = versionInfo.campus_updated || !hasLocalCache || (hasLocalCache && !localCache.campus_synced);
-        if (shouldSyncCampus)
+        if (IsVersionNewer(serverInfo.campus_version, localCache?.campus_version))
         {
             collectionsToSync.Add("Campus");
-            flagsToReset.Add("campus_updated");
+            versionUpdates["campus_version"] = serverInfo.campus_version;
         }
 
-        bool shouldSyncIndoor = versionInfo.indoor_infrastructure_updated || !hasLocalCache || (hasLocalCache && !localCache.indoor_synced);
-        if (shouldSyncIndoor)
+        if (IsVersionNewer(serverInfo.indoor_version, localCache?.indoor_version))
         {
             collectionsToSync.Add("IndoorInfrastructure");
-            flagsToReset.Add("indoor_infrastructure_updated");
+            versionUpdates["indoor_version"] = serverInfo.indoor_version;
         }
 
-        bool shouldSyncIndoorEdges = versionInfo.indoor_edges_updated || !hasLocalCache || (hasLocalCache && !localCache.indoor_edges_synced);
-        if (shouldSyncIndoorEdges)
+        if (IsVersionNewer(serverInfo.indoor_edges_version, localCache?.indoor_edges_version))
         {
             collectionsToSync.Add("IndoorEdges");
-            flagsToReset.Add("indoor_edges_updated");
+            versionUpdates["indoor_edges_version"] = serverInfo.indoor_edges_version;
         }
 
         if (collectionsToSync.Count == 0)
@@ -534,9 +552,7 @@ public class FirestoreManager : MonoBehaviour
 
         yield return new WaitUntil(() => completedSyncs >= collectionsToSync.Count);
 
-        UpdateLocalStaticDataCacheSelectively(syncResults);
-
-        ResetStaticDataFlagsSelectively(syncResults, flagsToReset);
+        UpdateLocalStaticDataCacheSelectively(syncResults, versionUpdates);
 
         onComplete?.Invoke();
     }
@@ -629,7 +645,7 @@ public class FirestoreManager : MonoBehaviour
         });
     }
 
-    private void UpdateLocalStaticDataCacheSelectively(Dictionary<string, bool> syncResults)
+    private void UpdateLocalStaticDataCacheSelectively(Dictionary<string, bool> syncResults, Dictionary<string, string> versionUpdates)
     {
         LocalStaticDataCache cache = GetLocalStaticDataCache();
 
@@ -637,37 +653,42 @@ public class FirestoreManager : MonoBehaviour
         {
             cache = new LocalStaticDataCache
             {
-                infrastructure_synced = false,
-                categories_synced = false,
-                campus_synced = false,
-                indoor_synced = false,
-                indoor_edges_synced = false
+                infrastructure_version = "v0.0.0",
+                categories_version = "v0.0.0",
+                campus_version = "v0.0.0",
+                indoor_version = "v0.0.0",
+                indoor_edges_version = "v0.0.0"
             };
         }
 
-        if (syncResults.ContainsKey("Infrastructure") && syncResults["Infrastructure"])
+        if (syncResults.ContainsKey("Infrastructure") && syncResults["Infrastructure"] && 
+            versionUpdates.ContainsKey("infrastructure_version"))
         {
-            cache.infrastructure_synced = true;
+            cache.infrastructure_version = versionUpdates["infrastructure_version"];
         }
 
-        if (syncResults.ContainsKey("Categories") && syncResults["Categories"])
+        if (syncResults.ContainsKey("Categories") && syncResults["Categories"] && 
+            versionUpdates.ContainsKey("categories_version"))
         {
-            cache.categories_synced = true;
+            cache.categories_version = versionUpdates["categories_version"];
         }
 
-        if (syncResults.ContainsKey("Campus") && syncResults["Campus"])
+        if (syncResults.ContainsKey("Campus") && syncResults["Campus"] && 
+            versionUpdates.ContainsKey("campus_version"))
         {
-            cache.campus_synced = true;
+            cache.campus_version = versionUpdates["campus_version"];
         }
 
-        if (syncResults.ContainsKey("IndoorInfrastructure") && syncResults["IndoorInfrastructure"])
+        if (syncResults.ContainsKey("IndoorInfrastructure") && syncResults["IndoorInfrastructure"] && 
+            versionUpdates.ContainsKey("indoor_version"))
         {
-            cache.indoor_synced = true;
+            cache.indoor_version = versionUpdates["indoor_version"];
         }
 
-        if (syncResults.ContainsKey("IndoorEdges") && syncResults["IndoorEdges"])
+        if (syncResults.ContainsKey("IndoorEdges") && syncResults["IndoorEdges"] && 
+            versionUpdates.ContainsKey("indoor_edges_version"))
         {
-            cache.indoor_edges_synced = true;
+            cache.indoor_edges_version = versionUpdates["indoor_edges_version"];
         }
 
         string jsonContent = JsonUtility.ToJson(cache, true);
@@ -677,55 +698,6 @@ public class FirestoreManager : MonoBehaviour
         }
     }
 
-    private void ResetStaticDataFlagsSelectively(Dictionary<string, bool> syncResults, List<string> flagsToReset)
-    {
-        DocumentReference staticRef = db.Collection(STATIC_DATA_VERSIONS_COLLECTION).Document("GlobalInfo");
-
-        var resetData = new Dictionary<string, object>();
-        bool hasUpdates = false;
-
-        foreach (string flag in flagsToReset)
-        {
-            string collectionName = flag.Replace("_updated", "").Replace("_", "");
-            if (flag == "indoor_infrastructure_updated")
-            {
-                if (syncResults.ContainsKey("IndoorInfrastructure") && syncResults["IndoorInfrastructure"])
-                {
-                    resetData[flag] = false;
-                    hasUpdates = true;
-                }
-            }
-            else if (flag == "indoor_edges_updated")
-            {
-                if (syncResults.ContainsKey("IndoorEdges") && syncResults["IndoorEdges"])
-                {
-                    resetData[flag] = false;
-                    hasUpdates = true;
-                }
-            }
-            else
-            {
-                collectionName = char.ToUpper(collectionName[0]) + collectionName.Substring(1);
-
-                if (syncResults.ContainsKey(collectionName) && syncResults[collectionName])
-                {
-                    resetData[flag] = false;
-                    hasUpdates = true;
-                }
-            }
-        }
-
-        resetData["last_check"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        hasUpdates = true;
-
-        if (hasUpdates)
-        {
-            staticRef.SetAsync(resetData, SetOptions.MergeAll).ContinueWithOnMainThread(task =>
-            {
-            });
-        }
-    }
-    
     private void SyncStaticDataSelectively(StaticDataVersionInfo versionInfo, System.Action onComplete)
     {
         StartCoroutine(SyncStaticDataSelectivelyCoroutine(versionInfo, onComplete));
@@ -786,39 +758,6 @@ public class FirestoreManager : MonoBehaviour
             }
         }
         return null;
-    }
-
-    private void UpdateLocalStaticDataCache(StaticDataVersionInfo serverInfo)
-    {
-        LocalStaticDataCache cache = new LocalStaticDataCache
-        {
-            infrastructure_synced = true,
-            categories_synced = true,
-            campus_synced = true,
-        };
-
-        string jsonContent = JsonUtility.ToJson(cache, true);
-        if (JSONFileManager.Instance != null)
-        {
-            JSONFileManager.Instance.WriteJSONFile("static_data_cache.json", jsonContent);
-        }
-    }
-
-    private void ResetStaticDataFlags()
-    {
-        DocumentReference staticRef = db.Collection(STATIC_DATA_VERSIONS_COLLECTION).Document("GlobalInfo");
-
-        var resetData = new Dictionary<string, object>
-        {
-            { "infrastructure_updated", false },
-            { "categories_updated", false },
-            { "campus_updated", false },
-            { "last_check", DateTimeOffset.UtcNow.ToUnixTimeSeconds() }
-        };
-
-        staticRef.SetAsync(resetData, SetOptions.MergeAll).ContinueWithOnMainThread(task =>
-        {
-        });
     }
 
     public void SyncCollectionToLocal(string collectionName, System.Action onComplete = null)
@@ -939,6 +878,31 @@ public class FirestoreManager : MonoBehaviour
         {
             versions[map.map_id] = GetCurrentMapVersion(map.map_id);
         }
+        return versions;
+    }
+
+    public Dictionary<string, string> GetAllStaticDataVersions()
+    {
+        Dictionary<string, string> versions = new Dictionary<string, string>();
+        LocalStaticDataCache cache = GetLocalStaticDataCache();
+        
+        if (cache != null)
+        {
+            versions["infrastructure"] = cache.infrastructure_version;
+            versions["categories"] = cache.categories_version;
+            versions["campus"] = cache.campus_version;
+            versions["indoor"] = cache.indoor_version;
+            versions["indoor_edges"] = cache.indoor_edges_version;
+        }
+        else
+        {
+            versions["infrastructure"] = "v0.0.0";
+            versions["categories"] = "v0.0.0";
+            versions["campus"] = "v0.0.0";
+            versions["indoor"] = "v0.0.0";
+            versions["indoor_edges"] = "v0.0.0";
+        }
+        
         return versions;
     }
 
