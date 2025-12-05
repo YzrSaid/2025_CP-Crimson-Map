@@ -10,6 +10,8 @@ public class DropdownInfraItem : MonoBehaviour
     public Button infraButton;
     public TextMeshProUGUI infraNameText;
     public Button expandArrowButton;
+    public GameObject arrowDownImage;
+    public GameObject arrowUpImage;
     public GameObject roomsContainer;
     public Transform roomsContent;
 
@@ -60,6 +62,7 @@ public class DropdownInfraItem : MonoBehaviour
             {
                 expandArrowButton.gameObject.SetActive(true);
                 expandArrowButton.onClick.AddListener(ToggleRooms);
+                UpdateArrowVisibility(false);
             }
 
             if (infraButton != null)
@@ -135,14 +138,7 @@ public class DropdownInfraItem : MonoBehaviour
         isExpanded = true;
         roomsContainer.SetActive(true);
 
-        if (expandArrowButton != null)
-        {
-            TextMeshProUGUI arrowText = expandArrowButton.GetComponentInChildren<TextMeshProUGUI>();
-            if (arrowText != null)
-            {
-                arrowText.text = "▲";
-            }
-        }
+        UpdateArrowVisibility(true);
 
         int visibleRoomCount = GetVisibleRoomCount();
         float totalRoomHeight = (roomItemHeight * visibleRoomCount) + (roomSpacing * (visibleRoomCount - 1));
@@ -166,18 +162,24 @@ public class DropdownInfraItem : MonoBehaviour
         isExpanded = false;
         roomsContainer.SetActive(false);
 
-        if (expandArrowButton != null)
-        {
-            TextMeshProUGUI arrowText = expandArrowButton.GetComponentInChildren<TextMeshProUGUI>();
-            if (arrowText != null)
-            {
-                arrowText.text = "▼";
-            }
-        }
+        UpdateArrowVisibility(false);
 
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, collapsedHeight);
 
         ForceLayoutUpdate();
+    }
+
+    private void UpdateArrowVisibility(bool isExpanded)
+    {
+        if (arrowDownImage != null)
+        {
+            arrowDownImage.SetActive(!isExpanded);
+        }
+
+        if (arrowUpImage != null)
+        {
+            arrowUpImage.SetActive(isExpanded);
+        }
     }
 
     private int GetVisibleRoomCount()
