@@ -8,58 +8,50 @@ using DG.Tweening;
 
 public class DirectionDisplayManager : MonoBehaviour
 {
-    [Header("UI References")]
     public GameObject directionPanel;
     public TextMeshProUGUI directionText;
 
-    [Header("Turn Icon Images (GameObjects)")]
     public GameObject turnRightImage;
     public GameObject turnLeftImage;
     public GameObject walkStraightImage;
     public GameObject enterImage;
     public GameObject turnIconsContainer;
 
-    [Header("Compass Arrow")]
     public CompassNavigationArrow compassArrow;
 
-    [Header("All Directions Panel")]
     public Transform directionsScrollContent;
     public GameObject directionItemPrefab;
 
-    [Header("Success Panel")]
     public GameObject successPanel;
     public TextMeshProUGUI successBodyText;
     public Button successCloseButton;
     public GameObject successPanelBackground;
 
-    [Header("Success Panel Animation")]
     public float successAnimationDuration = 0.3f;
     public Ease successEaseType = Ease.OutBack;
 
-    [Header("Lookahead & Off-Route Detection")]
-    public float lookaheadDistanceThreshold = 5f; // ≤5m = passed node
-    public float offRouteDistanceThreshold = 25f; // >25m = off route
-    public float destinationOvershootThreshold = 10f; // >10m past destination = passed
-    public int maxLookaheadCount = 3; // Check next 3 nodes
+    public float lookaheadDistanceThreshold = 5f;
+    public float offRouteDistanceThreshold = 25f;
+    public float destinationOvershootThreshold = 10f;
+    public int maxLookaheadCount = 3;
 
-    [Header("Off-Route Panel")]
     public GameObject offRoutePanel;
     public TextMeshProUGUI offRouteTitle;
     public TextMeshProUGUI offRouteBody;
     public Button offRouteContinueButton;
     public GameObject offRouteBackground;
 
-    // Internal tracking
+    private bool isOffRoutePanelActive = false;
+    private bool isOffRouteConditionActive = false;
+
     private bool hasPassedDestination = false;
     private Vector2 destinationGPS;
     private bool isDestinationNode = false;
     private Node currentDestinationNode;
 
-    [Header("Settings")]
     public bool enableKeyboardTesting = true;
     public float autoProgressDistance = 5f;
 
-    [Header("Dynamic Distance Display")]
     public float distanceUpdateInterval = 0.5f;
     private float lastDistanceUpdateTime = 0f;
 
@@ -103,17 +95,15 @@ public class DirectionDisplayManager : MonoBehaviour
         if (successCloseButton != null)
             successCloseButton.onClick.AddListener(OnSuccessCloseClicked);
 
-        // // ======== NEW: Initialize off-route panel ========
-        // if (offRoutePanel != null)
-        // {
-        //     offRoutePanel.SetActive(false);
-        // }
+        if (offRoutePanel != null)
+        {
+            offRoutePanel.SetActive(false);
+        }
 
-        // if (offRouteBackground != null)
-        // {
-        //     offRouteBackground.SetActive(false);
-        // }
-        // // =================================================
+        if (offRouteBackground != null)
+        {
+            offRouteBackground.SetActive(false);
+        }
 
         LoadDirectionsFromPlayerPrefs();
 
@@ -135,21 +125,16 @@ public class DirectionDisplayManager : MonoBehaviour
 
         UpdateUserLocation();
 
-        // // ======== NEW DETECTION SYSTEMS ========
-        // if (currentDirectionIndex < allDirections.Count - 1)
-        // {
-        //     // Lookahead: Check if user passed ANY upcoming nodes
-        //     CheckIfPassedAnyUpcomingNodes();
+        if (currentDirectionIndex < allDirections.Count - 1)
+        {
+            CheckIfPassedAnyUpcomingNodes();
 
-        //     // Off-route: Check if user is far from ALL route nodes
-        //     CheckIfOffRoute();
-        // }
-        // else if (currentDirectionIndex == allDirections.Count - 1)
-        // {
-        //     // User is at final direction (destination)
-        //     CheckDestinationOvershoot();
-        // }
-        // // =======================================
+            CheckIfOffRoute();
+        }
+        else if (currentDirectionIndex == allDirections.Count - 1)
+        {
+            CheckDestinationOvershoot();
+        }
 
         UpdateDistanceToTarget();
         CheckAutoProgress();
@@ -161,9 +146,6 @@ public class DirectionDisplayManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Lookahead Detection: Check if user passed ANY upcoming route nodes
-    /// </summary>
     private void CheckIfPassedAnyUpcomingNodes()
     {
         if (currentDirectionIndex >= allDirections.Count - 1)
@@ -188,11 +170,9 @@ public class DirectionDisplayManager : MonoBehaviour
             {
                 Debug.Log($"[Lookahead] ✅ User passed upcoming node {checkDir.destinationNode.name} at index {checkIndex}");
 
-                // Jump to this node's direction
                 int oldIndex = currentDirectionIndex;
                 currentDirectionIndex = checkIndex;
 
-                // Hide markers for skipped nodes
                 HideSkippedMarkers(oldIndex, checkIndex);
 
                 DisplayCurrentDirection();
@@ -201,43 +181,37 @@ public class DirectionDisplayManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Off-Route Detection: Check if user is far from ALL route nodes
-    /// </summary>
-    // private void CheckIfOffRoute()
-    // {
-    //     float minDistance = float.MaxValue;
-    //     Node closestNode = null;
+    private void CheckIfOffRoute()
+    {
+        if (isOffRouteConditionActive) return;
 
-    //     // Check distance to ALL upcoming route nodes
-    //     for (int i = currentDirectionIndex; i < allDirections.Count; i++)
-    //     {
-    //         NavigationDirection dir = allDirections[i];
-    //         if (dir.destinationNode == null || dir.isIndoorGrouped)
-    //             continue;
+        if (isOffRoutePanelActive) return;
 
-    //         Vector2 nodeGPS = new Vector2(dir.destinationNode.latitude, dir.destinationNode.longitude);
-    //         float distance = CalculateDistanceGPS(userLocation, nodeGPS);
+        float minDistance = float.MaxValue;
+        Node closestNode = null;
 
-    //         if (distance < minDistance)
-    //         {
-    //             minDistance = distance;
-    //             closestNode = dir.destinationNode;
-    //         }
-    //     }
+        for (int i = currentDirectionIndex; i < allDirections.Count; i++)
+        {
+            NavigationDirection dir = allDirections[i];
+            if (dir.destinationNode == null || dir.isIndoorGrouped)
+                continue;
 
-    //     Debug.Log($"[OffRoute] Closest route node: {closestNode?.name} at {minDistance:F1}m (threshold: {offRouteDistanceThreshold}m)");
+            Vector2 nodeGPS = new Vector2(dir.destinationNode.latitude, dir.destinationNode.longitude);
+            float distance = CalculateDistanceGPS(userLocation, nodeGPS);
 
-    //     // if (minDistance > offRouteDistanceThreshold)
-    //     // {
-    //     //     Debug.Log($"[OffRoute] ⚠️ User is off route! {minDistance:F1}m from nearest node");
-    //     //     ShowOffRoutePanel(closestNode, minDistance);
-    //     // }
-    // }
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestNode = dir.destinationNode;
+            }
+        }
 
-    /// <summary>
-    /// Destination Overshoot Detection: Check if user passed destination
-    /// </summary>
+        if (minDistance > offRouteDistanceThreshold)
+        {
+            isOffRouteConditionActive = true;
+            ShowOffRoutePanel(closestNode, minDistance);
+        }
+    }
     private void CheckDestinationOvershoot()
     {
         if (hasPassedDestination || currentDestinationNode == null)
@@ -245,7 +219,6 @@ public class DirectionDisplayManager : MonoBehaviour
 
         if (!isDestinationNode)
         {
-            // Set destination info when we first reach final direction
             NavigationDirection lastDir = allDirections[allDirections.Count - 1];
             if (lastDir.destinationNode != null)
             {
@@ -260,17 +233,14 @@ public class DirectionDisplayManager : MonoBehaviour
 
         Debug.Log($"[Destination] Distance from destination {currentDestinationNode.name}: {distanceFromDestination:F1}m (threshold: {destinationOvershootThreshold}m)");
 
-        // if (distanceFromDestination > destinationOvershootThreshold)
-        // {
-        //     Debug.Log($"[Destination] ⚠️ User passed destination by {distanceFromDestination:F1}m!");
-        //     hasPassedDestination = true;
-        //     ShowPassedDestinationPanel(distanceFromDestination);
-        // }
+        if (distanceFromDestination > destinationOvershootThreshold)
+        {
+            Debug.Log($"[Destination] ⚠️ User passed destination by {distanceFromDestination:F1}m!");
+            hasPassedDestination = true;
+            ShowPassedDestinationPanel(distanceFromDestination);
+        }
     }
 
-    /// <summary>
-    /// Hide markers for nodes that were skipped (when jumping ahead)
-    /// </summary>
     private void HideSkippedMarkers(int fromIndex, int toIndex)
     {
         if (markerSpawner == null) return;
@@ -290,85 +260,85 @@ public class DirectionDisplayManager : MonoBehaviour
         }
     }
 
-    // /// <summary>
-    // /// Show off-route panel
-    // /// </summary>
-    // private void ShowOffRoutePanel(Node nearestNode, float distance)
-    // {
-    //     if (offRoutePanel == null)
-    //     {
-    //         CreateSimpleOffRoutePanel(nearestNode, distance);
-    //         return;
-    //     }
+    private void ShowOffRoutePanel(Node nearestNode, float distance)
+    {
+        if (offRoutePanel == null)
+        {
+            CreateSimpleOffRoutePanel(nearestNode, distance);
+            return;
+        }
 
-    //     if (offRouteTitle != null)
-    //         offRouteTitle.text = "You're Off Route";
+        if (offRouteTitle != null)
+            offRouteTitle.text = "You're Off Route";
 
-    //     if (offRouteBody != null)
-    //     {
-    //         string nodeName = nearestNode != null ? nearestNode.name : "the nearest point";
-    //         offRouteBody.text = $"You are {Mathf.RoundToInt(distance)} meters away from {nodeName}.\n\nClick OK to continue navigation.";
-    //     }
+        if (offRouteBody != null)
+        {
+            string nodeName = nearestNode != null ? nearestNode.name : "the nearest point";
+            offRouteBody.text = $"You are {Mathf.RoundToInt(distance)} meters away from {nodeName}.\n\nClick OK to continue navigation.";
+        }
 
-    //     if (offRouteBackground != null)
-    //         offRouteBackground.SetActive(true);
+        if (offRouteBackground != null)
+            offRouteBackground.SetActive(true);
 
-    //     offRoutePanel.SetActive(true);
+        offRoutePanel.SetActive(true);
+        isOffRoutePanelActive = true;
 
-    //     // Setup buttons
-    //     if (offRouteContinueButton != null)
-    //         offRouteContinueButton.onClick.RemoveAllListeners();
+        if (offRouteContinueButton != null)
+            offRouteContinueButton.onClick.RemoveAllListeners();
 
-    //     if (offRouteContinueButton != null)
-    //         offRouteContinueButton.onClick.AddListener(HideOffRoutePanel);
-    // }
+        if (offRouteContinueButton != null)
+            offRouteContinueButton.onClick.AddListener(HideOffRoutePanel);
+    }
 
-    // /// <summary>
-    // /// Show passed destination panel
-    // /// </summary>
-    // private void ShowPassedDestinationPanel(float distancePassed)
-    // {
-    //     // Use the same off-route panel but with different message
-    //     if (offRoutePanel == null) return;
+    private void ShowPassedDestinationPanel(float distancePassed)
+    {
+        if (offRoutePanel == null) return;
 
-    //     if (offRouteTitle != null)
-    //         offRouteTitle.text = "Passed Destination";
+        if (offRouteTitle != null)
+            offRouteTitle.text = "Passed Destination";
 
-    //     if (offRouteBody != null)
-    //     {
-    //         offRouteBody.text = $"You have passed your destination by {Mathf.RoundToInt(distancePassed)} meters.\n\nYou are now beyond your intended stopping point.";
-    //     }
+        if (offRouteBody != null)
+        {
+            offRouteBody.text = $"You have passed your destination by {Mathf.RoundToInt(distancePassed)} meters.\n\nYou are now beyond your intended stopping point.";
+        }
 
-    //     if (offRouteBackground != null)
-    //         offRouteBackground.SetActive(true);
+        if (offRouteBackground != null)
+            offRouteBackground.SetActive(true);
 
-    //     offRoutePanel.SetActive(true);
+        offRoutePanel.SetActive(true);
+        isOffRoutePanelActive = true;
+    }
+    private void HideOffRoutePanel()
+    {
+        if (offRoutePanel != null)
+            offRoutePanel.SetActive(false);
+        if (offRouteBackground != null)
+            offRouteBackground.SetActive(false);
 
-    //     // Setup buttons differently for passed destination
-    //     if (offRouteContinueButton != null)
-    //     {
-    //         offRouteContinueButton.GetComponentInChildren<TextMeshProUGUI>().text = "Exit AR";
-    //         offRouteContinueButton.onClick.RemoveAllListeners();
-    //         offRouteContinueButton.onClick.AddListener(() =>
-    //         {
-    //             if (arManager != null) arManager.ExitARScene();
-    //         });
-    //     }
-    // }
+        isOffRoutePanelActive = false;
 
-    // private void HideOffRoutePanel()
-    // {
-    //     if (offRoutePanel != null)
-    //         offRoutePanel.SetActive(false);
-    //     if (offRouteBackground != null)
-    //         offRouteBackground.SetActive(false);
-    // }
+        Debug.Log("[OffRoute] Panel hidden - starting 40 second cooldown");
+        // Always start the 40-second cooldown when panel is closed
+        StartCoroutine(OffRouteCooldown());
+    }
+    private IEnumerator OffRouteCooldown()
+    {
+        float cooldownTime = 40f;
+        float timer = 0f;
 
-    // private void CreateSimpleOffRoutePanel(Node nearestNode, float distance)
-    // {
-    //     // Fallback if no panel is assigned
-    //     Debug.LogWarning($"[DirectionManager] Off-route panel not assigned! User is {distance:F1}m from {nearestNode?.name}");
-    // }
+        while (timer < cooldownTime)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        isOffRouteConditionActive = false;
+    }
+
+    private void CreateSimpleOffRoutePanel(Node nearestNode, float distance)
+    {
+        Debug.LogWarning($"[DirectionManager] Off-route panel not assigned! User is {distance:F1}m from {nearestNode?.name}");
+    }
 
     private void UpdateUserLocation()
     {
@@ -764,14 +734,12 @@ public class DirectionDisplayManager : MonoBehaviour
     {
         Debug.Log($"[DirectionManager] QR Recalibration triggered for node: {nodeId}");
 
-        // First check if this node is in our route
         int targetIndex = FindDirectionIndexByNodeId(nodeId);
 
         if (targetIndex == -1)
         {
             Debug.Log($"[DirectionManager] Node {nodeId} not in route. Finding closest route node...");
 
-            // Load node info
             Node scannedNode = LoadNodeById(nodeId);
             if (scannedNode == null)
             {
@@ -779,7 +747,6 @@ public class DirectionDisplayManager : MonoBehaviour
                 return;
             }
 
-            // Find closest upcoming route node to scanned location
             FindClosestUpcomingNode(scannedNode);
             return;
         }
@@ -798,7 +765,6 @@ public class DirectionDisplayManager : MonoBehaviour
             int oldIndex = currentDirectionIndex;
             currentDirectionIndex = targetIndex;
 
-            // Hide markers for skipped nodes
             HideSkippedMarkers(oldIndex, targetIndex);
 
             DisplayCurrentDirection();
@@ -810,9 +776,6 @@ public class DirectionDisplayManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Find closest upcoming route node to a scanned node (for QR at non-route location)
-    /// </summary>
     private void FindClosestUpcomingNode(Node scannedNode)
     {
         Vector2 scannedGPS = new Vector2(scannedNode.latitude, scannedNode.longitude);
@@ -821,7 +784,6 @@ public class DirectionDisplayManager : MonoBehaviour
         int closestIndex = -1;
         Node closestNode = null;
 
-        // Find which upcoming route node is closest to scanned location
         for (int i = currentDirectionIndex; i < allDirections.Count; i++)
         {
             NavigationDirection dir = allDirections[i];
@@ -845,7 +807,6 @@ public class DirectionDisplayManager : MonoBehaviour
         {
             if (minDistance <= lookaheadDistanceThreshold)
             {
-                // Close enough to consider as "passed"
                 Debug.Log($"[DirectionManager] ✅ Close enough ({minDistance:F1}m), jumping to index {closestIndex}");
                 int oldIndex = currentDirectionIndex;
                 currentDirectionIndex = closestIndex;
@@ -854,15 +815,11 @@ public class DirectionDisplayManager : MonoBehaviour
             }
             else if (minDistance > offRouteDistanceThreshold)
             {
-                // Too far - show off-route panel
                 Debug.Log($"[DirectionManager] ⚠️ Too far ({minDistance:F1}m), showing off-route panel");
-                // ShowOffRoutePanel(closestNode, minDistance);
             }
             else
             {
-                // Somewhat close but not enough to jump
                 Debug.Log($"[DirectionManager] Somewhat close ({minDistance:F1}m), staying at current direction");
-                // Stay at current direction
             }
         }
         else
@@ -871,22 +828,14 @@ public class DirectionDisplayManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Helper to load a node by ID (you might need to implement this based on your data structure)
-    /// </summary>
     private Node LoadNodeById(string nodeId)
     {
-        // This is a simplified version - you might need to load from your nodes list
-        // or get it from ARSceneQRRecalibration which already has the scanned node
-
-        // Check if we have this node in our allDirections
         foreach (var dir in allDirections)
         {
             if (dir.destinationNode != null && dir.destinationNode.node_id == nodeId)
                 return dir.destinationNode;
         }
 
-        // If not found in directions, you might need to load from your nodes database
         Debug.LogWarning($"[DirectionManager] Could not load node {nodeId} from directions");
         return null;
     }
@@ -1012,6 +961,9 @@ public class DirectionDisplayManager : MonoBehaviour
         hasPassedDestination = false;
         isDestinationNode = false;
 
+        isOffRoutePanelActive = false;
+        isOffRouteConditionActive = false;
+
         if (directionPanel != null)
             directionPanel.SetActive(false);
 
@@ -1026,13 +978,11 @@ public class DirectionDisplayManager : MonoBehaviour
         if (successPanelBackground != null)
             successPanelBackground.SetActive(false);
 
-        // ======== NEW: Hide off-route panel ========
         if (offRoutePanel != null)
             offRoutePanel.SetActive(false);
 
         if (offRouteBackground != null)
             offRouteBackground.SetActive(false);
-        // ===========================================
 
         UpdateDirectionItemsStatus();
     }

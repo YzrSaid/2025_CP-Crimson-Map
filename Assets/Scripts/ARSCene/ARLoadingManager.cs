@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ARLoadingManager : MonoBehaviour
 {
@@ -80,7 +81,6 @@ public class ARLoadingManager : MonoBehaviour
     {
         UpdateLoadingText("Initializing Compass...");
 
-        // Wait for GPSManager to be ready
         float timeout = 5f;
         float elapsed = 0f;
 
@@ -96,7 +96,6 @@ public class ARLoadingManager : MonoBehaviour
             yield break;
         }
 
-        // Wait for compass to be ready
         UpdateLoadingText("Waiting for Compass...");
         elapsed = 0f;
 
@@ -109,34 +108,59 @@ public class ARLoadingManager : MonoBehaviour
         if (!GPSManager.Instance.IsCompassReady())
         {
             Debug.LogWarning("[ARLoading] Compass not ready, using default orientation");
+            yield break;
         }
-        else
+
+        UpdateLoadingText("Hold device steady\nCalibrating compass...");
+
+        float calibrationTime = 3f;
+        float timer = calibrationTime;
+        List<float> headingSamples = new List<float>();
+
+        while (timer > 0)
         {
-            // Show user instruction
-            UpdateLoadingText("Hold device steady\nCalibrating compass...");
+            timer -= Time.deltaTime;
 
-            // Wait 3 seconds for stabilization
-            float calibrationTime = 3f;
-            float timer = calibrationTime;
+            float currentHeading = GPSManager.Instance.GetHeading();
+            headingSamples.Add(currentHeading);
 
-            while (timer > 0)
-            {
-                timer -= Time.deltaTime;
+            int secondsLeft = Mathf.CeilToInt(timer);
+            UpdateLoadingText($"Hold device steady\nCalibrating compass... {secondsLeft}s");
 
-                // Update countdown text
-                int secondsLeft = Mathf.CeilToInt(timer);
-                UpdateLoadingText($"Hold device steady\nCalibrating compass... {secondsLeft}s");
-
-                yield return null;
-            }
-
-            // Initialize compass heading for AR scene
-            GPSManager.Instance.InitializeARCompassHeading();
-            isCompassInitialized = true;
-
-            UpdateLoadingText("✅ Compass calibrated!");
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.1f);
         }
+
+        float avgHeading = AverageHeadings(headingSamples);
+
+        GPSManager.Instance.InitializeARCompassHeading(avgHeading);
+        isCompassInitialized = true;
+
+        UpdateLoadingText("✅ Compass calibrated!");
+        Debug.Log($"[ARLoading] Compass calibrated to {avgHeading:F1}° (from {headingSamples.Count} samples)");
+
+        yield return new WaitForSeconds(0.5f);
+    }
+    private float AverageHeadings(List<float> headings)
+    {
+        if (headings.Count == 0) return 0f;
+
+        float sumX = 0f;
+        float sumY = 0f;
+
+        foreach (float heading in headings)
+        {
+            float rad = heading * Mathf.Deg2Rad;
+            sumX += Mathf.Cos(rad);
+            sumY += Mathf.Sin(rad);
+        }
+
+        sumX /= headings.Count;
+        sumY /= headings.Count;
+
+        float avgHeading = Mathf.Atan2(sumY, sumX) * Mathf.Rad2Deg;
+        avgHeading = (avgHeading + 360f) % 360f;
+
+        return avgHeading;
     }
 
     private IEnumerator WaitForARManager()

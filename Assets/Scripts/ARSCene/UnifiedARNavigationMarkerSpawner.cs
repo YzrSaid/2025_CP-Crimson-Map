@@ -98,9 +98,10 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
     private void CalculateNorthCorrection()
     {
-        if (GPSManager.Instance == null || arCamera == null)
+        if (GPSManager.Instance == null)
         {
-            Debug.LogWarning("[MarkerSpawner] Cannot calculate north correction - missing references");
+            Debug.LogWarning("[MarkerSpawner] Cannot calculate north correction - GPSManager missing");
+            northCorrectionAngle = 0f;
             northCorrectionCalculated = false;
             return;
         }
@@ -108,35 +109,38 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         if (!GPSManager.Instance.IsARCompassInitialized())
         {
             Debug.LogWarning("[MarkerSpawner] AR compass not initialized, using default orientation");
+            northCorrectionAngle = 0f;
             northCorrectionCalculated = false;
             return;
         }
 
-        // Get the True North heading from when AR scene started
-        float trueNorthHeading = GPSManager.Instance.GetARSceneCompassHeading();
+        // Get the compass heading that was captured during AR initialization
+        float initialCompassHeading = GPSManager.Instance.GetARSceneCompassHeading();
 
-        // Get Unity's forward direction (where camera is facing in AR world)
-        Vector3 cameraForward = arCamera.transform.forward;
-
-        // Convert camera forward to compass heading (0-360 degrees)
-        // Unity: +Z is forward, +X is right
-        float unityForwardAngle = Mathf.Atan2(cameraForward.x, cameraForward.z) * Mathf.Rad2Deg;
-        unityForwardAngle = (unityForwardAngle + 360f) % 360f;
-
-        // Calculate correction: True North - Unity's forward
-        northCorrectionAngle = trueNorthHeading - unityForwardAngle;
-
-        // Normalize to -180 to 180 degrees for cleaner rotation
-        if (northCorrectionAngle > 180f) northCorrectionAngle -= 360f;
-        if (northCorrectionAngle < -180f) northCorrectionAngle += 360f;
+        // The correction angle is simply the initial heading
+        // This rotates markers so that North in the real world matches North in AR
+        northCorrectionAngle = initialCompassHeading;
 
         northCorrectionCalculated = true;
 
         Debug.Log($"[MarkerSpawner] North Correction Calculated:");
-        Debug.Log($"- True North Heading: {trueNorthHeading:F1}°");
-        Debug.Log($"- Unity Forward Angle: {unityForwardAngle:F1}°");
-        Debug.Log($"- Correction Angle: {northCorrectionAngle:F1}°");
+        Debug.Log($"- Initial Compass Heading: {initialCompassHeading:F1}°");
+        Debug.Log($"- North Correction Angle: {northCorrectionAngle:F1}°");
+        Debug.Log($"- When user was facing: {GetCardinalDirection(initialCompassHeading)}");
     }
+    private string GetCardinalDirection(float heading)
+    {
+        if (heading >= 337.5f || heading < 22.5f) return "North";
+        if (heading >= 22.5f && heading < 67.5f) return "North-East";
+        if (heading >= 67.5f && heading < 112.5f) return "East";
+        if (heading >= 112.5f && heading < 157.5f) return "South-East";
+        if (heading >= 157.5f && heading < 202.5f) return "South";
+        if (heading >= 202.5f && heading < 247.5f) return "South-West";
+        if (heading >= 247.5f && heading < 292.5f) return "West";
+        if (heading >= 292.5f && heading < 337.5f) return "North-West";
+        return "Unknown";
+    }
+
 
     public void MarkJourneyNodeAsPassed(string nodeId)
     {
@@ -235,7 +239,11 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
         if (northCorrectionCalculated)
         {
-            marker.transform.Rotate(0, northCorrectionAngle, 0, Space.World);
+            // Rotate the marker around the Y-axis (vertical) by the correction angle
+            // This aligns the marker's orientation with true geographic north
+            marker.transform.rotation = Quaternion.Euler(0, -northCorrectionAngle, 0);
+
+            Debug.Log($"[MarkerSpawner] Marker {node.name} rotated by {-northCorrectionAngle:F1}° for north correction");
         }
 
         string displayName = infra != null ? infra.name : node.name;

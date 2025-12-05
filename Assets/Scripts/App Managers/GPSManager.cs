@@ -65,10 +65,18 @@ public class GPSManager : MonoBehaviour
         LoadLockStateFromPlayerPrefs();
     }
 
-    public void InitializeARCompassHeading()
+    public void InitializeARCompassHeading(float? overrideHeading = null)
     {
-        if (IsCompassReady())
+        if (overrideHeading.HasValue)
         {
+            // Use the provided heading from calibration
+            arSceneCompassHeading = overrideHeading.Value;
+            arCompassInitialized = true;
+            Debug.Log($"[GPSManager] AR Scene Compass Initialized (Override): {arSceneCompassHeading}°");
+        }
+        else if (IsCompassReady())
+        {
+            // Use current heading
             arSceneCompassHeading = GetHeading();
             arCompassInitialized = true;
             Debug.Log($"[GPSManager] AR Scene Compass Initialized: {arSceneCompassHeading}°");
@@ -78,7 +86,6 @@ public class GPSManager : MonoBehaviour
             Debug.LogWarning("[GPSManager] Compass not ready for AR initialization");
         }
     }
-
     public float GetARSceneCompassHeading()
     {
         return arCompassInitialized ? arSceneCompassHeading : GetHeading();
