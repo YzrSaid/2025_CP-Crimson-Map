@@ -18621,8 +18621,8 @@ MonoBehaviour:
   gpsStrongImage: {fileID: 1404077187}
   gpsWeakImage: {fileID: 1546678739}
   gpsNoneImage: {fileID: 525399526}
-  strongGPSAccuracyThreshold: 10
-  weakGPSAccuracyThreshold: 15
+  strongGPSAccuracyThreshold: 5
+  weakGPSAccuracyThreshold: 10
   gpsCheckInterval: 2
   useDebugGPSStrength: 0
   debugGPSStrength: 0

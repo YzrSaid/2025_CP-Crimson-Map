@@ -50,7 +50,7 @@ public class DirectionDisplayManager : MonoBehaviour
     private Node currentDestinationNode;
 
     public bool enableKeyboardTesting = true;
-    public float autoProgressDistance = 5f;
+    public float autoProgressDistance = 10f;
 
     public float distanceUpdateInterval = 0.5f;
     private float lastDistanceUpdateTime = 0f;

@@ -38,8 +38,8 @@ public class UnifiedARManager : MonoBehaviour
     private bool recalibrationPanelShown = false;
 
     [Header("GPS Strength Thresholds")]
-    public float strongGPSAccuracyThreshold = 10f;
-    public float weakGPSAccuracyThreshold = 15f;
+    public float strongGPSAccuracyThreshold = 5f;
+    public float weakGPSAccuracyThreshold = 10f;
     public float gpsCheckInterval = 2f;
     private float lastGPSCheckTime = 0f;
 

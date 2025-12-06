@@ -984,7 +984,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &55266767
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1326,16 +1326,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 99593358}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2099970469}
+  m_Father: {fileID: 756213710}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 169.05, y: 291.30573}
+  m_AnchoredPosition: {x: 169.05, y: 102.045715}
   m_SizeDelta: {x: 338.11, y: 277.3888}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &99593360
@@ -2368,7 +2368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &181222519
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10402,6 +10402,7 @@ RectTransform:
   - {fileID: 391422555}
   - {fileID: 2119720164}
   - {fileID: 1136323683}
+  - {fileID: 99593359}
   m_Father: {fileID: 2099970469}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -24994,7 +24995,7 @@ MonoBehaviour:
   successAnimationDuration: 0.3
   successEaseType: 27
   lookaheadDistanceThreshold: 5
-  offRouteDistanceThreshold: 25
+  offRouteDistanceThreshold: 40
   destinationOvershootThreshold: 10
   maxLookaheadCount: 3
   offRoutePanel: {fileID: 1444396205}
@@ -25003,7 +25004,7 @@ MonoBehaviour:
   offRouteContinueButton: {fileID: 1845804710}
   offRouteBackground: {fileID: 959403723}
   enableKeyboardTesting: 1
-  autoProgressDistance: 5
+  autoProgressDistance: 10
   distanceUpdateInterval: 0.5
 --- !u!114 &1709089050
 MonoBehaviour:
@@ -25071,7 +25072,6 @@ MonoBehaviour:
   journeyMarkerPrefab: {fileID: 2395739616877220581, guid: 7e8f96e99d2342ca49a101c4b8d8e7d5, type: 3}
   startEndMarkerPrefab: {fileID: 2395739616877220581, guid: 73089d13ad9504e81bbdb2f03492a4ef, type: 3}
   journeyMarkerPassedPrefab: {fileID: 2395739616877220581, guid: 73089d13ad9504e81bbdb2f03492a4ef, type: 3}
-  testCompassHeadingDebug: {fileID: 0}
   arCamera: {fileID: 331264287}
   arRaycastManager: {fileID: 331264289}
   arPlaneManager: {fileID: 331264290}
@@ -25115,8 +25115,8 @@ MonoBehaviour:
   recalibrationBGPanel: {fileID: 959403723}
   recalibrationAnimDuration: 0.3
   recalibrationEaseType: 27
-  strongGPSAccuracyThreshold: 10
-  weakGPSAccuracyThreshold: 15
+  strongGPSAccuracyThreshold: 5
+  weakGPSAccuracyThreshold: 10
   gpsCheckInterval: 2
   useDebugGPSStrength: 0
   debugGPSStrength: 0
@@ -27796,7 +27796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1862824020
 RectTransform:
   m_ObjectHideFlags: 0
@@ -30213,7 +30213,6 @@ RectTransform:
   - {fileID: 1547090957}
   - {fileID: 1811880831}
   - {fileID: 738961601}
-  - {fileID: 99593359}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

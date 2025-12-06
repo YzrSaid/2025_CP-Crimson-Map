@@ -90,7 +90,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         {
             LoadNavigationData();
             groundPlaneY = 0f;
-            Debug.Log($"[MarkerSpawner] Ground Plane Y initialized to: {groundPlaneY}");
             StartCoroutine(InitializeMarkerSystem());
         }
     }
@@ -99,7 +98,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
     {
         if (GPSManager.Instance == null)
         {
-            Debug.LogWarning("[MarkerSpawner] Cannot calculate north correction - GPSManager missing");
             northCorrectionAngle = 0f;
             northCorrectionCalculated = false;
             return;
@@ -107,42 +105,16 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
         if (!GPSManager.Instance.IsCompassReady())
         {
-            Debug.LogWarning("[MarkerSpawner] Compass not ready, using default orientation");
             northCorrectionAngle = 0f;
             northCorrectionCalculated = false;
             return;
         }
 
-        // Get the compass heading at AR scene initialization
-        // This tells us which direction the device was facing when AR started
         float currentHeading = GPSManager.Instance.GetHeading();
 
-        // Store this as the north correction angle
-        // When AR starts facing East (90°), we need to rotate GPS coords by -90° 
-        // to align them with Unity's coordinate system
         northCorrectionAngle = currentHeading;
 
         northCorrectionCalculated = true;
-
-        Debug.Log($"[MarkerSpawner] ========== NORTH CORRECTION ==========");
-        Debug.Log($"[MarkerSpawner] Device Heading: {currentHeading:F1}°");
-        Debug.Log($"[MarkerSpawner] Device Facing: {GetCardinalDirection(currentHeading)}");
-        Debug.Log($"[MarkerSpawner] Correction Angle: {northCorrectionAngle:F1}°");
-        Debug.Log($"[MarkerSpawner] GPS offsets will be rotated by {-northCorrectionAngle:F1}°");
-        Debug.Log($"[MarkerSpawner] ====================================");
-    }
-
-    private string GetCardinalDirection(float heading)
-    {
-        if (heading >= 337.5f || heading < 22.5f) return "North";
-        if (heading >= 22.5f && heading < 67.5f) return "North-East";
-        if (heading >= 67.5f && heading < 112.5f) return "East";
-        if (heading >= 112.5f && heading < 157.5f) return "South-East";
-        if (heading >= 157.5f && heading < 202.5f) return "South";
-        if (heading >= 202.5f && heading < 247.5f) return "South-West";
-        if (heading >= 247.5f && heading < 292.5f) return "West";
-        if (heading >= 292.5f && heading < 337.5f) return "North-West";
-        return "Unknown";
     }
 
     public void MarkJourneyNodeAsPassed(string nodeId)
