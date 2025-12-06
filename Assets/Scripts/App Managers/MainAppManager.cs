@@ -36,8 +36,8 @@ public class MainAppManager : MonoBehaviour
     public GameObject gpsNoneImage;
 
     [Header("GPS Strength Thresholds")]
-    public float strongGPSAccuracyThreshold = 20f;
-    public float weakGPSAccuracyThreshold = 50f;
+    public float strongGPSAccuracyThreshold = 10f;
+    public float weakGPSAccuracyThreshold = 15f;
     public float gpsCheckInterval = 2f;
     private float lastGPSCheckTime = 0f;
 

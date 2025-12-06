@@ -366,7 +366,7 @@ public class ARSceneQRRecalibration : MonoBehaviour
 
         if (foundNode)
         {
-            if (scannedNodeInfo.type == "infrastructure")
+            if (scannedNodeInfo.type == "infrastructure" || scannedNodeInfo.type == "intermediate")
             {
                 ShowConfirmation();
             }

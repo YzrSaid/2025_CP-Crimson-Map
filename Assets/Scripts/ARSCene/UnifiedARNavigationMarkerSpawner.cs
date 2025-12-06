@@ -29,8 +29,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
     [Header("Marker Settings")]
     public float markerHeightOffset = 0.1f;
-    public float maxVisibleDistance = 100f;
-    public float minMarkerDistance = 2f;
+    public float maxVisibleDistance = 200f;
 
     [Header("Journey Marker Animation")]
     public float pulsateSpeed = 2f;
@@ -106,28 +105,33 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
             return;
         }
 
-        if (!GPSManager.Instance.IsARCompassInitialized())
+        if (!GPSManager.Instance.IsCompassReady())
         {
-            Debug.LogWarning("[MarkerSpawner] AR compass not initialized, using default orientation");
+            Debug.LogWarning("[MarkerSpawner] Compass not ready, using default orientation");
             northCorrectionAngle = 0f;
             northCorrectionCalculated = false;
             return;
         }
 
-        // Get the compass heading that was captured during AR initialization
-        float initialCompassHeading = GPSManager.Instance.GetARSceneCompassHeading();
+        // Get the compass heading at AR scene initialization
+        // This tells us which direction the device was facing when AR started
+        float currentHeading = GPSManager.Instance.GetHeading();
 
-        // The correction angle is simply the initial heading
-        // This rotates markers so that North in the real world matches North in AR
-        northCorrectionAngle = initialCompassHeading;
+        // Store this as the north correction angle
+        // When AR starts facing East (90°), we need to rotate GPS coords by -90° 
+        // to align them with Unity's coordinate system
+        northCorrectionAngle = currentHeading;
 
         northCorrectionCalculated = true;
 
-        Debug.Log($"[MarkerSpawner] North Correction Calculated:");
-        Debug.Log($"- Initial Compass Heading: {initialCompassHeading:F1}°");
-        Debug.Log($"- North Correction Angle: {northCorrectionAngle:F1}°");
-        Debug.Log($"- When user was facing: {GetCardinalDirection(initialCompassHeading)}");
+        Debug.Log($"[MarkerSpawner] ========== NORTH CORRECTION ==========");
+        Debug.Log($"[MarkerSpawner] Device Heading: {currentHeading:F1}°");
+        Debug.Log($"[MarkerSpawner] Device Facing: {GetCardinalDirection(currentHeading)}");
+        Debug.Log($"[MarkerSpawner] Correction Angle: {northCorrectionAngle:F1}°");
+        Debug.Log($"[MarkerSpawner] GPS offsets will be rotated by {-northCorrectionAngle:F1}°");
+        Debug.Log($"[MarkerSpawner] ====================================");
     }
+
     private string GetCardinalDirection(float heading)
     {
         if (heading >= 337.5f || heading < 22.5f) return "North";
@@ -140,7 +144,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         if (heading >= 292.5f && heading < 337.5f) return "North-West";
         return "Unknown";
     }
-
 
     public void MarkJourneyNodeAsPassed(string nodeId)
     {
@@ -158,7 +161,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
                 Node node = allNodes.FirstOrDefault(n => n.node_id == nodeId);
                 if (node != null)
                 {
-                    GameObject newMarker = CreateMarkerForNode(node, true); 
+                    GameObject newMarker = CreateMarkerForNode(node, true);
                     if (newMarker != null)
                     {
                         spawnedMarkers[nodeId] = newMarker;
@@ -168,6 +171,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
             }
         }
     }
+
     private GameObject CreateMarkerForNode(Node node, bool isPassed = false)
     {
         GameObject prefabToUse = null;
@@ -232,12 +236,8 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
         GameObject marker = Instantiate(prefabToUse, worldPos, Quaternion.identity);
 
-        if (northCorrectionCalculated)
-        {
-            marker.transform.rotation = Quaternion.Euler(0, -northCorrectionAngle, 0);
-
-            Debug.Log($"[MarkerSpawner] Marker {node.name} rotated by {-northCorrectionAngle:F1}° for north correction");
-        }
+        // Don't rotate markers individually - the GPS-to-world conversion already handles north alignment
+        // Markers will face the camera in UpdateMarkerVisibility()
 
         string displayName = infra != null ? infra.name : node.name;
         if (node.node_id == fromNodeId)
@@ -257,7 +257,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
         return marker;
     }
-
 
     private void LoadNavigationData()
     {
@@ -693,8 +692,25 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         float deltaLng = longitude - referenceGPS.y;
 
         float meterPerDegree = 111000f;
-        float x = deltaLng * meterPerDegree * Mathf.Cos(referenceGPS.x * Mathf.Deg2Rad);
-        float z = deltaLat * meterPerDegree;
+
+        float gpsNorth = deltaLat * meterPerDegree; 
+        float gpsEast = deltaLng * meterPerDegree * Mathf.Cos(referenceGPS.x * Mathf.Deg2Rad);  
+
+        float x = gpsEast;
+        float z = gpsNorth;
+
+        if (northCorrectionCalculated && Mathf.Abs(northCorrectionAngle) > 0.01f)
+        {
+            float angleRad = northCorrectionAngle * Mathf.Deg2Rad;
+            float cosAngle = Mathf.Cos(angleRad);
+            float sinAngle = Mathf.Sin(angleRad);
+
+            float rotatedX = gpsEast * cosAngle - gpsNorth * sinAngle;
+            float rotatedZ = gpsEast * sinAngle + gpsNorth * cosAngle;
+
+            x = rotatedX;
+            z = rotatedZ;
+        }
 
         Vector3 worldPos = referenceARWorldPosition;
         worldPos.x += x;

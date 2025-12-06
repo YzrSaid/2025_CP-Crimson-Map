@@ -18359,7 +18359,7 @@ MonoBehaviour:
   strongGPSAccuracyThreshold: 10
   weakGPSAccuracyThreshold: 15
   gpsCheckInterval: 2
-  useDebugGPSStrength: 1
+  useDebugGPSStrength: 0
   debugGPSStrength: 0
 --- !u!114 &1465186281
 MonoBehaviour:
@@ -18410,8 +18410,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useMockLocationInEditor: 1
-  enableCompassDebug: 0
+  strongGPSThreshold: 10
+  weakGPSThreshold: 15
   qrCalibrationSmoothTime: 7
+  enableCompassDebug: 0
 --- !u!114 &1465186286
 MonoBehaviour:
   m_ObjectHideFlags: 0

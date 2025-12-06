@@ -14,16 +14,15 @@ public class UnifiedARManager : MonoBehaviour
     [SerializeField] private string mainSceneName = "MainAppScene";
     private bool isExitingAR = false;
 
+    [Header("GPS Debug Display")]
+    public TextMeshProUGUI gpsDebugText;
+
     [Header("AR Components")]
     public XROrigin xrOrigin;
     public ARRaycastManager arRaycastManager;
     public ARPlaneManager arPlaneManager;
     public ARCameraManager arCameraManager;
     public Camera arCamera;
-
-    [Header("Tracking Quality")]
-    private TrackingState lastTrackingState = TrackingState.None;
-    public bool requireGoodTracking = true;
 
     [Header("GPS Strength Indicators")]
     public GameObject gpsStrongImage;
@@ -546,6 +545,7 @@ public class UnifiedARManager : MonoBehaviour
         {
             currentGPSAccuracy = -1f;
             UpdateGPSStrengthIndicator(GPSStrength.None);
+            UpdateGPSDebugText(GPSStrength.None, "No GPS Signal");
             return;
         }
 
@@ -565,36 +565,93 @@ public class UnifiedARManager : MonoBehaviour
                     break;
             }
             UpdateGPSStrengthIndicator(debugGPSStrength);
+            UpdateGPSDebugText(debugGPSStrength, "[DEBUG MODE]");
         }
         else
         {
-            currentGPSAccuracy = 10f;
-            UpdateGPSStrengthIndicator(GPSStrength.Strong);
-        }
-#else
-        if (Input.location.status == LocationServiceStatus.Running)
-        {
-            currentGPSAccuracy = Input.location.lastData.horizontalAccuracy;
-
-            if (currentGPSAccuracy <= strongGPSAccuracyThreshold)
+            currentGPSAccuracy = GPSManager.Instance.GetGPSAccuracy();
+            if (currentGPSAccuracy < 0)
+            {
+                UpdateGPSStrengthIndicator(GPSStrength.None);
+                UpdateGPSDebugText(GPSStrength.None, "GPS Error");
+            }
+            else if (currentGPSAccuracy <= strongGPSAccuracyThreshold)
             {
                 UpdateGPSStrengthIndicator(GPSStrength.Strong);
+                UpdateGPSDebugText(GPSStrength.Strong, "Editor GPS");
             }
             else if (currentGPSAccuracy <= weakGPSAccuracyThreshold)
             {
                 UpdateGPSStrengthIndicator(GPSStrength.Weak);
+                UpdateGPSDebugText(GPSStrength.Weak, "Editor GPS");
             }
             else
             {
                 UpdateGPSStrengthIndicator(GPSStrength.None);
+                UpdateGPSDebugText(GPSStrength.None, "Editor GPS");
             }
+        }
+#else
+    // THIS IS THE CODE THAT RUNS ON YOUR PHONE
+    if (Input.location.status == LocationServiceStatus.Running)
+    {
+        currentGPSAccuracy = Input.location.lastData.horizontalAccuracy;
+
+        if (currentGPSAccuracy <= strongGPSAccuracyThreshold)
+        {
+            UpdateGPSStrengthIndicator(GPSStrength.Strong);
+            UpdateGPSDebugText(GPSStrength.Strong, "Device GPS");
+        }
+        else if (currentGPSAccuracy <= weakGPSAccuracyThreshold)
+        {
+            UpdateGPSStrengthIndicator(GPSStrength.Weak);
+            UpdateGPSDebugText(GPSStrength.Weak, "Device GPS");
         }
         else
         {
-            currentGPSAccuracy = -1f;
             UpdateGPSStrengthIndicator(GPSStrength.None);
+            UpdateGPSDebugText(GPSStrength.None, "Device GPS");
         }
+    }
+    else
+    {
+        currentGPSAccuracy = -1f;
+        UpdateGPSStrengthIndicator(GPSStrength.None);
+        UpdateGPSDebugText(GPSStrength.None, $"GPS Status: {Input.location.status}");
+    }
 #endif
+    }
+    private void UpdateGPSDebugText(GPSStrength strength, string source)
+    {
+        if (gpsDebugText == null) return;
+
+        string strengthColor = "";
+        string strengthText = "";
+
+        switch (strength)
+        {
+            case GPSStrength.Strong:
+                strengthColor = "<color=green>STRONG ✅</color>";
+                strengthText = "Should be GREEN";
+                break;
+            case GPSStrength.Weak:
+                strengthColor = "<color=yellow>WEAK ⚠️</color>";
+                strengthText = "Should be YELLOW";
+                break;
+            case GPSStrength.None:
+                strengthColor = "<color=red>NONE/POOR ❌</color>";
+                strengthText = "Should be RED";
+                break;
+        }
+
+        gpsDebugText.text = $"<b>GPS DEBUG INFO</b>\n" +
+                            $"Accuracy: <b>{currentGPSAccuracy:F2}m</b>\n" +
+                            $"Strength: {strengthColor}\n" +
+                            $"Expected: {strengthText}\n" +
+                            $"Strong Threshold: ≤{strongGPSAccuracyThreshold}m\n" +
+                            $"Weak Threshold: ≤{weakGPSAccuracyThreshold}m\n" +
+                            $"Source: {source}\n" +
+                            $"Status: {Input.location.status}";
     }
 
     private void UpdateGPSStrengthIndicator(GPSStrength strength)
