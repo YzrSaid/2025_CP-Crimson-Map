@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using DG.Tweening;
 
 public class PathfindingController : MonoBehaviour
 {
@@ -28,6 +29,9 @@ public class PathfindingController : MonoBehaviour
     public TextMeshProUGUI confirmFromText;
     public TextMeshProUGUI confirmToText;
     public TextMeshProUGUI confirmErrorText;
+    public float confirmationPanelAnimDuration = 0.3f;
+    public Ease confirmationPanelEaseType = Ease.OutBack;
+    private Vector3 confirmationPanelOriginalScale;
     public Button confirmButton;
     public Button cancelButton;
 
@@ -40,6 +44,9 @@ public class PathfindingController : MonoBehaviour
     [Header("Result Display")]
     public GameObject resultPanel;
     public GameObject destinationPanel;
+    public float resultPanelAnimDuration = 0.3f;
+    public Ease resultPanelEaseType = Ease.OutBack;
+    private Vector3 resultPanelOriginalScale;
     public TextMeshProUGUI fromText;
     public TextMeshProUGUI toText;
 
@@ -91,16 +98,6 @@ public class PathfindingController : MonoBehaviour
             findPathButton.onClick.AddListener(OnFindPathClicked);
         }
 
-        if (confirmButton != null)
-        {
-            confirmButton.onClick.AddListener(OnConfirmClicked);
-        }
-
-        if (cancelButton != null)
-        {
-            cancelButton.onClick.AddListener(OnCancelClicked);
-        }
-
         if (toDropdown != null)
         {
             toDropdown.onValueChanged.AddListener(OnToDropdownChanged);
@@ -132,19 +129,9 @@ public class PathfindingController : MonoBehaviour
             conflictCancelButton.onClick.AddListener(OnLocationConflictCancel);
         }
 
-        if (resultPanel != null)
-        {
-            resultPanel.SetActive(false);
-        }
-
         if (destinationPanel != null)
         {
             destinationPanel.SetActive(false);
-        }
-
-        if (confirmationPanel != null)
-        {
-            confirmationPanel.SetActive(false);
         }
 
         if (locationConflictPanel != null)
@@ -173,6 +160,42 @@ public class PathfindingController : MonoBehaviour
         if (gpsManager == null)
         {
             gpsManager = GPSManager.Instance;
+        }
+        InitializePanels();
+    }
+    private void InitializePanels()
+    {
+        // For Confirmation Panel
+        if (confirmationPanel != null)
+        {
+            confirmationPanelOriginalScale = confirmationPanel.transform.localScale;
+            confirmationPanel.SetActive(false);
+        }
+
+        if (confirmationPanel != null)
+        {
+            confirmationPanel.SetActive(false);
+        }
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.AddListener(OnConfirmClicked);
+        }
+
+        if (cancelButton != null)
+        {
+            cancelButton.onClick.AddListener(OnCancelClicked);
+        }
+
+        // For Result Panel
+        if (resultPanel != null)
+        {
+            resultPanelOriginalScale = resultPanel.transform.localScale;
+            resultPanel.SetActive(false);
+        }
+
+        if (resultPanel != null)
+        {
+            resultPanel.SetActive(false);
         }
     }
 
@@ -806,8 +829,12 @@ public class PathfindingController : MonoBehaviour
         {
             confirmationPanel.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "Confirm Location";
             confirmButton.gameObject.SetActive(true);
-            cancelButton.GetComponentInChildren<TextMeshProUGUI>().text = "Cancel";
             confirmationPanel.SetActive(true);
+            confirmationPanel.transform.localScale = Vector3.zero;
+            confirmationPanel.transform.DOScale(confirmationPanelOriginalScale, confirmationPanelAnimDuration)
+                .SetEase(confirmationPanelEaseType)
+                .SetUpdate(true);
+            cancelButton.GetComponentInChildren<TextMeshProUGUI>().text = "Cancel";
             confirmErrorText.gameObject.SetActive(false);
             if (BGPanel != null)
             {
@@ -848,6 +875,10 @@ public class PathfindingController : MonoBehaviour
             {
                 BGPanel.SetActive(true);
             }
+            confirmationPanel.transform.localScale = Vector3.zero;
+            confirmationPanel.transform.DOScale(confirmationPanelOriginalScale, confirmationPanelAnimDuration)
+                .SetEase(confirmationPanelEaseType)
+                .SetUpdate(true);
             confirmButton.gameObject.SetActive(false);
             confirmErrorText.gameObject.SetActive(true);
         }
@@ -886,14 +917,15 @@ public class PathfindingController : MonoBehaviour
 
         if (confirmationPanel != null)
         {
-            confirmationPanel.SetActive(false);
-        }
 
-        if (BGPanel != null)
-        {
-            BGPanel.SetActive(false);
+            confirmationPanel.transform.DOScale(Vector3.zero, confirmationPanelAnimDuration)
+                .SetEase(Ease.InBack)
+                .SetUpdate(true)
+                .OnComplete(() =>
+                {
+                    confirmationPanel.SetActive(false);
+                });
         }
-
         StartCoroutine(FindAndDisplayPaths(fromNodeId, toNodeId));
     }
 
@@ -901,11 +933,18 @@ public class PathfindingController : MonoBehaviour
     {
         if (confirmationPanel != null)
         {
-            confirmationPanel.SetActive(false);
-        }
-        if (BGPanel != null)
-        {
-            BGPanel.SetActive(false);
+
+            confirmationPanel.transform.DOScale(Vector3.zero, confirmationPanelAnimDuration)
+                .SetEase(Ease.InBack)
+                .SetUpdate(true)
+                .OnComplete(() =>
+                {
+                    confirmationPanel.SetActive(false);
+                    if (BGPanel != null)
+                    {
+                        BGPanel.SetActive(false);
+                    }
+                });
         }
     }
 
@@ -1046,11 +1085,12 @@ public class PathfindingController : MonoBehaviour
         if (resultPanel != null && destinationPanel != null)
         {
             resultPanel.SetActive(true);
+            resultPanel.transform.localScale = Vector3.zero;
+
+            resultPanel.transform.DOScale(resultPanelOriginalScale, resultPanelAnimDuration)
+                .SetEase(resultPanelEaseType)
+                .SetUpdate(true);
             destinationPanel.SetActive(true);
-            if (BGPanel != null)
-            {
-                BGPanel.SetActive(true);
-            }
         }
 
         ClearRouteItems();
@@ -1320,17 +1360,22 @@ public class PathfindingController : MonoBehaviour
     {
         if (resultPanel != null)
         {
-            resultPanel.SetActive(false);
-        }
+            resultPanel.transform.DOScale(Vector3.zero, resultPanelAnimDuration)
+            .SetEase(Ease.InBack)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                resultPanel.SetActive(false);
+                if (destinationPanel != null)
+                {
+                    destinationPanel.SetActive(false);
+                }
 
-        if (destinationPanel != null)
-        {
-            destinationPanel.SetActive(false);
-        }
-
-        if (BGPanel != null)
-        {
-            BGPanel.SetActive(false);
+                if (BGPanel != null)
+                {
+                    BGPanel.SetActive(false);
+                }
+            });
         }
 
         ClearRouteItems();

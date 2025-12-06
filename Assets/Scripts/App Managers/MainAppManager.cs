@@ -27,6 +27,15 @@ public class MainAppManager : MonoBehaviour
     public GameObject explorePanel;
     public GameObject settingsPanel;
 
+    [Header("Home Page UI")]
+    public GameObject panelBG1;
+    public GameObject panelBG2;
+    public GameObject confirmationPanel;
+    public GameObject resultPanel;
+    public GameObject downloadPanel;
+    public GameObject aboutPanel;
+    public GameObject chooseAMapPanel;
+
     [Header("Lock Location Panel")]
     public GameObject lockPanel;
 
@@ -52,6 +61,39 @@ public class MainAppManager : MonoBehaviour
         Strong,
         Weak,
         None
+    }
+
+    private void HideAllHomePageRelatedPanels()
+    {
+
+        if (panelBG1 != null)
+        {
+            panelBG1.SetActive(false);
+        }
+        if (panelBG2 != null)
+        {
+            panelBG2.SetActive(false);
+        }
+        if (confirmationPanel != null)
+        {
+            confirmationPanel.SetActive(false);
+        }
+        if (resultPanel != null)
+        {
+            resultPanel.SetActive(false);
+        }
+        if (downloadPanel != null)
+        {
+            downloadPanel.SetActive(false);
+        }
+        if (aboutPanel != null)
+        {
+            aboutPanel.SetActive(false);
+        }
+        if (chooseAMapPanel != null)
+        {
+            chooseAMapPanel.SetActive(false);
+        }
     }
 
     private void Awake()
@@ -124,6 +166,8 @@ public class MainAppManager : MonoBehaviour
             lockPanel.SetActive(false);
         }
 
+        HideAllHomePageRelatedPanels();
+
     }
 
     void OnSettingsButtonClicked()
@@ -144,6 +188,7 @@ public class MainAppManager : MonoBehaviour
         {
             lockPanel.SetActive(false);
         }
+        HideAllHomePageRelatedPanels();
 
     }
 
