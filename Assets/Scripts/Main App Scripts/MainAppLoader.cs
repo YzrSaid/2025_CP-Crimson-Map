@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEditor.PackageManager;
+using DG.Tweening;
 
 public class MainAppLoader : MonoBehaviour
 {
@@ -21,7 +23,11 @@ public class MainAppLoader : MonoBehaviour
     public GameObject mainAppUI;
 
     [Header("Error Handling")]
+    public GameObject errorBGPanel;
     public GameObject errorContainer;
+    public float errorContainerPanelAnimDuration = 0.3f;
+    public Ease errorContainerPanelEaseType = Ease.OutBack;
+    private Vector3 errorContainerPanelOriginalScale;
     public Button retryButton;
     public TextMeshProUGUI errorText;
     public TextMeshProUGUI retryButtonText;
@@ -34,13 +40,14 @@ public class MainAppLoader : MonoBehaviour
     void Start()
     {
         bool skipFullInitialization = GlobalManager.ShouldSkipFullInitialization();
-        
+
         if (skipFullInitialization)
         {
             if (loadingPanel != null) loadingPanel.SetActive(false);
             if (mainAppUI != null) mainAppUI.SetActive(true);
             if (errorContainer != null) errorContainer.SetActive(false);
-            
+            if (errorBGPanel != null) errorBGPanel.SetActive(false);
+
             isInitialized = true;
             return;
         }
@@ -48,6 +55,7 @@ public class MainAppLoader : MonoBehaviour
         if (loadingPanel != null) loadingPanel.SetActive(true);
         if (mainAppUI != null) mainAppUI.SetActive(false);
         if (errorContainer != null) errorContainer.SetActive(false);
+        if (errorBGPanel != null) errorBGPanel.SetActive(false);
 
         if (retryButton != null)
         {
@@ -61,7 +69,15 @@ public class MainAppLoader : MonoBehaviour
     {
         hasError = false;
         hasOfflineData = false;
-        if (errorContainer != null) errorContainer.SetActive(false);
+
+
+        if (errorContainer != null)
+        {
+            errorContainerPanelOriginalScale = errorContainer.transform.localScale;
+            errorContainer.SetActive(false);
+        }
+
+        if (errorBGPanel != null) errorBGPanel.SetActive(false);
 
         UpdateLoadingUI("Starting app...", 0.1f);
         yield return new WaitForSeconds(0.5f);
@@ -80,7 +96,7 @@ public class MainAppLoader : MonoBehaviour
             ShowError("Failed to initialize system. Please restart the app.", true);
             yield break;
         }
-        
+
         if (!GlobalManager.Instance.onboardingComplete)
         {
             SceneManager.LoadScene("OnboardingScreensScene");
@@ -93,19 +109,19 @@ public class MainAppLoader : MonoBehaviour
         yield return StartCoroutine(EnsureManagersExist());
 
         bool hasInternet = Application.internetReachability != NetworkReachability.NotReachable;
-        
+
         if (!hasInternet)
         {
             UpdateLoadingUI("No internet connection...", 0.3f);
             yield return new WaitForSeconds(0.5f);
-            
+
             hasOfflineData = CheckForOfflineData();
-            
+
             if (hasOfflineData)
             {
                 UpdateLoadingUI("Loading offline data...", 0.5f);
                 yield return StartCoroutine(LoadFromOfflineData());
-                
+
                 if (GlobalManager.Instance != null && GlobalManager.Instance.availableMaps != null && GlobalManager.Instance.availableMaps.Count > 0)
                 {
                     ShowOfflineWarning();
@@ -135,7 +151,7 @@ public class MainAppLoader : MonoBehaviour
         {
             UpdateLoadingUI("Map ready...", 0.35f);
         }
-        
+
         yield return new WaitForSeconds(0.3f);
 
         UpdateLoadingUI("Setting up data systems...", 0.4f);
@@ -167,25 +183,25 @@ public class MainAppLoader : MonoBehaviour
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
                 GlobalManager.Instance.OnDataInitializationComplete -= onComplete;
-                
+
                 hasOfflineData = CheckForOfflineData();
-                
+
                 if (hasOfflineData)
                 {
                     UpdateLoadingUI("Internet lost. Loading offline data...", 0.5f);
                     yield return StartCoroutine(LoadFromOfflineData());
-                    
+
                     if (GlobalManager.Instance.availableMaps != null && GlobalManager.Instance.availableMaps.Count > 0)
                     {
                         ShowOfflineWarning();
                         yield break;
                     }
                 }
-                
+
                 ShowError("Internet connection lost during loading. Please check your connection and retry.", false);
                 yield break;
             }
-            
+
             initWaitTime += Time.deltaTime;
 
             float timeProgress = initWaitTime / maxInitWaitTime;
@@ -219,13 +235,13 @@ public class MainAppLoader : MonoBehaviour
             ShowError("Data initialization timed out. Check your internet connection.", false);
             yield break;
         }
-        
+
         if (GlobalManager.Instance.availableMaps == null || GlobalManager.Instance.availableMaps.Count == 0)
         {
             ShowError("Failed to load map data from Firebase. Check your internet connection.", false);
             yield break;
         }
-        
+
         SaveMapIdsToPlayerPrefs(GlobalManager.Instance.availableMaps);
 
         UpdateLoadingUI("Finalizing...", 0.95f);
@@ -243,25 +259,25 @@ public class MainAppLoader : MonoBehaviour
     private bool CheckForOfflineData()
     {
         bool hasJsonData = false;
-        
+
         if (JSONFileManager.Instance != null)
         {
             string mapsJson = JSONFileManager.Instance.ReadJSONFile("maps.json");
-            
+
             if (!string.IsNullOrEmpty(mapsJson) && mapsJson.Trim() != "[]")
             {
                 hasJsonData = true;
             }
-            
+
             if (hasJsonData)
             {
-                string[] requiredFiles = { 
-                    "categories.json", 
-                    "infrastructure.json", 
+                string[] requiredFiles = {
+                    "categories.json",
+                    "infrastructure.json",
                     "campus.json",
                     "indoor.json"
                 };
-                
+
                 foreach (string file in requiredFiles)
                 {
                     string content = JSONFileManager.Instance.ReadJSONFile(file);
@@ -273,10 +289,10 @@ public class MainAppLoader : MonoBehaviour
                 }
             }
         }
-        
+
         return hasJsonData;
     }
-    
+
     private IEnumerator LoadFromOfflineData()
     {
         float waitTime = 0f;
@@ -285,12 +301,12 @@ public class MainAppLoader : MonoBehaviour
             waitTime += Time.deltaTime;
             yield return null;
         }
-        
+
         if (GlobalManager.Instance == null)
         {
             yield break;
         }
-        
+
         if (JSONFileManager.Instance != null)
         {
             string mapsJson = JSONFileManager.Instance.ReadJSONFile("maps.json");
@@ -303,7 +319,7 @@ public class MainAppLoader : MonoBehaviour
                     {
                         GlobalManager.Instance.availableMaps = mapsArray;
                         GlobalManager.Instance.isDataInitialized = true;
-                        
+
                         GlobalManager.Instance.UpdateCurrentMapVersions();
                     }
                 }
@@ -312,10 +328,10 @@ public class MainAppLoader : MonoBehaviour
                 }
             }
         }
-        
+
         yield return new WaitForSeconds(0.5f);
     }
-    
+
     private IEnumerator EnsureManagersExist()
     {
         if (JSONFileManager.Instance == null)
@@ -323,34 +339,34 @@ public class MainAppLoader : MonoBehaviour
             GameObject jsonManager = new GameObject("JSONFileManager");
             jsonManager.AddComponent<JSONFileManager>();
             DontDestroyOnLoad(jsonManager);
-            
+
             yield return new WaitUntil(() => JSONFileManager.Instance != null);
         }
-        
+
         bool jsonInitComplete = false;
         JSONFileManager.Instance.InitializeJSONFiles(() => jsonInitComplete = true);
         yield return new WaitUntil(() => jsonInitComplete);
-        
+
         if (FirestoreManager.Instance == null)
         {
             GameObject firestoreManager = new GameObject("FirestoreManager");
             firestoreManager.AddComponent<FirestoreManager>();
             DontDestroyOnLoad(firestoreManager);
-            
+
             yield return new WaitUntil(() => FirestoreManager.Instance != null);
         }
     }
-    
+
     private void SaveMapIdsToPlayerPrefs(List<MapInfo> maps)
     {
         if (maps == null || maps.Count == 0) return;
-        
+
         List<string> mapIds = new List<string>();
         foreach (MapInfo map in maps)
         {
             mapIds.Add(map.map_id);
         }
-        
+
         PlayerPrefs.SetString("FetchedMapIds", string.Join(",", mapIds));
         PlayerPrefs.Save();
     }
@@ -371,16 +387,26 @@ public class MainAppLoader : MonoBehaviour
     {
         hasError = true;
 
-        if (errorContainer != null)
-            errorContainer.SetActive(true);
+        if (errorBGPanel != null)
+            errorBGPanel.SetActive(true);
 
-        if (errorText != null)
+        if (errorContainer != null)
+        {
+            errorContainer.SetActive(true);
+            errorContainer.transform.localScale = Vector3.zero;
+
+            errorContainer.transform.DOScale(errorContainerPanelOriginalScale, errorContainerPanelAnimDuration)
+                .SetEase(errorContainerPanelEaseType)
+                .SetUpdate(true);
+        }
+
+        if (errorText != null) 
             errorText.text = message;
 
         if (retryButton != null)
         {
             retryButton.gameObject.SetActive(!showRestartMessage);
-            
+
             if (retryButtonText != null)
             {
                 retryButtonText.text = "Retry";
@@ -392,7 +418,7 @@ public class MainAppLoader : MonoBehaviour
         if (loadingText != null)
             loadingText.text = showRestartMessage ? "Please restart the app" : "Tap retry to try again";
     }
-    
+
     private void ShowOfflineWarning()
     {
         hasError = true;
@@ -400,13 +426,16 @@ public class MainAppLoader : MonoBehaviour
         if (errorContainer != null)
             errorContainer.SetActive(true);
 
+        if (errorBGPanel != null)
+            errorBGPanel.SetActive(true);
+
         if (errorText != null)
             errorText.text = "You have no Internet Connection but saved data is available. This may not be the latest data. Proceed with caution.";
 
-        if (retryButton != null)
+        if (retryButton != null)    
         {
             retryButton.gameObject.SetActive(true);
-            
+
             if (retryButtonText != null)
             {
                 retryButtonText.text = "Confirm";
@@ -425,13 +454,14 @@ public class MainAppLoader : MonoBehaviour
         {
             return;
         }
-        
+
         if (hasOfflineData && retryButtonText != null && retryButtonText.text == "Confirm")
         {
             if (loadingPanel != null) loadingPanel.SetActive(false);
             if (errorContainer != null) errorContainer.SetActive(false);
+            if (errorBGPanel != null) errorBGPanel.SetActive(false);
             if (mainAppUI != null) mainAppUI.SetActive(true);
-            
+
             isInitialized = true;
             hasError = false;
             return;
@@ -440,17 +470,18 @@ public class MainAppLoader : MonoBehaviour
         isInitialized = false;
         hasError = false;
         hasOfflineData = false;
-        
+
         if (loadingPanel != null) loadingPanel.SetActive(true);
         if (errorContainer != null) errorContainer.SetActive(false);
+        if (errorBGPanel != null) errorBGPanel.SetActive(false);
         if (loadingBar != null) loadingBar.gameObject.SetActive(true);
         if (progressText != null) progressText.gameObject.SetActive(true);
-        
+
         if (retryButtonText != null)
         {
             retryButtonText.text = "Retry";
         }
-        
+
         StopAllCoroutines();
         StartCoroutine(InitializeApp());
     }

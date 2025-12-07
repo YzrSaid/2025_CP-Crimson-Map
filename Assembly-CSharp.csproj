@@ -363,6 +363,7 @@
     <Compile Include="Assets/Scripts/ARSCene/ARUIManager.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/TileJsonData.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/MapOptions.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/AppVersionDisplay.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/IObservable.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/MapCoordinateSystem.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/AbstractEditorLocationProvider.cs" />
