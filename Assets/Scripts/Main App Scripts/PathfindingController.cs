@@ -24,6 +24,17 @@ public class PathfindingController : MonoBehaviour
     public Button lockButton;
     public Button unlockButton;
 
+    [Header("GPS Unavailable Panel")]
+    public GameObject gpsUnavailablePanel;
+    public GameObject gpsUnavailableBGPanel;
+    public float gpsUnavailablePanelAnimDuration = 0.3f;
+    public Ease gpsUnavailablePanelEaseType = Ease.OutBack;
+    private Vector3 gpsUnavailablePanelOriginalScale;
+    public Button gpsUnavailableOkButton;
+    public float gpsUnavailableDelay = 40f;
+    private Coroutine gpsUnavailableCoroutine;
+    private bool gpsUnavailablePanelShown = false;
+
     [Header("Confirmation Panel")]
     public GameObject confirmationPanel;
     public TextMeshProUGUI confirmFromText;
@@ -67,7 +78,7 @@ public class PathfindingController : MonoBehaviour
 
     [Header("GPS Settings")]
     public bool useGPSForFromLocation = true;
-    public float nearestNodeSearchRadius = 500f;
+    public float nearestNodeSearchRadius = 50f;
     public bool autoUpdateGPSLocation = true;
     public float gpsUpdateInterval = 5f;
     public float qrConflictThresholdMeters = 100f;
@@ -83,6 +94,7 @@ public class PathfindingController : MonoBehaviour
     private bool hasShownConflictPanel = false;
     private float lastGPSUpdateTime;
     private bool nodesLoaded = false;
+    private bool lastGPSWasAvailable = true;
 
     private string currentMapId;
     private List<string> currentCampusIds;
@@ -129,6 +141,11 @@ public class PathfindingController : MonoBehaviour
             conflictCancelButton.onClick.AddListener(OnLocationConflictCancel);
         }
 
+        if (gpsUnavailableOkButton != null)
+        {
+            gpsUnavailableOkButton.onClick.AddListener(OnGPSUnavailableOkClicked);
+        }
+
         if (destinationPanel != null)
         {
             destinationPanel.SetActive(false);
@@ -171,11 +188,6 @@ public class PathfindingController : MonoBehaviour
             confirmationPanelOriginalScale = confirmationPanel.transform.localScale;
             confirmationPanel.SetActive(false);
         }
-
-        if (confirmationPanel != null)
-        {
-            confirmationPanel.SetActive(false);
-        }
         if (confirmButton != null)
         {
             confirmButton.onClick.AddListener(OnConfirmClicked);
@@ -193,9 +205,11 @@ public class PathfindingController : MonoBehaviour
             resultPanel.SetActive(false);
         }
 
-        if (resultPanel != null)
+        // For GPS Unavailable Panel
+        if (gpsUnavailablePanel != null)
         {
-            resultPanel.SetActive(false);
+            gpsUnavailablePanelOriginalScale = gpsUnavailablePanel.transform.localScale;
+            gpsUnavailablePanel.SetActive(false);
         }
     }
 
@@ -219,10 +233,17 @@ public class PathfindingController : MonoBehaviour
             conflictConfirmButton.onClick.RemoveListener(OnLocationConflictConfirm);
         if (conflictCancelButton != null)
             conflictCancelButton.onClick.RemoveListener(OnLocationConflictCancel);
+        if (gpsUnavailableOkButton != null)
+            gpsUnavailableOkButton.onClick.RemoveListener(OnGPSUnavailableOkClicked);
         if (MapManager.Instance != null)
             MapManager.Instance.OnMapChanged -= OnMapChanged;
 
         ClearQRData();
+
+        if (gpsUnavailableCoroutine != null)
+        {
+            StopCoroutine(gpsUnavailableCoroutine);
+        }
     }
 
     void Update()
@@ -244,7 +265,122 @@ public class PathfindingController : MonoBehaviour
                 }
             }
         }
+
+        CheckGPSAvailability();
     }
+    private void CheckGPSAvailability()
+    {
+        if (MainAppManager.Instance == null || isLocationLocked || useStaticTesting)
+            return;
+
+        float gpsAccuracy = MainAppManager.Instance.GetCurrentGPSAccuracy();
+
+        bool isGPSAvailable = gpsAccuracy > 0 && gpsAccuracy < 60f;
+
+        if (lastGPSWasAvailable && !isGPSAvailable)
+        {
+            OnGPSBecameUnavailable();
+        }
+        else if (!lastGPSWasAvailable && isGPSAvailable)
+        {
+            OnGPSBecameAvailable();
+        }
+
+        lastGPSWasAvailable = isGPSAvailable;
+    }
+    private void OnGPSBecameUnavailable()
+    {
+        Debug.Log("[PathfindingController] GPS became unavailable");
+
+        if (locationLockText != null && !isLocationLocked)
+        {
+            locationLockText.text = "Loading...";
+        }
+
+        currentNearestNode = null;
+        selectedFromNodeId = null;
+
+        if (gpsUnavailableCoroutine != null)
+        {
+            StopCoroutine(gpsUnavailableCoroutine);
+        }
+        gpsUnavailableCoroutine = StartCoroutine(ShowGPSUnavailablePanelAfterDelay());
+    }
+
+    private void OnGPSBecameAvailable()
+    {
+        Debug.Log("[PathfindingController] GPS became available");
+
+        if (gpsUnavailableCoroutine != null)
+        {
+            StopCoroutine(gpsUnavailableCoroutine);
+            gpsUnavailableCoroutine = null;
+        }
+
+        if (gpsUnavailablePanel != null && gpsUnavailablePanel.activeSelf)
+        {
+            gpsUnavailablePanel.SetActive(false);
+        }
+
+        gpsUnavailablePanelShown = false;
+
+        if (nodesLoaded && !isLocationLocked)
+        {
+            UpdateFromLocationByGPS();
+        }
+    }
+
+    private IEnumerator ShowGPSUnavailablePanelAfterDelay()
+    {
+        gpsUnavailablePanelShown = false;
+        yield return new WaitForSeconds(gpsUnavailableDelay);
+
+        if (MainAppManager.Instance != null)
+        {
+            float gpsAccuracy = MainAppManager.Instance.GetCurrentGPSAccuracy();
+            bool isGPSStillUnavailable = gpsAccuracy <= 0 || gpsAccuracy >= 60f;
+
+            if (isGPSStillUnavailable && !gpsUnavailablePanelShown && !isLocationLocked)
+            {
+                ShowGPSUnavailablePanel();
+            }
+        }
+    }
+
+    private void ShowGPSUnavailablePanel()
+    {
+        if (gpsUnavailablePanel != null && gpsUnavailableBGPanel != null && !gpsUnavailablePanelShown)
+        {
+            gpsUnavailableBGPanel.SetActive(true);
+            gpsUnavailablePanel.SetActive(true);
+            gpsUnavailablePanelShown = true;
+            gpsUnavailablePanel.transform.localScale = Vector3.zero;
+
+            gpsUnavailablePanel.transform.DOScale(gpsUnavailablePanelOriginalScale, gpsUnavailablePanelAnimDuration)
+                .SetEase(gpsUnavailablePanelEaseType)
+                .SetUpdate(true);
+        }
+    }
+
+    private void OnGPSUnavailableOkClicked()
+    {
+        if (gpsUnavailablePanel != null)
+        {
+            gpsUnavailablePanelShown = false;
+            gpsUnavailablePanel.transform.DOScale(Vector3.zero, gpsUnavailablePanelAnimDuration)
+            .SetEase(Ease.InBack)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                if (gpsUnavailableBGPanel != null)
+                {
+                    gpsUnavailableBGPanel.SetActive(false);
+                }
+                gpsUnavailablePanel.SetActive(false);
+            });
+        }
+    }
+
 
     private void CheckForScannedQRData()
     {

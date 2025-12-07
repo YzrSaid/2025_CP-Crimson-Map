@@ -365,7 +365,6 @@
     <Compile Include="Assets/Mapbox/Unity/DataContainers/MapOptions.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/AppVersionDisplay.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/IObservable.cs" />
-    <Compile Include="Assets/Scripts/Main App Scripts/MapCoordinateSystem.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/AbstractEditorLocationProvider.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/IReplaceable.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/EditorLocationProviderLocationLog.cs" />

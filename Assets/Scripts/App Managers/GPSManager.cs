@@ -23,8 +23,8 @@ public class GPSManager : MonoBehaviour
     private int maxHistorySize = 3;
 
     [Header("GPS Accuracy Settings")]
-    public float strongGPSThreshold = 10f;
-    public float weakGPSThreshold = 15f;
+    public float strongGPSThreshold = 5f;
+    public float weakGPSThreshold = 10f;
 
     [Header("QR Calibration")]
     public float qrCalibrationSmoothTime = 7f;

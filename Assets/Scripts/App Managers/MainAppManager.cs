@@ -35,6 +35,8 @@ public class MainAppManager : MonoBehaviour
     public GameObject downloadPanel;
     public GameObject aboutPanel;
     public GameObject chooseAMapPanel;
+    public GameObject gpsUnavailableBGPanel;
+    public GameObject gpsUnavailablePanel;
 
     [Header("Lock Location Panel")]
     public GameObject lockPanel;
@@ -93,6 +95,14 @@ public class MainAppManager : MonoBehaviour
         if (chooseAMapPanel != null)
         {
             chooseAMapPanel.SetActive(false);
+        }
+        if (gpsUnavailableBGPanel != null)
+        {
+            gpsUnavailableBGPanel.SetActive(false);
+        }
+        if (gpsUnavailablePanel != null)
+        {
+            gpsUnavailablePanel.SetActive(false);
         }
     }
 
