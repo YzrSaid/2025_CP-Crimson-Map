@@ -262,7 +262,6 @@ public class UnifiedARManager : MonoBehaviour
         {
             GPSManager.Instance.UnlockLocationForPathfinding(); 
             GPSManager.Instance.ClearQRLocationOverride(); 
-            Debug.Log("[UnifiedARManager] Exiting AR - All GPS locks cleared (home lock + QR override)");
         }
 
         CancelInvoke();
