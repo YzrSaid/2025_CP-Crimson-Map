@@ -1,7 +1,7 @@
 
 
 
-import { firebaseConfig } from "../firebaseConfig.js";
+import { firebaseConfig } from "../firebaseConfig.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import CryptoJS from "https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/+esm";
@@ -90,4 +90,39 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (!currentUser) {
     window.location.href = "/html/login.html";
   }
+});
+
+// --- Sidebar collapse: wrap labels and enable toggle (same UX as reports page)
+function wrapSidebarLabelsAccount() {
+  const anchors = document.querySelectorAll('.left .sidebar ul li a');
+  anchors.forEach((a) => {
+    if (a.querySelector('.sidebar-label')) return;
+    const nodes = Array.from(a.childNodes).filter(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim().length);
+    if (nodes.length === 0) return;
+    const span = document.createElement('span');
+    span.className = 'sidebar-label';
+    nodes.forEach(n => span.appendChild(n));
+    a.appendChild(span);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // prepare sidebar labels
+  wrapSidebarLabelsAccount();
+
+  const menuIcon = document.querySelector('.menu-icon');
+  const leftPane = document.querySelector('.left');
+  if (!menuIcon || !leftPane) return;
+
+  try {
+    const collapsed = localStorage.getItem('sidebarCollapsed');
+    if (collapsed === 'true') leftPane.classList.add('collapsed');
+  } catch (e) {}
+
+  menuIcon.addEventListener('click', () => {
+    const isCollapsed = leftPane.classList.toggle('collapsed');
+    menuIcon.style.transition = 'transform 200ms ease';
+    menuIcon.style.transform = isCollapsed ? 'rotate(90deg)' : 'rotate(0deg)';
+    try { localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false'); } catch(e) {}
+  });
 });

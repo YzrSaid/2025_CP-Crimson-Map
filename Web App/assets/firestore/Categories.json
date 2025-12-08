@@ -1,172 +1,172 @@
 [
   {
     "id": "3hFzZT9hQhuSYv6hyK7A",
-    "legend": "K",
     "name": "Lobbies / Waiting Areass",
     "icon": null,
     "buildings": 0,
-    "is_deleted": false,
-    "category_id": "CAT-04",
-    "updatedAt": {
-      "type": "firestore/timestamp/1.0",
-      "seconds": 1760843997,
-      "nanoseconds": 697000000
-    },
+    "legend": "K",
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756908352,
       "nanoseconds": 91000000
+    },
+    "category_id": "CAT-04",
+    "is_deleted": false,
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1760843997,
+      "nanoseconds": 697000000
     }
   },
   {
     "id": "GEklwq8BSgJ7UK9koul5",
+    "icon": null,
+    "category_id": "CAT-07",
+    "name": "Health & Wellness Services",
+    "is_deleted": false,
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756908930,
       "nanoseconds": 371000000
     },
-    "name": "Health & Wellness Services",
-    "is_deleted": false,
-    "icon": null,
+    "buildings": 0,
+    "legend": "S",
     "updatedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760844032,
       "nanoseconds": 326000000
-    },
-    "legend": "S",
-    "category_id": "CAT-07",
-    "buildings": 0
+    }
   },
   {
     "id": "LHJFyr5xMnNC9Lhfvbyb",
-    "legend": "Q",
-    "buildings": 0,
-    "is_deleted": false,
+    "category_id": "CAT-09",
     "updatedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760958713,
       "nanoseconds": 998000000
     },
-    "category_id": "CAT-09",
+    "name": "Courts & Gyms",
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1759158574,
       "nanoseconds": 216000000
     },
-    "name": "Courts & Gyms"
+    "is_deleted": false,
+    "buildings": 0,
+    "legend": "Q"
   },
   {
     "id": "N0HNFB5sC1f6Xv8c8WL6",
-    "is_deleted": false,
     "legend": "Z",
-    "category_id": "CAT-03",
+    "is_deleted": false,
     "buildings": 0,
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1756908231,
+      "nanoseconds": 115000000
+    },
+    "name": "Canteen / Cafeterias",
+    "icon": null,
     "updatedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760844079,
       "nanoseconds": 488000000
     },
-    "name": "Canteen / Cafeterias",
-    "icon": null,
-    "createdAt": {
-      "type": "firestore/timestamp/1.0",
-      "seconds": 1756908231,
-      "nanoseconds": 115000000
-    }
+    "category_id": "CAT-03"
   },
   {
     "id": "PUHFtmdiqM1FOkw9C0cV",
-    "is_deleted": false,
-    "name": "Academics",
     "updatedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760843957,
       "nanoseconds": 556000000
     },
-    "buildings": 0,
+    "category_id": "CAT-01",
+    "name": "Academics",
+    "is_deleted": false,
+    "legend": "L",
     "icon": null,
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756907782,
       "nanoseconds": 760000000
     },
-    "legend": "L",
-    "category_id": "CAT-01"
+    "buildings": 0
   },
   {
     "id": "RC6LPNrgCTaHiCoIdaZM",
-    "icon": null,
     "legend": "P",
-    "buildings": 0,
     "category_id": "CAT-05",
+    "name": "Parks & Green Spaces",
+    "icon": null,
+    "is_deleted": false,
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756908553,
       "nanoseconds": 990000000
     },
-    "is_deleted": false,
+    "buildings": 0,
     "updatedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760844008,
       "nanoseconds": 564000000
-    },
-    "name": "Parks & Green Spaces"
+    }
   },
   {
     "id": "abpznLNteKagGrvvT0MD",
-    "is_deleted": false,
     "updatedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760844413,
       "nanoseconds": 834000000
     },
-    "name": "Campus Facilities & Shops",
-    "legend": "T",
-    "buildings": 0,
-    "icon": null,
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756909139,
       "nanoseconds": 569000000
     },
+    "icon": null,
+    "name": "Campus Facilities & Shops",
+    "legend": "T",
+    "buildings": 0,
+    "is_deleted": false,
     "category_id": "CAT-08"
   },
   {
     "id": "cYbiVuFA12t8f2GXg0XT",
     "icon": null,
+    "category_id": "CAT-06",
+    "legend": "N",
     "updatedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760844021,
       "nanoseconds": 954000000
     },
-    "buildings": 0,
-    "name": "Administrative Offices",
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756908694,
       "nanoseconds": 708000000
     },
-    "category_id": "CAT-06",
     "is_deleted": false,
-    "legend": "N"
+    "buildings": 0,
+    "name": "Administrative Offices"
   },
   {
     "id": "xlYtX68DfQ7erT6RpdoD",
-    "name": "Gates",
+    "is_deleted": false,
     "icon": null,
-    "createdAt": {
-      "type": "firestore/timestamp/1.0",
-      "seconds": 1756908009,
-      "nanoseconds": 858000000
-    },
-    "legend": "K",
     "buildings": 0,
     "updatedAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1760844405,
       "nanoseconds": 706000000
     },
-    "is_deleted": false,
-    "category_id": "CAT-02"
+    "category_id": "CAT-02",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1756908009,
+      "nanoseconds": 858000000
+    },
+    "legend": "K",
+    "name": "Gates"
   }
 ]

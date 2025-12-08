@@ -1,734 +1,867 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Crimson Map - Navigate Your Campus with AR</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --crimson: #a3001e;
-  --crimson-dark: #7a0016;
-  --crimson-light: #d4102e;
-  --yellow: #f5c542;
-  --yellow-dark: #d4a935;
-  --white: #ffffff;
-  --dark: #1a1a1a;
-  --gray-light: #f8f9fa;
-  --gray-dark: #2d3436;
-  --success: #27ae60;
-}
-
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: var(--white);
-  color: var(--dark);
-  overflow-x: hidden;
-  position: relative;
-  scroll-behavior: smooth;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 20% 50%, rgba(163, 0, 30, 0.03) 0%, transparent 50%),
-              radial-gradient(circle at 80% 80%, rgba(245, 197, 66, 0.03) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-/* Floating AR shapes */
-.float-shape {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(6px);
-  opacity: 0.2;
-  pointer-events: none;
-  z-index: 5;
-  animation: float 10s infinite ease-in-out;
-}
-
-/* Individual shapes: size, color, position */
-.float1 { width: 100px; height: 100px; top: 10%; left: 5%; background: rgba(163,0,30,0.2); animation-delay: 0s; }
-.float2 { width: 80px; height: 80px; top: 60%; left: 10%; background: rgba(255,197,66,0.2); animation-delay: 1s; }
-.float3 { width: 120px; height: 120px; top: 30%; left: 70%; background: rgba(163,0,30,0.15); animation-delay: 2s; }
-.float4 { width: 60px; height: 60px; top: 80%; left: 50%; background: rgba(255,197,66,0.15); animation-delay: 3s; }
-.float5 { width: 90px; height: 90px; top: 20%; left: 50%; background: rgba(163,0,30,0.18); animation-delay: 4s; }
-.float6 { width: 70px; height: 70px; top: 50%; left: 80%; background: rgba(255,197,66,0.15); animation-delay: 5s; }
-.float7 { width: 50px; height: 50px; top: 40%; left: 30%; background: rgba(163,0,30,0.12); animation-delay: 6s; }
-.float8 { width: 110px; height: 110px; top: 75%; left: 20%; background: rgba(255,197,66,0.12); animation-delay: 7s; }
-.float9 { width: 60px; height: 60px; top: 15%; left: 80%; background: rgba(163,0,30,0.18); animation-delay: 8s; }
-.float10{ width: 90px; height: 90px; top: 55%; left: 40%; background: rgba(255,197,66,0.15); animation-delay: 9s; }
-
-/* Floating animation */
-@keyframes float {
-  0%   { transform: translate(0,0) rotate(0deg); }
-  25%  { transform: translate(10px,-20px) rotate(45deg); }
-  50%  { transform: translate(-10px,-10px) rotate(90deg); }
-  75%  { transform: translate(5px,15px) rotate(135deg); }
-  100% { transform: translate(0,0) rotate(360deg); }
-}
-
-/* Smooth fade-in animation */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Glow pulse animation */
-@keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 10px rgba(163, 0, 30, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(163, 0, 30, 0.6); }
-}
-
-/* Slide in from left */
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Slide in from right */
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Button hover animation */
-@keyframes buttonBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  .float-shape { opacity: 0.1; filter: blur(5px); }
-  .float1, .float3, .float5, .float8, .float9 { display: none; } /* reduce clutter */
-}
-
-
-
-/* Navigation */
-header {
-  width: 100%;
-  background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 100%);
-  padding: 1.2rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
-
-header:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-header .logo {
-  color: var(--white);
-  font-size: 1.8rem;
-  font-weight: 800;
-  letter-spacing: -1px;
-  background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow-dark) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: none;
-}
-
-header nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-header nav a {
-  color: var(--white);
-  text-decoration: none;
-  font-size: 1rem;
-  font-weight: 500;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-header nav a::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--yellow);
-  transition: width 0.3s ease;
-}
-
-header nav a:hover::after {
-  width: 100%;
-}
-
-header nav a:hover {
-  color: var(--yellow);
-}
-
-.login-btn {
-  padding: 0.6rem 1.4rem;
-  background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow-dark) 100%);
-  color: var(--dark);
-  border-radius: 8px;
-  font-weight: 700;
-  display: inline-block;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(245, 197, 66, 0.3);
-}
-
-.login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(245, 197, 66, 0.4);
-}
-
-/* Hamburger for mobile */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  cursor: pointer;
-  gap: 5px;
-}
-
-.hamburger div {
-  width: 25px;
-  height: 3px;
-  background: var(--white);
-  transition: all 0.3s ease;
-  border-radius: 2px;
-}
-
-.hamburger.active div:nth-child(1) {
-  transform: rotate(45deg) translate(10px, 10px);
-}
-
-.hamburger.active div:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger.active div:nth-child(3) {
-  transform: rotate(-45deg) translate(8px, -8px);
-}
-
-nav.mobile-menu {
-  display: none;
-  flex-direction: column;
-  position: absolute;
-  top: 60px;
-  right: 0;
-  background: var(--crimson);
-  width: 200px;
-  padding: 1rem;
-}
-
-nav.mobile-menu a {
-  margin: 10px 0;
-}
-
-/* Hero Section */
-.hero {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 4rem 2rem;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, rgba(163, 0, 30, 0.5) 0%, rgba(122, 0, 22, 0.6) 100%), url('/assets/imgs/wmsubg.jpg') center/cover no-repeat;
-  color: var(--white);
-  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
-  min-height: 80vh;
-  position: relative;
-  z-index: 10;
-}
-
-.hero-text { 
-  max-width: 550px; 
-  animation: slideInLeft 0.8s ease-out;
-}
-
-.hero-text h1 { 
-  font-size: 3rem; 
-  margin-bottom: 1rem;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.hero-text p { 
-  font-size: 1.2rem; 
-  margin-bottom: 2rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.95);
-}
-
-.download-btn { 
-  background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow-dark) 100%);
-  color: var(--dark); 
-  padding: 0.9rem 2rem; 
-  border-radius: 8px; 
-  text-decoration: none; 
-  font-size: 1.1rem; 
-  font-weight: 700; 
-  display: inline-block; 
-  align-items: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(245, 197, 66, 0.3);
-  border: none;
-  cursor: pointer;
-}
-
-.download-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(245, 197, 66, 0.4);
-  animation: buttonBounce 0.6s ease-in-out;
-}
-
-/* Center content in Download section */
-#download {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, rgba(248, 249, 250, 1) 0%, rgba(232, 245, 255, 0.5) 100%);
-}
-
-#download .download-btn {
-  margin-top: 1.5rem;
-}
-
-/* Center developer cards on all screen sizes */
-#developers .feature-grid {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-}
-
-.dev-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 300px;
-}
-
-/* Sections */
-section { 
-  padding: 4rem 2rem; 
-  max-width: 1200px; 
-  margin: auto; 
-  position: relative; 
-  z-index: 10; 
-}
-
-.section-title { 
-  font-size: 2.5rem; 
-  color: var(--crimson); 
-  margin-bottom: 1.5rem; 
-  text-align: center;
-  font-weight: 800;
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.feature-grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-  gap: 2rem; 
-}
-
-.feature-box { 
-  background: var(--white); 
-  color: var(--dark); 
-  border-radius: 12px; 
-  padding: 2rem; 
-  box-sizing: border-box; 
-  transition: all 0.3s ease;
-  border: 2px solid var(--crimson);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.feature-box h3 { 
-  margin-top: 0; 
-  color: var(--crimson);
-  font-size: 1.3rem;
-  font-weight: 700;
-}
-
-.feature-box p {
-  line-height: 1.6;
-  color: var(--gray-dark);
-}
-
-.feature-box:hover { 
-  transform: translateY(-8px); 
-  box-shadow: 0 8px 24px rgba(163, 0, 30, 0.2);
-  border-color: var(--yellow);
-}
-
-.dev-card img { 
-  width: 130px; 
-  height: 130px; 
-  object-fit: cover; 
-  border-radius: 50%; 
-  border: 4px solid var(--crimson); 
-  margin-bottom: 1rem;
-  transition: all 0.3s ease;
-}
-
-.dev-card:hover img {
-  border-color: var(--yellow);
-  box-shadow: 0 0 15px rgba(163, 0, 30, 0.3);
-}
-
-.dev-card h3 {
-  margin: 1rem 0 0.5rem 0;
-}
-
-.dev-card p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
-}
-
-.dev-card a {
-  color: var(--crimson);
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.dev-card a:hover {
-  color: var(--yellow);
-}
-
-footer { 
-  text-align: center; 
-  padding: 2.5rem 2rem; 
-  background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-dark) 100%);
-  color: var(--white); 
-  margin-top: 3rem; 
-  position: relative; 
-  z-index: 10;
-  font-size: 0.95rem;
-  line-height: 1.8;
-}
-
-/* Additional Enhancement Styles */
-.stats-section {
-  background: linear-gradient(135deg, rgba(163, 0, 30, 0.05) 0%, rgba(245, 197, 66, 0.05) 100%);
-}
-
-.stat-box {
-  text-align: center;
-  padding: 2rem;
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.stat-number {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--crimson);
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  font-size: 1rem;
-  color: var(--gray-dark);
-  font-weight: 600;
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--gray-light);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--crimson);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--crimson-dark);
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .login-btn { display: none; }
-}
-/* Mobile styles */
-@media (max-width: 768px) {
-  .desktop-menu { display: none; }
-  .hamburger { display: flex; flex-direction: column; cursor: pointer; }
-  .hamburger div { width: 25px; height: 3px; background: var(--white); margin: 4px 0; }
-
-  .mobile-menu {
-    display: none;
-    flex-direction: column;
-    position: sticky; /* <-- sticks at top */
-    top: 60px; /* same height as header */
-    background: var(--crimson);
-    width: 100%; /* full width of screen */
-    padding: 0.5rem 1rem;
-    z-index: 1001; /* above other content */
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-  }
-
-  /* Mobile menu */
-  nav.mobile-menu {
-    display: none;
-    flex-direction: column;
-    position: sticky; /* sticks at top when scrolling */
-    top: 60px;
-    right: 0;
-    width: 100%;
-    background: var(--crimson);
-    padding: 1rem;
-    z-index: 1001;
-  }
-  nav.mobile-menu.show { display: flex; }
-  nav.mobile-menu a { margin: 0.5rem 0; color: var(--white); text-decoration: none; text-align: center; }
-
-  /* Hero */
-  .hero {
-    flex-direction: column;
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-  .hero-text { max-width: 100%; }
-  
-  .hero-text h1 { font-size: 2rem; }
-  .hero-text p { font-size: 1rem; }
-
-  /* Sections */
-  section {
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-  
-  .section-title { font-size: 1.8rem; }
-  
-  .feature-grid {
-    grid-template-columns: 1fr !important; /* stack cards vertically */
-    gap: 2rem;
-    justify-items: center; /* center cards horizontally */
-  }
-  .feature-box {
-    width: 100%; /* take full width on mobile */
-    max-width: 300px; /* optional, keeps cards nice size */
-    margin: 0 auto;
-  }
-
-  /* Developer Cards */
-  .dev-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  /* Footer */
-  footer { text-align: center; }
-
-  .mobile-menu.show { display: flex; }
-  .mobile-menu a { margin: 0.5rem 0; color: var(--white); text-decoration: none; }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/imgs/crimson logo.png">
+
+  <title>Crimson Map - Navigate Your Campus with AR</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* ANIMATIONS */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(-20px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(20px) rotate(5deg);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+      background: #f0f0f0;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f0f0f0;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #a3001e;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #7a0016;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Floating shapes removed per request */
+
+    /* Header style (white) */
+    .gradient-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* logo text replaced by image in markup; keep utility if needed */
+    .gradient-text {
+      display: inline-block;
+    }
+
+    .gradient-btn {
+      background: linear-gradient(135deg, #f5c542 0%, #d4a935 100%);
+      transition: all 0.3s ease;
+    }
+
+    .gradient-btn:hover {
+      filter: brightness(0.9);
+      transform: translateY(-2px);
+    }
+
+    .nav-link {
+      color: #1f2937; /* gray-800 */
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.15s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #a3001e; /* crimson */
+      transition: width 0.2s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      color: #a3001e;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .feature-card:hover {
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      transform: translateY(-5px);
+    }
+
+    .dev-card-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #a3001e;
+      transition: all 0.3s ease;
+    }
+
+    .dev-card-img:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 0 20px rgba(163, 0, 30, 0.3);
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .animate-slide-in-left {
+      animation: slideInLeft 0.8s ease;
+    }
+
+    .hero {
+      /* background image with white overlay so hero appears white but keeps image */
+      background-image: url('/assets/imgs/wmsubg.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,1); /* white overlay to make hero appear white */
+      z-index: 0;
+    }
+
+    .hero > div { position: relative; z-index: 10; }
+
+    /* Footer crimson style (separate from header) */
+    .footer-crimson {
+      background: linear-gradient(90deg, #a3001e 0%, #7a0016 100%);
+      color: #ffffff;
+    }
+  </style>
 </head>
-<body>
 
-<!-- Floating AR Shapes -->
-<div class="float-shape float1"></div>
-<div class="float-shape float2"></div>
-<div class="float-shape float3"></div>
-<div class="float-shape float4"></div>
-<div class="float-shape float5"></div>
-<div class="float-shape float6"></div>
-<div class="float-shape float7"></div>
-<div class="float-shape float8"></div>
-<div class="float-shape float9"></div>
-<div class="float-shape float10"></div>
-
+<body class="bg-white text-gray-900 overflow-x-hidden relative">
 
 <!-- NAV -->
-<header>
-  <div class="logo">Crimson Map</div>
-  <nav class="desktop-menu">
-    <a href="#features">Features</a>
-    <a href="#about">About</a>
-    <a href="#screenshots">Screenshots</a>
-    <a href="#developers">Developers</a>
-    <a href="#download">Download</a>
-    <a href="/login.html" class="login-btn">Login</a>
-  </nav>
-  <div class="hamburger">
-    <div></div>
-    <div></div>
-    <div></div>
+<header class="gradient-header sticky top-0 z-50 shadow-sm transition-shadow duration-300">
+  <div class="flex justify-between items-center px-4 py-4 max-w-7xl mx-auto w-full">
+    
+<!-- Logo + Text as Images --> 
+<div class="flex items-center gap-3">
+  <!-- Logo image -->
+  <img src="/assets/imgs/crimson logo.png" alt="Crimson Map Logo" class="w-12"> 
+  
+<!-- Text replaced by image -->
+<img src="/assets/imgs/crimsonlogo.png" alt="Crimson Map Text" 
+     class="h-6 sm:h-6 md:h-8 object-contain">
+
+
+</div>
+
+
+    <!-- Desktop Menu -->
+    <nav class="hidden lg:flex items-center gap-8">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#screenshots" class="nav-link">Screenshots</a>
+      <a href="#developers" class="nav-link">Developers</a>
+    </nav>
+
+    <!-- Hamburger Menu -->
+    <div class="hamburger lg:hidden flex flex-col gap-1 cursor-pointer">
+      <div class="w-6 h-0.5 bg-gray-800 transition-all duration-300"></div>
+      <div class="w-6 h-0.5 bg-gray-800 transition-all duration-300"></div>
+      <div class="w-6 h-0.5 bg-gray-800 transition-all duration-300"></div>
+    </div>
+  </div>
+
+
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobileMenu" class="lg:hidden absolute top-full left-0 w-full bg-white shadow-md hidden flex-col items-center py-4 z-50">
+    <a href="#features" class="block w-full text-center py-2 hover:bg-gray-100 transition">Features</a>
+    <a href="#about" class="block w-full text-center py-2 hover:bg-gray-100 transition">About</a>
+    <a href="#screenshots" class="block w-full text-center py-2 hover:bg-gray-100 transition">Screenshots</a>
+    <a href="#developers" class="block w-full text-center py-2 hover:bg-gray-100 transition">Developers</a>
   </div>
 </header>
 
 
-<nav class="mobile-menu">
-  <a href="#features">Features</a>
-  <a href="#about">About</a>
-  <a href="#screenshots">Screenshots</a>
-  <a href="#developers">Developers</a>
-  <a href="#download">Download</a>
+
+
+
+<!-- Mobile Menu -->
+<nav class="mobile-menu hidden lg:hidden flex-col sticky top-16 w-full gradient-header z-40 shadow-sm">
+  <a href="#features" class="text-gray-800 text-center py-2 px-4 hover:bg-gray-100 transition-colors duration-200">Features</a>
+  <a href="#about" class="text-gray-800 text-center py-2 px-4 hover:bg-gray-100 transition-colors duration-200">About</a>
+  <a href="#screenshots" class="text-gray-800 text-center py-2 px-4 hover:bg-gray-100 transition-colors duration-200">Screenshots</a>
+  <a href="#developers" class="text-gray-800 text-center py-2 px-4 hover:bg-gray-100 transition-colors duration-200">Developers</a>
+  <a href="#download" class="text-gray-800 text-center py-2 px-4 hover:bg-gray-100 transition-colors duration-200">Download</a>
 </nav>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-text">
-    <h1>Navigate Your Campus with Ease</h1>
-    <p>Crimson Map helps students and visitors find buildings, rooms, and facilities across WMSU campuses using AR technology. Built mainly for Android.</p>
-    <a class="download-btn" href="#download">Download APK</a>
+<div class="relative bg-cover bg-center bg-no-repeat"
+     style="background-image: url('assets/imgs/wmsubg.jpg');">
+
+  <!-- Opacity -->
+  <div class="absolute inset-0 bg-white/20"></div>
+
+  <!-- Gradient overlay -->
+  <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/85 to-white"></div>
+
+  <!-- Hero Content -->
+  <div class="relative z-10 flex flex-col lg:flex-row items-center justify-center
+              px-6 sm:px-8 lg:px-0 py-6 sm:py-8 lg:py-6
+              min-h-[50vh] lg:min-h-[65vh]">
+
+    <!-- Phone Image (Visible first on mobile, stays right on desktop) -->
+    <div class="w-full lg:w-1/2 flex justify-center items-center order-1 lg:order-2 mb-6 sm:mb-8 lg:mb-0 
+                lg:translate-x-40">
+      <img src="/assets/imgs/phone.png"
+           alt="Crimson Map App"
+           class="w-64 sm:w-72 md:w-96 lg:w-[35rem] object-contain relative z-10">
+    </div>
+
+    <!-- Text -->
+    <div class="w-full lg:w-1/2 max-w-2xl animate-slide-in-left order-2 lg:order-1 
+            px-4 sm:px-0 lg:pl-[95px] relative z-10">
+
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight text-center lg:text-left">
+        Navigate Your Campus with Ease
+      </h1>
+
+      <p class="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed text-center lg:text-left">
+        Crimson Map helps students and visitors find buildings, rooms, and facilities across WMSU campuses using AR technology. Built mainly for Android.
+      </p>
+
+      <!-- Wrapper -->
+      <div class="flex flex-col items-center justify-center gap-2 
+                  sm:flex-row sm:justify-center sm:gap-3 lg:justify-start mt-4">
+
+        <!-- Download Button -->
+        <a id="downloadBtn"
+          href="https://github.com/YzrSaid/2025_CP-Crimson-Map/releases/download/v1.0.0/Crimson_Map_v1.0.0.apk"
+          download
+          class="gradient-btn w-48 h-12 rounded-lg text-gray-900 font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex items-center justify-center text-center">
+            Download APK
+        </a>
+
+        <!-- Download Count -->
+        <span id="downloadCount" class="text-gray-500 text-lg">
+          (...)
+        </span>
+
+      </div>
+
+
+
+    </div>
+
   </div>
 </div>
 
+
+
+
 <!-- FEATURES -->
-<section id="features">
-  <h2 class="section-title">Core Features</h2>
-  <div class="feature-grid">
-    <div class="feature-box">
-      <h3>🗺️ AR Campus Navigation</h3>
-      <p>Find buildings, rooms, and facilities easily using augmented reality guidance designed for WMSU campuses. Real-time directions with visual overlays help you navigate efficiently.</p>
+<section id="features" class="py-16 px-8 max-w-6xl mx-auto relative z-10 scroll-mt-10">
+  <h2 class="text-4xl font-bold text-red-700 text-center mb-8 animate-fade-in-up">
+    Core Features
+  </h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <div class="feature-card animate-fade-in-up text-center bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-xl font-bold text-red-700 mb-4">🗺️ AR Campus Navigation</h3>
+      <p class="text-gray-700 leading-relaxed text-justify mx-auto">
+        Find buildings, rooms, and facilities easily using augmented reality guidance designed for WMSU campuses.
+        Real-time directions with visual overlays help you navigate efficiently.
+      </p>
     </div>
-    <div class="feature-box">
-      <h3>🏢 Multi-Campus Coverage</h3>
-      <p>Works across Western Mindanao State University Campus A, B, and C with accurate location and route data. Comprehensive mapping of all facilities and landmarks.</p>
+
+    <div class="feature-card animate-fade-in-up text-center bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-xl font-bold text-red-700 mb-4">🏢 Multi-Campus Coverage</h3>
+      <p class="text-gray-700 leading-relaxed text-justify mx-auto">
+        Works across Western Mindanao State University Campus A, B, and C with accurate location and route data.
+        Comprehensive mapping of all facilities and landmarks.
+      </p>
     </div>
-    <div class="feature-box">
-      <h3>📱 Android Optimized</h3>
-      <p>Optimized mainly for Android devices to ensure smooth performance and compatibility for students. Lightweight app with fast loading times.</p>
+
+    <div class="feature-card animate-fade-in-up text-center bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-xl font-bold text-red-700 mb-4">📱 Android Optimized</h3>
+      <p class="text-gray-700 leading-relaxed text-justify mx-auto">
+        Optimized mainly for Android devices to ensure smooth performance and compatibility for students.
+        Lightweight app with fast loading times.
+      </p>
     </div>
-    <div class="feature-box">
-      <h3>🔍 Smart Search</h3>
-      <p>Quickly find buildings, classrooms, offices, and facilities with our intelligent search feature. Filter by campus or building type.</p>
+
+    <div class="feature-card animate-fade-in-up text-center bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-xl font-bold text-red-700 mb-4">🔍 Smart Search</h3>
+      <p class="text-gray-700 leading-relaxed text-justify mx-auto">
+        Quickly find buildings, classrooms, offices, and facilities with our intelligent search feature.
+        Filter by campus or building type.
+      </p>
     </div>
-    <div class="feature-box">
-      <h3>📍 Real-time Tracking</h3>
-      <p>Get accurate location tracking and turn-by-turn navigation. Offline maps available for seamless navigation without internet.</p>
+
+    <div class="feature-card animate-fade-in-up text-center bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-xl font-bold text-red-700 mb-4">📍 Real-time Tracking</h3>
+      <p class="text-gray-700 leading-relaxed text-justify mx-auto">
+        Get accurate location tracking and turn-by-turn navigation.
+        Offline maps available for seamless navigation without internet.
+      </p>
     </div>
-    <div class="feature-box">
-      <h3>⭐ User-Friendly Interface</h3>
-      <p>Intuitive design makes navigation easy for new students and visitors. Clean, modern interface optimized for all screen sizes.</p>
+
+    <div class="feature-card animate-fade-in-up text-center bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-xl font-bold text-red-700 mb-4">⭐ User-Friendly Interface</h3>
+      <p class="text-gray-700 leading-relaxed text-justify mx-auto">
+        Intuitive design makes navigation easy for new students and visitors.
+        Clean, modern interface optimized for all screen sizes.
+      </p>
     </div>
+
   </div>
 </section>
 
+
 <!-- ABOUT -->
-<section id="about">
-  <h2 class="section-title">About Crimson Map</h2>
-  <p style="font-size: 1.05rem; line-height: 1.8; max-width: 900px; margin: 0 auto;">Crimson Map is an innovative augmented reality navigation solution built specifically to help freshmen and visitors navigate Western Mindanao State University. With comprehensive coverage across WMSU Campus A, B, and C, the app provides seamless wayfinding through interactive AR overlays and turn-by-turn guidance.</p>
-  <p style="font-size: 1.05rem; line-height: 1.8; max-width: 900px; margin: 1.5rem auto 0;">Whether you're looking for a specific classroom, administrative office, or campus facility, Crimson Map ensures smooth campus exploration with intuitive navigation, real-time location tracking, and offline map support. The app is optimized for Android devices to provide the best user experience.</p>
+<section id="about" class="py-16 px-8 max-w-6xl mx-auto relative z-10 text-center scroll-mt-10">
+  <h2 class="text-4xl font-bold text-red-700 text-center mb-8 animate-fade-in-up">About Crimson Map</h2>
+  <p class="text-lg leading-relaxed text-gray-700 max-w-3xl text-justify mx-auto mb-6">Crimson Map is an innovative augmented reality navigation solution built specifically to help freshmen and visitors navigate Western Mindanao State University. With comprehensive coverage across WMSU Campus A, B, and C, the app provides seamless wayfinding through interactive AR overlays and turn-by-turn guidance.</p>
+  <p class="text-lg leading-relaxed text-gray-700 max-w-3xl text-justify mx-auto">Whether you're looking for a specific classroom, administrative office, or campus facility, Crimson Map ensures smooth campus exploration with intuitive navigation, real-time location tracking, and offline map support. The app is optimized for Android devices to provide the best user experience.</p>
 </section>
 
+<!-- HOW TO USE -->
+<section id="how-to-use" class="py-16 px-8 max-w-6xl mx-auto relative z-10 scroll-mt-10">
+  <h2 class="text-4xl font-bold text-red-700 text-center mb-12 animate-fade-in-up">How to Use Crimson Map</h2>
+  
+<!-- Step 1 -->
+<div class="flex flex-col lg:flex-row items-center gap-8 mb-16">
+  <!-- Text Section -->
+  <div class="w-full lg:w-1/2 animate-fade-in-up">
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="bg-red-700 text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">1</span>
+        <h3 class="text-2xl font-bold text-gray-900">Download & Install</h3>
+      </div>
+      <p class="text-gray-700 text-justify leading-relaxed">
+        Download the Crimson Map APK from our website and install it on your Android device.
+        Make sure to enable installation from unknown sources in your settings.
+      </p>
+    </div>
+  </div>
+
+  <!-- Image Section -->
+  <div class="w-full lg:w-1/2 flex justify-center">
+    <div class="step-icon-container">
+      <img 
+        src="/assets/imgs/ss/1.png" 
+        alt="Download illustration"
+        class="w-72 h-72 object-contain step-icon"
+      >
+    </div>
+  </div>
+</div>
+
+
+  <!-- Step 2 -->
+  <div class="flex flex-col lg:flex-row-reverse items-center gap-8 mb-16">
+    <div class="w-full lg:w-1/2 animate-fade-in-up">
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-red-700 text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">2</span>
+          <h3 class="text-2xl font-bold text-gray-900">Open the App</h3>
+        </div>
+        <p class="text-gray-700 text-justify leading-relaxed">Launch Crimson Map and wait for the app to load. You'll be taken to the landing page where the app begins locating your position using GPS.</p>
+      </div>
+    </div>
+  <!-- Image Section -->
+  <div class="w-full lg:w-1/2 flex justify-center">
+    <div class="step-icon-container">
+      <img 
+        src="/assets/imgs/ss/2.png" 
+        alt="Download illustration"
+        class="w-72 h-72 object-contain step-icon"
+      >
+    </div>
+  </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="flex flex-col lg:flex-row items-center gap-8 mb-16">
+    <div class="w-full lg:w-1/2 animate-fade-in-up">
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-red-700 text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">3</span>
+          <h3 class="text-2xl font-bold text-gray-900">Lock Your Location</h3>
+        </div>
+        <p class="text-gray-700 text-justify leading-relaxed">The app automatically detects your GPS location. Click the lock button to confirm your position. If GPS is slow, scan any QR code placed around WMSU buildings to instantly lock your location.</p>
+      </div>
+    </div>
+  <!-- Image Section -->
+  <div class="w-full lg:w-1/2 flex justify-center">
+    <div class="step-icon-container">
+      <img 
+        src="/assets/imgs/ss/3.png" 
+        alt="Download illustration"
+        class="w-72 h-72 object-contain step-icon"
+      >
+    </div>
+  </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="flex flex-col lg:flex-row-reverse items-center gap-8 mb-16">
+    <div class="w-full lg:w-1/2 animate-fade-in-up">
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-red-700 text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">4</span>
+          <h3 class="text-2xl font-bold text-gray-900">Search & Select Destination</h3>
+        </div>
+        <p class="text-gray-700 text-justify leading-relaxed">Use the search bar to find your destination building or facility. Select it from the list, and the app will automatically calculate the best route for you.</p>
+      </div>
+    </div>
+  <!-- Image Section -->
+  <div class="w-full lg:w-1/2 flex justify-center">
+    <div class="step-icon-container">
+      <img 
+        src="/assets/imgs/ss/4.png" 
+        alt="Download illustration"
+        class="w-72 h-72 object-contain step-icon"
+      >
+    </div>
+  </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="flex flex-col lg:flex-row items-center gap-8 mb-16">
+    <div class="w-full lg:w-1/2 animate-fade-in-up">
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-red-700 text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">5</span>
+          <h3 class="text-2xl font-bold text-gray-900">Navigate with AR</h3>
+        </div>
+        <p class="text-gray-700 text-justify leading-relaxed">Start navigating and view your route through AR. Buildings appear as labeled nodes, and directional arrows guide you with instructions like "Turn Left" or "Go Straight." Your route is also visible on the map view.</p>
+      </div>
+    </div>
+  <!-- Image Section -->
+  <div class="w-full lg:w-1/2 flex justify-center">
+    <div class="step-icon-container">
+      <img 
+        src="/assets/imgs/ss/5.png" 
+        alt="Download illustration"
+        class="w-[260px] md:w-[350px] lg:w-[420px] object-contain step-icon"
+      />
+
+    </div>
+  </div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="flex flex-col lg:flex-row-reverse items-center gap-8">
+    <div class="w-full lg:w-1/2 animate-fade-in-up">
+      <div class="bg-white p-6 rounded-xl shadow-lg">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-red-700 text-white font-bold text-xl w-10 h-10 rounded-full flex items-center justify-center">6</span>
+          <h3 class="text-2xl font-bold text-gray-900">Arrive & Explore Rooms</h3>
+        </div>
+        <p class="text-gray-700 text-justify leading-relaxed">When you reach your destination, stop the navigation. A button will appear on the map that you can click to view all rooms and facilities inside the building.</p>
+      </div>
+    </div>
+  <!-- Image Section -->
+  <div class="w-full lg:w-1/2 flex justify-center">
+    <div class="step-icon-container">
+      <img 
+        src="/assets/imgs/ss/6.png" 
+        alt="Download illustration"
+        class="w-72 h-72 object-contain step-icon"
+      >
+    </div>
+  </div>
+  </div>
+</section>
+
+<style>
+  .step-icon-container {
+    position: relative;
+    padding: 20px;
+  }
+
+  .step-icon {
+    filter: drop-shadow(0 10px 20px rgba(163, 0, 30, 0.1));
+    transition: transform 0.3s ease;
+  }
+
+  .step-icon:hover {
+    transform: scale(1.05);
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes radarPulse {
+    0% {
+      r: 30;
+      opacity: 0.4;
+    }
+    100% {
+      r: 50;
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes arNodeFloat {
+    0%, 100% {
+      transform: translateY(0);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translateY(-5px);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .pulse-dot {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .radar-pulse {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .checkmark {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawCheck 1s ease-in-out forwards;
+  }
+
+  @keyframes drawCheck {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .download-arrow {
+    animation: bounce 1.5s ease-in-out infinite;
+  }
+
+  .loading-lines {
+    animation: fadeInOut 2s ease-in-out infinite;
+  }
+
+  .search-results {
+    animation: fadeInOut 2s ease-in-out infinite;
+  }
+
+  .ar-node {
+    animation: arNodeFloat 3s ease-in-out infinite;
+  }
+
+  .ar-node:nth-child(2) {
+    animation-delay: 0.5s;
+  }
+
+  .ar-node-active {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .nav-arrow {
+    animation: bounce 1.5s ease-in-out infinite;
+  }
+
+  .destination-marker {
+    animation: pulse 2s ease-in-out infinite;
+  }
+</style>
+
 <!-- SCREENSHOTS -->
-<section id="screenshots">
-  <h2 class="section-title">App Screenshots</h2>
-  <div class="feature-grid">
-    <img src="/assets/imgs/ss1.jpg" style="border-radius:12px; width:100%; object-fit:cover;" />
-    <img src="/assets/imgs/ss2.jpg" style="border-radius:12px; width:100%; object-fit:cover;" />
-    <img src="/assets/imgs/ss3.jpg" style="border-radius:12px; width:100%; object-fit:cover;" />
+<section id="screenshots" class="py-16 px-8 max-w-6xl mx-auto relative z-10 scroll-mt-10">
+  <h2 class="text-4xl font-bold text-red-700 text-center mb-8 animate-fade-in-up">App Screenshots</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <img src="/assets/imgs/ss1.jpg" class="rounded-xl w-full object-cover shadow-lg hover:shadow-xl transition-shadow duration-300" />
+    <img src="/assets/imgs/ss2.jpg" class="rounded-xl w-full object-cover shadow-lg hover:shadow-xl transition-shadow duration-300" />
+    <img src="/assets/imgs/ss3.jpg" class="rounded-xl w-full object-cover shadow-lg hover:shadow-xl transition-shadow duration-300" />
   </div>
 </section>
 
 <!-- DEVELOPERS -->
-<section id="developers">
-  <h2 class="section-title">Meet the Developers</h2>
-  <div class="feature-grid">
-    <div class="feature-box dev-card">
-      <img src="/assets/imgs/aldrin.jpg" />
-      <h3>Main Developer</h3>
-      <p>Bachelor of Science in Information Technology</p>
-      <p><a href="#">GitHub</a> | <a href="#">LinkedIn</a> | <a href="#">Facebook</a></p>
+<section id="developers" class="py-16 px-8 max-w-6xl mx-auto relative z-10 scroll-mt-10">
+  <h2 class="text-4xl font-bold text-red-700 text-center mb-12 animate-fade-in-up">Meet the Developers</h2>
+  <div class="flex flex-wrap justify-center gap-8">
+
+    <!-- Main Developer -->
+    <div class="feature-card text-center max-w-xs w-full">
+      <img src="/assets/imgs/aldrin.jpg" class="dev-card-img mx-auto" />
+      <h3 class="text-xl font-bold text-gray-900 mt-4 mb-1">Main Developer</h3>
+
+      <p class="text-gray-700 font-semibold mb-2">Mohammad Aldrin Said</p>
+      <p class="text-gray-600 mb-3">Bachelor of Science in Information Technology</p>
+      <div class="flex justify-center gap-4">
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">GitHub</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">LinkedIn</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">Facebook</a>
+      </div>
     </div>
-    <div class="feature-box dev-card">
-      <img src="/assets/imgs/basil.jpg" />
-      <h3>Backend Developer</h3>
-      <p>Bachelor of Science in Information Technology</p>
-      <p><a href="#">GitHub</a> | <a href="#">LinkedIn</a> | <a href="#">Facebook</a></p>
+
+    <!-- Backend Developer -->
+    <div class="feature-card text-center max-w-xs w-full">
+      <img src="/assets/imgs/basil.jpg" class="dev-card-img mx-auto" />
+      <h3 class="text-xl font-bold text-gray-900 mt-4 mb-1">Backend Developer</h3>
+      <p class="text-gray-700 font-semibold mb-2">John Basi Andre Mula</p>
+      <p class="text-gray-600 mb-3">Bachelor of Science in Information Technology</p>
+      <div class="flex justify-center gap-4">
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">GitHub</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">LinkedIn</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">Facebook</a>
+      </div>
     </div>
-    <div class="feature-box dev-card">
-      <img src="/assets/imgs/daryl.jpg" />
-      <h3>Data Collector</h3>
-      <p>Bachelor of Science in Information Technology</p>
-      <p><a href="#">GitHub</a> | <a href="#">LinkedIn</a> | <a href="#">Facebook</a></p>
+
+    <!-- Data Collector -->
+    <div class="feature-card text-center max-w-xs w-full">
+      <img src="/assets/imgs/daryl.jpg" class="dev-card-img mx-auto" />
+      <h3 class="text-xl font-bold text-gray-900 mt-4 mb-1">Data Collector</h3>
+      <p class="text-gray-700 font-semibold mb-2">Daryl Gregorio</p>
+      <p class="text-gray-600 mb-3">Bachelor of Science in Information Technology</p>
+      <div class="flex justify-center gap-4">
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">GitHub</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">LinkedIn</a>
+        <span class="text-gray-400">|</span>
+        <a href="#" class="text-red-700 font-semibold hover:text-yellow-500 transition-colors duration-300">Facebook</a>
+      </div>
     </div>
+
   </div>
 </section>
 
-<!-- DOWNLOAD -->
-<section id="download">
-  <h2 class="section-title">Download Crimson Map</h2>
-  <p>Crimson Map is currently available for Android users only. Install the APK to start navigating your WMSU campus with ease.</p>
-  <a class="download-btn" href="https://github.com/YzrSaid/2025_CP-Crimson-Map/releases/download/v1.0.0-beta/Crimson_Map_v1.0.0-beta.apk">Download APK</a>
+
+<!-- FEEDBACK / CONTACT -->
+<section id="feedback" class="py-16 px-8 bg-gradient-to-b from-gray-50 to-blue-50 relative z-10">
+  <div class="max-w-6xl mx-auto text-center">
+
+    <!-- Title -->
+    <h2 class="text-4xl font-bold text-red-700 mb-6 animate-fade-in-up">
+      For Feedbacks, Requests, and Issues
+    </h2>
+
+    <!-- Description -->
+    <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+      We’d love to hear from you! If you have suggestions, issues, or requests regarding Crimson Map, reach out to us through the platforms below.
+    </p>
+
+    <!-- Social / Contact Links -->
+    <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-10">
+      
+      <!-- GitHub -->
+      <a href="https://github.com/YzrSaid/2025_CP-Crimson-Map" target="_blank" class="flex items-center gap-2 hover:scale-105 transition transform">
+        <img src="/assets/imgs/icons/github.png" alt="GitHub" class="w-6 h-6">
+        <span class="text-gray-700 font-semibold">GitHub</span>
+      </a>
+
+      <!-- Email -->
+      <a href="mailto:your-email@example.com" class="flex items-center gap-2 hover:scale-105 transition transform">
+        <img src="/assets/imgs/icons/email.png" alt="Email" class="w-6 h-6">
+        <span class="text-gray-700 font-semibold">Email</span>
+      </a>
+
+      <!-- Facebook -->
+      <a href="https://web.facebook.com/johnbasilmula" target="_blank" class="flex items-center gap-2 hover:scale-105 transition transform">
+        <img src="/assets/imgs/icons/facebook.png" alt="Facebook" class="w-6 h-6">
+        <span class="text-gray-700 font-semibold">Facebook</span>
+      </a>
+
+    </div>
+
+<!-- Bottom Image -->
+<div class="flex items-center justify-center gap-4">
+  <!-- Left Logo -->
+<img src="/assets/imgs/ss/7.png" 
+     alt="Crimson Logo" 
+     class="w-56 md:w-80">
+
+
+</div>
+
+
+
+  </div>
 </section>
 
+
 <!-- FOOTER -->
-<footer>
-  © 2025 Crimson Map — All Rights Reserved<br>
-  Western Mindanao State University — College of Computing Studies<br>
-  Adviser: Lorenzo Ceed
+<footer class="bg-red-700 text-gray-100 py-12 px-8 relative z-10"> 
+  <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 justify-center"> 
+
+    <!-- Logo + Description -->
+    <div class="flex flex-col items-center text-center">
+      <div class="flex space-x-4 mb-4">
+        <img src="/assets/imgs/Western_Mindanao_State_University.png" alt="WMSU Logo" class="w-20">
+        <img src="/assets/imgs/ccs logo.png" alt="CCS Logo" class="w-20">
+        <img src="/assets/imgs/crimson logo.png" alt="Crimson Map Logo" class="w-20">
+      </div>
+
+      <p class="text-gray-100">
+        Crimson Map — Navigate WMSU campuses with ease. AR-enabled campus navigation designed for students and visitors.
+      </p>
+    </div>
+
+    <!-- Our School -->
+    <div class="flex flex-col items-center text-center">
+      <h4 class="text-lg font-bold text-white mb-4">Our School</h4>
+      <ul class="space-y-2 text-gray-100">
+        <li>Western Mindanao State University</li>
+        <li>College of Computing Studies</li>
+        <li>Information Technology</li>
+      </ul>
+    </div>
+
+<!-- Admin Section (desktop only) -->
+<div class="hidden md:flex flex-col items-center text-center">
+  <h4 class="text-lg text-white mb-4">Admin</h4> <!-- Removed font-bold -->
+  <a href="login.html" 
+     class="text-gray-200 hover:text-white hover:border-b hover:border-white border-transparent transition-all">
+    Login as Admin
+  </a>
+</div>
+
+
+  </div>
 </footer>
 
-<script>
-  const hamburger = document.querySelector('.hamburger');
-  const mobileMenu = document.querySelector('.mobile-menu');
 
-  hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('show');
+
+<!-- Scroll-to-Top Button -->
+<button id="scrollTopBtn" 
+        class="fixed bottom-6 right-6 w-12 h-12 bg-red-700 text-white rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-opacity duration-300 hover:bg-red-800 z-50">
+  <!-- Arrow icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+  </svg>
+</button>
+
+
+
+
+<script>
+  // Mobile menu toggle
+  document.querySelector('.hamburger').addEventListener('click', function() {
+    const mobileMenu = document.querySelector('.mobile-menu');
+    if (mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.remove('hidden');
+      mobileMenu.classList.add('flex');
+    } else {
+      mobileMenu.classList.add('hidden');
+      mobileMenu.classList.remove('flex');
+    }
   });
 
-  // Optional: close menu when a link is clicked
-  mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenu.classList.remove('show');
+  // Close mobile menu when a link is clicked
+  document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', function() {
+      const mobileMenu = document.querySelector('.mobile-menu');
+      mobileMenu.classList.add('hidden');
+      mobileMenu.classList.remove('flex');
     });
   });
 </script>
+
+<script>
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+  // Show button when scrolling down 100px
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+      scrollTopBtn.classList.remove('opacity-0', 'invisible');
+      scrollTopBtn.classList.add('opacity-100', 'visible');
+    } else {
+      scrollTopBtn.classList.remove('opacity-100', 'visible');
+      scrollTopBtn.classList.add('opacity-0', 'invisible');
+    }
+  });
+
+  // Scroll to top when clicked
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+</script>
+
+<script type="module" src="/src/main.js"></script>
+<script type="module" src="/js/landing.js"></script>
+
 </body>
 </html>

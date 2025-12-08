@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ======================= FIREBASE CONFIG ===========================
-import { firebaseConfig } from "./firebaseConfig.js";
+import { firebaseConfig } from "./firebaseConfig.mjs";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

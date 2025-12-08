@@ -1,7 +1,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
 import { getFirestore, setDoc, collection, addDoc, getDocs, query, orderBy, where, updateDoc, doc, deleteField, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-import { firebaseConfig } from "../firebaseConfig.js";
+import { firebaseConfig } from "../firebaseConfig.mjs";
 
 
 
@@ -250,84 +250,93 @@ document.addEventListener("DOMContentLoaded", renderCategoriesTable);
 
 
 
+
 document.getElementById('categoryForm')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const submitBtn = e.target.querySelector(".save-btn");
-  if (!submitBtn) return;
+    const submitBtn = e.target.querySelector(".save-btn");
+    if (!submitBtn) return;
 
-  const originalBtnHTML = submitBtn.innerHTML;
+    const originalBtnHTML = submitBtn.innerHTML;
 
-  
-  submitBtn.innerHTML = `
-      <div class="spinner"></div>
-      <span class="loading-text">Saving...</span>
-  `;
-  submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+        <div class="spinner"></div> 
+        <span class="loading-text">Saving...</span>
+    `;
+    submitBtn.disabled = true;
 
-  const name = document.getElementById('categoryName').value.trim();
-  const legend = document.getElementById('categoryLegend').value; 
+    const name = document.getElementById('categoryName').value.trim();
+    const legend = document.getElementById('categoryLegend').value; 
 
-  if (!name || !legend) {
-    showModal('error', 'Please fill in all required fields.');
-    submitBtn.innerHTML = originalBtnHTML;
-    submitBtn.disabled = false;
-    return;
-  }
-
-  try {
-    
-    let nextNum = 1;
-    const querySnapshot = await getDocs(collection(db, "Categories"));
-    const existingIds = querySnapshot.docs
-      .map(doc => doc.data().category_id)
-      .filter(id => id && id.startsWith("CAT-"))
-      .map(id => parseInt(id.slice(4), 10))
-      .filter(num => !isNaN(num));
-
-    if (existingIds.length > 0) {
-      nextNum = Math.max(...existingIds) + 1;
+    if (!name || !legend) {
+        showModal('error', 'Please fill in all required fields.');
+        submitBtn.innerHTML = originalBtnHTML;
+        submitBtn.disabled = false;
+        return;
     }
-    const categoryId = `CAT-${String(nextNum).padStart(2, "0")}`;
 
-    
-    await addDoc(collection(db, "Categories"), {
-      category_id: categoryId,
-      name: name,
-      legend: legend, 
-      buildings: 0,
-      is_deleted: false,
-      createdAt: new Date()
-    });
+    try {
+        // Determine next category ID
+        let nextNum = 1;
+        const querySnapshot = await getDocs(collection(db, "Categories"));
+        const existingIds = querySnapshot.docs
+            .map(doc => doc.data().category_id)
+            .filter(id => id && id.startsWith("CAT-"))
+            .map(id => parseInt(id.slice(4), 10))
+            .filter(num => !isNaN(num));
 
-    
-    await addDoc(collection(db, "ActivityLogs"), {
-      timestamp: new Date(),
-      activity: "Added Category",
-      item: `Category ${categoryId}`,
-      description: `Added category "${name}" with legend "${legend}".`
-    });
+        if (existingIds.length > 0) {
+            nextNum = Math.max(...existingIds) + 1;
+        }
+        const categoryId = `CAT-${String(nextNum).padStart(2, "0")}`;
 
-    
-    const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
-    await updateDoc(staticDataRef, {
-      categories_updated: true,
-    });
+        // Add the category
+        await addDoc(collection(db, "Categories"), {
+            category_id: categoryId,
+            name: name,
+            legend: legend, 
+            buildings: 0,
+            is_deleted: false,
+            createdAt: new Date()
+        });
 
-    document.getElementById('categoryForm').reset();
-    hideCategoryModal();
-    renderCategoriesTable();
-    populateCategoryDropdownForInfra();
+        // Log activity
+        await addDoc(collection(db, "ActivityLogs"), {
+            timestamp: new Date(),
+            activity: "Added Category",
+            item: `Category ${categoryId}`,
+            description: `Added category "${name}" with legend "${legend}".`
+        });
 
-    showModal('success', 'Category has been saved successfully!');
-  } catch (err) {
-    console.error("Error adding category:", err);
-    showModal('error', 'Failed to save category. Please try again.');
-  } finally {
-    
-    submitBtn.innerHTML = originalBtnHTML;
-    submitBtn.disabled = false;
-  }
+        // Get current version
+        const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
+        const staticDataSnap = await getDoc(staticDataRef);
+        let currentVersion = "v1.0.0";
+        if (staticDataSnap.exists()) {
+            currentVersion = staticDataSnap.data().categories_version || "v1.0.0";
+        }
+
+        // Increment version
+        const newVersion = incrementVersion(currentVersion);
+
+        // Update Firestore with new version
+        await updateDoc(staticDataRef, {
+            categories_version: newVersion
+        });
+
+        document.getElementById('categoryForm').reset();
+        hideCategoryModal();
+        renderCategoriesTable();
+        populateCategoryDropdownForInfra();
+
+        showModal('success', 'Category has been saved successfully!');
+    } catch (err) {
+        console.error("Error adding category:", err);
+        showModal('error', 'Failed to save category. Please try again.');
+    } finally {
+        submitBtn.innerHTML = originalBtnHTML;
+        submitBtn.disabled = false;
+    }
 });
 
 
@@ -606,10 +615,8 @@ document.querySelector("#addInfraModal form")?.addEventListener("submit", async 
     const submitBtn = e.target.querySelector(".save-btn");
     if (!submitBtn) return;
 
-    
     const originalBtnHTML = submitBtn.innerHTML;
 
-    
     submitBtn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Saving...</span>
@@ -631,9 +638,12 @@ document.querySelector("#addInfraModal form")?.addEventListener("submit", async 
 
         if (!name || !infraId || !categoryId) {
             showModal('error', 'Please fill in all required fields.');
+            submitBtn.innerHTML = originalBtnHTML;
+            submitBtn.disabled = false;
             return;
         }
 
+        // Add infrastructure
         await addDoc(collection(db, "Infrastructure"), {
             infra_id: infraId,
             name: name,
@@ -645,6 +655,7 @@ document.querySelector("#addInfraModal form")?.addEventListener("submit", async 
             createdAt: new Date()
         });
 
+        // Log activity
         await addDoc(collection(db, "ActivityLogs"), {
             timestamp: new Date(),
             activity: "Added Infrastructure",
@@ -652,6 +663,18 @@ document.querySelector("#addInfraModal form")?.addEventListener("submit", async 
             description: `Added infrastructure "${name}" under category "${categoryName}".`
         });
 
+        // Increment infrastructure version
+        const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
+        const staticDataSnap = await getDoc(staticDataRef);
+        let currentVersion = "v1.0.0";
+        if (staticDataSnap.exists()) {
+            currentVersion = staticDataSnap.data().infrastructure_version || "v1.0.0";
+        }
+        const newVersion = incrementVersion(currentVersion);
+
+        await updateDoc(staticDataRef, { infrastructure_version: newVersion });
+
+        // Reset form & UI
         e.target.reset();
         hideInfraModal();
         renderInfraTable();
@@ -662,17 +685,14 @@ document.querySelector("#addInfraModal form")?.addEventListener("submit", async 
         if (existingImg2) existingImg2.remove();
 
         showModal('success', 'Infrastructure has been saved successfully!');
-
     } catch (err) {
-        console.error("Error adding infrastructure:", err);
-        showModal('error', 'Failed to save infrastructure. Please try again.');
-    } finally {
-        
-        submitBtn.innerHTML = originalBtnHTML;
-        submitBtn.disabled = false;
-    }
+        console.error("Error adding infrastructure:", err); 
+        showModal('error', 'Failed to save infrastructure. Please try again.'); 
+    } finally { 
+        submitBtn.innerHTML = originalBtnHTML; 
+        submitBtn.disabled = false; 
+    } 
 });
-
 
 
 
@@ -909,28 +929,19 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
 
     const originalBtnHTML = submitBtn.innerHTML;
 
-    
     submitBtn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Saving...</span>
     `;
     submitBtn.disabled = true;
 
-    
     const name = document.querySelector('#addRoomModal input[placeholder="e.g. Lecture Room 1"]')?.value.trim();
-
-    
     const roomId = document.querySelector('#addRoomModal input[name="room_id"]')?.value.trim();
-
-    
     const infraSelect = document.querySelectorAll('#addRoomModal select')[0];
     const infraId = infraSelect?.value || "";
     const infraName = infraSelect?.selectedOptions[0]?.dataset.name || infraId;
-
-    
     const indoorType = document.querySelectorAll('#addRoomModal select')[1]?.value || "";
 
-    
     if (!name || !roomId || !infraId || !indoorType) {
         showModal('error', 'Please fill in all required fields.');
         submitBtn.innerHTML = originalBtnHTML;
@@ -939,7 +950,7 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
     }
 
     try {
-        
+        // Add indoor infrastructure
         await addDoc(collection(db, "IndoorInfrastructure"), {
             room_id: roomId,
             name: name,
@@ -949,13 +960,17 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
             createdAt: new Date()
         });
 
-        
+        // Increment indoor_infrastructure version
         const staticDocRef = doc(db, "StaticDataVersions", "GlobalInfo");
-        await updateDoc(staticDocRef, {
-            indoor_infrastructure_updated: true
-        });
+        const staticDocSnap = await getDoc(staticDocRef);
+        let currentVersion = "v1.0.0";
+        if (staticDocSnap.exists()) {
+            currentVersion = staticDocSnap.data().indoor_infrastructure_version || "v1.0.0";
+        }
+        const newVersion = incrementVersion(currentVersion);
+        await updateDoc(staticDocRef, { indoor_infrastructure_version: newVersion });
 
-        
+        // Log activity
         await addDoc(collection(db, "ActivityLogs"), {
             timestamp: new Date(),
             activity: "Added Indoor Infrastructure",
@@ -963,21 +978,17 @@ document.querySelector("#addRoomModal form")?.addEventListener("submit", async (
             description: `Added "${name}" under infrastructure "${infraName}" (Type: ${indoorType}).`
         });
 
-        
+        // Reset form & UI
         e.target.reset();
         document.querySelector('#addRoomModal input[name="room_id"]').value = "";
-
-        
         hideRoomModal();
-        renderRoomsTable();
-
+        // renderRoomsTable();
         showModal('success', 'Room has been saved successfully!');
 
     } catch (err) {
         console.error("Error adding infrastructure:", err);
         showModal('error', 'Failed to save room. Please try again.');
     } finally {
-        
         submitBtn.innerHTML = originalBtnHTML;
         submitBtn.disabled = false;
     }
@@ -1683,6 +1694,23 @@ async function populateMapSelect() {
 }
 
 
+// Helper function to increment semantic version
+function incrementVersion(version) {
+    let [major, minor, patch] = version.replace('v', '').split('.').map(Number);
+
+    patch += 1;
+    if (patch > 99) {
+        patch = 0;
+        minor += 1;
+    }
+    if (minor > 99) {
+        minor = 0;
+        major += 1;
+    }
+
+    return `v${major}.${minor}.${patch}`;
+}
+
 document.querySelector("#addCampusModal form")?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -1691,7 +1719,6 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
 
     const originalBtnHTML = submitBtn.innerHTML;
 
-    
     submitBtn.innerHTML = `
         <div class="spinner"></div>
         <span class="loading-text">Saving...</span>
@@ -1712,7 +1739,7 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
     }
 
     try {
-        
+        // Add the campus
         await addDoc(collection(db, "Campus"), {
             campus_id: campusId,
             campus_name: campusName,
@@ -1720,7 +1747,7 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
             createdAt: new Date()
         });
 
-        
+        // Log activity
         await addDoc(collection(db, "ActivityLogs"), {
             timestamp: new Date(),
             activity: "Added Campus",
@@ -1728,24 +1755,32 @@ document.querySelector("#addCampusModal form")?.addEventListener("submit", async
             description: `Added campus "${campusName}" under map "${mapName}".`
         });
 
-        
+        // Get current version
         const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
-        await updateDoc(staticDataRef, { campus_updated: true });
+        const staticDataSnap = await getDoc(staticDataRef);
+        let currentVersion = "v1.0.0";
+        if (staticDataSnap.exists()) {
+            currentVersion = staticDataSnap.data().campus_version || "v1.0.0";
+        }
+
+        // Increment version
+        const newVersion = incrementVersion(currentVersion);
+
+        // Update Firestore with new version
+        await updateDoc(staticDataRef, { campus_version: newVersion });
 
         e.target.reset();
         hideCampusModal();
         renderCampusTable();
         showModal('success', 'Campus has been saved successfully!');
-    } catch (err) {
-        console.error("Error saving campus:", err);
-        showModal('error', 'Failed to save campus. Please try again.');
-    } finally {
-        
-        submitBtn.innerHTML = originalBtnHTML;
-        submitBtn.disabled = false;
-    }
+    } catch (err) { 
+        console.error("Error saving campus:", err); 
+        showModal('error', 'Failed to save campus. Please try again.'); 
+    } finally { 
+        submitBtn.innerHTML = originalBtnHTML; 
+        submitBtn.disabled = false; 
+    } 
 });
-
 
 
 
@@ -3662,3 +3697,42 @@ function showModal(type, message) {
     overlay.classList.remove("jModal-active");
   };
 }
+
+
+
+
+// --- Sidebar collapse: wrap labels and enable toggle (same UX as reports page)
+function wrapSidebarLabelsAccount() {
+  const anchors = document.querySelectorAll('.left .sidebar ul li a');
+  anchors.forEach((a) => {
+    if (a.querySelector('.sidebar-label')) return;
+    const nodes = Array.from(a.childNodes).filter(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim().length);
+    if (nodes.length === 0) return;
+    const span = document.createElement('span');
+    span.className = 'sidebar-label';
+    nodes.forEach(n => span.appendChild(n));
+    a.appendChild(span);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // prepare sidebar labels
+  wrapSidebarLabelsAccount();
+
+  const menuIcon = document.querySelector('.menu-icon');
+  const leftPane = document.querySelector('.left');
+  if (!menuIcon || !leftPane) return;
+
+  try {
+    const collapsed = localStorage.getItem('sidebarCollapsed');
+    if (collapsed === 'true') leftPane.classList.add('collapsed');
+  } catch (e) {}
+
+  menuIcon.addEventListener('click', () => {
+    const isCollapsed = leftPane.classList.toggle('collapsed');
+    menuIcon.style.transition = 'transform 200ms ease';
+    menuIcon.style.transform = isCollapsed ? 'rotate(90deg)' : 'rotate(0deg)';
+    try { localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false'); } catch(e) {}
+  });
+});
+

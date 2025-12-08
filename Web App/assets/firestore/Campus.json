@@ -1,35 +1,35 @@
 [
   {
     "id": "LPdTcLknVfDaBGJyvUnH",
-    "map_id": "MAP-01",
+    "campus_name": "Campus A",
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756907222,
       "nanoseconds": 208000000
     },
-    "campus_id": "CAMP-01",
-    "campus_name": "Campus A"
+    "map_id": "MAP-01",
+    "campus_id": "CAMP-01"
   },
   {
     "id": "RlcqVPExr5Q8lpWjc3HF",
+    "map_id": "MAP-01",
+    "campus_id": "CAMP-02",
     "campus_name": "Campus B",
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756907230,
       "nanoseconds": 957000000
-    },
-    "map_id": "MAP-01",
-    "campus_id": "CAMP-02"
+    }
   },
   {
     "id": "gFc6dcNnpMdsnr2e9ZoO",
-    "campus_name": "Campus C",
+    "campus_id": "CAMP-03",
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756907242,
       "nanoseconds": 674000000
     },
-    "map_id": "MAP-01",
-    "campus_id": "CAMP-03"
+    "campus_name": "Campus C",
+    "map_id": "MAP-01"
   }
 ]

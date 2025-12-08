@@ -1,43 +1,43 @@
 [
   {
     "id": "3xwjdI85vwotZyjkEamg",
-    "map_id": "MAP-02",
-    "updatedAt": {
-      "type": "firestore/timestamp/1.0",
-      "seconds": 1764490282,
-      "nanoseconds": 407000000
-    },
+    "center_lng": 121.92745203343347,
+    "map_name": "WMSU MAP 2",
+    "center_lat": 7.007540138406922,
+    "campus_included": [
+      "CAMP-03"
+    ],
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1761222361,
       "nanoseconds": 717000000
     },
-    "campus_included": [
-      "CAMP-03"
-    ],
-    "map_name": "WMSU MAP 2",
-    "center_lng": 121.92463699893412,
-    "center_lat": 7.007339504825558
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1764832899,
+      "nanoseconds": 573000000
+    },
+    "map_id": "MAP-02"
   },
   {
     "id": "tHP3U95Zd5ARRhiQUO2a",
+    "updatedAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1765199160,
+      "nanoseconds": 735000000
+    },
+    "map_id": "MAP-01",
+    "campus_included": [
+      "CAMP-01",
+      "CAMP-02"
+    ],
     "map_name": "WMSU MAP",
+    "center_lat": 6.913194751125161,
     "createdAt": {
       "type": "firestore/timestamp/1.0",
       "seconds": 1756907208,
       "nanoseconds": 977000000
     },
-    "center_lng": 122.06491440083694,
-    "map_id": "MAP-01",
-    "center_lat": 6.913184565326825,
-    "campus_included": [
-      "CAMP-01",
-      "CAMP-02"
-    ],
-    "updatedAt": {
-      "type": "firestore/timestamp/1.0",
-      "seconds": 1764490819,
-      "nanoseconds": 611000000
-    }
+    "center_lng": 122.06491961847219
   }
 ]

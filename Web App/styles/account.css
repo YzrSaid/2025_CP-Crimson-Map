@@ -29,6 +29,7 @@ body {
     top: 0;
     height: 100vh; /* fill screen height */
     overflow-y: auto; /* allow sidebar scroll if content too long */
+    transition: width 240ms ease, min-width 240ms ease;
 }
 
 
@@ -38,6 +39,40 @@ body {
 
 .logo img {
     width: 140px;
+    transition: width 240ms ease;
+}
+
+/* Collapsed sidebar state (same behavior as reports page) */
+.left.collapsed {
+    width: 72px;
+    min-width: 72px;
+}
+
+.left.collapsed .logo img {
+    width: 56px;
+}
+
+/* Hide time and welcome when collapsed */
+.left.collapsed .time,
+.left.collapsed .welcome {
+    display: none;
+}
+
+/* Narrow anchors and hide labels via .sidebar-label */
+.left.collapsed .sidebar ul li a {
+    width: 48px;
+    padding-left: 0;
+    padding-right: 0;
+    justify-content: center;
+}
+
+.left.collapsed .sidebar-label {
+    display: none;
+}
+
+.left.collapsed .sidebar ul .fas,
+.left.collapsed .sidebar ul li i {
+    font-size: 20px;
 }
 
 .time {
@@ -156,6 +191,7 @@ body {
 .menu-icon {
     font-size: 22px;
     cursor: pointer;
+    transition: transform 200ms ease;
 }
 .topbar-title {
     font-size: 18px;
@@ -278,9 +314,8 @@ body {
     font-family: 'Inter', sans-serif;
     display: flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .add-user-btn i {
@@ -291,6 +326,45 @@ body {
     background-color: #b30000;
     color: #fff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Smooth transitions for sidebar anchors (keeps behavior consistent with reports.css) */
+.left .sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 180ms ease, opacity 180ms ease;
+}
+
+/* When collapsed: center icons and remove extra paddings */
+.left.collapsed .sidebar ul li a {
+    justify-content: center;
+    width: 48px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Briefly make text visible on hover when collapsed */
+.left.collapsed .sidebar ul li a:hover {
+    color: #000;
+}
+
+/* Center list items and remove left border when collapsed */
+.left.collapsed .sidebar ul li {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Slightly increase icon size for readability when collapsed */
+.left.collapsed .sidebar ul .fas,
+.left.collapsed .sidebar ul li i {
+    font-size: 20px;
+}
+
+/* Menu icon rotation helper (toggle this class in JS to animate) */
+.menu-icon.rotate {
+    transform: rotate(90deg);
 }
 
 

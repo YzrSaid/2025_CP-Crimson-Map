@@ -7,7 +7,7 @@ import {
     query,
     orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-import { firebaseConfig } from "../firebaseConfig.js";
+import { firebaseConfig } from "../firebaseConfig.mjs";
 
 
 const app = initializeApp(firebaseConfig);
@@ -140,3 +140,40 @@ window.addEventListener("offline", renderActivityLogsTable);
 
 
 document.addEventListener("DOMContentLoaded", renderActivityLogsTable);
+
+
+
+// --- Sidebar collapse: wrap labels and enable toggle (same UX as reports page)
+function wrapSidebarLabelsAccount() {
+  const anchors = document.querySelectorAll('.left .sidebar ul li a');
+  anchors.forEach((a) => {
+    if (a.querySelector('.sidebar-label')) return;
+    const nodes = Array.from(a.childNodes).filter(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim().length);
+    if (nodes.length === 0) return;
+    const span = document.createElement('span');
+    span.className = 'sidebar-label';
+    nodes.forEach(n => span.appendChild(n));
+    a.appendChild(span);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // prepare sidebar labels
+  wrapSidebarLabelsAccount();
+
+  const menuIcon = document.querySelector('.menu-icon');
+  const leftPane = document.querySelector('.left');
+  if (!menuIcon || !leftPane) return;
+
+  try {
+    const collapsed = localStorage.getItem('sidebarCollapsed');
+    if (collapsed === 'true') leftPane.classList.add('collapsed');
+  } catch (e) {}
+
+  menuIcon.addEventListener('click', () => {
+    const isCollapsed = leftPane.classList.toggle('collapsed');
+    menuIcon.style.transition = 'transform 200ms ease';
+    menuIcon.style.transform = isCollapsed ? 'rotate(90deg)' : 'rotate(0deg)';
+    try { localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false'); } catch(e) {}
+  });
+});

@@ -147,3 +147,47 @@ body, html {
     font-size: 18px;
   }
 }
+
+
+.right {
+  position: relative; /* required for absolute positioning inside */
+  flex: 1;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.back-btn {
+  position: absolute;
+  top: 40px;              /* vertical position inside right box */
+  left: 0;                /* stick to left edge of right box */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #b30000, #8b0000);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  z-index: 20;
+
+  /* Outward corner effect on left side */
+  border-top-left-radius: 0;    /* top-left curves upward */
+  border-bottom-left-radius: 0; /* bottom-left curves downward */
+  border-top-right-radius: 25px 50px;
+  border-bottom-right-radius: 25px 50px;
+}
+
+.back-btn i {
+  font-size: 14px;
+}
+
+.back-btn:hover {
+  background: linear-gradient(135deg, #a00000, #700000);
+}
+

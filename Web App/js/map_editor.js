@@ -4,7 +4,7 @@ import {
     getFirestore, collection, addDoc, getDocs, query, orderBy, where, updateDoc, doc, getDoc, arrayUnion, writeBatch, deleteDoc, setDoc, limit
 } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
-import { firebaseConfig } from "../firebaseConfig.js";
+import { firebaseConfig } from "../firebaseConfig.mjs";
 
 
 const app = initializeApp(firebaseConfig);
@@ -631,6 +631,33 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
+
+// Helper function to increment semantic version
+function incrementVersion(version) {
+    let [major, minor, patch] = version.replace('v', '').split('.').map(Number);
+
+    patch += 1;
+    if (patch > 99) {
+        patch = 0;
+        minor += 1;
+    }
+    if (minor > 99) {
+        minor = 0;
+        major += 1;
+    }
+
+    return `v${major}.${minor}.${patch}`;
+}
+
+
+
+
+
+
+
+
+
+
 let pendingNodeData = null; 
 
 document.getElementById("nodeForm").addEventListener("submit", async (e) => {
@@ -747,7 +774,7 @@ async function saveNode(option) {
     try {
         const campusId = pendingNodeData.campus_id;
 
-        
+        // Fetch maps for the campus
         const mapsQuery = query(
             collection(db, "MapVersions"),
             where("campus_included", "array-contains", campusId)
@@ -764,7 +791,7 @@ async function saveNode(option) {
         const mapData = mapDoc.data();
         const currentVersion = mapData.current_version || "v1.0.0";
 
-        
+        // Get current version nodes and edges
         const versionRef = doc(db, "MapVersions", mapDocId, "versions", currentVersion);
         const versionSnap = await getDoc(versionRef);
 
@@ -777,6 +804,7 @@ async function saveNode(option) {
             oldEdges = versionData.edges || [];
         }
 
+        // Overwrite or new version logic
         if (option === "overwrite") {
             const updatedNodes = oldNodes.filter(n => n.node_id !== pendingNodeData.node_id);
             updatedNodes.push(pendingNodeData);
@@ -808,20 +836,31 @@ async function saveNode(option) {
             showModal('success', 'New version created successfully!');
         }
 
-        
+        // -----------------------------
+        // Update infrastructure_version
+        // -----------------------------
         const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
-        await updateDoc(staticDataRef, { infrastructure_updated: true });
+        const staticSnap = await getDoc(staticDataRef);
+        let currentInfraVersion = "v1.0.0";
+        if (staticSnap.exists()) {
+            const data = staticSnap.data();
+            if (data.infrastructure_version) currentInfraVersion = data.infrastructure_version;
+        }
+        const nextInfraVersion = incrementVersion(currentInfraVersion);
+        await updateDoc(staticDataRef, { infrastructure_version: nextInfraVersion });
+        console.log(`Infrastructure version updated: ${currentInfraVersion} → ${nextInfraVersion}`);
 
-        
+        // -----------------------------
+        // Update map center
+        // -----------------------------
         const allCampuses = mapData.campus_included || [];
-
         let allNodes = [];
         for (const campId of allCampuses) {
             const versionQuery = query(
                 collection(db, "MapVersions", mapDocId, "versions")
             );
             const versionDocs = await getDocs(versionQuery);
-            
+
             versionDocs.forEach(vDoc => {
                 const vData = vDoc.data();
                 const campusNodes = (vData.nodes || []).filter(n => n.campus_id === campId);
@@ -829,7 +868,6 @@ async function saveNode(option) {
             });
         }
 
-        
         const getGeographicCenter = (nodes) => {
             if (!nodes.length) return [6.9130, 122.0630];
             let x = 0, y = 0, z = 0;
@@ -851,7 +889,6 @@ async function saveNode(option) {
 
         const [centerLat, centerLng] = getGeographicCenter(allNodes);
 
-        
         const mapsCollection = collection(db, "Maps");
         const mapsQueryRef = query(mapsCollection, where("map_id", "==", mapDocId));
         const mapsDocs = await getDocs(mapsQueryRef);
@@ -866,11 +903,13 @@ async function saveNode(option) {
             console.log(`Map center updated for ${mapDocId}:`, centerLat, centerLng);
         }
 
-        
+        // -----------------------------
+        // Cleanup
+        // -----------------------------
         document.getElementById("nodeForm").reset();
         document.getElementById("indoorDetails").style.display = "none";
         generateNextNodeId();
-        renderNodesTable();
+        // renderNodesTable();
         pendingNodeData = null;
         document.getElementById("nodeSaveModal").style.display = "none";
 
@@ -879,6 +918,7 @@ async function saveNode(option) {
         showModal('error', 'Failed to save node. Please try again.');
     }
 }
+
 
 
 
@@ -1699,6 +1739,20 @@ async function saveEdge(option) {
                 created_at: new Date()
             });
 
+            // -----------------------------
+            // Update indoor_edges_version
+            // -----------------------------
+            const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
+            const staticSnap = await getDoc(staticDataRef);
+            let currentIndoorVersion = "v1.0.0";
+            if (staticSnap.exists()) {
+                const data = staticSnap.data();
+                if (data.indoor_edges_version) currentIndoorVersion = data.indoor_edges_version;
+            }
+            const nextIndoorVersion = incrementVersion(currentIndoorVersion);
+            await updateDoc(staticDataRef, { indoor_edges_version: nextIndoorVersion });
+            console.log(`Indoor edges version updated: ${currentIndoorVersion} → ${nextIndoorVersion}`);
+
             showModal('success', 'Indoor edge added successfully!');
             document.getElementById("edgeSaveModal").style.display = "none";
             document.getElementById("addEdgeModal").style.display = "none";
@@ -1713,7 +1767,6 @@ async function saveEdge(option) {
 
     // ----------------- NODE EDGE LOGIC (existing) -----------------
     try {
-        // Read UI dropdown values to get the selected map and version
         const mapSelect = document.getElementById("mapSelect");
         const versionSelect = document.getElementById("versionSelect");
 
@@ -1735,7 +1788,6 @@ async function saveEdge(option) {
         }
 
         const mapData = mapDocSnap.data();
-        const mapId = mapDocId;
         const currentVersion = selectedVersion;
 
         const versionRef = doc(db, "MapVersions", mapDocId, "versions", currentVersion);
@@ -1796,11 +1848,8 @@ async function saveEdge(option) {
             showModal('success', `New version created: ${newVersion} with migrated nodes and edges`);
         }
 
-        const staticDataRef = doc(db, "StaticDataVersions", "GlobalInfo");
-        await updateDoc(staticDataRef, { infrastructure_updated: true });
-
         renderEdgesTable();
-        loadMap(mapId);
+        loadMap(mapDocId);
 
         document.getElementById("edgeSaveModal").style.display = "none";
         document.getElementById("addEdgeModal").style.display = "none";
@@ -1812,6 +1861,7 @@ async function saveEdge(option) {
         showModal('error', 'Failed to save Edge. Please try again.');
     }
 }
+
 
 
 
@@ -5629,3 +5679,46 @@ function showModal(type, message) {
     overlay.classList.remove("jModal-active");
   };
 }
+
+
+
+
+
+
+
+
+
+// --- Sidebar collapse: wrap labels and enable toggle (same UX as reports page)
+function wrapSidebarLabelsAccount() {
+  const anchors = document.querySelectorAll('.left .sidebar ul li a');
+  anchors.forEach((a) => {
+    if (a.querySelector('.sidebar-label')) return;
+    const nodes = Array.from(a.childNodes).filter(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim().length);
+    if (nodes.length === 0) return;
+    const span = document.createElement('span');
+    span.className = 'sidebar-label';
+    nodes.forEach(n => span.appendChild(n));
+    a.appendChild(span);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // prepare sidebar labels
+  wrapSidebarLabelsAccount();
+
+  const menuIcon = document.querySelector('.menu-icon');
+  const leftPane = document.querySelector('.left');
+  if (!menuIcon || !leftPane) return;
+
+  try {
+    const collapsed = localStorage.getItem('sidebarCollapsed');
+    if (collapsed === 'true') leftPane.classList.add('collapsed');
+  } catch (e) {}
+
+  menuIcon.addEventListener('click', () => {
+    const isCollapsed = leftPane.classList.toggle('collapsed');
+    menuIcon.style.transition = 'transform 200ms ease';
+    menuIcon.style.transform = isCollapsed ? 'rotate(90deg)' : 'rotate(0deg)';
+    try { localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false'); } catch(e) {}
+  });
+});

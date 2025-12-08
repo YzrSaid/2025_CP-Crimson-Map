@@ -1,11 +1,12 @@
 [
   {
     "id": "GlobalInfo",
-    "categories_updated": false,
-    "campus_updated": false,
-    "infrastructure_updated": false,
-    "indoor_edges_updated": false,
-    "last_check": 1764492264,
-    "indoor_infrastructure_updated": false
+    "categories_version": "v1.0.1",
+    "indoor_infrastructure_version": "v1.0.92",
+    "indoor_edges_version": "v1.0.1",
+    "infrastructure_updated": true,
+    "infrastructure_version": "v1.1.4",
+    "last_check": 1764918152,
+    "campus_version": "v1.0.1"
   }
 ]

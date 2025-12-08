@@ -29,6 +29,7 @@ body {
     top: 0;
     height: 100vh; /* fill screen height */
     overflow-y: auto; /* allow sidebar scroll if content too long */
+    transition: width 240ms ease, min-width 240ms ease;
 }
 
 
@@ -38,6 +39,23 @@ body {
 
 .logo img {
     width: 140px;
+}
+
+/* Collapsed sidebar state (icons-only) */
+.left.collapsed {
+    width: 72px;
+    min-width: 72px;
+}
+
+.left.collapsed .logo img {
+    width: 56px;
+    transition: width 240ms ease;
+}
+
+/* Hide time and welcome when collapsed */
+.left.collapsed .time,
+.left.collapsed .welcome {
+    display: none;
 }
 
 .time {
@@ -103,6 +121,61 @@ body {
     text-decoration: none;
     color: inherit;
     width: 100%;
+}
+
+/* Smooth transitions for sidebar anchors */
+.left .sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 180ms ease, opacity 180ms ease;
+}
+
+/* When collapsed: center icons and reduce padding */
+.left.collapsed .sidebar ul li a {
+    justify-content: center;
+    width: 48px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Hide label text when collapsed (wrap text in .sidebar-label) */
+.left.collapsed .sidebar-label {
+    display: none;
+}
+
+/* Slightly increase icon size when collapsed for readability */
+.left.collapsed .sidebar ul .fas,
+.left.collapsed .sidebar ul li i {
+    font-size: 20px;
+}
+
+/* Improve alignment when collapsed (center icons) */
+.left.collapsed .sidebar li {
+    padding-left: 0;
+    padding-right: 0;
+    justify-content: center;
+}
+
+.left.collapsed .sidebar li a {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.left.collapsed .sidebar li i {
+    padding: 6px 0;
+    min-width: 0;
+    width: 28px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Menu icon rotation helper (toggle this class in JS) */
+.menu-icon.rotate {
+    transform: rotate(90deg);
+    transition: transform 200ms ease;
 }
 
 .sidebar li i {

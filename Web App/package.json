@@ -9,9 +9,24 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.17",
     "express": "^5.1.0",
     "firebase": "^12.2.1",
     "qrcode": "^1.5.4"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohnMulaPogi/Crimson-Map-Admin.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/JohnMulaPogi/Crimson-Map-Admin/issues"
+  },
+  "homepage": "https://github.com/JohnMulaPogi/Crimson-Map-Admin#readme"
 }
