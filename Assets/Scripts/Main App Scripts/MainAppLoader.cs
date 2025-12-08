@@ -5,7 +5,6 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using UnityEditor.PackageManager;
 using DG.Tweening;
 
 public class MainAppLoader : MonoBehaviour
