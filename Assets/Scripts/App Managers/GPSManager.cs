@@ -69,21 +69,15 @@ public class GPSManager : MonoBehaviour
     {
         if (overrideHeading.HasValue)
         {
-            // Use the provided heading from calibration
             arSceneCompassHeading = overrideHeading.Value;
             arCompassInitialized = true;
             Debug.Log($"[GPSManager] AR Scene Compass Initialized (Override): {arSceneCompassHeading}°");
         }
         else if (IsCompassReady())
         {
-            // Use current heading
             arSceneCompassHeading = GetHeading();
             arCompassInitialized = true;
             Debug.Log($"[GPSManager] AR Scene Compass Initialized: {arSceneCompassHeading}°");
-        }
-        else
-        {
-            Debug.LogWarning("[GPSManager] Compass not ready for AR initialization");
         }
     }
     public float GetARSceneCompassHeading()
@@ -203,7 +197,7 @@ public class GPSManager : MonoBehaviour
         }
         else
         {
-            return new Vector2(mockLatitude, mockLongitude);
+            return Vector2.zero;
         }
     }
 
@@ -382,7 +376,6 @@ public class GPSManager : MonoBehaviour
         {
             return Input.location.lastData.horizontalAccuracy;
         }
-
         return -1f;
     }
 

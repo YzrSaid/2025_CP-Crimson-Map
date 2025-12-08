@@ -8435,7 +8435,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 8
+  m_PixelsPerUnitMultiplier: 7
 --- !u!222 &571506453
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21661,7 +21661,7 @@ MonoBehaviour:
   staticFromNodeId: ND-015
   staticToNodeId: ND-033
   useGPSForFromLocation: 1
-  nearestNodeSearchRadius: 100
+  nearestNodeSearchRadius: 50
   autoUpdateGPSLocation: 1
   gpsUpdateInterval: 5
   qrConflictThresholdMeters: 100
@@ -23917,7 +23917,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: d4af31c9cd405426488b1eaf34c38a9e, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -23926,7 +23926,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 7
 --- !u!222 &1651063095
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -25725,7 +25725,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 8
+  m_PixelsPerUnitMultiplier: 7
 --- !u!222 &1724475840
 CanvasRenderer:
   m_ObjectHideFlags: 0

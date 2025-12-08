@@ -256,15 +256,14 @@ public class UnifiedARManager : MonoBehaviour
     public void ExitARScene()
     {
         if (isExitingAR) return;
-
         isExitingAR = true;
 
         if (GPSManager.Instance != null)
         {
-            GPSManager.Instance.UnlockLocationForPathfinding();
-            Debug.Log("[UnifiedARManager] Exiting AR - GPS unlocked");
+            GPSManager.Instance.UnlockLocationForPathfinding(); 
+            GPSManager.Instance.ClearQRLocationOverride(); 
+            Debug.Log("[UnifiedARManager] Exiting AR - All GPS locks cleared (home lock + QR override)");
         }
-
 
         CancelInvoke();
 
@@ -928,6 +927,20 @@ public class UnifiedARManager : MonoBehaviour
     {
         return false;
     }
+    public Vector2 GetUserRawGPS()
+    {
+        if (GPSManager.Instance != null && GPSManager.Instance.IsUsingQROverride())
+        {
+            return GPSManager.Instance.GetCoordinates();
+        }
+        if (GPSManager.Instance != null)
+        {
+            return GPSManager.Instance.GetRawSmoothedGPSCoordinates();
+        }
+
+        return Vector2.zero;
+    }
+
 
     public string GetCurrentIndoorInfraId()
     {

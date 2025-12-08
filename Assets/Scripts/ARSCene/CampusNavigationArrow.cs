@@ -18,8 +18,7 @@ public class CompassNavigationArrow : MonoBehaviour
     void Start()
     {
         arManager = FindObjectOfType<UnifiedARManager>();
-        
-        // Always enable compass for outdoor GPS mode
+
         Input.compass.enabled = true;
         Input.location.Start();
     }
@@ -35,13 +34,33 @@ public class CompassNavigationArrow : MonoBehaviour
 
     private void UpdateUserLocation()
     {
+        if (GPSManager.Instance != null && GPSManager.Instance.IsUsingQROverride())
+        {
+            userLocation = GPSManager.Instance.GetCoordinates();
+            if (enableDebugLogs)
+            {
+                Debug.Log($"[CompassArrow] Using QR Override: ({userLocation.x:F6}, {userLocation.y:F6})");
+            }
+            return;
+        }
+        
         if (arManager != null)
         {
-            userLocation = arManager.GetUserXY();
+            userLocation = arManager.GetUserRawGPS();
+            if (enableDebugLogs)
+            {
+                Debug.Log($"[CompassArrow] Using Raw GPS from ARManager: ({userLocation.x:F6}, {userLocation.y:F6})");
+            }
+            return;
         }
-        else if (GPSManager.Instance != null)
+        
+        if (GPSManager.Instance != null)
         {
-            userLocation = GPSManager.Instance.GetSmoothedCoordinates();
+            userLocation = GPSManager.Instance.GetRawSmoothedGPSCoordinates();
+            if (enableDebugLogs)
+            {
+                Debug.Log($"[CompassArrow] Using Raw GPS from GPSManager: ({userLocation.x:F6}, {userLocation.y:F6})");
+            }
         }
     }
 
@@ -57,7 +76,6 @@ public class CompassNavigationArrow : MonoBehaviour
 
         if (isIndoor)
         {
-            // Indoor mode - use X,Y coordinates
             Vector2 targetXY;
             if (targetNode.indoor != null)
             {
@@ -70,15 +88,11 @@ public class CompassNavigationArrow : MonoBehaviour
 
             Vector2 direction = targetXY - userLocation;
 
-            // Calculate bearing in X,Y space
-            // Assuming Y is forward (north) and X is right (east)
             float bearingToTarget = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
-            
-            // Get device heading from AR camera if available
+
             float deviceHeading = 0f;
             if (arManager != null && Camera.main != null)
             {
-                // Use AR camera's Y rotation as heading
                 deviceHeading = Camera.main.transform.eulerAngles.y;
             }
 
@@ -87,7 +101,6 @@ public class CompassNavigationArrow : MonoBehaviour
         }
         else
         {
-            // Outdoor mode - use GPS coordinates
             Vector2 targetGPS = new Vector2(targetNode.latitude, targetNode.longitude);
             float bearingToTarget = CalculateBearingGPS(userLocation, targetGPS);
 
@@ -107,7 +120,6 @@ public class CompassNavigationArrow : MonoBehaviour
         if (enableDebugLogs)
         {
             string mode = isIndoor ? "Indoor" : "Outdoor";
-            Debug.Log($"CompassArrow ({mode}): Target angle = {targetAngle:F1}°");
         }
     }
 

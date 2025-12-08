@@ -238,10 +238,30 @@ public class UserIndicator : MonoBehaviour
         else
         {
             gpsCoords = GPSManager.Instance.GetRawSmoothedGPSCoordinates();
-
             if (gpsCoords.magnitude < 0.0001f)
             {
+                if (userIndicatorInstance.activeSelf)
+                {
+                    userIndicatorInstance.SetActive(false);
+                }
+
+                if (shadowConeInstance != null && shadowConeInstance.activeSelf)
+                {
+                    shadowConeInstance.SetActive(false);
+                }
                 return;
+            }
+            else
+            {
+                if (!userIndicatorInstance.activeSelf)
+                {
+                    userIndicatorInstance.SetActive(true);
+                }
+
+                if (shadowConeInstance != null && !shadowConeInstance.activeSelf)
+                {
+                    shadowConeInstance.SetActive(true);
+                }
             }
         }
 
@@ -308,7 +328,28 @@ public class UserIndicator : MonoBehaviour
 
                 if (gpsCoords.magnitude < 0.0001f)
                 {
+                    if (userIndicatorInstance.activeSelf)
+                    {
+                        userIndicatorInstance.SetActive(false);
+                    }
+
+                    if (shadowConeInstance != null && shadowConeInstance.activeSelf)
+                    {
+                        shadowConeInstance.SetActive(false);
+                    }
                     return;
+                }
+                else
+                {
+                    if (!userIndicatorInstance.activeSelf)
+                    {
+                        userIndicatorInstance.SetActive(true);
+                    }
+
+                    if (shadowConeInstance != null && !shadowConeInstance.activeSelf)
+                    {
+                        shadowConeInstance.SetActive(true);
+                    }
                 }
             }
 
