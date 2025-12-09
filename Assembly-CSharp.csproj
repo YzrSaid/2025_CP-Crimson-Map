@@ -404,6 +404,7 @@
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Modifiers/MeshModifiers/PolygonMeshModifier.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/GeometryMaterialOptions.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Factories/TerrainStrategies/ElevatedTerrainWithSidesStrategy.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/WebRedirect.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/ILocationProvider.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Directions/Response/Step.cs" />
     <Compile Include="Assets/Mapbox/Unity/Location/LocationProviderFactory.cs" />
