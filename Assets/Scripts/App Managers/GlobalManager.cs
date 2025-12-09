@@ -546,21 +546,6 @@ public class GlobalManager : MonoBehaviour
         }
     }
 
-    public void AddToSavedDestinations(Dictionary<string, object> destination)
-    {
-        if (JSONFileManager.Instance != null)
-        {
-            JSONFileManager.Instance.AddSavedDestination(destination);
-        }
-    }
-
-    public void RemoveFromSavedDestinations(string destinationId)
-    {
-        if (JSONFileManager.Instance != null)
-        {
-            JSONFileManager.Instance.RemoveSavedDestination(destinationId);
-        }
-    }
 
     public bool IsMapDataFresh(string mapId, int maxAgeHours = 24)
     {

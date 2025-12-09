@@ -811,7 +811,7 @@ GameObject:
   - component: {fileID: 4741206518068181457}
   - component: {fileID: 5046599109498768812}
   - component: {fileID: 5559521910198267196}
-  - component: {fileID: 6349982395141062831}
+  - component: {fileID: 7302284759638988709}
   m_Layer: 5
   m_Name: ExploreInfrastructurePrefab
   m_TagString: Untagged
@@ -879,7 +879,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 6
---- !u!114 &6349982395141062831
+--- !u!114 &7302284759638988709
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -896,6 +896,7 @@ MonoBehaviour:
   navigateButton: {fileID: 9039800365135534093}
   viewDetailsButton: {fileID: 4677908348708706206}
   detailsPanelPrefab: {fileID: 1667522515482380833, guid: 03d3515f5812b3a6c8476995dd64775b, type: 3}
+  targetCanvasName: Canvas
 --- !u!1 &7621472915624509116
 GameObject:
   m_ObjectHideFlags: 0

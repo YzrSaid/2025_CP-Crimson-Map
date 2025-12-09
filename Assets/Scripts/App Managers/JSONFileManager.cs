@@ -19,7 +19,6 @@ public class JSONFileManager : MonoBehaviour
         "campus.json",
         "maps.json",
         "recent_destinations.json",
-        "saved_destinations.json",
         "static_data_cache.json",
         "indoor.json",
         "indoor_edges.json",
@@ -192,9 +191,6 @@ public class JSONFileManager : MonoBehaviour
                 
             case "recent_destinations.json":
                 return CreateDefaultRecentDestinations();
-                
-            case "saved_destinations.json":
-                return CreateDefaultSavedDestinations();
 
             case "static_data_cache.json":
                 return CreateDefaultStaticDataCache();
@@ -208,14 +204,6 @@ public class JSONFileManager : MonoBehaviour
     {
         var defaultData = new {
             recent_destinations = new object[] { }
-        };
-        return JsonUtility.ToJson(defaultData, true);
-    }
-
-    private string CreateDefaultSavedDestinations()
-    {
-        var defaultData = new {
-            saved_destinations = new object[] { }
         };
         return JsonUtility.ToJson(defaultData, true);
     }
@@ -393,54 +381,6 @@ public class JSONFileManager : MonoBehaviour
         }
     }
 
-    public void AddSavedDestination(Dictionary<string, object> destination)
-    {
-        try
-        {
-            string jsonContent = ReadJSONFile("saved_destinations.json");
-            if (!string.IsNullOrEmpty(jsonContent))
-            {
-                var data = JsonUtility.FromJson<SavedDestinationsData>(jsonContent);
-                var savedList = new List<Dictionary<string, object>>(data.saved_destinations ?? new Dictionary<string, object>[0]);
-                
-                bool alreadyExists = savedList.Any(d => d.ContainsKey("id") && destination.ContainsKey("id") && 
-                                                       d["id"].ToString() == destination["id"].ToString());
-                
-                if (!alreadyExists)
-                {
-                    savedList.Add(destination);
-                    data.saved_destinations = savedList.ToArray();
-                    string updatedJson = JsonUtility.ToJson(data, true);
-                    WriteJSONFile("saved_destinations.json", updatedJson);
-                }
-            }
-        }
-        catch (System.Exception)
-        {
-        }
-    }
-
-    public void RemoveSavedDestination(string destinationId)
-    {
-        try
-        {
-            string jsonContent = ReadJSONFile("saved_destinations.json");
-            if (!string.IsNullOrEmpty(jsonContent))
-            {
-                var data = JsonUtility.FromJson<SavedDestinationsData>(jsonContent);
-                var savedList = new List<Dictionary<string, object>>(data.saved_destinations ?? new Dictionary<string, object>[0]);
-                
-                savedList.RemoveAll(d => d.ContainsKey("id") && d["id"].ToString() == destinationId);
-                
-                data.saved_destinations = savedList.ToArray();
-                string updatedJson = JsonUtility.ToJson(data, true);
-                WriteJSONFile("saved_destinations.json", updatedJson);
-            }
-        }
-        catch (System.Exception)
-        {
-        }
-    }
 
     public void ClearAllCaches()
     {

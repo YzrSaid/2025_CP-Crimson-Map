@@ -10,161 +10,208 @@ public class AccordionSpawner : MonoBehaviour
     public Transform accordionContainer;
     public AccordionManager manager;
 
-    [Header( "Loading Check" )]
+    [Header("Prefab References")]
+    public GameObject infrastructurePrefab;
+    public GameObject recentDestinationPrefab;
+
+    [Header("Loading Check")]
     public float maxWaitTime = 30f;
 
     private List<string> staticCategories = new List<string> { "Saved", "Recent" };
 
     void Start()
     {
-        foreach ( string name in staticCategories ) {
-            SpawnAccordionItem( name, null );
+        foreach (string name in staticCategories)
+        {
+            SpawnAccordionItem(name, null);
         }
 
-        StartCoroutine( WaitForDataInitializationThenLoad() );
+        StartCoroutine(WaitForDataInitializationThenLoad());
     }
 
     private IEnumerator WaitForDataInitializationThenLoad()
     {
         float waitTime = 0f;
 
-        while ( waitTime < maxWaitTime ) {
-            if ( GlobalManager.Instance != null && IsDataInitializationComplete() ) {
-                yield return StartCoroutine( LoadDynamicCategoriesFromFirebase() );
+        while (waitTime < maxWaitTime)
+        {
+            if (GlobalManager.Instance != null && IsDataInitializationComplete())
+            {
+                yield return StartCoroutine(LoadDynamicCategoriesFromFirebase());
                 yield break;
             }
 
             waitTime += Time.deltaTime;
-            yield return new WaitForSeconds( 0.1f );
+            yield return new WaitForSeconds(0.1f);
         }
 
-        yield return StartCoroutine( LoadDynamicCategoriesFromFirebase() );
+        yield return StartCoroutine(LoadDynamicCategoriesFromFirebase());
     }
 
     private bool IsDataInitializationComplete()
     {
-        string filePath = GetJsonFilePath( "categories.json" );
+        string filePath = GetJsonFilePath("categories.json");
 
-        if ( !File.Exists( filePath ) ) {
+        if (!File.Exists(filePath))
+        {
             return false;
         }
 
-        try {
-            string content = File.ReadAllText( filePath );
-            if ( string.IsNullOrEmpty( content ) || content.Length < 10 ) {
+        try
+        {
+            string content = File.ReadAllText(filePath);
+            if (string.IsNullOrEmpty(content) || content.Length < 10)
+            {
                 return false;
             }
 
             string wrappedJson = "{\"categories\":" + content + "}";
-            CategoryList testList = JsonUtility.FromJson<CategoryList>( wrappedJson );
+            CategoryList testList = JsonUtility.FromJson<CategoryList>(wrappedJson);
 
-            if ( testList == null || testList.categories == null || testList.categories.Count == 0 ) {
+            if (testList == null || testList.categories == null || testList.categories.Count == 0)
+            {
                 return false;
             }
 
             return true;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
             return false;
         }
     }
 
-    private string GetJsonFilePath( string fileName )
+    private string GetJsonFilePath(string fileName)
     {
 #if UNITY_EDITOR
-        string streamingPath = Path.Combine( Application.streamingAssetsPath, fileName );
-        if ( File.Exists( streamingPath ) ) {
+        string streamingPath = Path.Combine(Application.streamingAssetsPath, fileName);
+        if (File.Exists(streamingPath))
+        {
             return streamingPath;
         }
 #endif
-        return Path.Combine( Application.persistentDataPath, fileName );
+        return Path.Combine(Application.persistentDataPath, fileName);
     }
 
     IEnumerator LoadDynamicCategoriesFromFirebase()
     {
-        yield return StartCoroutine( CrossPlatformFileLoader.LoadJsonFile(
+        yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
                                          "categories.json",
                                          OnCategoriesLoadSuccess,
                                          OnCategoriesLoadError
-                                     ) );
+                                     ));
     }
 
-    void OnCategoriesLoadSuccess( string jsonData )
+    void OnCategoriesLoadSuccess(string jsonData)
     {
-        try {
+        try
+        {
             string wrappedJson = "{\"categories\":" + jsonData + "}";
-            CategoryList categoryList = JsonUtility.FromJson<CategoryList>( wrappedJson );
+            CategoryList categoryList = JsonUtility.FromJson<CategoryList>(wrappedJson);
 
-            foreach ( Category cat in categoryList.categories ) {
-                SpawnAccordionItem( cat.name, cat.category_id );
+            foreach (Category cat in categoryList.categories)
+            {
+                SpawnAccordionItem(cat.name, cat.category_id);
             }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
         }
     }
 
-    void OnCategoriesLoadError( string errorMessage )
+    void OnCategoriesLoadError(string errorMessage)
     {
     }
 
-    [Header( "Prefab References" )]
-    public GameObject infrastructurePrefab;
-
-    void SpawnAccordionItem( string categoryName, string categoryId )
+    void SpawnAccordionItem(string categoryName, string categoryId)
     {
-        GameObject newItem = Instantiate( accordionItemPrefab, accordionContainer );
+        GameObject newItem = Instantiate(accordionItemPrefab, accordionContainer);
         AccordionItem item = newItem.GetComponent<AccordionItem>();
 
-        if ( item == null ) {
-            Destroy( newItem );
+        if (item == null)
+        {
+            Destroy(newItem);
             return;
         }
 
         RectTransform itemRect = newItem.GetComponent<RectTransform>();
-        if ( itemRect != null ) {
-            itemRect.anchorMin = new Vector2( 0, 1 );
-            itemRect.anchorMax = new Vector2( 1, 1 );
-            itemRect.pivot = new Vector2( 0.5f, 1 );
-            itemRect.offsetMin = new Vector2( 0, itemRect.offsetMin.y );
-            itemRect.offsetMax = new Vector2( 0, itemRect.offsetMax.y );
+        if (itemRect != null)
+        {
+            itemRect.anchorMin = new Vector2(0, 1);
+            itemRect.anchorMax = new Vector2(1, 1);
+            itemRect.pivot = new Vector2(0.5f, 1);
+            itemRect.offsetMin = new Vector2(0, itemRect.offsetMin.y);
+            itemRect.offsetMax = new Vector2(0, itemRect.offsetMax.y);
             itemRect.localScale = Vector3.one;
-            itemRect.localPosition = new Vector3( 0, itemRect.localPosition.y, 0 );
+            itemRect.localPosition = new Vector3(0, itemRect.localPosition.y, 0);
         }
 
         item.manager = manager;
 
-        if ( infrastructurePrefab != null ) {
-            item.infrastructurePrefab = infrastructurePrefab;
+        // ✅ SET THE CORRECT PREFAB BASED ON CATEGORY
+        if (categoryName == "Recent")
+        {
+            // Use recent destination prefab for "Recent" category
+            if (recentDestinationPrefab != null)
+            {
+                item.infrastructurePrefab = recentDestinationPrefab;
+            }
+            else
+            {
+                Debug.LogError("[AccordionSpawner] Recent destination prefab not assigned!");
+            }
+        }
+        else
+        {
+            // Use regular infrastructure prefab for other categories
+            if (infrastructurePrefab != null)
+            {
+                item.infrastructurePrefab = infrastructurePrefab;
+            }
         }
 
-        if ( item.infrastructureContainer == null ) {
+        if (item.infrastructureContainer == null)
+        {
             Transform contentPanel = item.contentPanel;
-            if ( contentPanel != null ) {
-                Transform container = contentPanel.Find( "InfrastructureContainer" );
-                if ( container == null && contentPanel.childCount > 0 ) {
-                    container = contentPanel.GetChild( 0 );
+            if (contentPanel != null)
+            {
+                Transform container = contentPanel.Find("InfrastructureContainer");
+                if (container == null && contentPanel.childCount > 0)
+                {
+                    container = contentPanel.GetChild(0);
                 }
 
-                if ( container != null ) {
+                if (container != null)
+                {
                     item.infrastructureContainer = container;
                 }
             }
         }
 
-        if ( !string.IsNullOrEmpty( categoryId ) ) {
-            item.SetCategoryId( categoryId );
+        // SPECIAL HANDLING FOR "RECENT" CATEGORY
+        if (categoryName == "Recent")
+        {
+            // Load recent destinations instead of regular infrastructures
+            item.LoadRecentDestinations();
+        }
+        else if (!string.IsNullOrEmpty(categoryId))
+        {
+            // Regular category - set category ID for normal infrastructure loading
+            item.SetCategoryId(categoryId);
         }
 
-        if ( item.headerButton != null ) {
+        if (item.headerButton != null)
+        {
             TMPro.TextMeshProUGUI headerText = item.headerButton.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-            if ( headerText != null ) {
+            if (headerText != null)
+            {
                 headerText.text = categoryName;
             }
         }
 
         item.headerButton.onClick.RemoveAllListeners();
-        item.headerButton.onClick.AddListener( () => manager.ToggleItem( item ) );
+        item.headerButton.onClick.AddListener(() => manager.ToggleItem(item));
 
-        manager.accordionItems.Add( item );
+        manager.accordionItems.Add(item);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class AccordionItem : MonoBehaviour
 {
@@ -197,6 +198,50 @@ public class AccordionItem : MonoBehaviour
         {
             StartCoroutine(ShowEmptyStateAfterError());
         }
+    }
+    public void LoadRecentDestinations()
+    {
+        if (infrastructureContainer == null)
+        {
+            Debug.LogError("[AccordionItem] Infrastructure container not assigned!");
+            return;
+        }
+
+        // Clear existing items
+        foreach (Transform child in infrastructureContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Load recent destinations from JSON
+        List<SavedNavigation> recentDestinations = ARNavigationDataHelper.GetNavigationHistory();
+
+        if (recentDestinations == null || recentDestinations.Count == 0)
+        {
+            Debug.Log("[AccordionItem] No recent destinations found");
+            return;
+        }
+
+        // Sort by timestamp (most recent first)
+        recentDestinations.Sort((a, b) => DateTime.Parse(b.timestamp).CompareTo(DateTime.Parse(a.timestamp)));
+
+        // Create items for each recent destination
+        foreach (SavedNavigation nav in recentDestinations)
+        {
+            GameObject itemObj = Instantiate(infrastructurePrefab, infrastructureContainer);
+            RecentDestinationItem itemScript = itemObj.GetComponent<RecentDestinationItem>();
+
+            if (itemScript != null)
+            {
+                itemScript.SetNavigationData(nav);
+            }
+            else
+            {
+                Debug.LogError("[AccordionItem] RecentDestinationItem component not found on prefab!");
+            }
+        }
+
+        Debug.Log($"[AccordionItem] Loaded {recentDestinations.Count} recent destinations");
     }
 
     void SpawnInfrastructureItem(Infrastructure infra)
@@ -394,7 +439,7 @@ public class AccordionItem : MonoBehaviour
         if (spawnedInfrastructures == null || spawnedInfrastructures.Count == 0)
             return matchingIds;
 
-        searchText = searchText.ToLower().Trim(); 
+        searchText = searchText.ToLower().Trim();
 
         foreach (GameObject infraObj in spawnedInfrastructures)
         {
@@ -403,7 +448,7 @@ public class AccordionItem : MonoBehaviour
             ExploreInfrastructureItem itemScript = infraObj.GetComponent<ExploreInfrastructureItem>();
             if (itemScript != null)
             {
-                string infraName = itemScript.GetInfrastructureName().ToLower().Trim(); 
+                string infraName = itemScript.GetInfrastructureName().ToLower().Trim();
                 bool matches = infraName.Contains(searchText);
 
                 infraObj.SetActive(matches);

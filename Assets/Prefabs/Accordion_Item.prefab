@@ -791,8 +791,8 @@ MonoBehaviour:
   emptyMessageHeight: 80
   showEmptyMessage: 1
   emptyMessageText: No infrastructures available
-  emptyMessageFont: {fileID: 0}
-  emptyMessageFontSize: 16
+  emptyMessageFont: {fileID: 11400000, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
+  emptyMessageFontSize: 26
   emptyMessageColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
   emptyMessageAlignment: 514
   emptyMessageFontStyle: 0

@@ -65,6 +65,55 @@ public class MainAppManager : MonoBehaviour
         None
     }
 
+    private void HideAllSettingsPageRelatedPanels()
+    {
+        if (panelBG1 != null)
+        {
+            panelBG1.SetActive(false);
+        }
+        if (panelBG2 != null)
+        {
+            panelBG2.SetActive(false);
+        }
+        if (aboutPanel != null)
+        {
+            aboutPanel.SetActive(false);
+        }
+    }
+
+    private void HideAllExplorePageRelatedPanels()
+    {
+        if (panelBG1 != null)
+        {
+            panelBG1.SetActive(false);
+        }
+        if (panelBG2 != null)
+        {
+            panelBG2.SetActive(false);
+        }
+        if (aboutPanel != null)
+        {
+            aboutPanel.SetActive(false);
+        }
+        if (confirmationPanel != null)
+        {
+            confirmationPanel.SetActive(false);
+        }
+        if (resultPanel != null)
+        {
+            resultPanel.SetActive(false);
+        }
+        if (gpsUnavailableBGPanel != null)
+        {
+            gpsUnavailableBGPanel.SetActive(false);
+        }
+        if (gpsUnavailablePanel != null)
+        {
+            gpsUnavailablePanel.SetActive(false);
+        }
+        DestroyAllDynamicUI();
+    }
+
     private void HideAllHomePageRelatedPanels()
     {
 
@@ -104,6 +153,18 @@ public class MainAppManager : MonoBehaviour
         {
             gpsUnavailablePanel.SetActive(false);
         }
+    }
+    private void DestroyAllDynamicUI()
+    {
+        GameObject[] dynamicUI = GameObject.FindGameObjectsWithTag("DynamicUi");
+        if (dynamicUI.Length > 0)
+        {
+            foreach (GameObject uiElement in dynamicUI)
+            {
+                Destroy(uiElement);
+            }
+        }
+
     }
 
     private void Awake()
@@ -154,6 +215,8 @@ public class MainAppManager : MonoBehaviour
         {
             lockPanel.SetActive(true);
         }
+        HideAllExplorePageRelatedPanels();
+        HideAllSettingsPageRelatedPanels();
     }
 
     void OnNavigateButtonClicked()
@@ -177,7 +240,7 @@ public class MainAppManager : MonoBehaviour
         }
 
         HideAllHomePageRelatedPanels();
-
+        HideAllSettingsPageRelatedPanels();
     }
 
     void OnSettingsButtonClicked()
@@ -199,7 +262,7 @@ public class MainAppManager : MonoBehaviour
             lockPanel.SetActive(false);
         }
         HideAllHomePageRelatedPanels();
-
+        HideAllExplorePageRelatedPanels();
     }
 
     private void CheckGPSStrength()

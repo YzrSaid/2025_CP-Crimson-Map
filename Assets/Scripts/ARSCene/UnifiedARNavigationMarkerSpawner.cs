@@ -436,13 +436,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
             {
                 userLocation = rawGPS;
             }
-            else
-            {
-                if (unifiedARManager != null)
-                {
-                    userLocation = unifiedARManager.GetUserXY();
-                }
-            }
         }
     }
 

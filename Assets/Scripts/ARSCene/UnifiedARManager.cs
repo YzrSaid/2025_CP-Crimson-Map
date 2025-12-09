@@ -82,6 +82,7 @@ public class UnifiedARManager : MonoBehaviour
     [Header("Data")]
     private List<Node> currentNodes = new List<Node>();
     private List<Infrastructure> currentInfrastructures = new List<Infrastructure>();
+    private Dictionary<string, IndoorInfrastructure> indoorInfrastructures = new Dictionary<string, IndoorInfrastructure>();
 
     [Header("Position Tracking")]
     private Vector2 userLocation;
@@ -174,12 +175,35 @@ public class UnifiedARManager : MonoBehaviour
 
             if (!string.IsNullOrEmpty(navigationFromNodeId) && currentNodes != null)
             {
+                Debug.Log($"[UpdateNavigationTexts] Looking for fromNode: {navigationFromNodeId}");
+
                 Node fromNode = currentNodes.FirstOrDefault(n => n.node_id == navigationFromNodeId);
                 if (fromNode != null)
                 {
-                    if (fromNode.type == "indoorinfra" && !string.IsNullOrEmpty(fromNode.related_infra_id))
+                    Debug.Log($"[UpdateNavigationTexts] Found fromNode: {fromNode.name}, Type: {fromNode.type}");
+
+                    // Handle indoor nodes - they need to get building name from related_room_id
+                    if (fromNode.type == "indoorinfra")
+                    {
+                        Debug.Log($"[UpdateNavigationTexts] Indoor node detected. Name: {fromNode.name}, related_room_id: {fromNode.related_room_id}");
+                        string buildingName = GetBuildingNameForIndoorNode(fromNode);
+                        if (!string.IsNullOrEmpty(buildingName))
+                        {
+                            // CHANGED: Format is "Room (Building)" not "Building (Room)"
+                            fromLocationText.text = $"FROM: {fromNode.name} ({buildingName})";
+                            Debug.Log($"[UpdateNavigationTexts] Display: {fromNode.name} ({buildingName})");
+                        }
+                        else
+                        {
+                            fromLocationText.text = $"FROM: {fromNode.name}";
+                            Debug.Log($"[UpdateNavigationTexts] No building name found, display: {fromNode.name}");
+                        }
+                    }
+                    // Handle outdoor infrastructure nodes
+                    else if (fromNode.type == "infrastructure" && !string.IsNullOrEmpty(fromNode.related_infra_id))
                     {
                         string buildingName = GetBuildingNameFromInfraId(fromNode.related_infra_id);
+                        // For outdoor infrastructure: "Building (Specific Location)"
                         fromLocationText.text = $"FROM: {buildingName} ({fromNode.name})";
                     }
                     else
@@ -189,6 +213,7 @@ public class UnifiedARManager : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log($"[UpdateNavigationTexts] From node NOT FOUND in currentNodes!");
                     fromLocationText.text = "FROM: Unknown";
                 }
             }
@@ -198,18 +223,42 @@ public class UnifiedARManager : MonoBehaviour
             }
         }
 
+        // Similar for toDestinationText...
         if (toDestinationText != null)
         {
             toDestinationText.gameObject.SetActive(true);
 
             if (!string.IsNullOrEmpty(navigationToNodeId) && currentNodes != null)
             {
+                Debug.Log($"[UpdateNavigationTexts] Looking for toNode: {navigationToNodeId}");
+
                 Node toNode = currentNodes.FirstOrDefault(n => n.node_id == navigationToNodeId);
                 if (toNode != null)
                 {
-                    if (toNode.type == "indoorinfra" && !string.IsNullOrEmpty(toNode.related_infra_id))
+                    Debug.Log($"[UpdateNavigationTexts] Found toNode: {toNode.name}, Type: {toNode.type}");
+
+                    // Handle indoor nodes - they need to get building name from related_room_id
+                    if (toNode.type == "indoorinfra")
+                    {
+                        Debug.Log($"[UpdateNavigationTexts] Indoor node detected. Name: {toNode.name}, related_room_id: {toNode.related_room_id}");
+                        string buildingName = GetBuildingNameForIndoorNode(toNode);
+                        if (!string.IsNullOrEmpty(buildingName))
+                        {
+                            // CHANGED: Format is "Room (Building)" not "Building (Room)"
+                            toDestinationText.text = $"TO: {toNode.name} ({buildingName})";
+                            Debug.Log($"[UpdateNavigationTexts] Display: {toNode.name} ({buildingName})");
+                        }
+                        else
+                        {
+                            toDestinationText.text = $"TO: {toNode.name}";
+                            Debug.Log($"[UpdateNavigationTexts] No building name found, display: {toNode.name}");
+                        }
+                    }
+                    // Handle outdoor infrastructure nodes
+                    else if (toNode.type == "infrastructure" && !string.IsNullOrEmpty(toNode.related_infra_id))
                     {
                         string buildingName = GetBuildingNameFromInfraId(toNode.related_infra_id);
+                        // For outdoor infrastructure: "Building (Specific Location)"
                         toDestinationText.text = $"TO: {buildingName} ({toNode.name})";
                     }
                     else
@@ -219,6 +268,7 @@ public class UnifiedARManager : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log($"[UpdateNavigationTexts] To node NOT FOUND in currentNodes!");
                     toDestinationText.text = "TO: Unknown";
                 }
             }
@@ -229,30 +279,68 @@ public class UnifiedARManager : MonoBehaviour
         }
     }
 
+    private string GetBuildingNameForIndoorNode(Node indoorNode)
+    {
+        if (indoorNode.type != "indoorinfra" || string.IsNullOrEmpty(indoorNode.related_room_id))
+        {
+            Debug.Log($"[GetBuildingNameForIndoorNode] Not an indoor node or missing related_room_id. Type: {indoorNode.type}, related_room_id: {indoorNode.related_room_id}");
+            return null;
+        }
+
+        Debug.Log($"[GetBuildingNameForIndoorNode] Looking for room_id: {indoorNode.related_room_id} in indoorInfrastructures (count: {indoorInfrastructures.Count})");
+
+        // Debug: List all available room_ids
+        foreach (var key in indoorInfrastructures.Keys.Take(5))
+        {
+            Debug.Log($"[GetBuildingNameForIndoorNode] Available room_id in dictionary: {key}");
+        }
+
+        if (indoorInfrastructures.TryGetValue(indoorNode.related_room_id, out IndoorInfrastructure indoor))
+        {
+            Debug.Log($"[GetBuildingNameForIndoorNode] Found indoor infrastructure. infra_id: {indoor.infra_id}");
+            // Now find the building name using the infra_id from the indoor infrastructure
+            string buildingName = GetBuildingNameFromInfraId(indoor.infra_id);
+            Debug.Log($"[GetBuildingNameForIndoorNode] Building name result: {buildingName}");
+            return buildingName;
+        }
+
+        Debug.LogWarning($"[UnifiedARManager] Room not found in indoor data: {indoorNode.related_room_id}");
+        return null;
+    }
+
     private string GetBuildingNameFromInfraId(string infraId)
     {
+        Debug.Log($"[GetBuildingNameFromInfraId] Looking for infra_id: {infraId}");
+        Debug.Log($"[GetBuildingNameFromInfraId] Total infrastructures: {currentInfrastructures?.Count ?? 0}");
+
         Infrastructure infra = currentInfrastructures.FirstOrDefault(i => i.infra_id == infraId);
         if (infra != null)
         {
+            Debug.Log($"[GetBuildingNameFromInfraId] Found in infrastructures: {infra.name}");
             return infra.name;
         }
+
+        Debug.Log($"[GetBuildingNameFromInfraId] Not found in infrastructures, looking in nodes...");
         Node infrastructureNode = currentNodes.FirstOrDefault(n =>
             n.type == "infrastructure" && n.related_infra_id == infraId);
 
         if (infrastructureNode != null)
         {
+            Debug.Log($"[GetBuildingNameFromInfraId] Found as node: {infrastructureNode.name}");
             return infrastructureNode.name;
         }
 
+        Debug.Log($"[GetBuildingNameFromInfraId] NOT FOUND: {infraId}");
         return "Building";
     }
-
     private void LoadNavigationData()
     {
         navigationFromNodeId = PlayerPrefs.GetString("ARNavigation_OriginalFromNodeId", "");
         navigationToNodeId = PlayerPrefs.GetString("ARNavigation_OriginalToNodeId", "");
-    }
 
+        Debug.Log($"[LoadNavigationData] From Node ID: {navigationFromNodeId}");
+        Debug.Log($"[LoadNavigationData] To Node ID: {navigationToNodeId}");
+    }
     public void ExitARScene()
     {
         if (isExitingAR) return;
@@ -260,8 +348,8 @@ public class UnifiedARManager : MonoBehaviour
 
         if (GPSManager.Instance != null)
         {
-            GPSManager.Instance.UnlockLocationForPathfinding(); 
-            GPSManager.Instance.ClearQRLocationOverride(); 
+            GPSManager.Instance.UnlockLocationForPathfinding();
+            GPSManager.Instance.ClearQRLocationOverride();
         }
 
         CancelInvoke();
@@ -403,6 +491,7 @@ public class UnifiedARManager : MonoBehaviour
     {
         bool nodesLoaded = false;
         bool infraLoaded = false;
+        bool indoorLoaded = false;
 
         UpdateLoadingUI($"Loading nodes for map {currentMapId}...");
 
@@ -416,6 +505,11 @@ public class UnifiedARManager : MonoBehaviour
         yield return StartCoroutine(LoadInfrastructureData((success) =>
         {
             infraLoaded = success;
+        }));
+
+        yield return StartCoroutine(LoadIndoorData((success) =>
+        {
+            indoorLoaded = success;
         }));
     }
 
@@ -432,19 +526,74 @@ public class UnifiedARManager : MonoBehaviour
                 {
                     Node[] nodes = JsonHelper.FromJson<Node>(jsonData);
 
+                    // ADD "indoorinfra" TO THE FILTER!
                     currentNodes = nodes.Where(n =>
-                        (n.type == "infrastructure" || n.type == "intermediate") && n.is_active
+                        (n.type == "infrastructure" || n.type == "intermediate" || n.type == "indoorinfra") && n.is_active
                     ).ToList();
 
                     loadSuccess = true;
+
+                    // Add debug log
+                    Debug.Log($"[LoadNodesData] Loaded {currentNodes.Count} nodes. Indoor nodes: {currentNodes.Count(n => n.type == "indoorinfra")}");
+
+                    // Show all indoor nodes and their related_room_id
+                    foreach (var node in currentNodes.Where(n => n.type == "indoorinfra"))
+                    {
+                        Debug.Log($"[LoadNodesData] Indoor node: id={node.node_id}, name={node.name}, related_room_id={node.related_room_id}");
+                    }
                 }
-                catch (System.Exception)
+                catch (System.Exception e)
                 {
+                    Debug.LogError($"[LoadNodesData] Error: {e.Message}");
                     loadSuccess = false;
                 }
             },
             (error) =>
             {
+                Debug.LogError($"[LoadNodesData] File error: {error}");
+                loadSuccess = false;
+            }
+        ));
+
+        onComplete?.Invoke(loadSuccess);
+    }
+    IEnumerator LoadIndoorData(System.Action<bool> onComplete)
+    {
+        string fileName = $"indoor.json";
+        bool loadSuccess = false;
+
+        Debug.Log($"[LoadIndoorData] Loading file: {fileName}");
+
+        yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
+            fileName,
+            (jsonData) =>
+            {
+                try
+                {
+                    Debug.Log($"[LoadIndoorData] JSON loaded: {jsonData.Substring(0, Mathf.Min(200, jsonData.Length))}...");
+
+                    IndoorInfrastructure[] indoorInfraArray = JsonHelper.FromJson<IndoorInfrastructure>(jsonData);
+                    Debug.Log($"[LoadIndoorData] Parsed {indoorInfraArray.Length} indoor infrastructures");
+
+                    indoorInfrastructures = indoorInfraArray.ToDictionary(i => i.room_id, i => i);
+                    loadSuccess = true;
+
+                    // Show all loaded indoor infrastructures
+                    foreach (var indoor in indoorInfraArray)
+                    {
+                        Debug.Log($"[LoadIndoorData] Indoor: room_id={indoor.room_id}, infra_id={indoor.infra_id}");
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[LoadIndoorData] Error loading indoor data: {e.Message}");
+                    Debug.LogError($"[LoadIndoorData] Stack trace: {e.StackTrace}");
+                    loadSuccess = false;
+                }
+            },
+            (error) =>
+            {
+                Debug.LogError($"[LoadIndoorData] File load error: {error}");
                 loadSuccess = false;
             }
         ));

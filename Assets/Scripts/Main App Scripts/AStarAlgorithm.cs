@@ -239,7 +239,7 @@ public class AStarPathfinding : MonoBehaviour
         var startNode = allNodes[startNodeId];
         var endNode = allNodes[endNodeId];
 
-        if (startNode.type != "infrastructure")
+        if (startNode.type != "infrastructure" && startNode.type != "intermediate")
         {
             isCalculating = false;
             yield break;

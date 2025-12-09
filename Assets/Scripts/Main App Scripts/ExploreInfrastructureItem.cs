@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Collections;
+using DG.Tweening;
 
 public class ExploreInfrastructureItem : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ExploreInfrastructureItem : MonoBehaviour
 
     [Header("Details Panel")]
     public GameObject detailsPanelPrefab;
+    public string targetCanvasName = "Canvas";
 
     private Infrastructure infrastructureData;
     private Category categoryData;
@@ -131,6 +133,8 @@ public class ExploreInfrastructureItem : MonoBehaviour
         UpdateUI();
     }
 
+
+
     void UpdateUI()
     {
         if (infrastructureData == null)
@@ -156,7 +160,6 @@ public class ExploreInfrastructureItem : MonoBehaviour
     {
         if (infrastructureData == null)
         {
-            Debug.LogError("Infrastructure data is null!");
             return;
         }
 
@@ -168,7 +171,6 @@ public class ExploreInfrastructureItem : MonoBehaviour
         }
         else
         {
-            Debug.LogError("PathfindingController not found in scene!");
         }
     }
 
@@ -180,20 +182,33 @@ public class ExploreInfrastructureItem : MonoBehaviour
     private IEnumerator SearchAndShowDetails()
     {
         yield return StartCoroutine(SearchNodeAcrossAllMaps(infrastructureData.infra_id));
+        Canvas targetCanvas = FindCanvasByName(targetCanvasName);
 
-        Canvas canvas = FindObjectOfType<Canvas>();
-        if (canvas == null)
+        if (targetCanvas == null)
         {
             yield break;
         }
 
-        GameObject detailsPanel = Instantiate(detailsPanelPrefab, canvas.transform);
+        GameObject detailsPanel = Instantiate(detailsPanelPrefab, targetCanvas.transform);
         InfrastructureDetailsPanel detailsScript = detailsPanel.GetComponent<InfrastructureDetailsPanel>();
 
         if (detailsScript != null)
         {
             detailsScript.SetData(infrastructureData, categoryData, nodeData, campusData);
         }
+    }
+
+    private Canvas FindCanvasByName(string canvasName)
+    {
+        Canvas[] allCanvases = FindObjectsOfType<Canvas>();
+        foreach (Canvas canvas in allCanvases)
+        {
+            if (canvas.gameObject.name == canvasName)
+            {
+                return canvas;
+            }
+        }
+        return null;
     }
 
     private IEnumerator SearchNodeAcrossAllMaps(string infraId)

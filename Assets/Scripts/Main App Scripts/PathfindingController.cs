@@ -46,6 +46,14 @@ public class PathfindingController : MonoBehaviour
     public Button confirmButton;
     public Button cancelButton;
 
+    [Header("Confirmation Panel 2")]
+    public GameObject confirmationPanel2;
+    public TextMeshProUGUI confirmErrorText2;
+    public float confirmationPanelAnimDuration2 = 0.3f;
+    public Ease confirmationPanelEaseType2 = Ease.OutBack;
+    private Vector3 confirmationPanelOriginalScale2;
+    public Button cancelButton2;
+
     [Header("Location Conflict Panel")]
     public GameObject locationConflictPanel;
     public TextMeshProUGUI conflictMessageText;
@@ -193,7 +201,14 @@ public class PathfindingController : MonoBehaviour
             confirmButton.onClick.AddListener(OnConfirmClicked);
         }
 
-        if (cancelButton != null)
+        // For Confirmation Panel 2
+        if (confirmationPanel2 != null)
+        {
+            confirmationPanelOriginalScale2 = confirmationPanel2.transform.localScale;
+            confirmationPanel2.SetActive(false);
+        }
+
+        if (cancelButton2 != null)
         {
             cancelButton.onClick.AddListener(OnCancelClicked);
         }
@@ -444,24 +459,6 @@ public class PathfindingController : MonoBehaviour
             return node.type == "indoorinfra";
         }
         return indoorNodes.ContainsKey(nodeId);
-    }
-
-    private Node GetBuildingEntranceNode(Node indoorNode)
-    {
-        if (indoorNode.type != "indoorinfra" || string.IsNullOrEmpty(indoorNode.related_infra_id))
-        {
-            return null;
-        }
-
-        foreach (var node in allNodes.Values)
-        {
-            if (node.type == "infrastructure" && node.related_infra_id == indoorNode.related_infra_id)
-            {
-                return node;
-            }
-        }
-
-        return null;
     }
     private void UpdateLocationDisplayTextIndoor(Node node, string buildingName)
     {
@@ -1002,36 +999,21 @@ public class PathfindingController : MonoBehaviour
 
     private void ShowConfirmationError(string message)
     {
-        if (confirmationPanel != null)
+        if (confirmationPanel2 != null)
         {
-            confirmationPanel.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "Error";
-            cancelButton.GetComponentInChildren<TextMeshProUGUI>().text = "Close";
-            confirmationPanel.SetActive(true);
+            confirmationPanel2.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "Error";
+            cancelButton2.GetComponentInChildren<TextMeshProUGUI>().text = "Close";
+            confirmationPanel2.SetActive(true);
             if (BGPanel != null)
             {
                 BGPanel.SetActive(true);
             }
-            confirmationPanel.transform.localScale = Vector3.zero;
-            confirmationPanel.transform.DOScale(confirmationPanelOriginalScale, confirmationPanelAnimDuration)
-                .SetEase(confirmationPanelEaseType)
+            confirmationPanel2.transform.localScale = Vector3.zero;
+            confirmationPanel2.transform.DOScale(confirmationPanelOriginalScale2, confirmationPanelAnimDuration2)
+                .SetEase(confirmationPanelEaseType2)
                 .SetUpdate(true);
-            confirmButton.gameObject.SetActive(false);
-            confirmErrorText.gameObject.SetActive(true);
-        }
-
-        if (confirmFromText != null)
-        {
-            confirmFromText.text = "";
-        }
-
-        if (confirmToText != null)
-        {
-            confirmToText.text = "";
-        }
-
-        if (confirmErrorText != null)
-        {
-            confirmErrorText.text = message;
+            confirmErrorText2.text = message;
+            confirmErrorText2.gameObject.SetActive(true);
         }
     }
 
@@ -1084,6 +1066,21 @@ public class PathfindingController : MonoBehaviour
         }
     }
 
+    private string GetInfraIdFromIndoorNode(Node indoorNode)
+    {
+        if (indoorNode.type != "indoorinfra" || string.IsNullOrEmpty(indoorNode.related_room_id))
+        {
+            return null;
+        }
+
+        if (indoorInfrastructures.TryGetValue(indoorNode.related_room_id, out IndoorInfrastructure indoor))
+        {
+            return indoor.infra_id;
+        }
+
+        Debug.LogWarning($"[PathfindingController] Room not found in indoor data: {indoorNode.related_room_id}");
+        return null;
+    }
     private IEnumerator FindAndDisplayPaths(string fromNodeId, string toNodeId)
     {
         if (pathfinding == null)
@@ -1096,6 +1093,7 @@ public class PathfindingController : MonoBehaviour
             findPathButton.interactable = false;
         }
 
+        // ========== VALIDATION: Check if nodes exist ==========
         if (!allNodes.ContainsKey(fromNodeId))
         {
             ShowConfirmationError($"FROM node not found: {fromNodeId}");
@@ -1110,56 +1108,116 @@ public class PathfindingController : MonoBehaviour
             yield break;
         }
 
-        bool fromIsIndoor = IsIndoorNode(fromNodeId);
-        bool toIsIndoor = IsIndoorNode(toNodeId);
-
-        string pathStartNodeId = fromNodeId;
-        string pathEndNodeId = toNodeId;
-
         Node fromNode = allNodes[fromNodeId];
         Node toNode = allNodes[toNodeId];
 
-        if (fromIsIndoor)
+        // ========== VALIDATION: Check if nodes are active ==========
+        if (!fromNode.is_active)
         {
-            string buildingName = GetBuildingNameFromInfraId(fromNode.related_infra_id);
-
-            ShowConfirmationError($"Please exit {buildingName} first before navigating to another location. Use the outdoor map to start navigation from outside the building.");
+            ShowConfirmationError($"Your starting location '{fromNode.name}' is currently not available.");
             if (findPathButton != null) findPathButton.interactable = true;
             yield break;
         }
 
-        if (toIsIndoor && allNodes.TryGetValue(toNodeId, out Node toIndoorNode))
+        if (!toNode.is_active)
         {
-            Node entranceNode = GetBuildingEntranceNode(toIndoorNode);
-            if (entranceNode != null)
-            {
-                pathEndNodeId = entranceNode.node_id;
-            }
-        }
-
-        bool isSameBuilding = pathStartNodeId == pathEndNodeId;
-
-        if (isSameBuilding)
-        {
-            var singleNodeRoute = CreateSameBuildingRoute(pathStartNodeId, fromNode, toNode);
-
-            PlayerPrefs.SetString("ARNavigation_OriginalFromNodeId", fromNodeId);
-            PlayerPrefs.SetString("ARNavigation_OriginalToNodeId", toNodeId);
-            PlayerPrefs.SetInt("ARNavigation_FromIsIndoor", fromIsIndoor ? 1 : 0);
-            PlayerPrefs.SetInt("ARNavigation_ToIsIndoor", toIsIndoor ? 1 : 0);
-            PlayerPrefs.SetString("ARNavigation_SameBuilding", "true");
-            PlayerPrefs.Save();
-
-            currentRoutes = new List<RouteData> { singleNodeRoute };
-
-            if (findPathButton != null)
-            {
-                findPathButton.interactable = true;
-            }
-
-            DisplayAllRoutes();
+            ShowConfirmationError($"Your destination '{toNode.name}' is currently not available.");
+            if (findPathButton != null) findPathButton.interactable = true;
             yield break;
         }
+
+        // ========== DETERMINE NODE TYPES ==========
+        bool fromIsIndoor = IsIndoorNode(fromNodeId);
+        bool toIsIndoor = IsIndoorNode(toNodeId);
+
+        Debug.Log($"[PathfindingController] Navigation Setup:");
+        Debug.Log($"  FROM: {fromNode.name} (Type: {fromNode.type}, Indoor: {fromIsIndoor})");
+        Debug.Log($"  TO: {toNode.name} (Type: {toNode.type}, Indoor: {toIsIndoor})");
+
+        // ========== CASE 1: OUTDOOR TO INDOOR (SAME BUILDING) ==========
+        // Check if navigating from a building entrance to a room in the same building
+        if (!fromIsIndoor && toIsIndoor)
+        {
+            // Get the infra_id that the room belongs to
+            string toInfraId = GetInfraIdFromIndoorNode(toNode);
+            string fromInfraId = null;
+
+            // Check if FROM is a building entrance node
+            if (fromNode.type == "infrastructure" && !string.IsNullOrEmpty(fromNode.related_infra_id))
+            {
+                fromInfraId = fromNode.related_infra_id;
+            }
+
+            bool isSameBuilding = !string.IsNullOrEmpty(fromInfraId) &&
+                                !string.IsNullOrEmpty(toInfraId) &&
+                                fromInfraId == toInfraId;
+
+            Debug.Log($"[PathfindingController] Same Building Check:");
+            Debug.Log($"  FROM infra_id: {fromInfraId}");
+            Debug.Log($"  TO infra_id: {toInfraId}");
+            Debug.Log($"  Same Building: {isSameBuilding}");
+
+            if (isSameBuilding)
+            {
+                Debug.Log($"[PathfindingController] ✅ CASE 1: Indoor navigation (same building)");
+
+                var singleNodeRoute = CreateSameBuildingRoute(fromNode.node_id, fromNode, toNode);
+
+                PlayerPrefs.SetString("ARNavigation_OriginalFromNodeId", fromNodeId);
+                PlayerPrefs.SetString("ARNavigation_OriginalToNodeId", toNodeId);
+                PlayerPrefs.SetInt("ARNavigation_FromIsIndoor", 0);
+                PlayerPrefs.SetInt("ARNavigation_ToIsIndoor", 1);
+                PlayerPrefs.SetString("ARNavigation_SameBuilding", "true");
+                PlayerPrefs.Save();
+
+                currentRoutes = new List<RouteData> { singleNodeRoute };
+
+                if (findPathButton != null)
+                {
+                    findPathButton.interactable = true;
+                }
+
+                DisplayAllRoutes();
+                yield break;
+            }
+        }
+
+        // ========== CASE 2: OUTDOOR TO INDOOR (DIFFERENT BUILDING) ==========
+        // Navigate to the building entrance if destination is in a different building
+        string pathStartNodeId = fromNodeId;
+        string pathEndNodeId = toNodeId;
+
+        if (toIsIndoor)
+        {
+            Debug.Log($"[PathfindingController] ✅ CASE 2: Outdoor to indoor (different building)");
+
+            // Map indoor destination to building entrance
+            string toInfraId = GetInfraIdFromIndoorNode(toNode);
+            if (!string.IsNullOrEmpty(toInfraId))
+            {
+                // Find the entrance node for this building
+                Node entranceNode = allNodes.Values.FirstOrDefault(n =>
+                    n.is_active &&
+                    (n.type == "infrastructure") &&
+                    n.related_infra_id == toInfraId);
+
+                if (entranceNode != null)
+                {
+                    pathEndNodeId = entranceNode.node_id;
+                    Debug.Log($"[PathfindingController] Mapped indoor destination to entrance: {entranceNode.node_id} ({entranceNode.name})");
+                }
+                else
+                {
+                    ShowConfirmationError($"Cannot find an active entrance for '{toNode.name}'");
+                    if (findPathButton != null) findPathButton.interactable = true;
+                    yield break;
+                }
+            }
+        }
+
+        // ========== CASE 3: OUTDOOR TO OUTDOOR ==========
+        Debug.Log($"[PathfindingController] ✅ CASE 3: Standard outdoor pathfinding");
+        Debug.Log($"  Pathfinding from: {pathStartNodeId} to {pathEndNodeId}");
 
         yield return StartCoroutine(pathfinding.FindMultiplePaths(pathStartNodeId, pathEndNodeId, 3));
 
@@ -1176,6 +1234,7 @@ public class PathfindingController : MonoBehaviour
             yield break;
         }
 
+        // ========== SAVE NAVIGATION DATA ==========
         PlayerPrefs.SetString("ARNavigation_OriginalFromNodeId", fromNodeId);
         PlayerPrefs.SetString("ARNavigation_OriginalToNodeId", toNodeId);
         PlayerPrefs.SetInt("ARNavigation_FromIsIndoor", fromIsIndoor ? 1 : 0);
@@ -1186,7 +1245,6 @@ public class PathfindingController : MonoBehaviour
         currentRoutes = routes;
         DisplayAllRoutes();
     }
-
     private RouteData CreateSameBuildingRoute(string buildingNodeId, Node fromNode, Node toNode)
     {
         Node buildingNode = allNodes[buildingNodeId];
@@ -1207,7 +1265,7 @@ public class PathfindingController : MonoBehaviour
                 }
             },
             totalDistance = 0f,
-            formattedDistance = "Already at building",
+            formattedDistance = "N/A",
             walkingTime = "< 1 minute",
             viaMode = "Indoor Navigation",
             isRecommended = true
@@ -1265,8 +1323,14 @@ public class PathfindingController : MonoBehaviour
 
             if (displayToNode.type == "indoorinfra")
             {
-                string buildingName = GetBuildingNameFromInfraId(displayToNode.related_infra_id);
+                string infraId = GetInfraIdFromIndoorNode(displayToNode);
+                string buildingName = GetBuildingNameFromInfraId(infraId);
                 toDisplay = $"{buildingName} ({displayToNode.name})";
+
+                Debug.Log($"[DisplayAllRoutes] Indoor destination: {displayToNode.name}");
+                Debug.Log($"  Related room ID: {displayToNode.related_room_id}");
+                Debug.Log($"  Looked up infra ID: {infraId}");
+                Debug.Log($"  Building name: {buildingName}");
             }
 
             toText.text = $"<b>To:</b> {toDisplay}";

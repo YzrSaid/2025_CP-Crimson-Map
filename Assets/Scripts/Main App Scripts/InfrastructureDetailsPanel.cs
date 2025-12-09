@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DG.Tweening;
 
 public class InfrastructureDetailsPanel : MonoBehaviour
 {
@@ -49,16 +50,16 @@ public class InfrastructureDetailsPanel : MonoBehaviour
     void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-        
+
         if (closeButton != null)
             closeButton.onClick.AddListener(Close);
-        
+
         if (bookmarkEmptyButton != null)
             bookmarkEmptyButton.onClick.AddListener(OnBookmarkClicked);
-        
+
         if (bookmarkFilledButton != null)
             bookmarkFilledButton.onClick.AddListener(OnUnbookmarkClicked);
-        
+
         SetupBackground();
     }
 
@@ -97,7 +98,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
         category = cat;
         node = nodeData;
         campus = campusData;
-        
+
         CheckBookmarkStatus();
         UpdateBookmarkUI();
         PopulateUI();
@@ -117,7 +118,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
     {
         if (bookmarkEmptyButton != null)
             bookmarkEmptyButton.gameObject.SetActive(!isBookmarked);
-        
+
         if (bookmarkFilledButton != null)
             bookmarkFilledButton.gameObject.SetActive(isBookmarked);
     }
@@ -127,7 +128,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
         if (infrastructure == null) return;
 
         BookmarkData bookmarkData = LoadBookmarkData();
-        
+
         if (!bookmarkData.bookmarked_infra_ids.Contains(infrastructure.infra_id))
         {
             bookmarkData.bookmarked_infra_ids.Add(infrastructure.infra_id);
@@ -142,7 +143,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
         if (infrastructure == null) return;
 
         BookmarkData bookmarkData = LoadBookmarkData();
-        
+
         if (bookmarkData.bookmarked_infra_ids.Contains(infrastructure.infra_id))
         {
             bookmarkData.bookmarked_infra_ids.Remove(infrastructure.infra_id);
@@ -155,7 +156,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
     private BookmarkData LoadBookmarkData()
     {
         string filePath = GetBookmarkFilePath();
-        
+
         if (File.Exists(filePath))
         {
             try
@@ -170,7 +171,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
                 return new BookmarkData();
             }
         }
-        
+
         return new BookmarkData();
     }
 
@@ -180,13 +181,13 @@ public class InfrastructureDetailsPanel : MonoBehaviour
         {
             string json = JsonUtility.ToJson(data, true);
             string filePath = GetBookmarkFilePath();
-            
+
             string directory = Path.GetDirectoryName(filePath);
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
-            
+
             File.WriteAllText(filePath, json);
         }
         catch (Exception e)
@@ -197,11 +198,11 @@ public class InfrastructureDetailsPanel : MonoBehaviour
 
     private string GetBookmarkFilePath()
     {
-        #if UNITY_EDITOR
-            return Path.Combine(Application.streamingAssetsPath, "bookmarks.json");
-        #else
+#if UNITY_EDITOR
+        return Path.Combine(Application.streamingAssetsPath, "bookmarks.json");
+#else
             return Path.Combine(Application.persistentDataPath, "bookmarks.json");
-        #endif
+#endif
     }
 
     void PopulateUI()
@@ -290,7 +291,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
 
         yield return new WaitUntil(() => loadComplete);
         PopulateListsByType();
-        
+
         yield return null;
         RecenterPanel();
     }
@@ -298,7 +299,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
     private void ClearScrollViewContent(ScrollRect scrollView)
     {
         if (scrollView == null || scrollView.content == null) return;
-        
+
         foreach (Transform child in scrollView.content)
         {
             Destroy(child.gameObject);
@@ -370,11 +371,11 @@ public class InfrastructureDetailsPanel : MonoBehaviour
         {
             GameObject itemObject = Instantiate(indoorItemPrefab, content);
             IndoorInfrastructureItem itemScript = itemObject.GetComponent<IndoorInfrastructureItem>();
-            
+
             if (itemScript != null)
             {
                 itemScript.SetData(indoor);
-                
+
                 Button button = itemObject.GetComponent<Button>();
                 if (button != null)
                 {
@@ -393,7 +394,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
     {
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
-        
+
         if (rectTransform != null)
         {
             rectTransform.anchoredPosition = Vector2.zero;
