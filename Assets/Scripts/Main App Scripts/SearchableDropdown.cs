@@ -29,6 +29,7 @@ public class SearchableDropdown : MonoBehaviour
     private List<GameObject> allInstantiatedItems = new List<GameObject>();
     private bool isOpen = false;
     private bool isManualOpen = false;
+    private bool isARMode = false;
 
     private string selectedId = null;
     private string selectedType = null;
@@ -38,6 +39,9 @@ public class SearchableDropdown : MonoBehaviour
 
     void Awake()
     {
+        isARMode = ARModeHelper.IsARMode();
+        Debug.Log($"[SearchableDropdown] Initialized in {(isARMode ? "AR" : "Normal")} mode");
+
         if (dropdownButton != null)
         {
             dropdownButton.onClick.AddListener(ToggleDropdown);
@@ -88,7 +92,8 @@ public class SearchableDropdown : MonoBehaviour
 
         foreach (var infra in infrastructureList.infrastructures)
         {
-            bool hasRooms = infraToRoomsMap.ContainsKey(infra.infra_id) &&
+            bool hasRooms = !isARMode && 
+                           infraToRoomsMap.ContainsKey(infra.infra_id) &&
                            infraToRoomsMap[infra.infra_id].Count > 0;
 
             GameObject infraItemObj = Instantiate(infraItemPrefab, contentContainer);
@@ -107,7 +112,7 @@ public class SearchableDropdown : MonoBehaviour
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(contentContainer as RectTransform);
 
-        Debug.Log($"[SearchableDropdown] Initialized with {infraItems.Count} infrastructures");
+        Debug.Log($"[SearchableDropdown] Initialized with {infraItems.Count} infrastructures (AR Mode: {isARMode})");
     }
 
     public void SelectDestination(string id, string type, string displayName)
@@ -225,7 +230,10 @@ public class SearchableDropdown : MonoBehaviour
         {
             DropdownInfraItem item = kvp.Value;
             bool infraMatches = item.InfrastructureName.ToLower().Contains(searchText);
-            bool anyRoomMatches = item.HasRooms && item.RoomNames.Any(roomName => roomName.ToLower().Contains(searchText));
+            
+            bool anyRoomMatches = !isARMode && 
+                                 item.HasRooms && 
+                                 item.RoomNames.Any(roomName => roomName.ToLower().Contains(searchText));
 
             if (infraMatches || anyRoomMatches)
             {
@@ -270,6 +278,7 @@ public class SearchableDropdown : MonoBehaviour
             kvp.Value.CollapseRooms();
         }
     }
+    
     public void ClearDropdown()
     {
         foreach (var item in allInstantiatedItems)

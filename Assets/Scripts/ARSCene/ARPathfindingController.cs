@@ -23,6 +23,11 @@ public class ARPathfindingController : MonoBehaviour
     public TextMeshProUGUI fromText;
     public TextMeshProUGUI toText;
 
+    [Header("Error Panel")]
+    public GameObject errorPanel;
+    public TextMeshProUGUI errorMessageText;
+    public Button errorOkButton;
+
     [Header("Loading")]
     public ARLoadingManager arLoadingManager;
 
@@ -56,9 +61,19 @@ public class ARPathfindingController : MonoBehaviour
             cancelRouteButton.onClick.AddListener(OnCancelRouteClicked);
         }
 
+        if (errorOkButton != null)
+        {
+            errorOkButton.onClick.AddListener(OnErrorOkClicked);
+        }
+
         if (routeSelectionPanel != null)
         {
             routeSelectionPanel.SetActive(false);
+        }
+
+        if (errorPanel != null)
+        {
+            errorPanel.SetActive(false);
         }
 
         currentMapId = PlayerPrefs.GetString("ARScene_MapId", "MAP-01");
@@ -77,6 +92,9 @@ public class ARPathfindingController : MonoBehaviour
 
         if (cancelRouteButton != null)
             cancelRouteButton.onClick.RemoveListener(OnCancelRouteClicked);
+
+        if (errorOkButton != null)
+            errorOkButton.onClick.RemoveListener(OnErrorOkClicked);
     }
 
     private IEnumerator InitializePathfinding()
@@ -109,15 +127,18 @@ public class ARPathfindingController : MonoBehaviour
                         allNodes[node.node_id] = node;
                     }
 
+                    Debug.Log($"[ARPathfinding] Loaded {allNodes.Count} nodes");
                     loadComplete = true;
                 }
-                catch (System.Exception)
+                catch (System.Exception ex)
                 {
+                    Debug.LogError($"[ARPathfinding] Error loading nodes: {ex.Message}");
                     loadComplete = true;
                 }
             },
             (error) =>
             {
+                Debug.LogError($"[ARPathfinding] Failed to load nodes: {error}");
                 loadComplete = true;
             }
         ));
@@ -146,15 +167,18 @@ public class ARPathfindingController : MonoBehaviour
                         }
                     }
 
+                    Debug.Log($"[ARPathfinding] Loaded {indoorInfrastructures.Count} indoor infrastructures");
                     loadComplete = true;
                 }
-                catch (System.Exception)
+                catch (System.Exception ex)
                 {
+                    Debug.LogError($"[ARPathfinding] Error loading indoor data: {ex.Message}");
                     loadComplete = true;
                 }
             },
             (error) =>
             {
+                Debug.LogError($"[ARPathfinding] Failed to load indoor data: {error}");
                 loadComplete = true;
             }
         ));
@@ -164,39 +188,121 @@ public class ARPathfindingController : MonoBehaviour
 
     public void StartReroute(string fromId, string toId, ARRerouteUIManager.ExemptionType exemption, string exemptedId)
     {
+        Debug.Log($"[ARPathfinding] StartReroute called with fromId={fromId}, toId={toId}");
+
         rerouteFromNodeId = ConvertToNodeId(fromId);
         rerouteToNodeId = ConvertToNodeId(toId);
 
+        Debug.Log($"[ARPathfinding] Converted: fromNodeId={rerouteFromNodeId}, toNodeId={rerouteToNodeId}");
+
+        // VALIDATION 1: Check if FROM node exists
         if (string.IsNullOrEmpty(rerouteFromNodeId))
         {
+            ShowError("Starting location not found.");
             return;
         }
 
+        // VALIDATION 2: Check if TO node exists
         if (string.IsNullOrEmpty(rerouteToNodeId))
         {
+            ShowError("Destination not found.");
             return;
         }
+
+        // VALIDATION 3: Get the actual node objects
+        if (!allNodes.TryGetValue(rerouteFromNodeId, out Node fromNode))
+        {
+            ShowError("Starting location node data not found.");
+            return;
+        }
+
+        if (!allNodes.TryGetValue(rerouteToNodeId, out Node toNode))
+        {
+            ShowError("Destination node data not found.");
+            return;
+        }
+
+        // VALIDATION 4: Check if FROM is an indoorinfra (not allowed as starting point)
+        if (fromNode.type == "indoorinfra")
+        {
+            ShowError("You cannot start navigation from an indoor room. Please start from a building entrance.");
+            return;
+        }
+
+        // VALIDATION 5: Check if FROM and TO are the same location
+        if (rerouteFromNodeId == rerouteToNodeId)
+        {
+            ShowError("You are already at this location!");
+            return;
+        }
+
+        // VALIDATION 6: Check if nodes are active
+        if (!fromNode.is_active)
+        {
+            ShowError($"Starting location '{fromNode.name}' is currently not available.");
+            return;
+        }
+
+        if (!toNode.is_active)
+        {
+            ShowError($"Destination '{toNode.name}' is currently not available.");
+            return;
+        }
+
+        Debug.Log($"[ARPathfinding] ✅ All validations passed");
+        Debug.Log($"  FROM: {fromNode.name} (Type: {fromNode.type})");
+        Debug.Log($"  TO: {toNode.name} (Type: {toNode.type})");
 
         exemptionType = exemption;
         exemptedItemId = exemptedId;
 
         blockedNodes.Clear();
         blockedEdges.Clear();
-
         if (exemptionType == ARRerouteUIManager.ExemptionType.BuildingsNodes && !string.IsNullOrEmpty(exemptedId))
         {
             string exemptedNodeId = ConvertToNodeId(exemptedId);
             if (!string.IsNullOrEmpty(exemptedNodeId))
             {
                 blockedNodes.Add(exemptedNodeId);
+                Debug.Log($"[ARPathfinding] Blocking node: {exemptedNodeId}");
             }
         }
         else if (exemptionType == ARRerouteUIManager.ExemptionType.PathsWalkways && !string.IsNullOrEmpty(exemptedId))
         {
             blockedEdges.Add(exemptedId);
+            Debug.Log($"[ARPathfinding] Blocking edge: {exemptedId}");
         }
 
         StartCoroutine(FindAndDisplayRoutes());
+    }
+
+    private void ShowError(string message)
+    {
+        Debug.LogWarning($"[ARPathfinding] Error: {message}");
+
+        if (errorPanel != null && errorMessageText != null)
+        {
+            errorMessageText.text = message;
+            errorPanel.SetActive(true);
+
+            if (routeSelectionBGPanel != null)
+            {
+                routeSelectionBGPanel.SetActive(true);
+            }
+        }
+    }
+
+    private void OnErrorOkClicked()
+    {
+        if (errorPanel != null)
+        {
+            errorPanel.SetActive(false);
+        }
+
+        if (routeSelectionBGPanel != null)
+        {
+            routeSelectionBGPanel.SetActive(false);
+        }
     }
 
     private string ConvertToNodeId(string id)
@@ -225,6 +331,7 @@ public class ARPathfindingController : MonoBehaviour
             }
         }
 
+        Debug.LogWarning($"[ARPathfinding] Could not convert ID to node: {id}");
         return null;
     }
 
@@ -232,63 +339,103 @@ public class ARPathfindingController : MonoBehaviour
     {
         if (pathfinding == null)
         {
+            Debug.LogError("[ARPathfinding] Pathfinding reference is null!");
             yield break;
         }
 
         if (!allNodes.ContainsKey(rerouteFromNodeId))
         {
+            ShowError("Starting location not found in map data.");
             yield break;
         }
 
         if (!allNodes.ContainsKey(rerouteToNodeId))
         {
+            ShowError("Destination not found in map data.");
             yield break;
         }
-
-        bool fromIsIndoor = IsIndoorNode(rerouteFromNodeId);
-        bool toIsIndoor = IsIndoorNode(rerouteToNodeId);
-
-        string pathStartNodeId = rerouteFromNodeId;
-        string pathEndNodeId = rerouteToNodeId;
 
         Node fromNode = allNodes[rerouteFromNodeId];
         Node toNode = allNodes[rerouteToNodeId];
 
-        if (fromIsIndoor && allNodes.TryGetValue(rerouteFromNodeId, out Node fromIndoorNode))
+        bool fromIsIndoor = IsIndoorNode(rerouteFromNodeId);
+        bool toIsIndoor = IsIndoorNode(rerouteToNodeId);
+
+        Debug.Log($"[ARPathfinding] Node Types:");
+        Debug.Log($"  FROM: {fromNode.name} (Indoor: {fromIsIndoor})");
+        Debug.Log($"  TO: {toNode.name} (Indoor: {toIsIndoor})");
+
+        string pathStartNodeId = rerouteFromNodeId;
+        string pathEndNodeId = rerouteToNodeId;
+
+        // ========== CASE 1: OUTDOOR TO INDOOR (SAME BUILDING) ==========
+        if (!fromIsIndoor && toIsIndoor)
         {
-            Node entranceNode = GetBuildingEntranceNode(fromIndoorNode);
-            if (entranceNode != null)
+            string toInfraId = GetInfraIdFromIndoorNode(toNode);
+            string fromInfraId = null;
+
+            if (fromNode.type == "infrastructure" && !string.IsNullOrEmpty(fromNode.related_infra_id))
             {
-                pathStartNodeId = entranceNode.node_id;
+                fromInfraId = fromNode.related_infra_id;
+            }
+
+            bool isSameBuilding = !string.IsNullOrEmpty(fromInfraId) &&
+                                !string.IsNullOrEmpty(toInfraId) &&
+                                fromInfraId == toInfraId;
+
+            Debug.Log($"[ARPathfinding] Same Building Check:");
+            Debug.Log($"  FROM infra_id: {fromInfraId}");
+            Debug.Log($"  TO infra_id: {toInfraId}");
+            Debug.Log($"  Same Building: {isSameBuilding}");
+
+            if (isSameBuilding)
+            {
+                Debug.Log($"[ARPathfinding] ✅ CASE 1: Indoor navigation (same building)");
+
+                var singleNodeRoute = CreateSameBuildingRoute(fromNode.node_id, fromNode, toNode);
+
+                PlayerPrefs.SetString("ARNavigation_OriginalFromNodeId", rerouteFromNodeId);
+                PlayerPrefs.SetString("ARNavigation_OriginalToNodeId", rerouteToNodeId);
+                PlayerPrefs.SetInt("ARNavigation_FromIsIndoor", 0);
+                PlayerPrefs.SetInt("ARNavigation_ToIsIndoor", 1);
+                PlayerPrefs.SetString("ARNavigation_SameBuilding", "true");
+                PlayerPrefs.Save();
+
+                currentRoutes = new List<RouteData> { singleNodeRoute };
+                DisplayAllRoutes();
+                yield break;
             }
         }
 
-        if (toIsIndoor && allNodes.TryGetValue(rerouteToNodeId, out Node toIndoorNode))
+        // ========== CASE 2: OUTDOOR TO INDOOR (DIFFERENT BUILDING) ==========
+        if (toIsIndoor)
         {
-            Node entranceNode = GetBuildingEntranceNode(toIndoorNode);
-            if (entranceNode != null)
+            Debug.Log($"[ARPathfinding] ✅ CASE 2: Outdoor to indoor (different building)");
+
+            string toInfraId = GetInfraIdFromIndoorNode(toNode);
+            if (!string.IsNullOrEmpty(toInfraId))
             {
-                pathEndNodeId = entranceNode.node_id;
+                Node entranceNode = allNodes.Values.FirstOrDefault(n =>
+                    n.is_active &&
+                    n.type == "infrastructure" &&
+                    n.related_infra_id == toInfraId);
+
+                if (entranceNode != null)
+                {
+                    pathEndNodeId = entranceNode.node_id;
+                    Debug.Log($"[ARPathfinding] Mapped indoor destination to entrance: {entranceNode.node_id} ({entranceNode.name})");
+                }
+                else
+                {
+                    ShowError($"Cannot find an active entrance for '{toNode.name}'");
+                    yield break;
+                }
             }
         }
 
-        bool isSameBuilding = pathStartNodeId == pathEndNodeId;
-
-        if (isSameBuilding)
-        {
-            var singleNodeRoute = CreateSameBuildingRoute(pathStartNodeId, fromNode, toNode);
-
-            PlayerPrefs.SetString("ARNavigation_OriginalFromNodeId", rerouteFromNodeId);
-            PlayerPrefs.SetString("ARNavigation_OriginalToNodeId", rerouteToNodeId);
-            PlayerPrefs.SetInt("ARNavigation_FromIsIndoor", fromIsIndoor ? 1 : 0);
-            PlayerPrefs.SetInt("ARNavigation_ToIsIndoor", toIsIndoor ? 1 : 0);
-            PlayerPrefs.SetString("ARNavigation_SameBuilding", "true");
-            PlayerPrefs.Save();
-
-            currentRoutes = new List<RouteData> { singleNodeRoute };
-            DisplayAllRoutes();
-            yield break;
-        }
+        // ========== CASE 3: OUTDOOR TO OUTDOOR ==========
+        Debug.Log($"[ARPathfinding] ✅ CASE 3: Standard outdoor pathfinding");
+        Debug.Log($"  Pathfinding from: {pathStartNodeId} to {pathEndNodeId}");
 
         yield return StartCoroutine(pathfinding.FindMultiplePathsWithBlocking(
             pathStartNodeId,
@@ -302,6 +449,7 @@ public class ARPathfindingController : MonoBehaviour
 
         if (routes == null || routes.Count == 0)
         {
+            ShowError("No alternative path found. The selected route may be the only available option.");
             yield break;
         }
 
@@ -325,21 +473,19 @@ public class ARPathfindingController : MonoBehaviour
         return false;
     }
 
-    private Node GetBuildingEntranceNode(Node indoorNode)
+    private string GetInfraIdFromIndoorNode(Node indoorNode)
     {
-        if (indoorNode.type != "indoorinfra" || string.IsNullOrEmpty(indoorNode.related_infra_id))
+        if (indoorNode.type != "indoorinfra" || string.IsNullOrEmpty(indoorNode.related_room_id))
         {
             return null;
         }
 
-        foreach (var node in allNodes.Values)
+        if (indoorInfrastructures.TryGetValue(indoorNode.related_room_id, out IndoorInfrastructure indoor))
         {
-            if (node.type == "infrastructure" && node.related_infra_id == indoorNode.related_infra_id)
-            {
-                return node;
-            }
+            return indoor.infra_id;
         }
 
+        Debug.LogWarning($"[ARPathfinding] Room not found in indoor data: {indoorNode.related_room_id}");
         return null;
     }
 
@@ -363,7 +509,7 @@ public class ARPathfindingController : MonoBehaviour
                 }
             },
             totalDistance = 0f,
-            formattedDistance = "Already at building",
+            formattedDistance = "N/A",
             walkingTime = "< 1 minute",
             viaMode = "Indoor Navigation",
             isRecommended = true
@@ -388,6 +534,7 @@ public class ARPathfindingController : MonoBehaviour
 
         if (currentRoutes.Count == 0)
         {
+            Debug.LogWarning("[ARPathfinding] No routes to display");
             return;
         }
 
@@ -395,7 +542,6 @@ public class ARPathfindingController : MonoBehaviour
 
         Node displayFromNode = firstRoute.startNode;
         Node displayToNode = firstRoute.endNode;
-
         if (!string.IsNullOrEmpty(rerouteFromNodeId) && allNodes.ContainsKey(rerouteFromNodeId))
         {
             displayFromNode = allNodes[rerouteFromNodeId];
@@ -417,7 +563,8 @@ public class ARPathfindingController : MonoBehaviour
 
             if (displayToNode.type == "indoorinfra")
             {
-                string buildingName = GetBuildingNameFromInfraId(displayToNode.related_infra_id);
+                string infraId = GetInfraIdFromIndoorNode(displayToNode);
+                string buildingName = GetBuildingNameFromInfraId(infraId);
                 toDisplay = $"{buildingName} ({displayToNode.name})";
             }
 
@@ -446,6 +593,8 @@ public class ARPathfindingController : MonoBehaviour
             Canvas.ForceUpdateCanvases();
             routeScrollView.verticalNormalizedPosition = 1f;
         }
+
+        Debug.Log($"[ARPathfinding] Displayed {currentRoutes.Count} routes");
     }
 
     private string GetBuildingNameFromInfraId(string infraId)
@@ -563,6 +712,7 @@ public class ARPathfindingController : MonoBehaviour
 
         if (!directionGen.IsDataLoaded())
         {
+            Debug.LogError("[ARPathfinding] Direction generator failed to load data");
             yield break;
         }
 
@@ -570,8 +720,11 @@ public class ARPathfindingController : MonoBehaviour
 
         if (directions == null || directions.Count == 0)
         {
+            Debug.LogError("[ARPathfinding] Failed to generate directions");
             yield break;
         }
+
+        Debug.Log($"[ARPathfinding] Generated {directions.Count} directions");
 
         SaveRouteDataForAR(selectedRoute, directions);
 
@@ -591,22 +744,25 @@ public class ARPathfindingController : MonoBehaviour
         }
 
         yield return new WaitForSeconds(0.5f);
-
         ARSceneUpdateManager updateManager = FindObjectOfType<ARSceneUpdateManager>();
-        if (updateManager != null)
+        if (updateManager != null && updateManager.gameObject.activeInHierarchy)
         {
-            yield return StartCoroutine(updateManager.ApplyReroute());
+            updateManager.StartRerouteUpdate();
         }
-
-        if (arLoadingManager != null)
+        else
         {
-            yield return new WaitForSeconds(1f);
-            arLoadingManager.gameObject.SetActive(false);
+            Debug.LogError("[ARPathfinding] ARSceneUpdateManager not found or inactive!");
+            if (arLoadingManager != null)
+            {
+                arLoadingManager.HideLoadingPanel();
+            }
         }
     }
 
     private void SaveRouteDataForAR(RouteData route, List<NavigationDirection> directions)
     {
+        Debug.Log("=============== SAVE REROUTE DATA START ===============");
+
         int oldDirectionCount = PlayerPrefs.GetInt("ARNavigation_DirectionCount", 0);
 
         for (int i = 0; i < oldDirectionCount; i++)
@@ -629,12 +785,18 @@ public class ARPathfindingController : MonoBehaviour
         PlayerPrefs.SetString("ARNavigation_WalkingTime", route.walkingTime);
         PlayerPrefs.SetString("ARNavigation_ViaMode", route.viaMode);
 
+        Debug.Log($"✅ Saved route metadata:");
+        Debug.Log($"  Start: {route.startNode.node_id} ({route.startNode.name})");
+        Debug.Log($"  End: {route.endNode.node_id} ({route.endNode.name})");
+
         PlayerPrefs.SetInt("ARNavigation_PathNodeCount", route.path.Count);
 
         for (int i = 0; i < route.path.Count; i++)
         {
             PlayerPrefs.SetString($"ARNavigation_PathNode_{i}", route.path[i].node.node_id);
         }
+
+        Debug.Log($"✅ Saved {route.path.Count} path nodes");
 
         int edgeCount = route.path.Count - 1;
         PlayerPrefs.SetInt("ARNavigation_EdgeCount", edgeCount);
@@ -647,6 +809,8 @@ public class ARPathfindingController : MonoBehaviour
             PlayerPrefs.SetString($"ARNavigation_Edge_{i}_From", fromNode);
             PlayerPrefs.SetString($"ARNavigation_Edge_{i}_To", toNode);
         }
+
+        Debug.Log($"✅ Saved {edgeCount} edges");
 
         PlayerPrefs.SetInt("ARNavigation_DirectionCount", directions.Count);
 
@@ -664,7 +828,11 @@ public class ARPathfindingController : MonoBehaviour
             PlayerPrefs.SetInt($"ARNavigation_Direction_{i}_IsIndoorDirection", dir.isIndoorDirection ? 1 : 0);
         }
 
+        Debug.Log($"✅ Saved {directions.Count} directions");
+
         ARModeHelper.SetARMode(true);
         PlayerPrefs.Save();
+
+        Debug.Log("=============== SAVE REROUTE DATA COMPLETE ===============");
     }
 }

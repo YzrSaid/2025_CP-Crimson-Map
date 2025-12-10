@@ -144,6 +144,29 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         }
     }
 
+    public void OnLocationRecalibrated()
+    {
+        Debug.Log("[MarkerSpawner] ========== QR RECALIBRATION: UPDATING VISIBILITY ==========");
+        Debug.Log($"[MarkerSpawner] Previous user location: {userLocation}");
+
+        UpdateUserLocation();
+
+        Debug.Log($"[MarkerSpawner] New user location: {userLocation}");
+
+        UpdateMarkerVisibility();
+
+        if (compassArrow != null && directionManager != null)
+        {
+            NavigationDirection currentDir = directionManager.GetCurrentDirection();
+            if (currentDir != null && currentDir.destinationNode != null)
+            {
+                compassArrow.SetTargetNode(currentDir.destinationNode);
+            }
+        }
+
+        Debug.Log("[MarkerSpawner] ========== QR RECALIBRATION: VISIBILITY UPDATED ==========");
+    }
+
     private GameObject CreateMarkerForNode(Node node, bool isPassed = false)
     {
         GameObject prefabToUse = null;
@@ -208,8 +231,6 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
         GameObject marker = Instantiate(prefabToUse, worldPos, Quaternion.identity);
 
-        // Don't rotate markers individually - the GPS-to-world conversion already handles north alignment
-        // Markers will face the camera in UpdateMarkerVisibility()
 
         string displayName = infra != null ? infra.name : node.name;
         if (node.node_id == fromNodeId)
@@ -427,6 +448,7 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         {
             Vector2 qrLocation = GPSManager.Instance.GetCoordinates();
             userLocation = qrLocation;
+            Debug.Log($"[MarkerSpawner] Using QR Override location: {userLocation}");
         }
         else
         {
@@ -549,15 +571,121 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
         }
     }
 
+    // public void ReloadPathNodes()
+    // {
+    //     CancelInvoke(nameof(UpdateMarkerVisibility));
+    //     ClearAllMarkers();
+    //     spawnedMarkers.Clear();
+    //     markersInitialized = false;
+    //     allMarkersSpawned = false;
+    //     LoadNavigationData();
+    //     StartCoroutine(ReinitializeAfterReload());
+    // }
     public void ReloadPathNodes()
     {
-        CancelInvoke(nameof(UpdateMarkerVisibility));
-        ClearAllMarkers();
-        spawnedMarkers.Clear();
-        markersInitialized = false;
-        allMarkersSpawned = false;
+        Debug.Log("[MarkerSpawner] ========== REROUTE: UPDATING MARKERS ==========");
+
+        HashSet<string> oldJourneyNodes = new HashSet<string>(journeyNodeIds);
+        HashSet<string> oldPassedNodes = new HashSet<string>(passedJourneyNodes);
+        string oldFromNodeId = fromNodeId;
+        string oldToNodeId = toNodeId;
+
         LoadNavigationData();
-        StartCoroutine(ReinitializeAfterReload());
+
+        Debug.Log($"[MarkerSpawner] Old FROM: {oldFromNodeId} → New FROM: {fromNodeId}");
+        Debug.Log($"[MarkerSpawner] Old TO: {oldToNodeId} → New TO: {toNodeId}");
+        Debug.Log($"[MarkerSpawner] Old journey nodes: {oldJourneyNodes.Count} → New: {journeyNodeIds.Count}");
+
+        passedJourneyNodes.Clear();
+
+        UpdateMarkerRoles(oldFromNodeId, oldToNodeId, oldJourneyNodes);
+
+        UpdateMarkerVisibility();
+
+        Debug.Log("[MarkerSpawner] ========== REROUTE: MARKERS UPDATED ==========");
+    }
+
+    private void UpdateMarkerRoles(string oldFromNodeId, string oldToNodeId, HashSet<string> oldJourneyNodes)
+    {
+        List<string> nodesToUpdate = new List<string>();
+
+        if (!string.IsNullOrEmpty(oldFromNodeId) && oldFromNodeId != fromNodeId)
+            nodesToUpdate.Add(oldFromNodeId);
+
+        if (!string.IsNullOrEmpty(oldToNodeId) && oldToNodeId != toNodeId)
+            nodesToUpdate.Add(oldToNodeId);
+
+        if (!string.IsNullOrEmpty(fromNodeId) && fromNodeId != oldFromNodeId)
+            nodesToUpdate.Add(fromNodeId);
+
+        if (!string.IsNullOrEmpty(toNodeId) && toNodeId != oldToNodeId)
+            nodesToUpdate.Add(toNodeId);
+
+        foreach (string nodeId in journeyNodeIds)
+        {
+            if (!oldJourneyNodes.Contains(nodeId))
+                nodesToUpdate.Add(nodeId);
+        }
+
+        foreach (string nodeId in oldJourneyNodes)
+        {
+            if (!journeyNodeIds.Contains(nodeId))
+                nodesToUpdate.Add(nodeId);
+        }
+
+        nodesToUpdate = nodesToUpdate.Distinct().ToList();
+
+        Debug.Log($"[MarkerSpawner] Updating {nodesToUpdate.Count} markers with new roles");
+
+        foreach (string nodeId in nodesToUpdate)
+        {
+            if (!spawnedMarkers.ContainsKey(nodeId))
+            {
+                Debug.Log($"[MarkerSpawner] Marker not spawned yet: {nodeId}, skipping");
+                continue;
+            }
+
+            GameObject oldMarker = spawnedMarkers[nodeId];
+            if (oldMarker == null)
+            {
+                Debug.LogWarning($"[MarkerSpawner] Marker is null for node: {nodeId}");
+                continue;
+            }
+
+            Node node = allNodes.FirstOrDefault(n => n.node_id == nodeId);
+            if (node == null)
+            {
+                Debug.LogWarning($"[MarkerSpawner] Node not found: {nodeId}");
+                continue;
+            }
+
+            Vector3 oldPosition = oldMarker.transform.position;
+            Quaternion oldRotation = oldMarker.transform.rotation;
+            bool wasActive = oldMarker.activeSelf;
+
+            Debug.Log($"[MarkerSpawner] Updating marker: {node.name} (was active: {wasActive})");
+
+            Destroy(oldMarker);
+
+            GameObject newMarker = CreateMarkerForNode(node, false);
+
+            if (newMarker != null)
+            {
+                newMarker.transform.position = oldPosition;
+                newMarker.transform.rotation = oldRotation;
+
+                spawnedMarkers[nodeId] = newMarker;
+
+                newMarker.SetActive(wasActive);
+
+                Debug.Log($"[MarkerSpawner] ✅ Updated marker for {node.name}");
+            }
+            else
+            {
+                Debug.LogError($"[MarkerSpawner] ❌ Failed to create new marker for {node.name}");
+                spawnedMarkers.Remove(nodeId);
+            }
+        }
     }
 
     private IEnumerator ReinitializeAfterReload()
@@ -658,8 +786,8 @@ public class UnifiedARNavigationMarkerSpawner : MonoBehaviour
 
         float meterPerDegree = 111000f;
 
-        float gpsNorth = deltaLat * meterPerDegree; 
-        float gpsEast = deltaLng * meterPerDegree * Mathf.Cos(referenceGPS.x * Mathf.Deg2Rad);  
+        float gpsNorth = deltaLat * meterPerDegree;
+        float gpsEast = deltaLng * meterPerDegree * Mathf.Cos(referenceGPS.x * Mathf.Deg2Rad);
 
         float x = gpsEast;
         float z = gpsNorth;

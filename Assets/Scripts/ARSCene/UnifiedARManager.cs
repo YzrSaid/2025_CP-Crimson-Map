@@ -182,14 +182,12 @@ public class UnifiedARManager : MonoBehaviour
                 {
                     Debug.Log($"[UpdateNavigationTexts] Found fromNode: {fromNode.name}, Type: {fromNode.type}");
 
-                    // Handle indoor nodes - they need to get building name from related_room_id
                     if (fromNode.type == "indoorinfra")
                     {
                         Debug.Log($"[UpdateNavigationTexts] Indoor node detected. Name: {fromNode.name}, related_room_id: {fromNode.related_room_id}");
                         string buildingName = GetBuildingNameForIndoorNode(fromNode);
                         if (!string.IsNullOrEmpty(buildingName))
                         {
-                            // CHANGED: Format is "Room (Building)" not "Building (Room)"
                             fromLocationText.text = $"FROM: {fromNode.name} ({buildingName})";
                             Debug.Log($"[UpdateNavigationTexts] Display: {fromNode.name} ({buildingName})");
                         }
@@ -199,16 +197,15 @@ public class UnifiedARManager : MonoBehaviour
                             Debug.Log($"[UpdateNavigationTexts] No building name found, display: {fromNode.name}");
                         }
                     }
-                    // Handle outdoor infrastructure nodes
-                    else if (fromNode.type == "infrastructure" && !string.IsNullOrEmpty(fromNode.related_infra_id))
+                    else if (fromNode.type == "infrastructure")
                     {
-                        string buildingName = GetBuildingNameFromInfraId(fromNode.related_infra_id);
-                        // For outdoor infrastructure: "Building (Specific Location)"
-                        fromLocationText.text = $"FROM: {buildingName} ({fromNode.name})";
+                        fromLocationText.text = $"FROM: {fromNode.name}";
+                        Debug.Log($"[UpdateNavigationTexts] Infrastructure node: {fromNode.name}");
                     }
                     else
                     {
                         fromLocationText.text = $"FROM: {fromNode.name}";
+                        Debug.Log($"[UpdateNavigationTexts] Other node type: {fromNode.name}");
                     }
                 }
                 else
@@ -223,7 +220,6 @@ public class UnifiedARManager : MonoBehaviour
             }
         }
 
-        // Similar for toDestinationText...
         if (toDestinationText != null)
         {
             toDestinationText.gameObject.SetActive(true);
@@ -237,14 +233,12 @@ public class UnifiedARManager : MonoBehaviour
                 {
                     Debug.Log($"[UpdateNavigationTexts] Found toNode: {toNode.name}, Type: {toNode.type}");
 
-                    // Handle indoor nodes - they need to get building name from related_room_id
                     if (toNode.type == "indoorinfra")
                     {
                         Debug.Log($"[UpdateNavigationTexts] Indoor node detected. Name: {toNode.name}, related_room_id: {toNode.related_room_id}");
                         string buildingName = GetBuildingNameForIndoorNode(toNode);
                         if (!string.IsNullOrEmpty(buildingName))
                         {
-                            // CHANGED: Format is "Room (Building)" not "Building (Room)"
                             toDestinationText.text = $"TO: {toNode.name} ({buildingName})";
                             Debug.Log($"[UpdateNavigationTexts] Display: {toNode.name} ({buildingName})");
                         }
@@ -254,16 +248,15 @@ public class UnifiedARManager : MonoBehaviour
                             Debug.Log($"[UpdateNavigationTexts] No building name found, display: {toNode.name}");
                         }
                     }
-                    // Handle outdoor infrastructure nodes
-                    else if (toNode.type == "infrastructure" && !string.IsNullOrEmpty(toNode.related_infra_id))
+                    else if (toNode.type == "infrastructure")
                     {
-                        string buildingName = GetBuildingNameFromInfraId(toNode.related_infra_id);
-                        // For outdoor infrastructure: "Building (Specific Location)"
-                        toDestinationText.text = $"TO: {buildingName} ({toNode.name})";
+                        toDestinationText.text = $"TO: {toNode.name}";
+                        Debug.Log($"[UpdateNavigationTexts] Infrastructure node: {toNode.name}");
                     }
                     else
                     {
                         toDestinationText.text = $"TO: {toNode.name}";
+                        Debug.Log($"[UpdateNavigationTexts] Other node type: {toNode.name}");
                     }
                 }
                 else
@@ -278,7 +271,6 @@ public class UnifiedARManager : MonoBehaviour
             }
         }
     }
-
     private string GetBuildingNameForIndoorNode(Node indoorNode)
     {
         if (indoorNode.type != "indoorinfra" || string.IsNullOrEmpty(indoorNode.related_room_id))
@@ -289,7 +281,6 @@ public class UnifiedARManager : MonoBehaviour
 
         Debug.Log($"[GetBuildingNameForIndoorNode] Looking for room_id: {indoorNode.related_room_id} in indoorInfrastructures (count: {indoorInfrastructures.Count})");
 
-        // Debug: List all available room_ids
         foreach (var key in indoorInfrastructures.Keys.Take(5))
         {
             Debug.Log($"[GetBuildingNameForIndoorNode] Available room_id in dictionary: {key}");
@@ -298,7 +289,6 @@ public class UnifiedARManager : MonoBehaviour
         if (indoorInfrastructures.TryGetValue(indoorNode.related_room_id, out IndoorInfrastructure indoor))
         {
             Debug.Log($"[GetBuildingNameForIndoorNode] Found indoor infrastructure. infra_id: {indoor.infra_id}");
-            // Now find the building name using the infra_id from the indoor infrastructure
             string buildingName = GetBuildingNameFromInfraId(indoor.infra_id);
             Debug.Log($"[GetBuildingNameForIndoorNode] Building name result: {buildingName}");
             return buildingName;
@@ -525,18 +515,14 @@ public class UnifiedARManager : MonoBehaviour
                 try
                 {
                     Node[] nodes = JsonHelper.FromJson<Node>(jsonData);
-
-                    // ADD "indoorinfra" TO THE FILTER!
                     currentNodes = nodes.Where(n =>
                         (n.type == "infrastructure" || n.type == "intermediate" || n.type == "indoorinfra") && n.is_active
                     ).ToList();
 
                     loadSuccess = true;
 
-                    // Add debug log
                     Debug.Log($"[LoadNodesData] Loaded {currentNodes.Count} nodes. Indoor nodes: {currentNodes.Count(n => n.type == "indoorinfra")}");
 
-                    // Show all indoor nodes and their related_room_id
                     foreach (var node in currentNodes.Where(n => n.type == "indoorinfra"))
                     {
                         Debug.Log($"[LoadNodesData] Indoor node: id={node.node_id}, name={node.name}, related_room_id={node.related_room_id}");
@@ -578,7 +564,6 @@ public class UnifiedARManager : MonoBehaviour
                     indoorInfrastructures = indoorInfraArray.ToDictionary(i => i.room_id, i => i);
                     loadSuccess = true;
 
-                    // Show all loaded indoor infrastructures
                     foreach (var indoor in indoorInfraArray)
                     {
                         Debug.Log($"[LoadIndoorData] Indoor: room_id={indoor.room_id}, infra_id={indoor.infra_id}");
@@ -739,7 +724,6 @@ public class UnifiedARManager : MonoBehaviour
             }
         }
 #else
-    // THIS IS THE CODE THAT RUNS ON YOUR PHONE
     if (Input.location.status == LocationServiceStatus.Running)
     {
         currentGPSAccuracy = Input.location.lastData.horizontalAccuracy;

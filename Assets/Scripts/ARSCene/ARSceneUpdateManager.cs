@@ -10,6 +10,7 @@ public class ARSceneUpdateManager : MonoBehaviour
     public UnifiedARNavigationMarkerSpawner navigationMarkerSpawner;
     public ReportAffectedItemPopulator reportAffectedItemPopulator;
     public ARRerouteAffectedItemPopulator rerouteAffectedItemPopulator;
+    public UnifiedARManager unifiedARManager;
 
     [Header("Loading")]
     public ARLoadingManager arLoadingManager;
@@ -42,6 +43,9 @@ public class ARSceneUpdateManager : MonoBehaviour
 
         if (arLoadingManager == null)
             arLoadingManager = FindObjectOfType<ARLoadingManager>();
+
+        if (unifiedARManager == null)
+            unifiedARManager = FindObjectOfType<UnifiedARManager>();
     }
 
     private void LoadMapData()
@@ -51,31 +55,83 @@ public class ARSceneUpdateManager : MonoBehaviour
         currentCampusIds = string.IsNullOrEmpty(campusIdsStr)
             ? new List<string>()
             : new List<string>(campusIdsStr.Split(','));
+
+        Debug.Log($"[ARSceneUpdateManager] Loaded map data: {currentMapId}");
+    }
+
+    public void StartRerouteUpdate()
+    {
+        Debug.Log("[ARSceneUpdateManager] Starting reroute update...");
+        
+        if (!gameObject.activeInHierarchy)
+        {
+            Debug.LogWarning("[ARSceneUpdateManager] GameObject was inactive, activating...");
+            gameObject.SetActive(true);
+        }
+
+        StopAllCoroutines();
+        StartCoroutine(ApplyRerouteCoroutine());
+    }
+
+    private IEnumerator ApplyRerouteCoroutine()
+    {
+        Debug.Log("[ARSceneUpdateManager] ========== REROUTE UPDATE START ==========");
+
+        UpdateTopPanelUI();
+        Debug.Log("[ARSceneUpdateManager] ✅ Top panel UI updated");
+
+        yield return StartCoroutine(UpdateDirectionDisplay());
+        Debug.Log("[ARSceneUpdateManager] ✅ Direction display updated");
+
+        yield return StartCoroutine(UpdateARMapHighlighting());
+        Debug.Log("[ARSceneUpdateManager] ✅ AR map highlighting updated");
+
+        yield return StartCoroutine(UpdateNavigationMarkers());
+        Debug.Log("[ARSceneUpdateManager] ✅ Navigation markers updated");
+
+        UpdateAffectedItemPopulators();
+        Debug.Log("[ARSceneUpdateManager] ✅ Affected item populators updated");
+
+        yield return new WaitForSeconds(1f);
+
+        if (arLoadingManager != null)
+        {
+            arLoadingManager.HideLoadingPanel();
+            Debug.Log("[ARSceneUpdateManager] ✅ Loading panel hidden");
+        }
+
+        Debug.Log("[ARSceneUpdateManager] ========== REROUTE UPDATE COMPLETE ==========");
+    }
+
+    private void UpdateTopPanelUI()
+    {
+        if (unifiedARManager != null)
+        {
+            Debug.Log("[ARSceneUpdateManager] Reloading navigation data in UnifiedARManager...");
+            unifiedARManager.ReloadNavigationData();
+        }
+        else
+        {
+            Debug.LogWarning("[ARSceneUpdateManager] UnifiedARManager not found!");
+        }
     }
 
     public IEnumerator ApplyReroute()
     {
-        yield return StartCoroutine(UpdateDirectionDisplay());
-
-        yield return StartCoroutine(UpdateARMapHighlighting());
-
-        yield return StartCoroutine(UpdateNavigationMarkers());
-
-        UpdateAffectedItemPopulators();
-
-        yield return new WaitForSeconds(0.3f);
-
-        if (arLoadingManager != null)
-            arLoadingManager.HideLoadingPanel();
+        Debug.LogWarning("[ARSceneUpdateManager] ApplyReroute() is deprecated. Use StartRerouteUpdate() instead.");
+        StartRerouteUpdate();
+        yield return null;
     }
 
     private IEnumerator UpdateDirectionDisplay()
     {
         if (directionDisplayManager == null)
         {
+            Debug.LogWarning("[ARSceneUpdateManager] DirectionDisplayManager not found");
             yield break;
         }
 
+        Debug.Log("[ARSceneUpdateManager] Reloading directions...");
         directionDisplayManager.ReloadDirections();
 
         float timeout = 5f;
@@ -88,12 +144,18 @@ public class ARSceneUpdateManager : MonoBehaviour
 
             if (currentCount > 0 && currentCount != previousCount)
             {
+                Debug.Log($"[ARSceneUpdateManager] Directions loaded: {currentCount}");
                 break;
             }
 
             previousCount = currentCount;
             elapsed += Time.deltaTime;
             yield return null;
+        }
+
+        if (elapsed >= timeout)
+        {
+            Debug.LogWarning("[ARSceneUpdateManager] Direction loading timed out");
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -103,9 +165,11 @@ public class ARSceneUpdateManager : MonoBehaviour
     {
         if (arMapManager == null)
         {
+            Debug.LogWarning("[ARSceneUpdateManager] ARMapManager not found");
             yield break;
         }
 
+        Debug.Log("[ARSceneUpdateManager] Clearing navigation highlights...");
         arMapManager.ClearNavigationHighlights();
         yield return new WaitForSeconds(0.2f);
 
@@ -114,27 +178,39 @@ public class ARSceneUpdateManager : MonoBehaviour
 
     private IEnumerator ReconstructAndApplyRoute()
     {
+        Debug.Log("[ARSceneUpdateManager] Reconstructing route from PlayerPrefs...");
+        
         RouteData newRoute = null;
         yield return StartCoroutine(BuildRouteFromPlayerPrefs((route) => newRoute = route));
 
         if (newRoute != null && arMapManager != null)
         {
+            Debug.Log($"[ARSceneUpdateManager] Applying new route: {newRoute.startNode.name} → {newRoute.endNode.name}");
             arMapManager.InitializeARNavigation(currentMapId, currentCampusIds, newRoute);
             yield return new WaitForSeconds(0.5f);
+        }
+        else
+        {
+            Debug.LogWarning("[ARSceneUpdateManager] Failed to reconstruct route or ARMapManager is null");
         }
     }
 
     private IEnumerator BuildRouteFromPlayerPrefs(System.Action<RouteData> callback)
     {
         int pathNodeCount = PlayerPrefs.GetInt("ARNavigation_PathNodeCount", 0);
+        Debug.Log($"[ARSceneUpdateManager] Building route with {pathNodeCount} nodes");
+
         if (pathNodeCount == 0)
         {
+            Debug.LogWarning("[ARSceneUpdateManager] No path nodes found in PlayerPrefs");
             callback?.Invoke(null);
             yield break;
         }
 
         string startNodeId = PlayerPrefs.GetString("ARNavigation_StartNodeId", "");
         string endNodeId = PlayerPrefs.GetString("ARNavigation_EndNodeId", "");
+
+        Debug.Log($"[ARSceneUpdateManager] Route: {startNodeId} → {endNodeId}");
 
         List<string> pathNodeIds = new List<string>();
         for (int i = 0; i < pathNodeCount; i++)
@@ -160,15 +236,18 @@ public class ARSceneUpdateManager : MonoBehaviour
                         if (node != null && node.is_active)
                             allNodes[node.node_id] = node;
                     }
+                    Debug.Log($"[ARSceneUpdateManager] Loaded {allNodes.Count} nodes from {fileName}");
                     loadComplete = true;
                 }
-                catch (System.Exception)
+                catch (System.Exception ex)
                 {
+                    Debug.LogError($"[ARSceneUpdateManager] Error loading nodes: {ex.Message}");
                     loadComplete = true;
                 }
             },
             (error) =>
             {
+                Debug.LogError($"[ARSceneUpdateManager] Failed to load nodes: {error}");
                 loadComplete = true;
             }
         ));
@@ -177,6 +256,7 @@ public class ARSceneUpdateManager : MonoBehaviour
 
         if (!allNodes.ContainsKey(startNodeId) || !allNodes.ContainsKey(endNodeId))
         {
+            Debug.LogError($"[ARSceneUpdateManager] Start or end node not found in loaded nodes");
             callback?.Invoke(null);
             yield break;
         }
@@ -208,6 +288,8 @@ public class ARSceneUpdateManager : MonoBehaviour
             viaMode = PlayerPrefs.GetString("ARNavigation_ViaMode", "")
         };
 
+        Debug.Log($"[ARSceneUpdateManager] ✅ Route reconstructed with {pathNodes.Count} path nodes");
+
         callback?.Invoke(route);
     }
 
@@ -215,9 +297,11 @@ public class ARSceneUpdateManager : MonoBehaviour
     {
         if (navigationMarkerSpawner == null)
         {
+            Debug.LogWarning("[ARSceneUpdateManager] NavigationMarkerSpawner not found");
             yield break;
         }
 
+        Debug.Log("[ARSceneUpdateManager] Reloading navigation markers...");
         navigationMarkerSpawner.ReloadPathNodes();
         yield return new WaitForSeconds(0.5f);
     }
@@ -226,11 +310,13 @@ public class ARSceneUpdateManager : MonoBehaviour
     {
         if (reportAffectedItemPopulator != null)
         {
+            Debug.Log("[ARSceneUpdateManager] Reloading report affected item populator...");
             reportAffectedItemPopulator.ReloadNavigationData();
         }
 
         if (rerouteAffectedItemPopulator != null)
         {
+            Debug.Log("[ARSceneUpdateManager] Refreshing reroute affected item populator...");
             rerouteAffectedItemPopulator.enabled = false;
             rerouteAffectedItemPopulator.enabled = true;
         }
