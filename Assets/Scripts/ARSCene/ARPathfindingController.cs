@@ -830,7 +830,7 @@ public class ARPathfindingController : MonoBehaviour
 
         Debug.Log($"✅ Saved {directions.Count} directions");
 
-        ARModeHelper.SetARMode(true);
+        ARModeHelper.EnableARMode();
         PlayerPrefs.Save();
 
         Debug.Log("=============== SAVE REROUTE DATA COMPLETE ===============");

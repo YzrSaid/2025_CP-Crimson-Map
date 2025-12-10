@@ -48,11 +48,37 @@ public class CategoryDropdown : MonoBehaviour
 
         while (waitTime < maxWaitTime)
         {
-            if (GlobalManager.Instance != null && MapManager.Instance != null && MapManager.Instance.IsReady() && IsDataInitializationComplete())
+            bool globalReady = GlobalManager.Instance != null;
+            bool mapReady = false;
+            bool dataReady = IsDataInitializationComplete();
+            bool indoorMode = IsIndoorMode();
+
+            // Check based on AR mode
+            if (ARModeHelper.IsARMode())
             {
-                if (!IsIndoorMode())
+                // AR Scene - check ARMapManager
+                mapReady = ARMapManager.Instance != null && ARMapManager.Instance.IsSpawningComplete();
+                Debug.Log($"AR Mode | Spawning Complete: {mapReady}");
+            }
+            else
+            {
+                // Regular scene - check MapManager
+                mapReady = MapManager.Instance != null && MapManager.Instance.IsReady();
+                Debug.Log($"Map Mode | Map Ready: {mapReady}");
+            }
+
+            Debug.Log($"Wait time: {waitTime}s | Global: {globalReady} | Map: {mapReady} | Data: {dataReady} | Indoor: {indoorMode}");
+
+            if (globalReady && mapReady && dataReady)
+            {
+                if (!indoorMode)
                 {
+                    Debug.Log("CategoryDropdown: Starting PopulatePanel");
                     yield return StartCoroutine(PopulatePanel());
+                }
+                else
+                {
+                    Debug.Log("CategoryDropdown: Skipped - Indoor mode detected");
                 }
                 yield break;
             }
@@ -61,10 +87,7 @@ public class CategoryDropdown : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
 
-        if (!IsIndoorMode())
-        {
-            yield return StartCoroutine(PopulatePanel());
-        }
+        Debug.LogWarning("CategoryDropdown: Timeout reached!");
     }
 
     private bool IsDataInitializationComplete()
@@ -106,11 +129,33 @@ public class CategoryDropdown : MonoBehaviour
 
     IEnumerator PopulatePanel()
     {
-        List<string> currentCampusIds = MapManager.Instance.GetCurrentCampusIds();
-        string currentMapId = MapManager.Instance.GetCurrentMap()?.map_id;
+        List<string> currentCampusIds = new List<string>();
+        string currentMapId = null;
+
+        // Get data based on AR mode
+        if (ARModeHelper.IsARMode())
+        {
+            // In AR scene, get from PlayerPrefs
+            currentMapId = PlayerPrefs.GetString("ARScene_MapId");
+            string campusIdsStr = PlayerPrefs.GetString("ARScene_CampusIds", "");
+            currentCampusIds = string.IsNullOrEmpty(campusIdsStr)
+                ? new List<string>()
+                : new List<string>(campusIdsStr.Split(','));
+
+            Debug.Log($"AR Mode: MapId={currentMapId}, CampusIds={campusIdsStr}");
+        }
+        else
+        {
+            // Regular scene, get from MapManager
+            currentCampusIds = MapManager.Instance.GetCurrentCampusIds();
+            currentMapId = MapManager.Instance.GetCurrentMap()?.map_id;
+
+            Debug.Log($"Map Mode: MapId={currentMapId}, CampusCount={currentCampusIds.Count}");
+        }
 
         if (string.IsNullOrEmpty(currentMapId) || currentCampusIds.Count == 0)
         {
+            Debug.LogWarning("CategoryDropdown: No valid map data found");
             yield break;
         }
 

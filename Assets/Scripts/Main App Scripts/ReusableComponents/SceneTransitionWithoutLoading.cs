@@ -31,6 +31,8 @@ public class SceneTransitionWithoutLoading : MonoBehaviour
                 ARMapManager.Instance.ClearNavigationHighlights();
             }
             ARModeHelper.DisableARMode();
+            PlayerPrefs.SetString("ARNavigation_SameBuilding", "false");
+            PlayerPrefs.Save();
             GlobalManager.Instance.StartCoroutine(GlobalManager.Instance.SafeARCleanupAndExit(sceneName));
         }
         else if (GlobalManager.Instance != null && ARModeHelper.IsNotARMode())

@@ -1167,7 +1167,7 @@ public class PathfindingController : MonoBehaviour
                 PlayerPrefs.SetString("ARNavigation_OriginalToNodeId", toNodeId);
                 PlayerPrefs.SetInt("ARNavigation_FromIsIndoor", 0);
                 PlayerPrefs.SetInt("ARNavigation_ToIsIndoor", 1);
-                PlayerPrefs.SetString("ARNavigation_SameBuilding", "true");
+                PlayerPrefs.SetInt("ARNavigation_SameBuilding", 1);
                 PlayerPrefs.Save();
 
                 currentRoutes = new List<RouteData> { singleNodeRoute };
@@ -1554,7 +1554,7 @@ public class PathfindingController : MonoBehaviour
 
         Debug.Log($"Saved {directions.Count} directions");
 
-        ARModeHelper.SetARMode(true);
+        ARModeHelper.EnableARMode();
     }
     public void HideResults()
     {

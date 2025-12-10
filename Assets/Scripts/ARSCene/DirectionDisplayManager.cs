@@ -887,21 +887,33 @@ public class DirectionDisplayManager : MonoBehaviour
             return;
         bool toIsIndoor = PlayerPrefs.GetInt("ARNavigation_ToIsIndoor", 0) == 1;
 
+        bool isSameBuilding = PlayerPrefs.GetInt("ARNavigation_SameBuilding", 0) == 1;
+
         if (successBodyText != null)
         {
-            if (toIsIndoor)
+            // CASE #1 (Outdoor to Indoor - Same Building)
+            if (toIsIndoor && isSameBuilding)
+            {
+                successBodyText.text =
+                    $"<b>You're already in the building!</b> " +
+                    $"Check the directions panel to see which floor the room is on, and use the indoor map to navigate inside the building.";
+            }
+            // CASE #2 (Outdoor to Indoor - Different Building)
+            else if (toIsIndoor && !isSameBuilding)
             {
                 successBodyText.text =
                     $"<b>Congratulations!</b> You've arrived at the building. " +
-                    $"Check the directions panel to see which floor the room is on, and use the indoor map to navigate inside building.";
+                    $"Check the directions panel to see which floor the room is on, and use the indoor map to navigate inside the building.";
             }
+            // CASE #3 (Outdoor to Outdoor)
             else
             {
                 successBodyText.text =
                     $"<b>Congratulations!</b> You've successfully reached your destination! " +
-                    $"You can now stop AR navigation or explore other locations on campus. ";
+                    $"You can now stop AR navigation or explore other locations on campus.";
             }
         }
+
         if (successPanelBackground != null)
         {
             successPanelBackground.SetActive(true);

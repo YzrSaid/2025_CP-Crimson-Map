@@ -53,8 +53,6 @@ public class InfrastructurePopulator : MonoBehaviour
         }
         else
         {
-            ARModeHelper.DisableARMode();
-            Debug.Log("Hey disable ka muna");
             mapManager = MapManager.Instance;
             if (mapManager != null) mapManager.OnMapChanged += OnMapChangedHandler;
         }
