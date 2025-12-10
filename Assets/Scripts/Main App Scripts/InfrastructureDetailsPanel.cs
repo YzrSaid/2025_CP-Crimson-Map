@@ -135,6 +135,8 @@ public class InfrastructureDetailsPanel : MonoBehaviour
             SaveBookmarkData(bookmarkData);
             isBookmarked = true;
             UpdateBookmarkUI();
+            
+            RefreshSavedAccordion();
         }
     }
 
@@ -150,6 +152,24 @@ public class InfrastructureDetailsPanel : MonoBehaviour
             SaveBookmarkData(bookmarkData);
             isBookmarked = false;
             UpdateBookmarkUI();
+            
+            RefreshSavedAccordion();
+        }
+    }
+
+    private void RefreshSavedAccordion()
+    {
+        AccordionManager manager = FindObjectOfType<AccordionManager>();
+        if (manager != null)
+        {
+            foreach (AccordionItem item in manager.accordionItems)
+            {
+                if (item.IsBookmarksCategory)
+                {
+                    item.RefreshBookmarks();
+                    break;
+                }
+            }
         }
     }
 
@@ -187,7 +207,6 @@ public class InfrastructureDetailsPanel : MonoBehaviour
             {
                 Directory.CreateDirectory(directory);
             }
-
             File.WriteAllText(filePath, json);
         }
         catch (Exception e)
@@ -201,7 +220,7 @@ public class InfrastructureDetailsPanel : MonoBehaviour
 #if UNITY_EDITOR
         return Path.Combine(Application.streamingAssetsPath, "bookmarks.json");
 #else
-            return Path.Combine(Application.persistentDataPath, "bookmarks.json");
+        return Path.Combine(Application.persistentDataPath, "bookmarks.json");
 #endif
     }
 

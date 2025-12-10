@@ -133,11 +133,6 @@ public class BarrierSpawner : MonoBehaviour
 
     private string GetNodesFileName()
     {
-        if (string.IsNullOrEmpty(currentMapId))
-        {
-            return "nodes.json";
-        }
-
         string fileName = $"nodes_{currentMapId}.json";
         return fileName;
     }

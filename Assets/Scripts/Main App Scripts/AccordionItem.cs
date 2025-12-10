@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.IO;
 
 public class AccordionItem : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class AccordionItem : MonoBehaviour
     [Header("Empty State")]
     public bool showEmptyMessage = true;
     public string emptyMessageText = "No infrastructures available";
+    public string emptyRecentMessageText = "No navigation history yet";
+    public string emptyBookmarksMessageText = "No saved infrastructures";
     public TMP_FontAsset emptyMessageFont;
     public float emptyMessageFontSize = 16f;
     public Color emptyMessageColor = new Color(0.6f, 0.6f, 0.6f, 1f);
@@ -47,8 +50,24 @@ public class AccordionItem : MonoBehaviour
     private string categoryId;
     private bool infrastructuresLoaded = false;
     private GameObject emptyMessageObject;
+    private bool isRecentCategory = false;
+    private bool isBookmarksCategory = false;
 
     public bool IsExpanded => isExpanded;
+    public bool IsBookmarksCategory => isBookmarksCategory;
+    
+    // Public method to refresh bookmarks
+    public void RefreshBookmarks()
+    {
+        if (!isBookmarksCategory) return;
+        
+        infrastructuresLoaded = false;
+        
+        if (isExpanded)
+        {
+            StartCoroutine(LoadBookmarkedInfrastructuresCoroutine());
+        }
+    }
 
     void Awake()
     {
@@ -93,6 +112,24 @@ public class AccordionItem : MonoBehaviour
     public void SetCategoryId(string catId)
     {
         categoryId = catId;
+        isRecentCategory = false;
+        isBookmarksCategory = false;
+    }
+
+    // NEW METHOD: Just mark as bookmarks category, don't load yet
+    public void SetAsBookmarksCategory()
+    {
+        isBookmarksCategory = true;
+        isRecentCategory = false;
+        categoryId = null;
+    }
+
+    // NEW METHOD: Just mark as recent category, don't load yet
+    public void SetAsRecentCategory()
+    {
+        isRecentCategory = true;
+        isBookmarksCategory = false;
+        categoryId = null;
     }
 
     public IEnumerator LoadInfrastructures()
@@ -141,7 +178,6 @@ public class AccordionItem : MonoBehaviour
             }
 
             infrastructuresLoaded = true;
-
 
             StartCoroutine(FinishExpandAfterLoad());
         }
@@ -199,33 +235,35 @@ public class AccordionItem : MonoBehaviour
             StartCoroutine(ShowEmptyStateAfterError());
         }
     }
-    public void LoadRecentDestinations()
+
+    // MODIFIED: Load recent destinations (called during expand)
+    private IEnumerator LoadRecentDestinationsCoroutine()
     {
+        infrastructuresLoaded = true;
+
         if (infrastructureContainer == null)
         {
             Debug.LogError("[AccordionItem] Infrastructure container not assigned!");
-            return;
+            yield break;
         }
 
-        // Clear existing items
-        foreach (Transform child in infrastructureContainer)
-        {
-            Destroy(child.gameObject);
-        }
+        ClearSpawnedItems();
 
-        // Load recent destinations from JSON
         List<SavedNavigation> recentDestinations = ARNavigationDataHelper.GetNavigationHistory();
 
         if (recentDestinations == null || recentDestinations.Count == 0)
         {
             Debug.Log("[AccordionItem] No recent destinations found");
-            return;
+            
+            ShowEmptyMessage();
+            targetHeight = minHeight + emptyMessageHeight;
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+            ForceLayoutUpdate();
+            yield break;
         }
 
-        // Sort by timestamp (most recent first)
         recentDestinations.Sort((a, b) => DateTime.Parse(b.timestamp).CompareTo(DateTime.Parse(a.timestamp)));
 
-        // Create items for each recent destination
         foreach (SavedNavigation nav in recentDestinations)
         {
             GameObject itemObj = Instantiate(infrastructurePrefab, infrastructureContainer);
@@ -234,25 +272,148 @@ public class AccordionItem : MonoBehaviour
             if (itemScript != null)
             {
                 itemScript.SetNavigationData(nav);
+                spawnedInfrastructures.Add(itemObj);
             }
             else
             {
                 Debug.LogError("[AccordionItem] RecentDestinationItem component not found on prefab!");
+                Destroy(itemObj);
             }
         }
 
-        Debug.Log($"[AccordionItem] Loaded {recentDestinations.Count} recent destinations");
+        yield return StartCoroutine(FinishExpandAfterLoad());
+    }
+
+    // MODIFIED: Load bookmarked infrastructures (called during expand)
+    private IEnumerator LoadBookmarkedInfrastructuresCoroutine()
+    {
+        infrastructuresLoaded = true;
+
+        if (infrastructureContainer == null)
+        {
+            Debug.LogError("[AccordionItem] Infrastructure container not assigned!");
+            yield break;
+        }
+
+        ClearSpawnedItems();
+
+        // Load bookmarks
+        BookmarkData bookmarkData = LoadBookmarkData();
+
+        if (bookmarkData == null || bookmarkData.bookmarked_infra_ids == null || bookmarkData.bookmarked_infra_ids.Count == 0)
+        {
+            Debug.Log("[AccordionItem] No bookmarked infrastructures found");
+            
+            ShowEmptyMessage();
+            targetHeight = minHeight + emptyMessageHeight;
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+            ForceLayoutUpdate();
+            yield break;
+        }
+
+        // Load all infrastructures and filter by bookmarked IDs
+        yield return StartCoroutine(LoadBookmarkedInfrastructuresFromJson(bookmarkData.bookmarked_infra_ids));
+    }
+
+    private IEnumerator LoadBookmarkedInfrastructuresFromJson(List<string> bookmarkedIds)
+    {
+        yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
+            "infrastructure.json",
+            (jsonData) => OnBookmarkedInfrastructuresLoadSuccess(jsonData, bookmarkedIds),
+            (error) => OnBookmarkedInfrastructuresLoadError(error)
+        ));
+    }
+
+    void OnBookmarkedInfrastructuresLoadSuccess(string jsonData, List<string> bookmarkedIds)
+    {
+        try
+        {
+            string wrappedJson = "{\"infrastructures\":" + jsonData + "}";
+            InfrastructureList infrastructureList = JsonUtility.FromJson<InfrastructureList>(wrappedJson);
+
+            foreach (Infrastructure infra in infrastructureList.infrastructures)
+            {
+                if (!infra.is_deleted && bookmarkedIds.Contains(infra.infra_id))
+                {
+                    SpawnInfrastructureItem(infra);
+                }
+            }
+
+            StartCoroutine(FinishExpandAfterLoad());
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[AccordionItem] Error loading bookmarked infrastructures: {e.Message}");
+            StartCoroutine(ShowEmptyStateAfterError());
+        }
+    }
+
+    void OnBookmarkedInfrastructuresLoadError(string errorMessage)
+    {
+        Debug.LogError($"[AccordionItem] Error loading infrastructure.json for bookmarks: {errorMessage}");
+        StartCoroutine(ShowEmptyStateAfterError());
+    }
+
+    private BookmarkData LoadBookmarkData()
+    {
+        string filePath = GetBookmarkFilePath();
+
+        if (File.Exists(filePath))
+        {
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                BookmarkData data = JsonUtility.FromJson<BookmarkData>(json);
+                return data ?? new BookmarkData();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[AccordionItem] Error loading bookmarks: {e.Message}");
+                return new BookmarkData();
+            }
+        }
+
+        return new BookmarkData();
+    }
+
+    private string GetBookmarkFilePath()
+    {
+#if UNITY_EDITOR
+        return Path.Combine(Application.streamingAssetsPath, "bookmarks.json");
+#else
+        return Path.Combine(Application.persistentDataPath, "bookmarks.json");
+#endif
+    }
+
+    private void ClearSpawnedItems()
+    {
+        foreach (GameObject item in spawnedInfrastructures)
+        {
+            if (item != null)
+                Destroy(item);
+        }
+        spawnedInfrastructures.Clear();
     }
 
     void SpawnInfrastructureItem(Infrastructure infra)
     {
-
         GameObject newItem = Instantiate(infrastructurePrefab, infrastructureContainer);
 
-        ExploreInfrastructureItem itemScript = newItem.GetComponent<ExploreInfrastructureItem>();
-        if (itemScript != null)
+        if (isBookmarksCategory)
         {
-            itemScript.SetInfrastructureData(infra);
+            SavedInfrastructureItem itemScript = newItem.GetComponent<SavedInfrastructureItem>();
+            if (itemScript != null)
+            {
+                itemScript.SetInfrastructureData(infra);
+            }
+        }
+        else
+        {
+            ExploreInfrastructureItem itemScript = newItem.GetComponent<ExploreInfrastructureItem>();
+            if (itemScript != null)
+            {
+                itemScript.SetInfrastructureData(infra);
+            }
         }
 
         spawnedInfrastructures.Add(newItem);
@@ -291,7 +452,20 @@ public class AccordionItem : MonoBehaviour
         emptyRect.anchoredPosition = Vector2.zero;
 
         TextMeshProUGUI emptyText = emptyObj.AddComponent<TextMeshProUGUI>();
-        emptyText.text = emptyMessageText;
+
+        // Choose the appropriate empty message based on category type
+        if (isBookmarksCategory)
+        {
+            emptyText.text = emptyBookmarksMessageText;
+        }
+        else if (isRecentCategory)
+        {
+            emptyText.text = emptyRecentMessageText;
+        }
+        else
+        {
+            emptyText.text = emptyMessageText;
+        }
 
         if (emptyMessageFont != null)
             emptyText.font = emptyMessageFont;
@@ -338,13 +512,61 @@ public class AccordionItem : MonoBehaviour
 
         isExpanded = true;
 
-
         if (contentPanel != null)
             contentPanel.gameObject.SetActive(true);
 
         StopAllCoroutines();
 
-        if (infrastructuresLoaded)
+        // Handle special categories that load on expand
+        if (isRecentCategory)
+        {
+            if (!infrastructuresLoaded)
+            {
+                StartCoroutine(LoadRecentDestinationsCoroutine());
+            }
+            else
+            {
+                // Already loaded, just show
+                if (spawnedInfrastructures.Count > 0)
+                {
+                    HideEmptyMessage();
+                    UpdateContentHeight();
+                    rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+                }
+                else
+                {
+                    ShowEmptyMessage();
+                    targetHeight = minHeight + emptyMessageHeight;
+                    rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+                }
+                ForceLayoutUpdate();
+            }
+        }
+        else if (isBookmarksCategory)
+        {
+            if (!infrastructuresLoaded)
+            {
+                StartCoroutine(LoadBookmarkedInfrastructuresCoroutine());
+            }
+            else
+            {
+                // Already loaded, just show
+                if (spawnedInfrastructures.Count > 0)
+                {
+                    HideEmptyMessage();
+                    UpdateContentHeight();
+                    rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+                }
+                else
+                {
+                    ShowEmptyMessage();
+                    targetHeight = minHeight + emptyMessageHeight;
+                    rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+                }
+                ForceLayoutUpdate();
+            }
+        }
+        else if (infrastructuresLoaded)
         {
             if (spawnedInfrastructures.Count > 0)
             {
@@ -408,12 +630,7 @@ public class AccordionItem : MonoBehaviour
 
     void OnDestroy()
     {
-        foreach (GameObject item in spawnedInfrastructures)
-        {
-            if (item != null)
-                Destroy(item);
-        }
-        spawnedInfrastructures.Clear();
+        ClearSpawnedItems();
 
         if (emptyMessageObject != null)
             Destroy(emptyMessageObject);
@@ -445,17 +662,56 @@ public class AccordionItem : MonoBehaviour
         {
             if (infraObj == null) continue;
 
-            ExploreInfrastructureItem itemScript = infraObj.GetComponent<ExploreInfrastructureItem>();
-            if (itemScript != null)
+            if (isRecentCategory)
             {
-                string infraName = itemScript.GetInfrastructureName().ToLower().Trim();
-                bool matches = infraName.Contains(searchText);
-
-                infraObj.SetActive(matches);
-
-                if (matches)
+                RecentDestinationItem itemScript = infraObj.GetComponent<RecentDestinationItem>();
+                if (itemScript != null)
                 {
-                    matchingIds.Add(infraObj.name);
+                    SavedNavigation navData = itemScript.GetNavigationData();
+                    if (navData != null)
+                    {
+                        string routeText = $"{navData.startNodeName} {navData.endNodeName}".ToLower();
+                        bool matches = routeText.Contains(searchText);
+
+                        infraObj.SetActive(matches);
+
+                        if (matches)
+                        {
+                            matchingIds.Add(infraObj.name);
+                        }
+                    }
+                }
+            }
+            else if (isBookmarksCategory)
+            {
+                SavedInfrastructureItem itemScript = infraObj.GetComponent<SavedInfrastructureItem>();
+                if (itemScript != null)
+                {
+                    string infraName = itemScript.GetInfrastructureName().ToLower().Trim();
+                    bool matches = infraName.Contains(searchText);
+
+                    infraObj.SetActive(matches);
+
+                    if (matches)
+                    {
+                        matchingIds.Add(infraObj.name);
+                    }
+                }
+            }
+            else
+            {
+                ExploreInfrastructureItem itemScript = infraObj.GetComponent<ExploreInfrastructureItem>();
+                if (itemScript != null)
+                {
+                    string infraName = itemScript.GetInfrastructureName().ToLower().Trim();
+                    bool matches = infraName.Contains(searchText);
+
+                    infraObj.SetActive(matches);
+
+                    if (matches)
+                    {
+                        matchingIds.Add(infraObj.name);
+                    }
                 }
             }
         }

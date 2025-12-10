@@ -135,7 +135,7 @@ public class ARLoadingManager : MonoBehaviour
         GPSManager.Instance.InitializeARCompassHeading(avgHeading);
         isCompassInitialized = true;
 
-        UpdateLoadingText("✅ Compass calibrated!");
+        UpdateLoadingText("Compass calibrated successfully.");
         Debug.Log($"[ARLoading] Compass calibrated to {avgHeading:F1}° (from {headingSamples.Count} samples)");
 
         yield return new WaitForSeconds(0.5f);

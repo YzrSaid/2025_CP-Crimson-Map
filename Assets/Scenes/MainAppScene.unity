@@ -22296,8 +22296,10 @@ MonoBehaviour:
   accordionItemPrefab: {fileID: 6748272285920137565, guid: 8e354388e8e6073d1beca9992ad88b12, type: 3}
   accordionContainer: {fileID: 1588432970}
   manager: {fileID: 1588432973}
-  maxWaitTime: 30
   infrastructurePrefab: {fileID: 6456600717238766217, guid: 544f8227a655998be88a21bba89463ed, type: 3}
+  recentDestinationPrefab: {fileID: 6456600717238766217, guid: 4259fad7e15637d408a03e13fa7e46a6, type: 3}
+  savedInfrastructurePrefab: {fileID: 6456600717238766217, guid: cb5e1b3d661bd91dfa17c46295079701, type: 3}
+  maxWaitTime: 30
 --- !u!1 &1411231298
 GameObject:
   m_ObjectHideFlags: 0

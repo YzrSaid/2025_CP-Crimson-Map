@@ -240,6 +240,7 @@
     <Compile Include="Assets/Mapbox/Unity/Utilities/SingletonScriptableObject.cs" />
     <Compile Include="Assets/Mapbox/Unity/Utilities/PolygonUtils.cs" />
     <Compile Include="Assets/Mapbox/Unity/SourceLayers/SubLayerCustomStyleTiled.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/SavedInfrastructureItem.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/Spawners/PathRenderer.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/Spawners/UserIndicator.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/ElevationModificationOptions.cs" />

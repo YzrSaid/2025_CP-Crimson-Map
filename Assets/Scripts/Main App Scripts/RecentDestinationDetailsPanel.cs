@@ -13,18 +13,13 @@ public class RecentDestinationDetailsPanel : MonoBehaviour
 
     [Header("Route Summary")]
     public TextMeshProUGUI distanceText;       
-    public TextMeshProUGUI walkingTimeText;    
-    public TextMeshProUGUI viaModeText;       
+    public TextMeshProUGUI walkingTimeText;         
 
     [Header("Directions List")]
     public ScrollRect directionsScrollView;
-    public GameObject directionItemPrefab;
-
-    [Header("Path Visualization")]
-    public TextMeshProUGUI pathNodesText;      
+    public GameObject directionItemPrefab;  
 
     [Header("Buttons")]
-    public Button navigateButton;
     public Button closeButton;
 
     [Header("Background Settings")]
@@ -35,9 +30,6 @@ public class RecentDestinationDetailsPanel : MonoBehaviour
 
     void Awake()
     {
-        if (navigateButton != null)
-            navigateButton.onClick.AddListener(OnNavigateClicked);
-
         if (closeButton != null)
             closeButton.onClick.AddListener(Close);
 
@@ -87,7 +79,7 @@ public class RecentDestinationDetailsPanel : MonoBehaviour
             titleText.text = "Route Details";
 
         if (routeText != null)
-            routeText.text = $"{navigationData.startNodeName} → {navigationData.endNodeName}";
+            routeText.text = $"From:{navigationData.startNodeName} \nTo:{navigationData.endNodeName}";
 
         if (timestampText != null)
             timestampText.text = FormatTimestamp(navigationData.timestamp);
@@ -98,15 +90,7 @@ public class RecentDestinationDetailsPanel : MonoBehaviour
         if (walkingTimeText != null)
             walkingTimeText.text = $"Walking Time: {navigationData.walkingTime}";
 
-        if (viaModeText != null)
-            viaModeText.text = navigationData.viaMode;
-
         PopulateDirections();
-
-        if (pathNodesText != null)
-        {
-            pathNodesText.text = "Path: " + string.Join(" → ", navigationData.pathNodes);
-        }
     }
 
     private void PopulateDirections()
@@ -153,61 +137,6 @@ public class RecentDestinationDetailsPanel : MonoBehaviour
         {
             return timestamp;
         }
-    }
-
-    void OnNavigateClicked()
-    {
-        if (navigationData == null) return;
-
-        RestoreNavigationData();
-
-        Close();
-
-        ARManagerCleanup arCleanup = FindObjectOfType<ARManagerCleanup>();
-        if (arCleanup != null)
-        {
-            arCleanup.LoadARNavigationWithScene("ARScene");
-        }
-    }
-
-    private void RestoreNavigationData()
-    {
-        PlayerPrefs.SetString("ARNavigation_StartNodeId", navigationData.startNodeId);
-        PlayerPrefs.SetString("ARNavigation_EndNodeId", navigationData.endNodeId);
-        PlayerPrefs.SetString("ARNavigation_StartNodeName", navigationData.startNodeName);
-        PlayerPrefs.SetString("ARNavigation_EndNodeName", navigationData.endNodeName);
-        PlayerPrefs.SetFloat("ARNavigation_TotalDistance", navigationData.totalDistance);
-        PlayerPrefs.SetString("ARNavigation_FormattedDistance", navigationData.formattedDistance);
-        PlayerPrefs.SetString("ARNavigation_WalkingTime", navigationData.walkingTime);
-        PlayerPrefs.SetString("ARNavigation_ViaMode", navigationData.viaMode);
-
-        PlayerPrefs.SetInt("ARNavigation_PathNodeCount", navigationData.pathNodes.Count);
-        for (int i = 0; i < navigationData.pathNodes.Count; i++)
-        {
-            PlayerPrefs.SetString($"ARNavigation_PathNode_{i}", navigationData.pathNodes[i]);
-        }
-
-        PlayerPrefs.SetInt("ARNavigation_EdgeCount", navigationData.edges.Count);
-        for (int i = 0; i < navigationData.edges.Count; i++)
-        {
-            PlayerPrefs.SetString($"ARNavigation_Edge_{i}_From", navigationData.edges[i].fromNode);
-            PlayerPrefs.SetString($"ARNavigation_Edge_{i}_To", navigationData.edges[i].toNode);
-        }
-
-        PlayerPrefs.SetInt("ARNavigation_DirectionCount", navigationData.directions.Count);
-        for (int i = 0; i < navigationData.directions.Count; i++)
-        {
-            var dir = navigationData.directions[i];
-            PlayerPrefs.SetString($"ARNavigation_Direction_{i}_Instruction", dir.instruction);
-            PlayerPrefs.SetString($"ARNavigation_Direction_{i}_Turn", dir.turn);
-            PlayerPrefs.SetFloat($"ARNavigation_Direction_{i}_Distance", dir.distance);
-            PlayerPrefs.SetString($"ARNavigation_Direction_{i}_DestNodeId", dir.destNodeId);
-            PlayerPrefs.SetString($"ARNavigation_Direction_{i}_DestNode", dir.destNode);
-            PlayerPrefs.SetInt($"ARNavigation_Direction_{i}_IsIndoorGrouped", dir.isIndoorGrouped ? 1 : 0);
-            PlayerPrefs.SetInt($"ARNavigation_Direction_{i}_IsIndoorDirection", dir.isIndoorDirection ? 1 : 0);
-        }
-
-        PlayerPrefs.Save();
     }
 
     void Close()

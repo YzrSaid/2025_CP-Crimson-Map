@@ -7,7 +7,7 @@ public class RecentDestinationItem : MonoBehaviour
 {
     [Header("UI References")]
     public TextMeshProUGUI routeText;           
-    public TextMeshProUGUI timestampText;      
+    public TextMeshProUGUI timestampText;    
     public TextMeshProUGUI distanceText;    
     public TextMeshProUGUI viaModeText;      
 

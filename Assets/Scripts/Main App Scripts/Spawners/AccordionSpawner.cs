@@ -13,6 +13,7 @@ public class AccordionSpawner : MonoBehaviour
     [Header("Prefab References")]
     public GameObject infrastructurePrefab;
     public GameObject recentDestinationPrefab;
+    public GameObject savedInfrastructurePrefab; // NEW!
 
     [Header("Loading Check")]
     public float maxWaitTime = 30f;
@@ -161,6 +162,18 @@ public class AccordionSpawner : MonoBehaviour
                 Debug.LogError("[AccordionSpawner] Recent destination prefab not assigned!");
             }
         }
+        else if (categoryName == "Saved")
+        {
+            // Use saved infrastructure prefab for "Saved" category
+            if (savedInfrastructurePrefab != null)
+            {
+                item.infrastructurePrefab = savedInfrastructurePrefab;
+            }
+            else
+            {
+                Debug.LogError("[AccordionSpawner] Saved infrastructure prefab not assigned!");
+            }
+        }
         else
         {
             // Use regular infrastructure prefab for other categories
@@ -188,11 +201,16 @@ public class AccordionSpawner : MonoBehaviour
             }
         }
 
-        // SPECIAL HANDLING FOR "RECENT" CATEGORY
+        // SPECIAL HANDLING FOR SPECIAL CATEGORIES
         if (categoryName == "Recent")
         {
-            // Load recent destinations instead of regular infrastructures
-            item.LoadRecentDestinations();
+            // Mark as recent category (will load on expand)
+            item.SetAsRecentCategory();
+        }
+        else if (categoryName == "Saved")
+        {
+            // Mark as bookmarks category (will load on expand)
+            item.SetAsBookmarksCategory();
         }
         else if (!string.IsNullOrEmpty(categoryId))
         {
