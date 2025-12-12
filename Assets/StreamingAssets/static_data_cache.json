@@ -1,7 +1,7 @@
 {
-    "infrastructure_version": "v1.1.5",
+    "infrastructure_version": "v1.1.32",
     "categories_version": "v1.0.1",
     "campus_version": "v1.0.1",
-    "indoor_version": "v0.0.0",
-    "indoor_edges_version": "v1.0.1"
+    "indoor_version": "v1.1.17",
+    "indoor_edges_version": "v1.0.20"
 }

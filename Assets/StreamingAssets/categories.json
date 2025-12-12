@@ -11,15 +11,6 @@
     "id": "3hFzZT9hQhuSYv6hyK7A"
   },
   {
-    "name": "samp",
-    "is_deleted": false,
-    "createdAt": {},
-    "legend": "M",
-    "category_id": "CAT-10",
-    "buildings": 0,
-    "id": "Bfg2vdjyspwumorJiXSI"
-  },
-  {
     "updatedAt": {},
     "is_deleted": false,
     "name": "Health & Wellness Services",
@@ -94,15 +85,6 @@
     "category_id": "CAT-06",
     "buildings": 0,
     "id": "cYbiVuFA12t8f2GXg0XT"
-  },
-  {
-    "name": "Canteen",
-    "is_deleted": false,
-    "createdAt": {},
-    "legend": "O",
-    "category_id": "CAT-11",
-    "buildings": 0,
-    "id": "poFH34xqKpcjaHl8n7kF"
   },
   {
     "updatedAt": {},

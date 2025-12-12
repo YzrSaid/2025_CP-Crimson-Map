@@ -1,12 +1,5 @@
 [
   {
-    "map_id": "MAP-02",
-    "createdAt": {},
-    "campus_name": "samp",
-    "campus_id": "CAMP-04",
-    "id": "IcQdUcKxqvPj71RQs16W"
-  },
-  {
     "map_id": "MAP-01",
     "createdAt": {},
     "campus_name": "Campus A",
@@ -26,12 +19,5 @@
     "campus_name": "Campus C",
     "campus_id": "CAMP-03",
     "id": "gFc6dcNnpMdsnr2e9ZoO"
-  },
-  {
-    "map_id": "MAP-01",
-    "createdAt": {},
-    "campus_name": "samp",
-    "campus_id": "CAMP-05",
-    "id": "owoM3AYzo8zDWFbDg4ID"
   }
 ]

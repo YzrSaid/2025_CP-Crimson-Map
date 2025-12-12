@@ -83,7 +83,7 @@ public class FirestoreManager : MonoBehaviour
             onComplete?.Invoke();
             return;
         }
-        
+
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             LoadAvailableMaps();
@@ -102,7 +102,7 @@ public class FirestoreManager : MonoBehaviour
             onComplete?.Invoke();
             yield break;
         }
-        
+
         bool mapsSyncComplete = false;
         SyncCollectionToLocal(MAPS_COLLECTION, () => mapsSyncComplete = true);
         yield return new WaitUntil(() => mapsSyncComplete);
@@ -197,7 +197,6 @@ public class FirestoreManager : MonoBehaviour
 
         onComplete?.Invoke();
     }
-
     private void CheckSingleMapVersion(string mapId, System.Action<bool, MapVersionInfo> onComplete)
     {
         DocumentReference mapRef = db.Collection(MAP_VERSIONS_COLLECTION).Document(mapId);
@@ -226,21 +225,12 @@ public class FirestoreManager : MonoBehaviour
 
                     LocalVersionCache localCache = GetLocalVersionCache(mapId);
 
+                    // Only check if version changed
                     bool versionChanged = localCache == null ||
                                          string.IsNullOrEmpty(localCache.cached_version) ||
                                          localCache.cached_version != serverVersion.current_version;
 
-                    bool versionUpdatedFlag = false;
-                    if (!versionChanged && localCache != null)
-                    {
-                        versionUpdatedFlag = data.ContainsKey("current_version_updated") &&
-                                            data["current_version_updated"] is bool &&
-                                            (bool)data["current_version_updated"];
-                    }
-
-                    bool needsUpdate = versionChanged || versionUpdatedFlag;
-
-                    onComplete?.Invoke(needsUpdate, serverVersion);
+                    onComplete?.Invoke(versionChanged, serverVersion);
                 }
                 else
                 {
@@ -253,6 +243,7 @@ public class FirestoreManager : MonoBehaviour
             }
         });
     }
+
 
     private string GetStringValue(Dictionary<string, object> data, string key)
     {
@@ -344,7 +335,7 @@ public class FirestoreManager : MonoBehaviour
 
         UpdateLocalVersionCache(mapVersion);
 
-        ResetMapVersionUpdatedFlag(mapVersion.map_id);
+        // No flag reset at all - removed ResetMapVersionUpdatedFlag
 
         onComplete?.Invoke();
     }
@@ -353,6 +344,7 @@ public class FirestoreManager : MonoBehaviour
     {
         StartCoroutine(SyncSingleMapVersionCoroutine(mapVersion, onComplete));
     }
+
 
     private void ProcessVersionedCollection(string mapId, string collectionName, object collectionData, System.Action onComplete)
     {
@@ -422,7 +414,7 @@ public class FirestoreManager : MonoBehaviour
                         infrastructure_version = GetStringValue(data, "infrastructure_version") ?? "v0.0.0",
                         categories_version = GetStringValue(data, "categories_version") ?? "v0.0.0",
                         campus_version = GetStringValue(data, "campus_version") ?? "v0.0.0",
-                        indoor_version = GetStringValue(data, "indoor_version") ?? "v0.0.0",
+                        indoor_version = GetStringValue(data, "indoor_infrastructure_version") ?? "v0.0.0",
                         indoor_edges_version = GetStringValue(data, "indoor_edges_version") ?? "v0.0.0"
                     };
 
@@ -521,7 +513,7 @@ public class FirestoreManager : MonoBehaviour
         if (IsVersionNewer(serverInfo.indoor_version, localCache?.indoor_version))
         {
             collectionsToSync.Add("IndoorInfrastructure");
-            versionUpdates["indoor_version"] = serverInfo.indoor_version;
+            versionUpdates["indoor_infrastructure_version"] = serverInfo.indoor_version;
         }
 
         if (IsVersionNewer(serverInfo.indoor_edges_version, localCache?.indoor_edges_version))
@@ -661,31 +653,31 @@ public class FirestoreManager : MonoBehaviour
             };
         }
 
-        if (syncResults.ContainsKey("Infrastructure") && syncResults["Infrastructure"] && 
+        if (syncResults.ContainsKey("Infrastructure") && syncResults["Infrastructure"] &&
             versionUpdates.ContainsKey("infrastructure_version"))
         {
             cache.infrastructure_version = versionUpdates["infrastructure_version"];
         }
 
-        if (syncResults.ContainsKey("Categories") && syncResults["Categories"] && 
+        if (syncResults.ContainsKey("Categories") && syncResults["Categories"] &&
             versionUpdates.ContainsKey("categories_version"))
         {
             cache.categories_version = versionUpdates["categories_version"];
         }
 
-        if (syncResults.ContainsKey("Campus") && syncResults["Campus"] && 
+        if (syncResults.ContainsKey("Campus") && syncResults["Campus"] &&
             versionUpdates.ContainsKey("campus_version"))
         {
             cache.campus_version = versionUpdates["campus_version"];
         }
 
-        if (syncResults.ContainsKey("IndoorInfrastructure") && syncResults["IndoorInfrastructure"] && 
-            versionUpdates.ContainsKey("indoor_version"))
+        if (syncResults.ContainsKey("IndoorInfrastructure") && syncResults["IndoorInfrastructure"] &&
+            versionUpdates.ContainsKey("indoor_infrastructure_version"))
         {
-            cache.indoor_version = versionUpdates["indoor_version"];
+            cache.indoor_version = versionUpdates["indoor_infrastructure_version"];
         }
 
-        if (syncResults.ContainsKey("IndoorEdges") && syncResults["IndoorEdges"] && 
+        if (syncResults.ContainsKey("IndoorEdges") && syncResults["IndoorEdges"] &&
             versionUpdates.ContainsKey("indoor_edges_version"))
         {
             cache.indoor_edges_version = versionUpdates["indoor_edges_version"];
@@ -885,7 +877,7 @@ public class FirestoreManager : MonoBehaviour
     {
         Dictionary<string, string> versions = new Dictionary<string, string>();
         LocalStaticDataCache cache = GetLocalStaticDataCache();
-        
+
         if (cache != null)
         {
             versions["infrastructure"] = cache.infrastructure_version;
@@ -902,7 +894,7 @@ public class FirestoreManager : MonoBehaviour
             versions["indoor"] = "v0.0.0";
             versions["indoor_edges"] = "v0.0.0";
         }
-        
+
         return versions;
     }
 

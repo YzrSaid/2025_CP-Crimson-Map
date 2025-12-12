@@ -26,7 +26,8 @@ public class HomePageLoadingManager : MonoBehaviour
         {
             ShowLoaderAndWait();
         }
-
+        bool isARMode = ARModeHelper.IsARMode();
+        Debug.Log(isARMode);
         ARModeHelper.SetARMode(false);
         PlayerPrefs.SetInt("ARNavigation_SameBuilding", 0);
         PlayerPrefs.Save();

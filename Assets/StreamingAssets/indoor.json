@@ -9,6 +9,15 @@
     "id": "0AH074xKVbSjUTMrDcGb"
   },
   {
+    "room_id": "IND-214",
+    "name": "Civil Engineering Department",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "0LH0lezmbIfozg7ch7kD"
+  },
+  {
     "room_id": "IND-173",
     "name": "Room 7 (4th floor)",
     "is_deleted": false,
@@ -63,6 +72,24 @@
     "id": "1H5XrmZLSSuyjY6cZnmd"
   },
   {
+    "room_id": "IND-253",
+    "name": "CTE Hall",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "1VmjthX1U7vBUCfh6flK"
+  },
+  {
+    "room_id": "IND-287",
+    "name": "Office of the Undergraduate Program / Guidance",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "21NJVrJP3wQ2tLbOzC2X"
+  },
+  {
     "room_id": "IND-181",
     "name": "Stairs 1 (Floor 1)",
     "is_deleted": false,
@@ -70,6 +97,42 @@
     "indoor_type": "stairs",
     "createdAt": {},
     "id": "285lA3uALlCXSsjcFaqJ"
+  },
+  {
+    "room_id": "IND-270",
+    "name": "Stairs 1 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "2SPXiP4ndHnKTSebyGtw"
+  },
+  {
+    "room_id": "IND-288",
+    "name": "Office",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "2TICAboLtzXLNmDPG8Ni"
+  },
+  {
+    "room_id": "IND-224",
+    "name": "Stairs 2 (2nd Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "32O3dGzBh9KrQINNcA2I"
+  },
+  {
+    "room_id": "IND-275",
+    "name": "Room 26 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "38ftoZDnNsstbGBc9tfz"
   },
   {
     "room_id": "IND-139",
@@ -81,6 +144,24 @@
     "id": "3QspXTfPAvaLrPtjbQWP"
   },
   {
+    "room_id": "IND-273",
+    "name": "Room 27 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "3VIHSM67LAcOz3Ry4IQU"
+  },
+  {
+    "room_id": "IND-215",
+    "name": "Stairs 2 (1st floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "3odGvJ6MLXGWMoehzht7"
+  },
+  {
     "room_id": "IND-129",
     "name": "Stock Room",
     "is_deleted": false,
@@ -88,6 +169,24 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "3tQozolXSBkV5uVMAyaA"
+  },
+  {
+    "room_id": "IND-292",
+    "name": "Forensic Laboratory",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "3vaGOCZz7zmPAjCqLT96"
+  },
+  {
+    "room_id": "IND-221",
+    "name": "ME Laboratory A",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "41TQVqkd0tDNW0sOTTYT"
   },
   {
     "room_id": "IND-058",
@@ -115,6 +214,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "4jFOvHCY13KR2TkHAiuu"
+  },
+  {
+    "room_id": "IND-196",
+    "name": "CET 121",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "4rktOWPGX6R1CxnJ6uNu"
   },
   {
     "room_id": "IND-047",
@@ -162,6 +270,24 @@
     "id": "5fXzzfc9T4cTQmsdKTll"
   },
   {
+    "room_id": "IND-250",
+    "name": "Stairs (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-50",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "5p7J3bArYBwNz5sPNmpA"
+  },
+  {
+    "room_id": "IND-306",
+    "name": "Stairs 1 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "65YXt25WFaEGFAMbcpzG"
+  },
+  {
     "room_id": "IND-177",
     "name": "Stairs 2 (4th floor)",
     "is_deleted": false,
@@ -178,6 +304,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "6gqmvxIgF3sIMkcFVs5K"
+  },
+  {
+    "room_id": "IND-290",
+    "name": "Room 5",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "6tMI5TSCtH8aM0rtbQ5U"
   },
   {
     "room_id": "IND-165",
@@ -205,6 +340,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "7EW9fZX1NVvlegbcYUuY"
+  },
+  {
+    "room_id": "IND-301",
+    "name": "Room 14",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "7QrfqQ4KojavTCamUfwz"
   },
   {
     "room_id": "IND-078",
@@ -261,6 +405,15 @@
     "id": "82JldlLDmoRqNIjT0Z6U"
   },
   {
+    "room_id": "IND-210",
+    "name": "CET 209",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "82PDMmN4KI2b63tgbBvx"
+  },
+  {
     "room_id": "IND-009",
     "name": "Lecture Room 2",
     "is_deleted": false,
@@ -268,6 +421,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "8RapT9ISmE1EINoYbhVm"
+  },
+  {
+    "room_id": "IND-263",
+    "name": "Room 13",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "8RivpfQ2ZezUfqncsHQZ"
   },
   {
     "room_id": "IND-073",
@@ -288,6 +450,15 @@
     "id": "8n9T8kLYnFsfKsVfKMfo"
   },
   {
+    "room_id": "IND-278",
+    "name": "Room 23 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "8wEbBXHzzjqh6Geso4vX"
+  },
+  {
     "room_id": "IND-064",
     "name": "Nursing Art Laboratory Room",
     "is_deleted": false,
@@ -295,6 +466,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "9nA3d69UA4LyGNPR8VkT"
+  },
+  {
+    "room_id": "IND-304",
+    "name": "Room 10",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "9rvoy9sWbN7DmuM7JUzG"
   },
   {
     "room_id": "IND-148",
@@ -306,6 +486,15 @@
     "id": "AE59Z3f1gTS6sqF1O9NI"
   },
   {
+    "room_id": "IND-203",
+    "name": "CET 215",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "Ak50FamWF99VsBtHpDM5"
+  },
+  {
     "room_id": "IND-031",
     "name": "Department of Bio Sciences Faculty",
     "is_deleted": false,
@@ -313,6 +502,33 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "AxpjIRLvVaOcM3dgzQYi"
+  },
+  {
+    "room_id": "IND-252",
+    "name": "College of Teacher Education Entrance",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "entrance",
+    "createdAt": {},
+    "id": "BQem0hHBXs0Syn8ebybK"
+  },
+  {
+    "room_id": "IND-202",
+    "name": "CET 214",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "BXygePrIZoPtK6Yqcya3"
+  },
+  {
+    "room_id": "IND-266",
+    "name": "Graduate School office",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "BdZV2dhIyTDdNIGAxlL3"
   },
   {
     "room_id": "IND-119",
@@ -331,6 +547,24 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "BpFRXL4YspWC4FDX4cJR"
+  },
+  {
+    "room_id": "IND-286",
+    "name": "Office of the Dean",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "BsolZZEf9KMRpCjxea0r"
+  },
+  {
+    "room_id": "IND-262",
+    "name": "Room 14",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "C0oBCg2cui7zHYQWnRIT"
   },
   {
     "room_id": "IND-133",
@@ -379,6 +613,15 @@
     "id": "Chl1gFvi8u1T5QiWOiAt"
   },
   {
+    "room_id": "IND-259",
+    "name": "BAED Visual Arts Room",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "CjQwAUGCDIuXJrOHxSbV"
+  },
+  {
     "room_id": "IND-116",
     "name": "Stock Room (3rd floor)",
     "is_deleted": false,
@@ -386,6 +629,33 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "Cqj9LeixLwlxCrpdjO3V"
+  },
+  {
+    "room_id": "IND-247",
+    "name": "Office of the Student Regent",
+    "is_deleted": false,
+    "infra_id": "INFRA-50",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "Cxuhnp5ZjBiy3gWz95Na"
+  },
+  {
+    "room_id": "IND-257",
+    "name": "Technology for Teaching and Learning Room",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "D2Lppo34bMuSUPPbMwgW"
+  },
+  {
+    "room_id": "IND-258",
+    "name": "Comfort Room (Male)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "DJboPbc5ZwvThbO2mMQe"
   },
   {
     "room_id": "IND-028",
@@ -404,6 +674,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "DOCgdofEci2thqunOifB"
+  },
+  {
+    "room_id": "IND-269",
+    "name": "Gender Club office",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "DVNH2MZwJE7ichpc016Y"
   },
   {
     "room_id": "IND-100",
@@ -443,6 +722,15 @@
     "id": "EzwKOiw0mibSDELIS5n4"
   },
   {
+    "room_id": "IND-293",
+    "name": "Office of the Property Custodian",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "FDUomUJYAp2HHRUUF5d5"
+  },
+  {
     "room_id": "IND-105",
     "name": "Floor 1 Stairs 2",
     "is_deleted": false,
@@ -450,6 +738,15 @@
     "indoor_type": "stairs",
     "createdAt": {},
     "id": "FO6rmGKW3QU1jefqn8Dq"
+  },
+  {
+    "room_id": "IND-226",
+    "name": "NE 28 (CET 206) (2nd Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "FgCLJKqIQ6UGyRMjEDyO"
   },
   {
     "room_id": "IND-180",
@@ -488,6 +785,15 @@
     "id": "G449woGpz0iz1sYt8S6k"
   },
   {
+    "room_id": "IND-197",
+    "name": "GEA",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "GinUywdCJ7AQDhiPpPYz"
+  },
+  {
     "room_id": "IND-046",
     "name": "Office of the Dean CSM",
     "is_deleted": false,
@@ -497,6 +803,15 @@
     "id": "GolXjAaFhDrqF5usNOIk"
   },
   {
+    "room_id": "IND-209",
+    "name": "CET 210",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "GqyTIlLn1IiLLPPTa0fR"
+  },
+  {
     "room_id": "IND-025",
     "name": "BSCD Department",
     "is_deleted": false,
@@ -504,6 +819,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "GxqiuzrdxezQzGB0dUWQ"
+  },
+  {
+    "room_id": "IND-238",
+    "name": "CET 311 (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "H0qwKynSdyZjRQYOa34w"
   },
   {
     "room_id": "IND-065",
@@ -522,6 +846,33 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "HWRVPIp6ZLmywP4jMd34"
+  },
+  {
+    "room_id": "IND-194",
+    "name": "CET 119",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "HrK8FHM02NYpQv2PsunF"
+  },
+  {
+    "room_id": "IND-217",
+    "name": "Comfort Room (Female)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "HrPr1eaPSrUKSXwW249U"
+  },
+  {
+    "room_id": "IND-261",
+    "name": "Emergency Exit 1",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "fire_exit",
+    "createdAt": {},
+    "id": "IHSs4mTwbsp9rghY5SwU"
   },
   {
     "room_id": "IND-082",
@@ -560,6 +911,15 @@
     "id": "IiWwQ2H4lZTT3aDwTpVs"
   },
   {
+    "room_id": "IND-234",
+    "name": "CET 307 (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "J0I0LGmdCaO1cZZ6l7T9"
+  },
+  {
     "room_id": "IND-007",
     "name": "Floor 2 Stairs",
     "is_deleted": false,
@@ -567,6 +927,15 @@
     "indoor_type": "stairs",
     "createdAt": {},
     "id": "J96F64VT7f3eGK1r4Dxv"
+  },
+  {
+    "room_id": "IND-272",
+    "name": "Room 30 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "JHzYu4W2KMh6P3hZ95PE"
   },
   {
     "room_id": "IND-069",
@@ -606,14 +975,31 @@
     "id": "KDAfIgki5yJB2Sq6c8ER"
   },
   {
-    "room_id": "IND-022",
-    "name": "Social work",
-    "is_deleted": true,
-    "infra_id": "INFRA-13",
-    "indoor_type": "room",
-    "deletedAt": {},
+    "room_id": "IND-233",
+    "name": "Stairs 1 (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "stairs",
     "createdAt": {},
-    "id": "LDX05viUXXQbjs1HKqyD"
+    "id": "KDWaQvmWD8HveE9OlLFU"
+  },
+  {
+    "room_id": "IND-265",
+    "name": "Office of the Dean",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "KJ1RyzRt5K1OH3jR0mSn"
+  },
+  {
+    "room_id": "IND-211",
+    "name": "Comfort Room",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "LJHVtF6tF2ULgwgH7yJD"
   },
   {
     "room_id": "IND-132",
@@ -623,6 +1009,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "LsoMFvBnNZWPfMBMeuMt"
+  },
+  {
+    "room_id": "IND-284",
+    "name": "Old Building Entrance",
+    "is_deleted": false,
+    "infra_id": "INFRA-17",
+    "indoor_type": "entrance",
+    "createdAt": {},
+    "id": "MIoQ7zjtowRA22LYoHJJ"
   },
   {
     "room_id": "IND-043",
@@ -653,6 +1048,24 @@
     "id": "MnapUr600ZtVnp5o29oC"
   },
   {
+    "room_id": "IND-218",
+    "name": "NE-01 (CET 101)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "MyvhtHURqDtpmGjXPZ99"
+  },
+  {
+    "room_id": "IND-208",
+    "name": "CET 211",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "NF9iZHi395oYJBQptUa9"
+  },
+  {
     "room_id": "IND-147",
     "name": "Room 7 (2nd floor)",
     "is_deleted": false,
@@ -660,6 +1073,24 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "NPYG82QlNRzSs3KWzxrD"
+  },
+  {
+    "room_id": "IND-248",
+    "name": "Emergency exit",
+    "is_deleted": false,
+    "infra_id": "INFRA-50",
+    "indoor_type": "fire_exit",
+    "createdAt": {},
+    "id": "NpA00xNSzh73BqVVqvIB"
+  },
+  {
+    "room_id": "IND-225",
+    "name": "NE 29 -Lecture Room (CET 207) (2nd Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "O1H6pD7fX7lPWrU0e8La"
   },
   {
     "room_id": "IND-163",
@@ -687,6 +1118,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "OBG5ZWpTUPVp989nO5QR"
+  },
+  {
+    "room_id": "IND-235",
+    "name": "Library (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "OMNVGAJChuPdTRRcsOz2"
   },
   {
     "room_id": "IND-051",
@@ -723,6 +1163,43 @@
     "indoor_type": "stairs",
     "createdAt": {},
     "id": "PKMp02eLXL9R5YPOpeLL"
+  },
+  {
+    "room_id": "IND-227",
+    "name": "NE 27 -Computer laboratory 3 (CET 205) (2nd Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "PNYSAE1eDVbDC0ZZoLPT"
+  },
+  {
+    "room_id": "IND-239",
+    "name": "Stairs 2 (3rd floor)",
+    "updatedAt": {},
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "PQc1Gy669INunwIztEtR"
+  },
+  {
+    "room_id": "IND-245",
+    "name": "Chief of Staff and Secretary",
+    "is_deleted": false,
+    "infra_id": "INFRA-50",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "PYdl9pJahG7AbXPjADpX"
+  },
+  {
+    "room_id": "IND-302",
+    "name": "Room 13",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "PdUt8MXhYrbFFtZ5J97t"
   },
   {
     "room_id": "IND-127",
@@ -788,6 +1265,15 @@
     "id": "QlkmEvxZ3l8ReCYKtfV9"
   },
   {
+    "room_id": "IND-220",
+    "name": "Stock Room",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "Qv64oQeSXv9WxsJM3RCN"
+  },
+  {
     "room_id": "IND-005",
     "name": "Laboratory 2",
     "is_deleted": false,
@@ -797,6 +1283,24 @@
     "id": "RAArcOOw9biiabIRWlCH"
   },
   {
+    "room_id": "IND-281",
+    "name": "CTE -CSC office (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "Rl5Z9IJ0pltAwUObrvXX"
+  },
+  {
+    "room_id": "IND-199",
+    "name": "CET 116",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "Rs1RIRrHZA3wS06ZLE8u"
+  },
+  {
     "room_id": "IND-094",
     "name": "CN - 305",
     "is_deleted": false,
@@ -804,6 +1308,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "S0J12YK7Xjq8X2yF9Jo2"
+  },
+  {
+    "room_id": "IND-246",
+    "name": "Stairs (1st floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-50",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "S9fCx3HHY0jppq452aXI"
   },
   {
     "room_id": "IND-034",
@@ -824,6 +1337,15 @@
     "id": "SP0rthbBooNN8huLZ61L"
   },
   {
+    "room_id": "IND-192",
+    "name": "College of Engineering Entrance 1",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "entrance",
+    "createdAt": {},
+    "id": "SUfhY8Vb2gpABobghMbd"
+  },
+  {
     "room_id": "IND-081",
     "name": "Stock Room",
     "is_deleted": false,
@@ -840,6 +1362,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "T0TXOrcXpPz61h7Nra1K"
+  },
+  {
+    "room_id": "IND-240",
+    "name": "CET 306 (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "T7IC6KLpEcAGTHm1ekfv"
   },
   {
     "room_id": "IND-155",
@@ -869,6 +1400,33 @@
     "id": "T9s62KzM6SYZmA90nZLG"
   },
   {
+    "room_id": "IND-289",
+    "name": "Room 4",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "TgRgKX6wyfFWiPUFJ8xG"
+  },
+  {
+    "room_id": "IND-212",
+    "name": "College of Engineering Entrance 2",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "entrance",
+    "createdAt": {},
+    "id": "TnG1OxFgie6NzHipUQ9O"
+  },
+  {
+    "room_id": "IND-282",
+    "name": "Stock Room (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "U3ZUn9IU42QEtz0lasbh"
+  },
+  {
     "room_id": "IND-011",
     "name": "Fire Exit",
     "is_deleted": false,
@@ -876,16 +1434,6 @@
     "indoor_type": "fire_exit",
     "createdAt": {},
     "id": "UdPhyUiWkCdDuglN2MqV"
-  },
-  {
-    "room_id": "IND-039",
-    "name": "CSM Back Room",
-    "is_deleted": true,
-    "infra_id": "INFRA-03",
-    "indoor_type": "room",
-    "deletedAt": {},
-    "createdAt": {},
-    "id": "Uv66JIcRZJ832XX7rqCm"
   },
   {
     "room_id": "IND-080",
@@ -904,6 +1452,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "VYP5gKQBZvQA83MX0J4v"
+  },
+  {
+    "room_id": "IND-193",
+    "name": "Stairs (1st floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "Vs4niPPogwBRHcfSeuxg"
   },
   {
     "room_id": "IND-029",
@@ -942,6 +1499,15 @@
     "id": "WmqiJd5dTjBpG0Pnpuqm"
   },
   {
+    "room_id": "IND-204",
+    "name": "CET 216",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "X3HsW6cHZdIrLZutm9yh"
+  },
+  {
     "room_id": "IND-191",
     "name": "Comfort Room",
     "is_deleted": false,
@@ -976,6 +1542,33 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "XoYqSzbLtbEDNkVnvysV"
+  },
+  {
+    "room_id": "IND-241",
+    "name": "Industrial Engineering Laboratory (CET 305) (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "XyxT9RHQFxbTQlde6Qpf"
+  },
+  {
+    "room_id": "IND-303",
+    "name": "Room 12",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "Y0cylJrseweYBnVm7i2j"
+  },
+  {
+    "room_id": "IND-230",
+    "name": "EE and ECE Department  (CET 202) (2nd Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "YPuGMyUgBxgKyaMAjbMU"
   },
   {
     "room_id": "IND-013",
@@ -1014,6 +1607,15 @@
     "id": "ZB9vrlWi0znl23KV9CZB"
   },
   {
+    "room_id": "IND-236",
+    "name": "CET 309 (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "ZNn230k8ADI0wTO8aRW8"
+  },
+  {
     "room_id": "IND-111",
     "name": "Stock Room (2nd floor)",
     "is_deleted": false,
@@ -1030,6 +1632,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "ZbvZMY3d2vraV0xrnA76"
+  },
+  {
+    "room_id": "IND-243",
+    "name": "Faculty Room (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "Zfz687KDYnnG5FK1KU20"
   },
   {
     "room_id": "IND-098",
@@ -1059,6 +1670,15 @@
     "id": "aqBpGOUtI6a0UvpmhGPl"
   },
   {
+    "room_id": "IND-205",
+    "name": "CET 217 (Faculty Room)",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "avDuq3ZBTbcLZB1VqzO4"
+  },
+  {
     "room_id": "IND-004",
     "name": "Laboratory 1",
     "is_deleted": false,
@@ -1068,6 +1688,15 @@
     "id": "b0HUUyzH6AQK7kugnBIk"
   },
   {
+    "room_id": "IND-291",
+    "name": "Room 6",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "c2vxyrxpEWZyXqO4b2wq"
+  },
+  {
     "room_id": "IND-020",
     "name": "Audio Visual Room",
     "is_deleted": false,
@@ -1075,6 +1704,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "c9nhWuAV7lEvaRLUsXnM"
+  },
+  {
+    "room_id": "IND-295",
+    "name": "Stairs 1 (1st Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "cBqkI5dkiYstNw7nWv8H"
   },
   {
     "room_id": "IND-056",
@@ -1095,6 +1733,15 @@
     "id": "cNowjxE7WMVeuVkU8kAN"
   },
   {
+    "room_id": "IND-242",
+    "name": "Deans office (CET 304) (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "caVc4uYwC1ZVkFaWdPsM"
+  },
+  {
     "room_id": "IND-138",
     "name": "Stairs 1 (2nd floor)",
     "is_deleted": false,
@@ -1113,6 +1760,24 @@
     "id": "cjuMxbUOnBFMLh1OSt3W"
   },
   {
+    "room_id": "IND-206",
+    "name": "CET 213",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "csza9pJWJkBcwuB2ufWh"
+  },
+  {
+    "room_id": "IND-251",
+    "name": "Office of the Student Affairs",
+    "is_deleted": false,
+    "infra_id": "INFRA-50",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "d6nwTQVdJOWPQfvuAGqX"
+  },
+  {
     "room_id": "IND-176",
     "name": "Stock Room (4th floor)",
     "is_deleted": false,
@@ -1120,6 +1785,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "d8Dazci1Jhv9sMwNFQcp"
+  },
+  {
+    "room_id": "IND-207",
+    "name": "CET 212",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "dL3deZGNGRuYK6Ek0E08"
   },
   {
     "room_id": "IND-014",
@@ -1139,6 +1813,24 @@
     "indoor_type": "stairs",
     "createdAt": {},
     "id": "dog74zRj5h0Ou5xv2TYN"
+  },
+  {
+    "room_id": "IND-296",
+    "name": "Stairs 2 (1st floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "e40Nnm3lmJhaO6lmPNpj"
+  },
+  {
+    "room_id": "IND-231",
+    "name": "Network Operations Center  (CET 201) (2nd Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "eOgcq01qOCGKFyDC0fl7"
   },
   {
     "room_id": "IND-088",
@@ -1175,6 +1867,24 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "eqhTLGMqQP94tjWbjoP7"
+  },
+  {
+    "room_id": "IND-229",
+    "name": "NE 25 - Computer laboratory  1 (CET 203) (2nd Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "ezZaYYNNeL8f7R0UYbzE"
+  },
+  {
+    "room_id": "IND-285",
+    "name": "College of Criminal Justice Education Entrance",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "entrance",
+    "createdAt": {},
+    "id": "ezoJKgACRl1l2rJasASd"
   },
   {
     "room_id": "IND-169",
@@ -1249,6 +1959,15 @@
     "id": "gPZs0LupcZtA0EIZlHdz"
   },
   {
+    "room_id": "IND-271",
+    "name": "Room 29 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "gZScpijBKderuu8P42wU"
+  },
+  {
     "room_id": "IND-118",
     "name": "Comfort Room (3rd floor)",
     "is_deleted": false,
@@ -1256,6 +1975,24 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "grZVh3bNW9gL7smZtEyD"
+  },
+  {
+    "room_id": "IND-298",
+    "name": "Office of the College Student Council",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "gvTK0501ALrb5sLlLtf2"
+  },
+  {
+    "room_id": "IND-195",
+    "name": "CET 120",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "hFcW8nUFYHHjf9WqVvsW"
   },
   {
     "room_id": "IND-142",
@@ -1283,6 +2020,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "imiztPwotsAVR7oRZslh"
+  },
+  {
+    "room_id": "IND-201",
+    "name": "Stairs 2 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "j0I1nyT0dyHoxYWdpQeN"
   },
   {
     "room_id": "IND-130",
@@ -1385,6 +2131,24 @@
     "id": "m0llZVpYNP46fwQXZrx8"
   },
   {
+    "room_id": "IND-274",
+    "name": "Room 28 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "mDz9b5Zij3SQw2ij8Cas"
+  },
+  {
+    "room_id": "IND-305",
+    "name": "Room 9",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "mfloWYtMY9Cp0KOLlh4l"
+  },
+  {
     "room_id": "IND-032",
     "name": "Microbiology CSM10",
     "is_deleted": false,
@@ -1392,6 +2156,24 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "nGFLMvgNVOVDjDeDIt2J"
+  },
+  {
+    "room_id": "IND-200",
+    "name": "CET 114",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "nXRIWqH9hj3XyjJOroeH"
+  },
+  {
+    "room_id": "IND-198",
+    "name": "CET 117",
+    "is_deleted": false,
+    "infra_id": "INFRA-46",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "naGNY0d92uJ7Gao8axJD"
   },
   {
     "room_id": "IND-108",
@@ -1439,6 +2221,15 @@
     "id": "o5Usllcwhh0DcLjNA4gZ"
   },
   {
+    "room_id": "IND-216",
+    "name": "CE laboratory",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "oDrvXIzLObrMMcyPW7n8"
+  },
+  {
     "room_id": "IND-008",
     "name": "Lecture Room 1",
     "is_deleted": false,
@@ -1459,9 +2250,10 @@
   {
     "room_id": "IND-187",
     "name": "Stairs 3 (3rd floor)",
+    "updatedAt": {},
     "is_deleted": false,
     "infra_id": "INFRA-45",
-    "indoor_type": "room",
+    "indoor_type": "stairs",
     "createdAt": {},
     "id": "pA1j0azM7SLNIs6ntVor"
   },
@@ -1475,6 +2267,51 @@
     "id": "pDYtVCT1RDW5J2zyYXZj"
   },
   {
+    "room_id": "IND-244",
+    "name": "Office Of the Student Affairs Entrance",
+    "is_deleted": false,
+    "infra_id": "INFRA-50",
+    "indoor_type": "entrance",
+    "createdAt": {},
+    "id": "pFHvSlBHzCAYaEzZhuuV"
+  },
+  {
+    "room_id": "IND-228",
+    "name": "NE 26 - Computer laboratory 2 (CET 204) (2nd Floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "pFc3pT29lCZIYqA8WRCk"
+  },
+  {
+    "room_id": "IND-237",
+    "name": "CET 310 (3rd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "pKbwqCbui8F2iPMMf4n1"
+  },
+  {
+    "room_id": "IND-267",
+    "name": "Stairs 2 (1st floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "pLZgAGctIHWrOYlo9M47"
+  },
+  {
+    "room_id": "IND-297",
+    "name": "Stairs 2 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "pc4zmKwIeMxDXNE8CxRh"
+  },
+  {
     "room_id": "IND-049",
     "name": "CSM 207",
     "is_deleted": false,
@@ -1482,6 +2319,34 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "piihDg5qs8fkMi2zxyui"
+  },
+  {
+    "room_id": "IND-256",
+    "name": "BCAED Music Room",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "pkfaB2e8OFr1nrIIGf2b"
+  },
+  {
+    "room_id": "IND-232",
+    "name": "Stairs 1 (2nd floor)",
+    "updatedAt": {},
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "pzXLFFfNI6fKB39d6Z1Z"
+  },
+  {
+    "room_id": "IND-280",
+    "name": "Room 21 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "qPi9aN473wzF2hI8Ph5x"
   },
   {
     "room_id": "IND-083",
@@ -1493,6 +2358,15 @@
     "id": "qjFG8e7bqKZ5aRt4h82D"
   },
   {
+    "room_id": "IND-299",
+    "name": "Office of the College of Criminal Justice Education Alumni",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "qpYFxz9Y2U7EXXue9hno"
+  },
+  {
     "room_id": "IND-112",
     "name": "Intermediate 2 (2nd floor)",
     "is_deleted": false,
@@ -1500,6 +2374,15 @@
     "indoor_type": "indoorinter",
     "createdAt": {},
     "id": "qr1yOctPy8UGavQIFpIw"
+  },
+  {
+    "room_id": "IND-279",
+    "name": "Room 22 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "rAuG0QgovaHJahXlEJqR"
   },
   {
     "room_id": "IND-124",
@@ -1520,6 +2403,15 @@
     "id": "roUujaSfmhWu425b8UvR"
   },
   {
+    "room_id": "IND-222",
+    "name": "CET 113",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "rqEdW8N1NQBSkzmJSSVl"
+  },
+  {
     "room_id": "IND-001",
     "name": "Department of Computer Science",
     "is_deleted": false,
@@ -1527,6 +2419,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "ruBPRWvbcxowjgm1ZB4U"
+  },
+  {
+    "room_id": "IND-277",
+    "name": "Room 24 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "s2l5KB1W6QzzOMtDcNUO"
   },
   {
     "room_id": "IND-149",
@@ -1556,6 +2457,15 @@
     "id": "tpkdWtgpjaRUqPUhKcoN"
   },
   {
+    "room_id": "IND-294",
+    "name": "Room 3",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "u4hlhfkcvbXG6tHo7Gdw"
+  },
+  {
     "room_id": "IND-096",
     "name": "College of Medicine Entrance",
     "is_deleted": false,
@@ -1583,6 +2493,33 @@
     "id": "vFWIIk4W7Q5dunxUMIA1"
   },
   {
+    "room_id": "IND-213",
+    "name": "Stairs 1 (1st floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "vSp7pLfcx9cJaRqgP8xb"
+  },
+  {
+    "room_id": "IND-249",
+    "name": "Comfort Room",
+    "is_deleted": false,
+    "infra_id": "INFRA-50",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "vaqZVUZoD5mSVlTSCB61"
+  },
+  {
+    "room_id": "IND-260",
+    "name": "Stairs 1 (1st floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "vqrx5REvRT5QE8t89CEK"
+  },
+  {
     "room_id": "IND-090",
     "name": "Guidance Office",
     "is_deleted": false,
@@ -1599,6 +2536,15 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "w8L2B6tMvXmo0yG3kwre"
+  },
+  {
+    "room_id": "IND-276",
+    "name": "Room 25 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "wSlnEL4bNrQFJbwpxP8l"
   },
   {
     "room_id": "IND-182",
@@ -1664,6 +2610,24 @@
     "id": "x9D6QwSNR8dTtLbSmCxu"
   },
   {
+    "room_id": "IND-300",
+    "name": "Stock Room",
+    "is_deleted": false,
+    "infra_id": "INFRA-10",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "xIRqGZTHXHKEFzWTYSpQ"
+  },
+  {
+    "room_id": "IND-254",
+    "name": "Accreditation Center (Room 15)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "xOVV931qJEf2Ahq53t7R"
+  },
+  {
     "room_id": "IND-059",
     "name": "CN-101",
     "is_deleted": false,
@@ -1680,6 +2644,33 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "xq1VAvbzLBV47Ygu0Gnn"
+  },
+  {
+    "room_id": "IND-268",
+    "name": "Emergency exit 2",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "fire_exit",
+    "createdAt": {},
+    "id": "xslIWZnvMjHkOsB7tZi3"
+  },
+  {
+    "room_id": "IND-283",
+    "name": "Stairs 2 (2nd floor)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "stairs",
+    "createdAt": {},
+    "id": "y1GOPFiouiUEmvdg4OI4"
+  },
+  {
+    "room_id": "IND-219",
+    "name": "CET 109",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "yI7f47xdUYdgdgR1kDWz"
   },
   {
     "room_id": "IND-164",
@@ -1700,6 +2691,15 @@
     "id": "yXLM7e2WD7AOC3GLs00y"
   },
   {
+    "room_id": "IND-264",
+    "name": "Comfort Room (Female)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "yb2UnJwuu1cWA9jVKPee"
+  },
+  {
     "room_id": "IND-158",
     "name": "Room 6 (3rd floor)",
     "is_deleted": false,
@@ -1718,6 +2718,15 @@
     "id": "ytGJG6AVweoleIdHdiN6"
   },
   {
+    "room_id": "IND-223",
+    "name": "ME Laboratory B",
+    "is_deleted": false,
+    "infra_id": "INFRA-80",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "zTFW8wuXfz3D9eqs4wkE"
+  },
+  {
     "room_id": "IND-095",
     "name": "CN - 306",
     "is_deleted": false,
@@ -1725,5 +2734,14 @@
     "indoor_type": "room",
     "createdAt": {},
     "id": "zvwPoTKGdckAShVMF8VZ"
+  },
+  {
+    "room_id": "IND-255",
+    "name": "BEED Department Head Office faculty (Room 16)",
+    "is_deleted": false,
+    "infra_id": "INFRA-67",
+    "indoor_type": "room",
+    "createdAt": {},
+    "id": "zza7j9VxTAhVM8dMCMAf"
   }
 ]

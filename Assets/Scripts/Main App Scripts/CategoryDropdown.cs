@@ -67,8 +67,6 @@ public class CategoryDropdown : MonoBehaviour
                 Debug.Log($"Map Mode | Map Ready: {mapReady}");
             }
 
-            Debug.Log($"Wait time: {waitTime}s | Global: {globalReady} | Map: {mapReady} | Data: {dataReady} | Indoor: {indoorMode}");
-
             if (globalReady && mapReady && dataReady)
             {
                 if (!indoorMode)
