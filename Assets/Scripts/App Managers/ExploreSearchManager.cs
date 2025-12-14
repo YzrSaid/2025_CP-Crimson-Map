@@ -59,7 +59,6 @@ public class ExploreSearchManager : MonoBehaviour
             }
         }
     }
-
     private void FilterAccordions(string searchText)
     {
         if (accordionManager == null || accordionManager.accordionItems == null)
