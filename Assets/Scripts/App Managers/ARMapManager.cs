@@ -128,21 +128,50 @@ public class ARMapManager : MonoBehaviour
 
         yield return StartCoroutine(WaitForMapManagerAndUpdateCenter());
 
+        // ========== NEW: Setup navigation mode BEFORE spawning ==========
+        if (route != null)
+        {
+            yield return StartCoroutine(LoadAllNodesForAR());
+            RouteData fullRoute = ReconstructRouteFromPlayerPrefs();
+            
+            if (fullRoute != null)
+            {
+                // Build navigation edge IDs list
+                navigationNodeIds.Clear();
+                navigationNodeIds = fullRoute.path.Select(pn => pn.node.node_id).ToList();
+                
+                navigationEdgeIds.Clear();
+                for (int i = 0; i < navigationNodeIds.Count - 1; i++)
+                {
+                    string edgeKey = GetEdgeKey(navigationNodeIds[i], navigationNodeIds[i + 1]);
+                    navigationEdgeIds.Add(edgeKey);
+                }
+                
+                // Tell PathRenderer we're in navigation mode
+                if (pathRenderer != null)
+                {
+                    pathRenderer.SetNavigationMode(navigationEdgeIds);
+                    Debug.Log($"[ARMapManager] Set navigation mode with {navigationEdgeIds.Count} edges");
+                }
+            }
+        }
+        // ==============================================================
+
         yield return StartCoroutine(InitializeSpawners(mapId, campusIds));
 
         yield return new WaitUntil(() => spawningComplete);
 
+        // ========== MODIFIED: Only setup highlighting, paths already spawned ==========
         if (route != null)
         {
-            yield return StartCoroutine(LoadAllNodesForAR());
-
             RouteData fullRoute = ReconstructRouteFromPlayerPrefs();
-
+            
             if (fullRoute != null)
             {
                 InitializeARNavigation(mapId, campusIds, fullRoute);
             }
         }
+        // ============================================================================
     }
 
     private IEnumerator WaitForMapManagerAndUpdateCenter()
@@ -248,6 +277,7 @@ public class ARMapManager : MonoBehaviour
         if (infrastructureSpawner != null)
             infrastructureSpawner.SetCurrentMapData(mapId, campusIds);
 
+        // PathRenderer will now respect navigation mode and only spawn filtered paths
         if (pathRenderer != null)
             yield return StartCoroutine(pathRenderer.LoadAndRenderPathsForMap(mapId, campusIds));
 
@@ -287,15 +317,8 @@ public class ARMapManager : MonoBehaviour
 
     private IEnumerator SetupNavigationHighlighting(RouteData route)
     {
-        navigationNodeIds.Clear();
-        navigationNodeIds = route.path.Select(pn => pn.node.node_id).ToList();
-
-        navigationEdgeIds.Clear();
-        for (int i = 0; i < navigationNodeIds.Count - 1; i++)
-        {
-            string edgeKey = GetEdgeKey(navigationNodeIds[i], navigationNodeIds[i + 1]);
-            navigationEdgeIds.Add(edgeKey);
-        }
+        // Node IDs and edge IDs already set earlier
+        // Just need to highlight them now
 
         yield return new WaitForSeconds(0.5f);
 
@@ -388,6 +411,7 @@ public class ARMapManager : MonoBehaviour
                 );
             }
         }
+        
         yield break;
     }
 

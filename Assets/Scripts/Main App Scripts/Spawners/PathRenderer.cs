@@ -19,6 +19,10 @@ public class PathRenderer : MonoBehaviour
     public float pathWidth = 1f;
     public float pathHeightOffset = 1f;
 
+    [Header("AR Navigation Mode")]
+    [Tooltip("TRUE = Spawn all paths. FALSE = Only spawn navigation paths")]
+    public bool spawnAllPathsInARMode = false;
+
     [Header("Path Appearance")]
     public Color pathwayColor = new Color(0.8f, 0.6f, 0.4f, 0.9f);
 
@@ -29,6 +33,9 @@ public class PathRenderer : MonoBehaviour
     private Dictionary<string, Node> allNodes = new Dictionary<string, Node>();
 
     private bool isRendering = false;
+    
+    // Navigation filter
+    private HashSet<string> navigationEdgeIds = new HashSet<string>();
 
     void Awake()
     {
@@ -68,6 +75,24 @@ public class PathRenderer : MonoBehaviour
         if (campusIds != null)
         {
             currentCampusIds.AddRange(campusIds);
+        }
+    }
+
+    /// <summary>
+    /// Sets the navigation edges to filter when in AR mode
+    /// </summary>
+    /// <param name="navEdgeIds">Navigation edges to spawn. If null/empty, clears the filter.</param>
+    public void SetNavigationMode(HashSet<string> navEdgeIds = null)
+    {   
+        if (navEdgeIds != null && navEdgeIds.Count > 0)
+        {
+            navigationEdgeIds = new HashSet<string>(navEdgeIds);
+            Debug.Log($"[PathRenderer] Navigation edges set: {navigationEdgeIds.Count} edges");
+        }
+        else
+        {
+            navigationEdgeIds.Clear();
+            Debug.Log($"[PathRenderer] Navigation edges cleared");
         }
     }
 
@@ -204,7 +229,51 @@ public class PathRenderer : MonoBehaviour
             yield break;
         }
 
+        if (ARModeHelper.IsARMode() && !spawnAllPathsInARMode && navigationEdgeIds.Count > 0)
+        {
+            Debug.Log($"[PathRenderer] AR Mode + Clean Mode: Filtering to {navigationEdgeIds.Count} navigation paths only");
+            validEdges = FilterNavigationEdges(validEdges);
+            Debug.Log($"[PathRenderer] Will spawn {validEdges.Count} navigation paths");
+        }
+        else if (ARModeHelper.IsARMode() && spawnAllPathsInARMode)
+        {
+            Debug.Log($"[PathRenderer] AR Mode + Cluttered Mode: Rendering all {validEdges.Count} paths");
+        }
+        else
+        {
+            Debug.Log($"[PathRenderer] Normal Mode: Rendering all {validEdges.Count} paths");
+        }
+
         yield return StartCoroutine(RenderPathEdges(validEdges));
+    }
+
+    /// <summary>
+    /// Filters edges to only include those in the navigation path
+    /// </summary>
+    private List<Edge> FilterNavigationEdges(List<Edge> allEdges)
+    {
+        List<Edge> navigationEdges = new List<Edge>();
+
+        foreach (var edge in allEdges)
+        {
+            string edgeKey = GetEdgeKey(edge.from_node, edge.to_node);
+            
+            if (navigationEdgeIds.Contains(edgeKey))
+            {
+                navigationEdges.Add(edge);
+            }
+        }
+
+        Debug.Log($"[PathRenderer] Filtered {allEdges.Count} total edges → {navigationEdges.Count} navigation edges");
+        return navigationEdges;
+    }
+
+    private string GetEdgeKey(string from, string to)
+    {
+        if (string.Compare(from, to) < 0)
+            return from + "-" + to;
+        else
+            return to + "-" + from;
     }
 
     private IEnumerator LoadFilteredNodes(List<string> campusIds)
@@ -212,40 +281,40 @@ public class PathRenderer : MonoBehaviour
         bool loadCompleted = false;
 
         yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
-                                         GetNodesFileName(),
-        (jsonContent) =>
-        {
-            try
+            GetNodesFileName(),
+            (jsonContent) =>
             {
-                Node[] nodes = JsonHelper.FromJson<Node>(jsonContent);
-
-                allNodes.Clear();
-
-                var pathwayNodes = nodes.Where(n =>
-                                                n != null &&
-                                                n.is_active &&
-                                                (n.type == "pathway" || n.type == "infrastructure" || n.type == "intermediate") &&
-                                                (campusIds == null || campusIds.Count == 0 || campusIds.Contains(n.campus_id)) &&
-                                                IsValidCoordinate(n.latitude, n.longitude)
-                                              ).ToList();
-
-                foreach (var node in pathwayNodes)
+                try
                 {
-                    allNodes[node.node_id] = node;
-                }
+                    Node[] nodes = JsonHelper.FromJson<Node>(jsonContent);
 
-                loadCompleted = true;
-            }
-            catch (System.Exception)
+                    allNodes.Clear();
+
+                    var pathwayNodes = nodes.Where(n =>
+                        n != null &&
+                        n.is_active &&
+                        (n.type == "pathway" || n.type == "infrastructure" || n.type == "intermediate") &&
+                        (campusIds == null || campusIds.Count == 0 || campusIds.Contains(n.campus_id)) &&
+                        IsValidCoordinate(n.latitude, n.longitude)
+                    ).ToList();
+
+                    foreach (var node in pathwayNodes)
+                    {
+                        allNodes[node.node_id] = node;
+                    }
+
+                    loadCompleted = true;
+                }
+                catch (System.Exception)
+                {
+                    loadCompleted = true;
+                }
+            },
+            (error) =>
             {
                 loadCompleted = true;
             }
-        },
-        (error) =>
-        {
-            loadCompleted = true;
-        }
-                                     ));
+        ));
 
         yield return new WaitUntil(() => loadCompleted);
     }
@@ -256,24 +325,24 @@ public class PathRenderer : MonoBehaviour
         Edge[] edges = null;
 
         yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
-                                         GetEdgesFileName(),
-        (jsonContent) =>
-        {
-            try
+            GetEdgesFileName(),
+            (jsonContent) =>
             {
-                edges = JsonHelper.FromJson<Edge>(jsonContent);
+                try
+                {
+                    edges = JsonHelper.FromJson<Edge>(jsonContent);
+                    loadCompleted = true;
+                }
+                catch (System.Exception)
+                {
+                    loadCompleted = true;
+                }
+            },
+            (error) =>
+            {
                 loadCompleted = true;
             }
-            catch (System.Exception)
-            {
-                loadCompleted = true;
-            }
-        },
-        (error) =>
-        {
-            loadCompleted = true;
-        }
-                                     ));
+        ));
 
         yield return new WaitUntil(() => loadCompleted);
         onComplete?.Invoke(edges);
@@ -302,6 +371,7 @@ public class PathRenderer : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         int renderedCount = 0;
+        
         foreach (var edge in edges)
         {
             bool shouldYield = false;
@@ -313,7 +383,7 @@ public class PathRenderer : MonoBehaviour
                 }
 
                 if (!allNodes.TryGetValue(edge.from_node, out Node fromNode) ||
-                        !allNodes.TryGetValue(edge.to_node, out Node toNode))
+                    !allNodes.TryGetValue(edge.to_node, out Node toNode))
                 {
                     continue;
                 }
@@ -391,18 +461,6 @@ public class PathRenderer : MonoBehaviour
                !float.IsInfinity(lat) && !float.IsInfinity(lon) &&
                lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
     }
-
-    private void DebugLog(string message)
-    {
-        if (enableDebugLogs)
-        {
-            Debug.Log($"[PathRenderer] {message}");
-        }
-    }
-
-    void Update()
-    {
-    }
 }
 
 public class PathEdge : MonoBehaviour
@@ -446,6 +504,7 @@ public class PathEdge : MonoBehaviour
 
         UpdatePathTransform();
     }
+    
     private void RecalculateReferenceValues()
     {
         if (map == null || fromNode == null || toNode == null) return;
@@ -454,8 +513,6 @@ public class PathEdge : MonoBehaviour
         referenceFromPos = map.GeoToWorldPosition(new Vector2d(fromNode.latitude, fromNode.longitude), false);
         referenceToPos = map.GeoToWorldPosition(new Vector2d(toNode.latitude, toNode.longitude), false);
         referenceDistance = Vector3.Distance(referenceFromPos, referenceToPos);
-
-        Debug.Log($"[PathEdge] Recalculated reference - Zoom: {referenceZoomLevel}, Distance: {referenceDistance:F2}");
     }
 
     private void ApplyColorToPath(Color color)
