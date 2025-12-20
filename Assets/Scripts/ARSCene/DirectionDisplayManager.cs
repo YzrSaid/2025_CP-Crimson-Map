@@ -8,28 +8,33 @@ using DG.Tweening;
 
 public class DirectionDisplayManager : MonoBehaviour
 {
+    [Header("Direction Panel UI")]
     public GameObject directionPanel;
     public TextMeshProUGUI directionText;
 
+    [Header("Turn Icons")]
     public GameObject turnRightImage;
     public GameObject turnLeftImage;
     public GameObject walkStraightImage;
     public GameObject enterImage;
     public GameObject turnIconsContainer;
 
+    [Header("Compass Arrow")]
     public CompassNavigationArrow compassArrow;
 
+    [Header("All Directions UI")]
     public Transform directionsScrollContent;
     public GameObject directionItemPrefab;
 
+    [Header("Success Panel UI")]
     public GameObject successPanel;
     public TextMeshProUGUI successBodyText;
     public Button successCloseButton;
     public GameObject successPanelBackground;
-
     public float successAnimationDuration = 0.3f;
     public Ease successEaseType = Ease.OutBack;
 
+    [Header("Lookahead, Off Route, and Overshoot Algorithm Settings")]
     public float lookaheadDistanceThreshold = 5f;
     public float offRouteDistanceThreshold = 25f;
     public float destinationOvershootThreshold = 10f;
@@ -40,6 +45,24 @@ public class DirectionDisplayManager : MonoBehaviour
     public TextMeshProUGUI offRouteBody;
     public Button offRouteContinueButton;
     public GameObject offRouteBackground;
+
+    [Header("Voice & Sound Effects")]
+    [Tooltip("AudioSource for playing sound effects")]
+    public AudioSource audioSource;
+
+    [Tooltip("Sound when reaching waypoint/checkpoint")]
+    public AudioClip checkpointSound;
+
+    [Tooltip("Sound when reaching final destination")]
+    public AudioClip destinationSound;
+
+    [Tooltip("Enable voice instructions")]
+    public bool enableVoiceInstructions = true;
+
+    [Tooltip("Delay before speaking (seconds)")]
+    public float voiceDelay = 0.5f;
+
+    private AndroidJavaObject tts;
 
     private bool isOffRoutePanelActive = false;
     private bool isOffRouteConditionActive = false;
@@ -74,6 +97,14 @@ public class DirectionDisplayManager : MonoBehaviour
     {
         arManager = FindObjectOfType<UnifiedARManager>();
         markerSpawner = FindObjectOfType<UnifiedARNavigationMarkerSpawner>();
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+        }
+
+        InitializeAndroidTTS();
 
         if (directionPanel != null)
             directionPanel.SetActive(false);
@@ -111,6 +142,85 @@ public class DirectionDisplayManager : MonoBehaviour
         {
             StartNavigation();
         }
+    }
+
+    private void InitializeAndroidTTS()
+    {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            try
+            {
+                AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+
+                tts = new AndroidJavaObject("android.speech.tts.TextToSpeech", activity, null);
+
+                Debug.Log("[TTS] Android TTS initialized successfully");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[TTS] Failed to initialize Android TTS: {e.Message}");
+            }
+        }
+        else
+        {
+            Debug.Log("[TTS] Not on Android platform - TTS disabled");
+        }
+    }
+
+    private void Speak(string message)
+    {
+        if (!enableVoiceInstructions) return;
+
+        if (Application.platform == RuntimePlatform.Android && tts != null)
+        {
+            try
+            {
+                tts.Call<int>("speak", message, 0, null, null);
+                Debug.Log($"[TTS] Speaking: {message}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[TTS] Error speaking: {e.Message}");
+            }
+        }
+        else
+        {
+            Debug.Log($"[TTS] Would speak: {message}");
+        }
+    }
+
+    private void PlayCheckpointReached(string instruction)
+    {
+        if (checkpointSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(checkpointSound);
+        }
+
+        if (enableVoiceInstructions)
+        {
+            StartCoroutine(SpeakAfterDelay(instruction, voiceDelay));
+        }
+    }
+
+    private void PlayDestinationReached(string destinationName)
+    {
+        if (destinationSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(destinationSound);
+        }
+
+        if (enableVoiceInstructions)
+        {
+            string message = $"You have reached your destination. Welcome to {destinationName}!";
+            StartCoroutine(SpeakAfterDelay(message, voiceDelay));
+        }
+    }
+
+    private IEnumerator SpeakAfterDelay(string message, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Speak(message);
     }
 
     void Update()
@@ -212,6 +322,7 @@ public class DirectionDisplayManager : MonoBehaviour
             ShowOffRoutePanel(closestNode, minDistance);
         }
     }
+
     private void CheckDestinationOvershoot()
     {
         if (hasPassedDestination || currentDestinationNode == null)
@@ -308,6 +419,7 @@ public class DirectionDisplayManager : MonoBehaviour
         offRoutePanel.SetActive(true);
         isOffRoutePanelActive = true;
     }
+
     private void HideOffRoutePanel()
     {
         if (offRoutePanel != null)
@@ -318,9 +430,9 @@ public class DirectionDisplayManager : MonoBehaviour
         isOffRoutePanelActive = false;
 
         Debug.Log("[OffRoute] Panel hidden - starting 40 second cooldown");
-        // Always start the 40-second cooldown when panel is closed
         StartCoroutine(OffRouteCooldown());
     }
+
     private IEnumerator OffRouteCooldown()
     {
         float cooldownTime = 40f;
@@ -350,7 +462,6 @@ public class DirectionDisplayManager : MonoBehaviour
         if (GPSManager.Instance.IsUsingQROverride())
         {
             userLocation = GPSManager.Instance.GetCoordinates();
-            Debug.Log($"[DirectionManager] Using QR Override for distance: ({userLocation.x:F6}, {userLocation.y:F6})");
         }
         else
         {
@@ -359,7 +470,6 @@ public class DirectionDisplayManager : MonoBehaviour
             if (rawGPS.magnitude > 0.0001f)
             {
                 userLocation = rawGPS;
-                Debug.Log($"[DirectionManager] Using Raw GPS for distance: ({userLocation.x:F6}, {userLocation.y:F6})");
             }
         }
     }
@@ -550,6 +660,9 @@ public class DirectionDisplayManager : MonoBehaviour
             hasAutoProgressed = false;
 
             UpdateDirectionItemsStatus();
+
+            PlayCheckpointReached(groupedInstructions.Trim());
+
             return;
         }
 
@@ -567,6 +680,8 @@ public class DirectionDisplayManager : MonoBehaviour
 
         hasAutoProgressed = false;
         UpdateDirectionItemsStatus();
+
+        PlayCheckpointReached(currentDir.instruction);
     }
 
     private void UpdateDirectionTextWithDistance()
@@ -857,7 +972,7 @@ public class DirectionDisplayManager : MonoBehaviour
     {
         for (int i = 0; i < directionItemInstances.Count; i++)
         {
-            bool isCompleted = i < currentDirectionIndex;
+            bool isCompleted = i < currentDirectionIndex || !isNavigationActive;
             directionItemInstances[i].SetCompleted(isCompleted);
         }
     }
@@ -878,6 +993,18 @@ public class DirectionDisplayManager : MonoBehaviour
 
         UpdateDirectionItemsStatus();
 
+        string destinationName = "your destination";
+
+        if (allDirections.Count > 0)
+        {
+            NavigationDirection lastDir = allDirections[allDirections.Count - 1];
+            if (lastDir.destinationNode != null && !string.IsNullOrEmpty(lastDir.destinationNode.name))
+            {
+                destinationName = lastDir.destinationNode.name;
+            }
+        }
+
+        PlayDestinationReached(destinationName);
         ShowSuccessPanel();
     }
 
@@ -961,11 +1088,6 @@ public class DirectionDisplayManager : MonoBehaviour
         return 6371000 * c;
     }
 
-    private float CalculateDistanceXY(Vector2 point1, Vector2 point2)
-    {
-        return Vector2.Distance(point1, point2);
-    }
-
     public void ResetNavigation()
     {
         currentDirectionIndex = 0;
@@ -998,6 +1120,7 @@ public class DirectionDisplayManager : MonoBehaviour
 
         UpdateDirectionItemsStatus();
     }
+
     public void ReloadDirections()
     {
         allDirections.Clear();
@@ -1023,5 +1146,21 @@ public class DirectionDisplayManager : MonoBehaviour
     public List<NavigationDirection> GetAllDirections()
     {
         return new List<NavigationDirection>(allDirections);
+    }
+
+    void OnDestroy()
+    {
+        if (Application.platform == RuntimePlatform.Android && tts != null)
+        {
+            try
+            {
+                tts.Call("shutdown");
+                Debug.Log("[TTS] Android TTS shutdown");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[TTS] Error shutting down: {e.Message}");
+            }
+        }
     }
 }
