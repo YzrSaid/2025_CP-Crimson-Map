@@ -26,6 +26,10 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
     [Header("My Location Settings")]
     public float myLocationZoomLevel = 20f;
     public bool useSmoothedCoordinates = true;
+    
+    [Header("Follow Mode Settings")]
+    public float followUpdateInterval = 0.1f;
+    public float followMovementThreshold = 0.00001f; 
 
     private Vector2 lastPointerPosition;
     private Vector2 initialPointerPosition;
@@ -41,6 +45,9 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
 
     private UserIndicator userIndicator;
     private MapModeController mapModeController;
+    private bool isFollowingUser = false;
+    private float followUpdateTimer = 0f;
+    private Vector2 lastFollowedPosition;
 
     private void OnEnable()
     {
@@ -75,6 +82,45 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
     private void Update()
     {
         HandleMultiTouch();
+        
+        if (isFollowingUser)
+        {
+            UpdateFollowMode();
+        }
+    }
+
+    private void UpdateFollowMode()
+    {
+        if (mapboxMap == null || GPSManager.Instance == null)
+        {
+            return;
+        }
+
+        if (mapModeController != null && mapModeController.IsIndoorMode())
+        {
+            isFollowingUser = false;
+            return;
+        }
+
+        followUpdateTimer += Time.deltaTime;
+
+        if (followUpdateTimer >= followUpdateInterval)
+        {
+            followUpdateTimer = 0f;
+
+            Vector2 currentCoords = useSmoothedCoordinates ?
+                GPSManager.Instance.GetSmoothedCoordinates() :
+                GPSManager.Instance.GetCoordinates();
+
+            if (Vector2.Distance(currentCoords, lastFollowedPosition) > followMovementThreshold)
+            {
+                var newCenter = new Mapbox.Utils.Vector2d(currentCoords.x, currentCoords.y);
+                mapboxMap.UpdateMap(newCenter, mapboxMap.Zoom);
+                
+                lastFollowedPosition = currentCoords;
+                ForceUserIndicatorUpdate();
+            }
+        }
     }
 
     private void HandleMultiTouch()
@@ -102,6 +148,8 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
 
                 isDragging = false;
                 hasStartedDragging = false;
+
+                StopFollowing();
 
                 NotifyUserIndicatorDragStart();
             }
@@ -181,6 +229,9 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
                 return;
             }
             hasStartedDragging = true;
+            
+            StopFollowing();
+            
             NotifyUserIndicatorDragStart();
         }
 
@@ -206,6 +257,8 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
         if (mapboxMap == null) return;
         float zoomDelta = eventData.scrollDelta.y * zoomSensitivity;
         ZoomMap(zoomDelta);
+        
+        StopFollowing();
     }
 
     private void NotifyUserIndicatorDragStart()
@@ -235,11 +288,13 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
     public void ZoomIn()
     {
         ZoomMap(0.5f);
+        StopFollowing();
     }
 
     public void ZoomOut()
     {
         ZoomMap(-0.5f);
+        StopFollowing();
     }
 
     private void ZoomMap(float zoomDelta)
@@ -275,6 +330,35 @@ public class MapInteraction : MonoBehaviour, IDragHandler, IScrollHandler, IPoin
 
         mapboxMap.UpdateMap(myLocation, myLocationZoomLevel);
         
+        StartFollowing(coords);
+        
         ForceUserIndicatorUpdate();
+    }
+
+    private void StartFollowing(Vector2 currentPosition)
+    {
+        isFollowingUser = true;
+        lastFollowedPosition = currentPosition;
+        followUpdateTimer = 0f;
+        
+        Debug.Log("Started following user");
+    }
+
+    private void StopFollowing()
+    {
+        if (isFollowingUser)
+        {
+            isFollowingUser = false;
+            Debug.Log("Stopped following user");
+        }
+    }
+    public bool IsFollowingUser()
+    {
+        return isFollowingUser;
+    }
+
+    public void DisableFollowMode()
+    {
+        StopFollowing();
     }
 }
