@@ -246,9 +246,6 @@ public class MainAppLoader : MonoBehaviour
         UpdateLoadingUI("Finalizing...", 0.95f);
         yield return new WaitForSeconds(0.5f);
 
-        UpdateLoadingUI("Ready!", 1.0f);
-        yield return new WaitForSeconds(0.5f);
-
         if (loadingPanel != null) loadingPanel.SetActive(false);
         if (mainAppUI != null) mainAppUI.SetActive(true);
 

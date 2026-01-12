@@ -556,6 +556,7 @@ MonoBehaviour:
   enableDebugLogs: 1
   infrastructureSize: 2
   heightOffset: 6
+  defaultNodeColor: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 1}
 --- !u!114 &4371025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -571,7 +572,6 @@ MonoBehaviour:
   mapboxMap: {fileID: 4371021}
   nodePrefab: {fileID: 5910253498655256837, guid: 1a4e31524136c5126a824a84ee0f9241, type: 3}
   edgePrefab: {fileID: 7818019151854478976, guid: ab76d48a9abd4a45f97f0336445c47f0, type: 3}
-  enableDebugLogs: 1
   nodeSize: 4.5
   heightOffset: 1
   edgeWidth: 1
@@ -595,7 +595,6 @@ MonoBehaviour:
   pathWidth: 1
   pathHeightOffset: 1
   spawnAllPathsInARMode: 0
-  pathwayColor: {r: 0.62352943, g: 0.62352943, b: 0.62352943, a: 0.9}
 --- !u!1 &24615741
 GameObject:
   m_ObjectHideFlags: 0
@@ -3500,8 +3499,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.5, y: 239.60692}
-  m_SizeDelta: {x: -3, y: -479.209}
+  m_AnchoredPosition: {x: -0.44281006, y: 260.9507}
+  m_SizeDelta: {x: -4.8857, y: -521.8965}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &235282998
 MonoBehaviour:
@@ -3775,6 +3774,8 @@ MonoBehaviour:
   pinchZoomDeadzone: 5
   myLocationZoomLevel: 20
   useSmoothedCoordinates: 1
+  followUpdateInterval: 0.1
+  followMovementThreshold: 0.00001
 --- !u!1 &292731277
 GameObject:
   m_ObjectHideFlags: 0
@@ -5429,8 +5430,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.49633, y: 132.62}
-  m_SizeDelta: {x: 830.7217, y: 450.687}
+  m_AnchoredPosition: {x: -0.49999, y: 49}
+  m_SizeDelta: {x: 857.5184, y: 376.5441}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &352111586
 MonoBehaviour:
@@ -17388,8 +17389,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0000038146973, y: 71}
-  m_SizeDelta: {x: 581.1, y: 50}
+  m_AnchoredPosition: {x: 3.4177, y: 34}
+  m_SizeDelta: {x: 515.52, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1101261013
 MonoBehaviour:
@@ -17411,7 +17412,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'FROM:'
+  m_text: 'From:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
   m_sharedMaterial: {fileID: 730542738843737679, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
@@ -17438,14 +17439,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 26
+  m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -19063,7 +19064,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 292.69, y: 434}
+  m_AnchoredPosition: {x: 299.5, y: 478}
   m_SizeDelta: {x: 496.65, y: 57.2441}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1212071821
@@ -22262,8 +22263,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 299.5, y: -171.44}
-  m_SizeDelta: {x: 581.1, y: 89.1546}
+  m_AnchoredPosition: {x: 300.5, y: -178.56}
+  m_SizeDelta: {x: 581.1, y: 127.0259}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1443983432
 GameObject:
@@ -22855,8 +22856,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0000038146973, y: 25.000015}
-  m_SizeDelta: {x: 581.1, y: 50}
+  m_AnchoredPosition: {x: 3.4184, y: -25.000011}
+  m_SizeDelta: {x: 515.5179, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1474220225
 MonoBehaviour:
@@ -22878,7 +22879,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'TO:'
+  m_text: 'To:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
   m_sharedMaterial: {fileID: 730542738843737679, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
@@ -22905,14 +22906,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 26
+  m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -23146,7 +23147,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Go Staright to College of Computing Studies
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
   m_sharedMaterial: {fileID: 730542738843737679, guid: ab48a3ca35564fe02afaf527acecf6fe, type: 2}
@@ -24887,7 +24888,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.49633, y: -193}
+  m_AnchoredPosition: {x: -0.49999, y: -215}
   m_SizeDelta: {x: 220, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1599837304
@@ -25641,8 +25642,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000013351, y: 67.573}
-  m_SizeDelta: {x: 600, y: 518.96}
+  m_AnchoredPosition: {x: -0.000013351, y: 44.845}
+  m_SizeDelta: {x: 600, y: 564.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1629470342
 MonoBehaviour:
@@ -26614,15 +26615,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arMapboxMap: {fileID: 4371021}
-  defaultPathColor: {r: 0.62, g: 0.62, b: 0.62, a: 1}
-  defaultPathWidth: 1
   pathRenderer: {fileID: 4371027}
   barrierSpawner: {fileID: 4371025}
   infrastructureSpawner: {fileID: 4371024}
   navigationPathColor: {r: 0.74, g: 0.06, b: 0.18, a: 0.9}
-  navigationPathWidth: 2.5
+  navigationPathWidth: 1
   navigationNodeColor: {r: 0.74, g: 0.06, b: 0.18, a: 1}
-  navigationNodeSize: 4
+  navigationNodeSize: 3
 --- !u!114 &1709089048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26832,6 +26831,8 @@ MonoBehaviour:
   pinchZoomDeadzone: 5
   myLocationZoomLevel: 20
   useSmoothedCoordinates: 1
+  followUpdateInterval: 0.1
+  followMovementThreshold: 0.00001
 --- !u!114 &1709089056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27130,7 +27131,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1710405586
 RectTransform:
   m_ObjectHideFlags: 0

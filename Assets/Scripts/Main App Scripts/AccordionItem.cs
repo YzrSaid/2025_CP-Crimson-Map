@@ -55,8 +55,6 @@ public class AccordionItem : MonoBehaviour
 
     public bool IsExpanded => isExpanded;
     public bool IsBookmarksCategory => isBookmarksCategory;
-    
-    // Public method to refresh bookmarks
     public void RefreshBookmarks()
     {
         if (!isBookmarksCategory) return;
@@ -115,8 +113,6 @@ public class AccordionItem : MonoBehaviour
         isRecentCategory = false;
         isBookmarksCategory = false;
     }
-
-    // NEW METHOD: Just mark as bookmarks category, don't load yet
     public void SetAsBookmarksCategory()
     {
         isBookmarksCategory = true;
@@ -124,7 +120,6 @@ public class AccordionItem : MonoBehaviour
         categoryId = null;
     }
 
-    // NEW METHOD: Just mark as recent category, don't load yet
     public void SetAsRecentCategory()
     {
         isRecentCategory = true;
@@ -236,14 +231,12 @@ public class AccordionItem : MonoBehaviour
         }
     }
 
-    // MODIFIED: Load recent destinations (called during expand)
     private IEnumerator LoadRecentDestinationsCoroutine()
     {
         infrastructuresLoaded = true;
 
         if (infrastructureContainer == null)
         {
-            Debug.LogError("[AccordionItem] Infrastructure container not assigned!");
             yield break;
         }
 
@@ -253,8 +246,6 @@ public class AccordionItem : MonoBehaviour
 
         if (recentDestinations == null || recentDestinations.Count == 0)
         {
-            Debug.Log("[AccordionItem] No recent destinations found");
-            
             ShowEmptyMessage();
             targetHeight = minHeight + emptyMessageHeight;
             rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
@@ -276,7 +267,6 @@ public class AccordionItem : MonoBehaviour
             }
             else
             {
-                Debug.LogError("[AccordionItem] RecentDestinationItem component not found on prefab!");
                 Destroy(itemObj);
             }
         }
@@ -284,26 +274,21 @@ public class AccordionItem : MonoBehaviour
         yield return StartCoroutine(FinishExpandAfterLoad());
     }
 
-    // MODIFIED: Load bookmarked infrastructures (called during expand)
     private IEnumerator LoadBookmarkedInfrastructuresCoroutine()
     {
         infrastructuresLoaded = true;
 
         if (infrastructureContainer == null)
         {
-            Debug.LogError("[AccordionItem] Infrastructure container not assigned!");
             yield break;
         }
 
         ClearSpawnedItems();
 
-        // Load bookmarks
         BookmarkData bookmarkData = LoadBookmarkData();
 
         if (bookmarkData == null || bookmarkData.bookmarked_infra_ids == null || bookmarkData.bookmarked_infra_ids.Count == 0)
         {
-            Debug.Log("[AccordionItem] No bookmarked infrastructures found");
-            
             ShowEmptyMessage();
             targetHeight = minHeight + emptyMessageHeight;
             rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
@@ -311,7 +296,6 @@ public class AccordionItem : MonoBehaviour
             yield break;
         }
 
-        // Load all infrastructures and filter by bookmarked IDs
         yield return StartCoroutine(LoadBookmarkedInfrastructuresFromJson(bookmarkData.bookmarked_infra_ids));
     }
 
@@ -343,14 +327,12 @@ public class AccordionItem : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"[AccordionItem] Error loading bookmarked infrastructures: {e.Message}");
             StartCoroutine(ShowEmptyStateAfterError());
         }
     }
 
     void OnBookmarkedInfrastructuresLoadError(string errorMessage)
     {
-        Debug.LogError($"[AccordionItem] Error loading infrastructure.json for bookmarks: {errorMessage}");
         StartCoroutine(ShowEmptyStateAfterError());
     }
 
@@ -368,7 +350,6 @@ public class AccordionItem : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError($"[AccordionItem] Error loading bookmarks: {e.Message}");
                 return new BookmarkData();
             }
         }
@@ -452,8 +433,6 @@ public class AccordionItem : MonoBehaviour
         emptyRect.anchoredPosition = Vector2.zero;
 
         TextMeshProUGUI emptyText = emptyObj.AddComponent<TextMeshProUGUI>();
-
-        // Choose the appropriate empty message based on category type
         if (isBookmarksCategory)
         {
             emptyText.text = emptyBookmarksMessageText;
@@ -517,7 +496,6 @@ public class AccordionItem : MonoBehaviour
 
         StopAllCoroutines();
 
-        // Handle special categories that load on expand
         if (isRecentCategory)
         {
             if (!infrastructuresLoaded)
@@ -526,7 +504,6 @@ public class AccordionItem : MonoBehaviour
             }
             else
             {
-                // Already loaded, just show
                 if (spawnedInfrastructures.Count > 0)
                 {
                     HideEmptyMessage();
@@ -550,7 +527,6 @@ public class AccordionItem : MonoBehaviour
             }
             else
             {
-                // Already loaded, just show
                 if (spawnedInfrastructures.Count > 0)
                 {
                     HideEmptyMessage();

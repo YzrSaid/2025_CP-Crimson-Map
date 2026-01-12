@@ -25717,6 +25717,8 @@ MonoBehaviour:
   pinchZoomDeadzone: 5
   myLocationZoomLevel: 18
   useSmoothedCoordinates: 1
+  followUpdateInterval: 0.1
+  followMovementThreshold: 0.00001
 --- !u!1 &1627642218
 GameObject:
   m_ObjectHideFlags: 0
@@ -27383,7 +27385,6 @@ MonoBehaviour:
   mapboxMap: {fileID: 1699060734}
   nodePrefab: {fileID: 5910253498655256837, guid: 1a4e31524136c5126a824a84ee0f9241, type: 3}
   edgePrefab: {fileID: 7818019151854478976, guid: ab76d48a9abd4a45f97f0336445c47f0, type: 3}
-  enableDebugLogs: 1
   nodeSize: 4.5
   heightOffset: 1
   edgeWidth: 1
@@ -27408,6 +27409,7 @@ MonoBehaviour:
   enableDebugLogs: 1
   infrastructureSize: 2.8
   heightOffset: 3
+  defaultNodeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!114 &1699060741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27425,7 +27427,7 @@ MonoBehaviour:
   enableDebugLogs: 1
   pathWidth: 0.5
   pathHeightOffset: 1
-  pathwayColor: {r: 0.6226415, g: 0.6226415, b: 0.6226415, a: 1}
+  spawnAllPathsInARMode: 0
 --- !u!114 &1699060743
 MonoBehaviour:
   m_ObjectHideFlags: 0

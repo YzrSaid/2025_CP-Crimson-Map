@@ -334,9 +334,6 @@ public class FirestoreManager : MonoBehaviour
         yield return new WaitUntil(() => completedSyncs >= totalSyncs);
 
         UpdateLocalVersionCache(mapVersion);
-
-        // No flag reset at all - removed ResetMapVersionUpdatedFlag
-
         onComplete?.Invoke();
     }
 

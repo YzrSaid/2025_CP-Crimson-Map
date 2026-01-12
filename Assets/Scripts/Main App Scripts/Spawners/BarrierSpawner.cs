@@ -16,7 +16,6 @@ public class BarrierSpawner : MonoBehaviour
     public GameObject edgePrefab;
 
     [Header("Settings")]
-    public bool enableDebugLogs = true;
     public float nodeSize = 2.5f;
     public float heightOffset = 10f;
 
@@ -78,7 +77,6 @@ public class BarrierSpawner : MonoBehaviour
             currentCampusIds.AddRange(campusIds);
         }
 
-        DebugLog($"yawa ka campus ids: {string.Join(", ", campusIds)}");
     }
 
     private void OnMapChanged(MapInfo mapInfo)
@@ -502,14 +500,6 @@ public class BarrierSpawner : MonoBehaviour
         return !float.IsNaN(lat) && !float.IsNaN(lon) &&
                !float.IsInfinity(lat) && !float.IsInfinity(lon) &&
                lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
-    }
-
-    private void DebugLog(string message)
-    {
-        if (enableDebugLogs)
-        {
-            Debug.Log($"[BarrierSpawner] {message}");
-        }
     }
 
     void Update()

@@ -11,10 +11,6 @@ public class ARMapManager : MonoBehaviour
     [Header("Mapbox References")]
     public AbstractMap arMapboxMap;
 
-    [Header("Default Colors (for reset)")]
-    public Color defaultPathColor = new Color(0.62f, 0.62f, 0.62f, 1f);
-    public float defaultPathWidth = 1f;
-
     [Header("Spawner References")]
     public PathRenderer pathRenderer;
     public BarrierSpawner barrierSpawner;
@@ -32,7 +28,6 @@ public class ARMapManager : MonoBehaviour
     private List<string> currentCampusIds = new List<string>();
     private List<string> navigationNodeIds = new List<string>();
     private HashSet<string> navigationEdgeIds = new HashSet<string>();
-    private Dictionary<string, Vector3> originalPathScales = new Dictionary<string, Vector3>();
     private Dictionary<string, Material> originalNodeMaterials = new Dictionary<string, Material>();
 
     private List<PathEdge> spawnedNavigationPaths = new List<PathEdge>();
@@ -128,15 +123,16 @@ public class ARMapManager : MonoBehaviour
 
         yield return StartCoroutine(WaitForMapManagerAndUpdateCenter());
 
-        // ========== NEW: Setup navigation mode BEFORE spawning ==========
         if (route != null)
         {
+            int pathNodeCount = PlayerPrefs.GetInt("ARNavigation_PathNodeCount", 0);
+            
             yield return StartCoroutine(LoadAllNodesForAR());
+            
             RouteData fullRoute = ReconstructRouteFromPlayerPrefs();
             
             if (fullRoute != null)
             {
-                // Build navigation edge IDs list
                 navigationNodeIds.Clear();
                 navigationNodeIds = fullRoute.path.Select(pn => pn.node.node_id).ToList();
                 
@@ -147,31 +143,32 @@ public class ARMapManager : MonoBehaviour
                     navigationEdgeIds.Add(edgeKey);
                 }
                 
-                // Tell PathRenderer we're in navigation mode
                 if (pathRenderer != null)
                 {
                     pathRenderer.SetNavigationMode(navigationEdgeIds);
-                    Debug.Log($"[ARMapManager] Set navigation mode with {navigationEdgeIds.Count} edges");
                 }
             }
+            else
+            {
+            }
         }
-        // ==============================================================
+        else
+        {
+        }
 
         yield return StartCoroutine(InitializeSpawners(mapId, campusIds));
 
         yield return new WaitUntil(() => spawningComplete);
-
-        // ========== MODIFIED: Only setup highlighting, paths already spawned ==========
         if (route != null)
         {
             RouteData fullRoute = ReconstructRouteFromPlayerPrefs();
             
             if (fullRoute != null)
             {
-                InitializeARNavigation(mapId, campusIds, fullRoute);
+                activeRoute = fullRoute;
+                StartCoroutine(SetupNavigationHighlighting(fullRoute));
             }
         }
-        // ============================================================================
     }
 
     private IEnumerator WaitForMapManagerAndUpdateCenter()
@@ -277,7 +274,6 @@ public class ARMapManager : MonoBehaviour
         if (infrastructureSpawner != null)
             infrastructureSpawner.SetCurrentMapData(mapId, campusIds);
 
-        // PathRenderer will now respect navigation mode and only spawn filtered paths
         if (pathRenderer != null)
             yield return StartCoroutine(pathRenderer.LoadAndRenderPathsForMap(mapId, campusIds));
 
@@ -312,14 +308,22 @@ public class ARMapManager : MonoBehaviour
         activeRoute = route;
 
         ClearNavigationHighlights();
+        
+        navigationNodeIds.Clear();
+        navigationNodeIds = route.path.Select(pn => pn.node.node_id).ToList();
+        
+        navigationEdgeIds.Clear();
+        for (int i = 0; i < navigationNodeIds.Count - 1; i++)
+        {
+            string edgeKey = GetEdgeKey(navigationNodeIds[i], navigationNodeIds[i + 1]);
+            navigationEdgeIds.Add(edgeKey);
+        }
+        
         StartCoroutine(SetupNavigationHighlighting(route));
     }
 
     private IEnumerator SetupNavigationHighlighting(RouteData route)
     {
-        // Node IDs and edge IDs already set earlier
-        // Just need to highlight them now
-
         yield return new WaitForSeconds(0.5f);
 
         yield return StartCoroutine(HighlightNavigationPaths());
@@ -388,25 +392,22 @@ public class ARMapManager : MonoBehaviour
 
             if (navigationEdgeIds.Contains(edgeKey))
             {
-                if (!originalPathScales.ContainsKey(edgeKey))
-                {
-                    originalPathScales[edgeKey] = pathEdge.transform.localScale;
-                }
-
                 spawnedNavigationPaths.Add(pathEdge);
 
                 Renderer[] renderers = pathEdge.GetComponentsInChildren<Renderer>();
                 foreach (var renderer in renderers)
                 {
-                    if (renderer.material != null)
+                    if (renderer != null && renderer.material != null)
                     {
-                        renderer.material.color = navigationPathColor;
+                        Material mat = new Material(renderer.material);
+                        mat.color = navigationPathColor;
+                        renderer.material = mat;
                     }
                 }
 
                 pathEdge.transform.localScale = new Vector3(
-                    navigationPathWidth / 1f,
-                    navigationPathWidth / 1f,
+                    navigationPathWidth,
+                    navigationPathWidth,
                     pathEdge.transform.localScale.z
                 );
             }
@@ -426,6 +427,8 @@ public class ARMapManager : MonoBehaviour
 
         InfrastructureNode[] allInfraNodes = arMapboxMap.GetComponentsInChildren<InfrastructureNode>();
 
+        int highlightedCount = 0;
+
         foreach (var infraNode in allInfraNodes)
         {
             if (infraNode == null)
@@ -439,23 +442,9 @@ public class ARMapManager : MonoBehaviour
 
             if (navigationNodeIds.Contains(nodeId))
             {
-                Renderer[] renderers = infraNode.GetComponentsInChildren<Renderer>();
-                foreach (var renderer in renderers)
-                {
-                    if (renderer != null)
-                    {
-                        if (!originalNodeMaterials.ContainsKey(nodeId))
-                        {
-                            originalNodeMaterials[nodeId] = renderer.material;
-                        }
-
-                        Material newMat = new Material(renderer.material);
-                        newMat.SetColor("_BaseColor", navigationNodeColor);
-                        renderer.material = newMat;
-                    }
-                }
-
+                infraNode.SetNodeColor(navigationNodeColor);
                 spawnedNavigationNodes[nodeId] = infraNode;
+                highlightedCount++;
             }
         }
 
@@ -464,35 +453,6 @@ public class ARMapManager : MonoBehaviour
 
     public void ClearNavigationHighlights()
     {
-        foreach (var pathEdge in spawnedNavigationPaths)
-        {
-            if (pathEdge == null) continue;
-
-            Edge edgeData = pathEdge.GetEdgeData();
-            if (edgeData != null)
-            {
-                string edgeKey = GetEdgeKey(edgeData.from_node, edgeData.to_node);
-
-                if (originalPathScales.TryGetValue(edgeKey, out Vector3 originalScale))
-                {
-                    pathEdge.transform.localScale = originalScale;
-                }
-                else
-                {
-                    pathEdge.transform.localScale = new Vector3(defaultPathWidth, defaultPathWidth, pathEdge.transform.localScale.z);
-                }
-            }
-
-            Renderer[] renderers = pathEdge.GetComponentsInChildren<Renderer>();
-            foreach (var renderer in renderers)
-            {
-                if (renderer.material != null)
-                {
-                    renderer.material.color = defaultPathColor;
-                }
-            }
-        }
-
         foreach (var kvp in spawnedNavigationNodes)
         {
             string nodeId = kvp.Key;
@@ -516,9 +476,6 @@ public class ARMapManager : MonoBehaviour
 
         spawnedNavigationPaths.Clear();
         spawnedNavigationNodes.Clear();
-        navigationNodeIds.Clear();
-        navigationEdgeIds.Clear();
-        originalPathScales.Clear();
         originalNodeMaterials.Clear();
         activeRoute = null;
     }
@@ -556,5 +513,14 @@ public class ARMapManager : MonoBehaviour
     public bool IsSpawningComplete()
     {
         return spawningComplete;
+    }
+    public Color GetNavigationPathColor()
+    {
+        return navigationPathColor;
+    }
+
+    public float GetNavigationPathWidth()
+    {
+        return navigationPathWidth;
     }
 }

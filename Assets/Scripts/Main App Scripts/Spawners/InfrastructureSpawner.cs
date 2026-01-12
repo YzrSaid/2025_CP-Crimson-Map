@@ -9,20 +9,23 @@ using TMPro;
 
 public class InfrastructureSpawner : MonoBehaviour
 {
-    [Header( "Mapbox" )]
+    [Header("Mapbox")]
     public AbstractMap mapboxMap;
 
-    [Header( "Prefabs" )]
+    [Header("Prefabs")]
     public GameObject infrastructurePrefab;
 
-    [Header( "JSON Files - Static Files" )]
+    [Header("JSON Files - Static Files")]
     public string infrastructureFileName = "infrastructure.json";
     public string categoriesFileName = "categories.json";
 
-    [Header( "Settings" )]
+    [Header("Settings")]
     public bool enableDebugLogs = true;
     public float infrastructureSize = 3.0f;
     public float heightOffset = 1f;
+
+    [Header("Default Appearance")]
+    public Color defaultNodeColor = Color.gray;
 
     private string currentMapId;
     private List<string> currentCampusIds = new List<string>();
@@ -34,18 +37,21 @@ public class InfrastructureSpawner : MonoBehaviour
 
     void Awake()
     {
-        if ( mapboxMap == null ) {
+        if (mapboxMap == null)
+        {
             mapboxMap = FindObjectOfType<AbstractMap>();
         }
     }
 
     void Start()
     {
-        if ( mapboxMap == null ) {
+        if (mapboxMap == null)
+        {
             return;
         }
 
-        if ( MapManager.Instance != null ) {
+        if (MapManager.Instance != null)
+        {
             MapManager.Instance.OnMapChanged += OnMapChanged;
             MapManager.Instance.OnMapLoadingStarted += OnMapLoadingStarted;
         }
@@ -53,32 +59,35 @@ public class InfrastructureSpawner : MonoBehaviour
 
     void OnDestroy()
     {
-        if ( MapManager.Instance != null ) {
+        if (MapManager.Instance != null)
+        {
             MapManager.Instance.OnMapChanged -= OnMapChanged;
             MapManager.Instance.OnMapLoadingStarted -= OnMapLoadingStarted;
         }
     }
 
-    public void SetTargetCampusIds( List<string> campusIds )
+    public void SetTargetCampusIds(List<string> campusIds)
     {
         currentCampusIds.Clear();
-        if ( campusIds != null ) {
-            currentCampusIds.AddRange( campusIds );
+        if (campusIds != null)
+        {
+            currentCampusIds.AddRange(campusIds);
         }
     }
 
-    public void SetCurrentMapData( string mapId, List<string> campusIds )
+    public void SetCurrentMapData(string mapId, List<string> campusIds)
     {
         currentMapId = mapId;
         currentCampusIds.Clear();
-        if ( campusIds != null ) {
-            currentCampusIds.AddRange( campusIds );
+        if (campusIds != null)
+        {
+            currentCampusIds.AddRange(campusIds);
         }
     }
 
-    private void OnMapChanged( MapInfo mapInfo )
+    private void OnMapChanged(MapInfo mapInfo)
     {
-        SetCurrentMapData( mapInfo.map_id, mapInfo.campus_included );
+        SetCurrentMapData(mapInfo.map_id, mapInfo.campus_included);
     }
 
     private void OnMapLoadingStarted()
@@ -86,17 +95,18 @@ public class InfrastructureSpawner : MonoBehaviour
         ClearSpawnedInfrastructure();
     }
 
-    public IEnumerator LoadAndSpawnForCampuses( List<string> campusIds )
+    public IEnumerator LoadAndSpawnForCampuses(List<string> campusIds)
     {
-        if ( isSpawning ) {
+        if (isSpawning)
+        {
             yield break;
         }
 
-        SetTargetCampusIds( campusIds );
+        SetTargetCampusIds(campusIds);
 
-        yield return StartCoroutine( WaitForMapReady() );
+        yield return StartCoroutine(WaitForMapReady());
 
-        yield return StartCoroutine( LoadAndSpawnInfrastructure() );
+        yield return StartCoroutine(LoadAndSpawnInfrastructure());
     }
 
     private IEnumerator WaitForMapReady()
@@ -104,25 +114,29 @@ public class InfrastructureSpawner : MonoBehaviour
         float timeout = 30f;
         float elapsed = 0f;
 
-        while ( elapsed < timeout ) {
-            if ( mapboxMap != null && mapboxMap.gameObject.activeInHierarchy ) {
+        while (elapsed < timeout)
+        {
+            if (mapboxMap != null && mapboxMap.gameObject.activeInHierarchy)
+            {
                 break;
             }
 
-            yield return new WaitForSeconds( 0.5f );
+            yield return new WaitForSeconds(0.5f);
             elapsed += 0.5f;
         }
 
-        if ( elapsed >= timeout ) {
+        if (elapsed >= timeout)
+        {
             yield break;
         }
 
-        yield return new WaitForSeconds( 1f );
+        yield return new WaitForSeconds(1f);
     }
 
     private string GetNodesFileName()
     {
-        if ( string.IsNullOrEmpty( currentMapId ) ) {
+        if (string.IsNullOrEmpty(currentMapId))
+        {
             return "nodes.json";
         }
 
@@ -131,7 +145,8 @@ public class InfrastructureSpawner : MonoBehaviour
 
     public IEnumerator LoadAndSpawnInfrastructure()
     {
-        if ( isSpawning ) {
+        if (isSpawning)
+        {
             yield break;
         }
 
@@ -146,206 +161,245 @@ public class InfrastructureSpawner : MonoBehaviour
 
         ClearSpawnedInfrastructure();
 
-        yield return StartCoroutine( LoadNodesFromJSONAsync( ( loadedNodes ) => {
+        yield return StartCoroutine(LoadNodesFromJSONAsync((loadedNodes) =>
+        {
             nodes = loadedNodes;
-        } ) );
+        }));
 
-        yield return StartCoroutine( LoadInfrastructureFromJSONAsync( ( loadedInfra ) => {
+        yield return StartCoroutine(LoadInfrastructureFromJSONAsync((loadedInfra) =>
+        {
             infrastructures = loadedInfra;
-        } ) );
+        }));
 
-        yield return StartCoroutine( LoadCategoriesFromJSONAsync( ( loadedCategories ) => {
+        yield return StartCoroutine(LoadCategoriesFromJSONAsync((loadedCategories) =>
+        {
             categories = loadedCategories;
-        } ) );
+        }));
 
-        try {
-            if ( nodes == null || infrastructures == null ) {
+        try
+        {
+            if (nodes == null || infrastructures == null)
+            {
                 errorOccurred = true;
-            } else {
-                infrastructureToSpawn = BuildInfrastructureData( nodes, infrastructures, categories, currentCampusIds );
             }
-        } catch (System.Exception)
+            else
+            {
+                infrastructureToSpawn = BuildInfrastructureData(nodes, infrastructures, categories, currentCampusIds);
+            }
+        }
+        catch (System.Exception)
         {
             errorOccurred = true;
-        } finally {
+        }
+        finally
+        {
             isSpawning = false;
         }
 
-        if ( errorOccurred || infrastructureToSpawn == null ) {
+        if (errorOccurred || infrastructureToSpawn == null)
+        {
             yield break;
         }
 
-        yield return StartCoroutine( SpawnInfrastructureItems( infrastructureToSpawn ) );
+        yield return StartCoroutine(SpawnInfrastructureItems(infrastructureToSpawn));
     }
 
-    private IEnumerator LoadNodesFromJSONAsync( System.Action<Node[]> onComplete )
+    private IEnumerator LoadNodesFromJSONAsync(System.Action<Node[]> onComplete)
     {
         bool loadCompleted = false;
         Node[] nodes = null;
 
-        yield return StartCoroutine( CrossPlatformFileLoader.LoadJsonFile(
+        yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
                                          GetNodesFileName(),
-        ( jsonContent ) => {
-            try {
-                nodes = JsonHelper.FromJson<Node>( jsonContent );
+        (jsonContent) =>
+        {
+            try
+            {
+                nodes = JsonHelper.FromJson<Node>(jsonContent);
                 loadCompleted = true;
-            } catch (System.Exception)
+            }
+            catch (System.Exception)
             {
                 loadCompleted = true;
             }
         },
-        ( error ) => {
+        (error) =>
+        {
             loadCompleted = true;
         }
-                                     ) );
+                                     ));
 
-        yield return new WaitUntil( () => loadCompleted );
-        onComplete?.Invoke( nodes );
+        yield return new WaitUntil(() => loadCompleted);
+        onComplete?.Invoke(nodes);
     }
 
-    private IEnumerator LoadInfrastructureFromJSONAsync( System.Action<Infrastructure[]> onComplete )
+    private IEnumerator LoadInfrastructureFromJSONAsync(System.Action<Infrastructure[]> onComplete)
     {
         bool loadCompleted = false;
         Infrastructure[] infrastructures = null;
 
-        yield return StartCoroutine( CrossPlatformFileLoader.LoadJsonFile(
+        yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
                                          infrastructureFileName,
-        ( jsonContent ) => {
-            try {
-                infrastructures = JsonHelper.FromJson<Infrastructure>( jsonContent );
+        (jsonContent) =>
+        {
+            try
+            {
+                infrastructures = JsonHelper.FromJson<Infrastructure>(jsonContent);
                 loadCompleted = true;
-            } catch (System.Exception)
+            }
+            catch (System.Exception)
             {
                 loadCompleted = true;
             }
         },
-        ( error ) => {
+        (error) =>
+        {
             loadCompleted = true;
         }
-                                     ) );
+                                     ));
 
-        yield return new WaitUntil( () => loadCompleted );
-        onComplete?.Invoke( infrastructures );
+        yield return new WaitUntil(() => loadCompleted);
+        onComplete?.Invoke(infrastructures);
     }
 
-    private IEnumerator LoadCategoriesFromJSONAsync( System.Action<Category[]> onComplete )
+    private IEnumerator LoadCategoriesFromJSONAsync(System.Action<Category[]> onComplete)
     {
         bool loadCompleted = false;
         Category[] categories = null;
 
-        yield return StartCoroutine( CrossPlatformFileLoader.LoadJsonFile(
+        yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
                                          categoriesFileName,
-        ( jsonContent ) => {
-            try {
-                categories = JsonHelper.FromJson<Category>( jsonContent );
+        (jsonContent) =>
+        {
+            try
+            {
+                categories = JsonHelper.FromJson<Category>(jsonContent);
                 loadCompleted = true;
-            } catch (System.Exception)
+            }
+            catch (System.Exception)
             {
                 loadCompleted = true;
             }
         },
-        ( error ) => {
+        (error) =>
+        {
             loadCompleted = true;
         }
-                                     ) );
+                                     ));
 
-        yield return new WaitUntil( () => loadCompleted );
-        onComplete?.Invoke( categories );
+        yield return new WaitUntil(() => loadCompleted);
+        onComplete?.Invoke(categories);
     }
 
-    private List<InfrastructureData> BuildInfrastructureData( Node[] nodes, Infrastructure[] infrastructures,
-            Category[] categories, List<string> campusIds )
+    private List<InfrastructureData> BuildInfrastructureData(Node[] nodes, Infrastructure[] infrastructures,
+            Category[] categories, List<string> campusIds)
     {
         var infrastructureData = new List<InfrastructureData>();
 
         var infraDict = new Dictionary<string, Infrastructure>();
 
-        for ( int i = 0; i < infrastructures.Length; i++ ) {
+        for (int i = 0; i < infrastructures.Length; i++)
+        {
             var infra = infrastructures[i];
 
-            if ( string.IsNullOrEmpty( infra.infra_id ) ) {
+            if (string.IsNullOrEmpty(infra.infra_id))
+            {
                 continue;
             }
 
-            if ( !infraDict.ContainsKey( infra.infra_id ) ) {
+            if (!infraDict.ContainsKey(infra.infra_id))
+            {
                 infraDict[infra.infra_id] = infra;
             }
         }
 
         var categoryDict = new Dictionary<string, Category>();
 
-        if ( categories != null ) {
-            for ( int i = 0; i < categories.Length; i++ ) {
+        if (categories != null)
+        {
+            for (int i = 0; i < categories.Length; i++)
+            {
                 var category = categories[i];
                 string key = category.category_id;
 
-                if ( string.IsNullOrEmpty( key ) ) {
+                if (string.IsNullOrEmpty(key))
+                {
                     continue;
                 }
 
-                if ( !categoryDict.ContainsKey( key ) ) {
+                if (!categoryDict.ContainsKey(key))
+                {
                     categoryDict[key] = category;
                 }
             }
         }
 
-        var infrastructureNodes = nodes.Where( n =>
+        var infrastructureNodes = nodes.Where(n =>
                                                n != null &&
                                                n.type == "infrastructure" &&
                                                n.is_active &&
-                                               ( campusIds == null || campusIds.Count == 0 || campusIds.Contains( n.campus_id ) ) &&
-                                               !string.IsNullOrEmpty( n.related_infra_id ) &&
-                                               IsValidCoordinate( n.latitude, n.longitude )
+                                               (campusIds == null || campusIds.Count == 0 || campusIds.Contains(n.campus_id)) &&
+                                               !string.IsNullOrEmpty(n.related_infra_id) &&
+                                               IsValidCoordinate(n.latitude, n.longitude)
                                              ).ToList();
 
-        foreach ( var node in infrastructureNodes ) {
-            if ( infraDict.TryGetValue( node.related_infra_id, out Infrastructure infrastructure ) ) {
-                categoryDict.TryGetValue( infrastructure.category_id, out Category category );
+        foreach (var node in infrastructureNodes)
+        {
+            if (infraDict.TryGetValue(node.related_infra_id, out Infrastructure infrastructure))
+            {
+                categoryDict.TryGetValue(infrastructure.category_id, out Category category);
 
-                var data = new InfrastructureData {
+                var data = new InfrastructureData
+                {
                     Node = node,
                     Infrastructure = infrastructure,
                     Category = category
                 };
 
-                infrastructureData.Add( data );
+                infrastructureData.Add(data);
             }
         }
 
         return infrastructureData;
     }
 
-    private IEnumerator SpawnInfrastructureItems( List<InfrastructureData> infrastructureData )
+    private IEnumerator SpawnInfrastructureItems(List<InfrastructureData> infrastructureData)
     {
         int spawnedCount = 0;
-        foreach ( var data in infrastructureData ) {
+        foreach (var data in infrastructureData)
+        {
             bool shouldYield = false;
-            try {
-                if ( infrastructurePrefab == null ) {
+            try
+            {
+                if (infrastructurePrefab == null)
+                {
                     break;
                 }
 
-                GameObject infraObj = Instantiate( infrastructurePrefab, Vector3.zero, Quaternion.identity, mapboxMap.transform );
+                GameObject infraObj = Instantiate(infrastructurePrefab, Vector3.zero, Quaternion.identity, mapboxMap.transform);
                 infraObj.name = $"Infrastructure_{data.Infrastructure.name}_{data.Node.node_id}";
                 infraObj.transform.localScale = Vector3.one * infrastructureSize;
 
                 InfrastructureNode infraComponent = infraObj.AddComponent<InfrastructureNode>();
-                infraComponent.Initialize( mapboxMap, data, heightOffset );
+                infraComponent.Initialize(mapboxMap, data, heightOffset, defaultNodeColor);
 
-                spawnedInfrastructure.Add( infraComponent );
+                spawnedInfrastructure.Add(infraComponent);
 
                 infraIdToComponent[data.Infrastructure.infra_id] = infraComponent;
 
                 spawnedCount++;
 
-                if ( spawnedCount % 5 == 0 ) {
+                if (spawnedCount % 5 == 0)
+                {
                     shouldYield = true;
                 }
-            } catch (System.Exception)
+            }
+            catch (System.Exception)
             {
             }
 
-            if ( shouldYield ) {
+            if (shouldYield)
+            {
                 yield return null;
             }
         }
@@ -353,9 +407,11 @@ public class InfrastructureSpawner : MonoBehaviour
 
     public void ClearSpawnedInfrastructure()
     {
-        foreach ( var infrastructure in spawnedInfrastructure ) {
-            if ( infrastructure != null && infrastructure.gameObject != null ) {
-                DestroyImmediate( infrastructure.gameObject );
+        foreach (var infrastructure in spawnedInfrastructure)
+        {
+            if (infrastructure != null && infrastructure.gameObject != null)
+            {
+                DestroyImmediate(infrastructure.gameObject);
             }
         }
 
@@ -365,8 +421,9 @@ public class InfrastructureSpawner : MonoBehaviour
 
     public void ManualSpawn()
     {
-        if ( currentCampusIds != null && currentCampusIds.Count > 0 ) {
-            StartCoroutine( LoadAndSpawnInfrastructure() );
+        if (currentCampusIds != null && currentCampusIds.Count > 0)
+        {
+            StartCoroutine(LoadAndSpawnInfrastructure());
         }
     }
 
@@ -376,10 +433,10 @@ public class InfrastructureSpawner : MonoBehaviour
         StopAllCoroutines();
     }
 
-    private bool IsValidCoordinate( float lat, float lon )
+    private bool IsValidCoordinate(float lat, float lon)
     {
-        return !float.IsNaN( lat ) && !float.IsNaN( lon ) &&
-               !float.IsInfinity( lat ) && !float.IsInfinity( lon ) &&
+        return !float.IsNaN(lat) && !float.IsNaN(lon) &&
+               !float.IsInfinity(lat) && !float.IsInfinity(lon) &&
                lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
     }
 
@@ -398,20 +455,24 @@ public class InfrastructureData
 
 public class InfrastructureNode : MonoBehaviour
 {
+    private Material instanceMaterial;
     private AbstractMap map;
     private InfrastructureData infrastructureData;
     private Vector2d geoLocation;
     private float heightOffset;
+    private Color nodeColor;
+    private Renderer circleRenderer;
 
     public InfrastructureData GetInfrastructureData() => infrastructureData;
     public Vector2d GetGeoLocation() => geoLocation;
 
-    public void Initialize( AbstractMap mapReference, InfrastructureData data, float height )
+    public void Initialize(AbstractMap mapReference, InfrastructureData data, float height, Color color)
     {
         map = mapReference;
         infrastructureData = data;
-        geoLocation = new Vector2d( data.Node.latitude, data.Node.longitude );
+        geoLocation = new Vector2d(data.Node.latitude, data.Node.longitude);
         heightOffset = height;
+        nodeColor = color;
 
         SetupInfrastructureDisplay();
         UpdatePosition();
@@ -419,44 +480,77 @@ public class InfrastructureNode : MonoBehaviour
 
     private void SetupInfrastructureDisplay()
     {
-        // Update the main label to show the legend instead of full name
         TextMeshPro label3D = GetComponentInChildren<TextMeshPro>();
-        if ( label3D != null ) {
-            if ( infrastructureData.Category != null && !string.IsNullOrEmpty( infrastructureData.Category.legend ) ) {
+        if (label3D != null)
+        {
+            if (infrastructureData.Category != null && !string.IsNullOrEmpty(infrastructureData.Category.legend))
+            {
                 label3D.text = infrastructureData.Category.legend;
-            } else {
-                // Fallback to infrastructure name if no legend
+            }
+            else
+            {
                 label3D.text = infrastructureData.Infrastructure.name;
             }
         }
 
-        SetupCircleBackground();
+        FindAndSetupCircle();
     }
 
-    private void SetupCircleBackground()
+    private void FindAndSetupCircle()
     {
-        Renderer circleRenderer = null;
+        if (circleRenderer != null)
+            return;
 
-        foreach ( Transform child in transform ) {
-            MeshFilter meshFilter = child.GetComponent<MeshFilter>();
-            if ( meshFilter != null && meshFilter.sharedMesh != null && meshFilter.sharedMesh.name == "Cylinder" ) {
-                circleRenderer = child.GetComponent<Renderer>();
-                break;
-            }
+        Transform cylinderChild = transform.Find("Cylinder");
+        if (cylinderChild != null)
+            circleRenderer = cylinderChild.GetComponent<Renderer>();
+
+        if (circleRenderer == null)
+            return;
+
+        instanceMaterial = new Material(circleRenderer.sharedMaterial);
+        SetMaterialColor(instanceMaterial, nodeColor);
+        
+        circleRenderer.material = instanceMaterial;
+    }
+
+    private void SetMaterialColor(Material mat, Color color)
+    {
+        if (mat.HasProperty("_Color"))
+        {
+            mat.SetColor("_Color", color);
         }
+        if (mat.HasProperty("_BaseColor"))
+        {
+            mat.SetColor("_BaseColor", color);
+        }
+        mat.color = color;
+    }
 
+    public void SetNodeColor(Color color)
+    {
+        nodeColor = color;
+
+        if (circleRenderer == null || instanceMaterial == null)
+            FindAndSetupCircle();
+
+        if (instanceMaterial != null)
+        {
+            SetMaterialColor(instanceMaterial, color);
+        }
     }
 
     void Update()
     {
-        if ( map != null ) {
+        if (map != null)
+        {
             UpdatePosition();
         }
     }
 
     void UpdatePosition()
     {
-        Vector3 worldPos = map.GeoToWorldPosition( geoLocation, true );
+        Vector3 worldPos = map.GeoToWorldPosition(geoLocation, true);
         worldPos.y += heightOffset;
 
         transform.position = worldPos;

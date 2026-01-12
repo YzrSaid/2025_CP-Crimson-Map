@@ -23,9 +23,6 @@ public class PathRenderer : MonoBehaviour
     [Tooltip("TRUE = Spawn all paths. FALSE = Only spawn navigation paths")]
     public bool spawnAllPathsInARMode = false;
 
-    [Header("Path Appearance")]
-    public Color pathwayColor = new Color(0.8f, 0.6f, 0.4f, 0.9f);
-
     private string currentMapId;
     private List<string> currentCampusIds = new List<string>();
 
@@ -34,7 +31,6 @@ public class PathRenderer : MonoBehaviour
 
     private bool isRendering = false;
     
-    // Navigation filter
     private HashSet<string> navigationEdgeIds = new HashSet<string>();
 
     void Awake()
@@ -77,11 +73,6 @@ public class PathRenderer : MonoBehaviour
             currentCampusIds.AddRange(campusIds);
         }
     }
-
-    /// <summary>
-    /// Sets the navigation edges to filter when in AR mode
-    /// </summary>
-    /// <param name="navEdgeIds">Navigation edges to spawn. If null/empty, clears the filter.</param>
     public void SetNavigationMode(HashSet<string> navEdgeIds = null)
     {   
         if (navEdgeIds != null && navEdgeIds.Count > 0)
@@ -246,10 +237,6 @@ public class PathRenderer : MonoBehaviour
 
         yield return StartCoroutine(RenderPathEdges(validEdges));
     }
-
-    /// <summary>
-    /// Filters edges to only include those in the navigation path
-    /// </summary>
     private List<Edge> FilterNavigationEdges(List<Edge> allEdges)
     {
         List<Edge> navigationEdges = new List<Edge>();
@@ -371,6 +358,16 @@ public class PathRenderer : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         int renderedCount = 0;
+
+        Color pathColor = Color.gray;
+        float width = pathWidth;
+        
+        if (ARModeHelper.IsARMode() && navigationEdgeIds.Count > 0 && ARMapManager.Instance != null)
+        {
+            pathColor = ARMapManager.Instance.GetNavigationPathColor();
+            width = ARMapManager.Instance.GetNavigationPathWidth();
+            Debug.Log($"[PathRenderer] Using navigation color: {pathColor} and width: {width}");
+        }
         
         foreach (var edge in edges)
         {
@@ -392,7 +389,7 @@ public class PathRenderer : MonoBehaviour
                 pathObj.name = $"Pathway_{edge.edge_id}_{edge.from_node}_to_{edge.to_node}";
 
                 PathEdge pathComponent = pathObj.AddComponent<PathEdge>();
-                pathComponent.Initialize(mapboxMap, edge, fromNode, toNode, pathWidth, pathHeightOffset, pathwayColor);
+                pathComponent.Initialize(mapboxMap, edge, fromNode, toNode, width, pathHeightOffset, pathColor);
 
                 spawnedPaths.Add(pathComponent);
                 renderedCount++;
