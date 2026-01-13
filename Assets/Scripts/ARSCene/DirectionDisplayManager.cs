@@ -154,8 +154,6 @@ public class DirectionDisplayManager : MonoBehaviour
                 AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 
                 tts = new AndroidJavaObject("android.speech.tts.TextToSpeech", activity, null);
-
-                Debug.Log("[TTS] Android TTS initialized successfully");
             }
             catch (System.Exception e)
             {
@@ -274,12 +272,8 @@ public class DirectionDisplayManager : MonoBehaviour
             Vector2 targetGPS = new Vector2(checkDir.destinationNode.latitude, checkDir.destinationNode.longitude);
             float distanceToNode = CalculateDistanceGPS(userLocation, targetGPS);
 
-            Debug.Log($"[Lookahead] Distance to upcoming node {checkDir.destinationNode.name}: {distanceToNode:F1}m (threshold: {lookaheadDistanceThreshold}m)");
-
             if (distanceToNode <= lookaheadDistanceThreshold)
             {
-                Debug.Log($"[Lookahead] ✅ User passed upcoming node {checkDir.destinationNode.name} at index {checkIndex}");
-
                 int oldIndex = currentDirectionIndex;
                 currentDirectionIndex = checkIndex;
 

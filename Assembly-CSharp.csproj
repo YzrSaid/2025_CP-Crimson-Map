@@ -59,7 +59,7 @@
     <UnityVersion>2022.3.62f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="/home/yazar/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.0/Analyzers/Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="/home/yazar/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.1/Analyzers/Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="/home/yazar/Unity/2022.3.62f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll" />
     <Analyzer Include="/home/yazar/Unity/2022.3.62f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
@@ -89,6 +89,7 @@
     <Compile Include="Assets/Mapbox/Examples/6_ZoomableMap/Scripts/SetCameraHeight.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/ColliderOptions.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Data/AtlasInfo.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/DirectionTester.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Geocoding/GeocodeResource.cs" />
     <Compile Include="Assets/Scripts/ARSCene/ARLoadingManager.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/TileStats.cs" />

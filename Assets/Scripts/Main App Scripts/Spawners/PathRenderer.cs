@@ -71,7 +71,7 @@ public class PathRenderer : MonoBehaviour
         if (campusIds != null)
         {
             currentCampusIds.AddRange(campusIds);
-        }
+        }   
     }
     public void SetNavigationMode(HashSet<string> navEdgeIds = null)
     {   
