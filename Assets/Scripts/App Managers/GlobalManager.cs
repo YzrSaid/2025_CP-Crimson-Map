@@ -8,9 +8,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
 
-/// <summary>
-/// FULLY OFFLINE GlobalManager - no Firebase, just APK JSON files
-/// </summary>
 public class GlobalManager : MonoBehaviour
 {
     public static GlobalManager Instance { get; private set; }
@@ -145,7 +142,6 @@ public class GlobalManager : MonoBehaviour
             yield return StartCoroutine(RecreateJSONManager());
         }
 
-        // Initialize and preload all JSON files
         bool jsonInitComplete = false;
         JSONFileManager.Instance.InitializeJSONFiles(() =>
         {
@@ -155,10 +151,8 @@ public class GlobalManager : MonoBehaviour
 
         Debug.Log("[GlobalManager] JSON files loaded!");
 
-        // Load available maps
         LoadAvailableMaps();
 
-        // Finalize
         FinalizeDataInitialization();
     }
 
@@ -345,7 +339,6 @@ public class GlobalManager : MonoBehaviour
         return systemStatus;
     }
 
-    // AR Scene management
     private IEnumerator CleanupXRSubsystems()
     {
         List<UnityEngine.XR.ARSubsystems.XRSessionSubsystem> sessionSubsystems = null;

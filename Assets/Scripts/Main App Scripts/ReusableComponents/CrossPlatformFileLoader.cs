@@ -6,26 +6,14 @@ using System.IO;
 using UnityEngine.Networking;
 #endif
 
-/// <summary>
-/// Smart file loader that caches JSON content in memory.
-/// Reads from APK only ONCE per session, then reuses cached data.
-/// </summary>
 public static class CrossPlatformFileLoader
 {
-    // Cache dictionary: fileName → JSON content
     private static Dictionary<string, string> fileCache = new Dictionary<string, string>();
 
-    // Track which files are currently being loaded to prevent duplicate requests
     private static HashSet<string> currentlyLoading = new HashSet<string>();
 
-    /// <summary>
-    /// Load a JSON file with caching.
-    /// First call: Loads from APK and caches in memory.
-    /// Subsequent calls: Returns cached version instantly (no APK read).
-    /// </summary>
     public static IEnumerator LoadJsonFile(string fileName, System.Action<string> onSuccess, System.Action<string> onError)
     {
-        // Check if already cached
         if (fileCache.ContainsKey(fileName))
         {
             Debug.Log($"[FileLoader] Using CACHED version of {fileName}");
@@ -33,15 +21,10 @@ public static class CrossPlatformFileLoader
             yield break;
         }
 
-        // Check if currently loading (prevent duplicate loads)
         if (currentlyLoading.Contains(fileName))
         {
-            Debug.Log($"[FileLoader] {fileName} is already loading, waiting...");
-
-            // Wait until loading completes
             yield return new WaitUntil(() => !currentlyLoading.Contains(fileName));
 
-            // Now it should be in cache
             if (fileCache.ContainsKey(fileName))
             {
                 onSuccess?.Invoke(fileCache[fileName]);
@@ -53,16 +36,11 @@ public static class CrossPlatformFileLoader
             yield break;
         }
 
-        // Mark as currently loading
         currentlyLoading.Add(fileName);
 
-        Debug.Log($"[FileLoader] Loading {fileName} from APK (StreamingAssets)...");
-
-        // Load from APK
         yield return LoadFromStreamingAssets(fileName,
             (content) =>
             {
-                // Cache the content
                 fileCache[fileName] = content;
                 currentlyLoading.Remove(fileName);
 
@@ -77,15 +55,11 @@ public static class CrossPlatformFileLoader
         );
     }
 
-    /// <summary>
-    /// Load from StreamingAssets (APK). This is the actual decompression work.
-    /// </summary>
     private static IEnumerator LoadFromStreamingAssets(string fileName, System.Action<string> onSuccess, System.Action<string> onError)
     {
         string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
 #if UNITY_ANDROID
-        // Android: Files are compressed in APK, use UnityWebRequest
         UnityWebRequest request = UnityWebRequest.Get(filePath);
         yield return request.SendWebRequest();
 
@@ -107,7 +81,6 @@ public static class CrossPlatformFileLoader
             onError?.Invoke($"Error loading {fileName}: {request.error}");
         }
 #else
-        // Editor/iOS/Other: Direct file read
         try
         {
             if (!File.Exists(filePath))
@@ -136,15 +109,10 @@ public static class CrossPlatformFileLoader
 #endif
     }
 
-    /// <summary>
-    /// Load a user-modifiable file from PersistentDataPath (bookmarks, recent destinations).
-    /// These are NOT cached because they can change during the session.
-    /// </summary>
     public static IEnumerator LoadUserDataFile(string fileName, System.Action<string> onSuccess, System.Action<string> onError)
     {
         string persistentPath = Path.Combine(Application.persistentDataPath, fileName);
 
-        // Check if user has a modified version
         if (File.Exists(persistentPath))
         {
             try
@@ -159,13 +127,9 @@ public static class CrossPlatformFileLoader
             }
         }
 
-        // If no user version exists, load default from StreamingAssets (with caching)
         yield return LoadJsonFile(fileName, onSuccess, onError);
     }
 
-    /// <summary>
-    /// Save user data to PersistentDataPath (bookmarks, recent destinations, etc.)
-    /// </summary>
     public static void SaveUserDataFile(string fileName, string jsonContent)
     {
         string persistentPath = Path.Combine(Application.persistentDataPath, fileName);
@@ -181,18 +145,11 @@ public static class CrossPlatformFileLoader
         }
     }
 
-    /// <summary>
-    /// Check if a file is already cached in memory.
-    /// </summary>
     public static bool IsCached(string fileName)
     {
         return fileCache.ContainsKey(fileName);
     }
 
-    /// <summary>
-    /// Get cached file content directly (synchronous).
-    /// Returns null if not cached yet.
-    /// </summary>
     public static string GetCached(string fileName)
     {
         if (fileCache.ContainsKey(fileName))
@@ -202,9 +159,6 @@ public static class CrossPlatformFileLoader
         return null;
     }
 
-    /// <summary>
-    /// Clear cache for a specific file (useful if you need to reload).
-    /// </summary>
     public static void ClearCache(string fileName)
     {
         if (fileCache.ContainsKey(fileName))
@@ -214,9 +168,6 @@ public static class CrossPlatformFileLoader
         }
     }
 
-    /// <summary>
-    /// Clear all cached files (useful when app closes or for memory management).
-    /// </summary>
     public static void ClearAllCache()
     {
         int count = fileCache.Count;
@@ -224,9 +175,6 @@ public static class CrossPlatformFileLoader
         Debug.Log($"[FileLoader] Cleared all cache ({count} files)");
     }
 
-    /// <summary>
-    /// Get cache statistics.
-    /// </summary>
     public static string GetCacheStats()
     {
         int totalFiles = fileCache.Count;
@@ -240,9 +188,6 @@ public static class CrossPlatformFileLoader
         return $"Cached Files: {totalFiles} | Total Size: {totalSize / 1024}KB";
     }
 
-    /// <summary>
-    /// Preload multiple files at once (good for app startup).
-    /// </summary>
     public static IEnumerator PreloadFiles(string[] fileNames, System.Action onComplete = null)
     {
         Debug.Log($"[FileLoader] Preloading {fileNames.Length} files...");
