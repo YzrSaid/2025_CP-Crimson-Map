@@ -20722,6 +20722,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114478715909612932, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 3}
+      propertyPath: _options.loadingTexture
+      value: 
+      objectReference: {fileID: 2800000, guid: ae30072a59a25814e8cfe4b1f70242ed, type: 3}
+    - target: {fileID: 114478715909612932, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 3}
       propertyPath: _options.locationOptions.zoom
       value: 17
       objectReference: {fileID: 0}
@@ -24176,7 +24180,7 @@ MonoBehaviour:
   barrierSpawner: {fileID: 1699060737}
   pathfindingController: {fileID: 1465186292}
   infrastructureSpawner: {fileID: 1699060740}
-  pathRenderer: {fileID: 1699060741}
+  pathRenderer: {fileID: 0}
   currentMap:
     map_id: 
     map_name: 
@@ -27942,7 +27946,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 259187411}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf2530a8d87bbe2db94ca15ff3b9de85, type: 3}
   m_Name: 

@@ -483,9 +483,10 @@ public class InfrastructureNode : MonoBehaviour
         TextMeshPro label3D = GetComponentInChildren<TextMeshPro>();
         if (label3D != null)
         {
-            if (infrastructureData.Category != null && !string.IsNullOrEmpty(infrastructureData.Category.legend))
+            // Use acronym from Infrastructure data if available, otherwise fallback to infrastructure name
+            if (!string.IsNullOrEmpty(infrastructureData.Infrastructure.acronym))
             {
-                label3D.text = infrastructureData.Category.legend;
+                label3D.text = infrastructureData.Infrastructure.acronym;
             }
             else
             {
@@ -510,7 +511,7 @@ public class InfrastructureNode : MonoBehaviour
 
         instanceMaterial = new Material(circleRenderer.sharedMaterial);
         SetMaterialColor(instanceMaterial, nodeColor);
-        
+
         circleRenderer.material = instanceMaterial;
     }
 

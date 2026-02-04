@@ -77,6 +77,7 @@ public class Infrastructure
 {
     public string infra_id;
     public string name;
+    public string acronym;
     public string category_id;
     public string image_url;
     public string email;
