@@ -8,6 +8,9 @@ using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// FULLY OFFLINE GlobalManager - no Firebase, just APK JSON files
+/// </summary>
 public class GlobalManager : MonoBehaviour
 {
     public static GlobalManager Instance { get; private set; }
@@ -19,18 +22,14 @@ public class GlobalManager : MonoBehaviour
 
     public bool onboardingComplete = false;
     public bool isDataInitialized = false;
-    public Dictionary<string, string> currentMapVersions = new Dictionary<string, string>();
     public List<MapInfo> availableMaps = new List<MapInfo>();
 
     public GameObject jsonFileManagerPrefab;
-    public GameObject firestoreManagerPrefab;
 
     private string onboardingSavePath;
-
     private static bool skipFullInitializationOnReturn = false;
 
     public System.Action OnDataInitializationComplete;
-    public System.Action<Dictionary<string, string>> OnMapVersionsChanged;
     public System.Action<List<MapInfo>> OnAvailableMapsChanged;
 
     void Start()
@@ -75,12 +74,12 @@ public class GlobalManager : MonoBehaviour
 
     void OnEnable()
     {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnDisable()
     {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private bool IsARScene(string sceneName)
@@ -133,28 +132,20 @@ public class GlobalManager : MonoBehaviour
             yield return StartCoroutine(RecreateJSONManager());
         }
 
-        if (FirestoreManager.Instance == null)
-        {
-            yield return StartCoroutine(RecreateFirestoreManager());
-        }
-
         isDataInitialized = true;
-
         OnDataInitializationComplete?.Invoke();
     }
 
     private IEnumerator FullInitializationFromScratch()
     {
+        Debug.Log("[GlobalManager] Starting OFFLINE initialization...");
+
         if (JSONFileManager.Instance == null)
         {
             yield return StartCoroutine(RecreateJSONManager());
         }
 
-        if (FirestoreManager.Instance == null)
-        {
-            yield return StartCoroutine(RecreateFirestoreManager());
-        }
-
+        // Initialize and preload all JSON files
         bool jsonInitComplete = false;
         JSONFileManager.Instance.InitializeJSONFiles(() =>
         {
@@ -162,25 +153,13 @@ public class GlobalManager : MonoBehaviour
         });
         yield return new WaitUntil(() => jsonInitComplete);
 
-        bool firebaseInitComplete = false;
-        FirestoreManager.Instance.InitializeFirebase((success) =>
-        {
-            firebaseInitComplete = true;
+        Debug.Log("[GlobalManager] JSON files loaded!");
 
-            if (success)
-            {
-                FirestoreManager.Instance.CheckAndSyncData(() =>
-                {
-                    PostSyncInitialization();
-                });
-            }
-            else
-            {
-                PostSyncInitialization();
-            }
-        });
+        // Load available maps
+        LoadAvailableMaps();
 
-        yield return new WaitUntil(() => firebaseInitComplete);
+        // Finalize
+        FinalizeDataInitialization();
     }
 
     private IEnumerator RecreateJSONManager()
@@ -204,64 +183,24 @@ public class GlobalManager : MonoBehaviour
         yield return new WaitUntil(() => JSONFileManager.Instance != null);
     }
 
-    private IEnumerator RecreateFirestoreManager()
-    {
-        GameObject firestoreManager;
-        if (firestoreManagerPrefab != null)
-        {
-            firestoreManager = Instantiate(firestoreManagerPrefab);
-            if (firestoreManager.GetComponent<FirestoreManager>() == null)
-            {
-                firestoreManager.AddComponent<FirestoreManager>();
-            }
-        }
-        else
-        {
-            firestoreManager = new GameObject("FirestoreManager");
-            firestoreManager.AddComponent<FirestoreManager>();
-        }
-
-        DontDestroyOnLoad(firestoreManager);
-        yield return new WaitUntil(() => FirestoreManager.Instance != null);
-    }
-
     private void CheckOnboardingAndNavigate()
     {
         LoadOnboardingData();
 
         if (!onboardingComplete)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("OnboardingScreensScene");
+            SceneManager.LoadScene("OnboardingScreensScene");
         }
         else
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MainAppScene");
-        }
-    }
-
-    private void PostSyncInitialization()
-    {
-        LoadAvailableMaps();
-        UpdateCurrentMapVersions();
-
-        if (JSONFileManager.Instance != null && availableMaps.Count > 0)
-        {
-            List<string> mapIds = availableMaps.Select(m => m.map_id).ToList();
-            JSONFileManager.Instance.InitializeMapSpecificFiles(mapIds, () =>
-            {
-                FinalizeDataInitialization();
-            });
-        }
-        else
-        {
-            FinalizeDataInitialization();
+            SceneManager.LoadScene("MainAppScene");
         }
     }
 
     private void FinalizeDataInitialization()
     {
         isDataInitialized = true;
-
+        Debug.Log("[GlobalManager] ✅ Data initialization complete!");
         OnDataInitializationComplete?.Invoke();
     }
 
@@ -278,26 +217,13 @@ public class GlobalManager : MonoBehaviour
                 {
                     var mapsArray = JsonConvert.DeserializeObject<List<MapInfo>>(mapsJson);
                     availableMaps.AddRange(mapsArray);
-
+                    Debug.Log($"[GlobalManager] Loaded {availableMaps.Count} maps");
                     OnAvailableMapsChanged?.Invoke(availableMaps);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Debug.LogError($"[GlobalManager] Error loading maps: {e.Message}");
                 }
-            }
-        }
-    }
-
-    public void UpdateCurrentMapVersions()
-    {
-        currentMapVersions.Clear();
-
-        if (JSONFileManager.Instance != null && FirestoreManager.Instance != null)
-        {
-            foreach (var map in availableMaps)
-            {
-                LocalVersionCache cache = JSONFileManager.Instance.GetMapVersionCache(map.map_id);
-                currentMapVersions[map.map_id] = cache?.cached_version ?? "none";
             }
         }
     }
@@ -309,7 +235,6 @@ public class GlobalManager : MonoBehaviour
             try
             {
                 string json = File.ReadAllText(onboardingSavePath);
-
                 if (!string.IsNullOrEmpty(json.Trim()))
                 {
                     SaveData data = JsonUtility.FromJson<SaveData>(json);
@@ -346,57 +271,18 @@ public class GlobalManager : MonoBehaviour
         }
     }
 
-    public void SmartDataSync(System.Action onComplete = null)
-    {
-        if (FirestoreManager.Instance != null && FirestoreManager.Instance.IsReady)
-        {
-            var oldVersions = new Dictionary<string, string>(currentMapVersions);
-
-            FirestoreManager.Instance.CheckAndSyncData(() =>
-            {
-                UpdateCurrentMapVersions();
-
-                bool versionsChanged = false;
-                List<string> updatedMaps = new List<string>();
-
-                foreach (var kvp in currentMapVersions)
-                {
-                    string oldVersion = oldVersions.GetValueOrDefault(kvp.Key, "unknown");
-                    if (oldVersion != kvp.Value)
-                    {
-                        versionsChanged = true;
-                        updatedMaps.Add(kvp.Key);
-                    }
-                }
-
-                if (versionsChanged)
-                {
-                    OnMapVersionsChanged?.Invoke(currentMapVersions);
-                }
-
-                onComplete?.Invoke();
-            });
-        }
-        else
-        {
-            onComplete?.Invoke();
-        }
-    }
-
     public string GetSystemStatus()
     {
-        string status = "=== CRIMSON MAP SYSTEM STATUS ===\n";
+        string status = "=== CRIMSON MAP SYSTEM STATUS (OFFLINE) ===\n";
         status += $"Data Initialized: {isDataInitialized}\n";
         status += $"Available Maps: {availableMaps.Count}\n";
 
         foreach (var map in availableMaps)
         {
-            string version = currentMapVersions.GetValueOrDefault(map.map_id, "unknown");
-            status += $"  - {map.map_id} ({map.map_name}): v{version}\n";
+            status += $"  - {map.map_id} ({map.map_name})\n";
         }
 
         status += $"JSON Manager Ready: {JSONFileManager.Instance != null}\n";
-        status += $"Firestore Manager Ready: {FirestoreManager.Instance?.IsReady ?? false}\n";
         status += $"Onboarding Complete: {onboardingComplete}\n";
         status += $"System Ready: {IsSystemReady()}";
 
@@ -429,113 +315,9 @@ public class GlobalManager : MonoBehaviour
         return null;
     }
 
-    public void ForceDataRefresh(System.Action onComplete = null)
-    {
-        if (!IsSystemReady())
-        {
-            onComplete?.Invoke();
-            return;
-        }
-
-        if (JSONFileManager.Instance != null)
-        {
-            JSONFileManager.Instance.ClearAllCaches();
-        }
-
-        if (FirestoreManager.Instance != null && FirestoreManager.Instance.IsReady)
-        {
-            var oldVersions = new Dictionary<string, string>(currentMapVersions);
-
-            FirestoreManager.Instance.CheckAndSyncData(() =>
-            {
-                UpdateCurrentMapVersions();
-
-                bool versionsChanged = false;
-                foreach (var kvp in currentMapVersions)
-                {
-                    string oldVersion = oldVersions.GetValueOrDefault(kvp.Key, "unknown");
-                    if (oldVersion != kvp.Value)
-                    {
-                        versionsChanged = true;
-                    }
-                }
-
-                if (versionsChanged)
-                {
-                    OnMapVersionsChanged?.Invoke(currentMapVersions);
-                }
-
-                onComplete?.Invoke();
-            });
-        }
-        else
-        {
-            onComplete?.Invoke();
-        }
-    }
-
-    public void GetAvailableMapVersions(string mapId, System.Action<List<string>> onComplete)
-    {
-        if (FirestoreManager.Instance != null && FirestoreManager.Instance.IsReady)
-        {
-            FirestoreManager.Instance.GetAvailableMapVersions(mapId, onComplete);
-        }
-        else
-        {
-            onComplete?.Invoke(new List<string>());
-        }
-    }
-
-    public void SwitchToMapVersion(string mapId, string version, System.Action onComplete = null)
-    {
-        if (FirestoreManager.Instance != null && FirestoreManager.Instance.IsReady)
-        {
-            string oldVersion = currentMapVersions.GetValueOrDefault(mapId, "unknown");
-
-            FirestoreManager.Instance.SwitchToMapVersion(mapId, version, () =>
-            {
-                currentMapVersions[mapId] = version;
-
-                OnMapVersionsChanged?.Invoke(currentMapVersions);
-                onComplete?.Invoke();
-            });
-        }
-        else
-        {
-            onComplete?.Invoke();
-        }
-    }
-
-    public string GetCurrentMapVersion(string mapId)
-    {
-        return currentMapVersions.GetValueOrDefault(mapId, "unknown");
-    }
-
-    public Dictionary<string, string> GetAllCurrentMapVersions()
-    {
-        return new Dictionary<string, string>(currentMapVersions);
-    }
-
     public List<MapInfo> GetAvailableMaps()
     {
         return new List<MapInfo>(availableMaps);
-    }
-
-    public void SyncDataFromFirestore(System.Action onComplete = null)
-    {
-        SmartDataSync(onComplete);
-    }
-
-    public void FetchFirestoreDocument(string collection, string documentId, System.Action<Dictionary<string, object>> onComplete)
-    {
-        if (FirestoreManager.Instance != null && FirestoreManager.Instance.IsReady)
-        {
-            FirestoreManager.Instance.FetchDocument(collection, documentId, onComplete);
-        }
-        else
-        {
-            onComplete?.Invoke(null);
-        }
     }
 
     public void AddToRecentDestinations(Dictionary<string, object> destination)
@@ -546,46 +328,9 @@ public class GlobalManager : MonoBehaviour
         }
     }
 
-
-    public bool IsMapDataFresh(string mapId, int maxAgeHours = 24)
-    {
-        if (JSONFileManager.Instance != null)
-        {
-            return JSONFileManager.Instance.IsMapDataFresh(mapId, maxAgeHours);
-        }
-        return false;
-    }
-
-    public bool IsAllMapDataFresh(int maxAgeHours = 24)
-    {
-        if (JSONFileManager.Instance != null && availableMaps.Count > 0)
-        {
-            foreach (var map in availableMaps)
-            {
-                if (!JSONFileManager.Instance.IsMapDataFresh(map.map_id, maxAgeHours))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
     public bool IsSystemReady()
     {
-        return isDataInitialized &&
-               JSONFileManager.Instance != null &&
-               (FirestoreManager.Instance == null || FirestoreManager.Instance.IsReady);
-    }
-
-    public void CleanupUnusedFiles()
-    {
-        if (JSONFileManager.Instance != null)
-        {
-            List<string> currentMapIds = availableMaps.Select(m => m.map_id).ToList();
-            JSONFileManager.Instance.CleanupUnusedMapFiles(currentMapIds);
-        }
+        return isDataInitialized && JSONFileManager.Instance != null;
     }
 
     public string GetComprehensiveStatus()
@@ -600,6 +345,7 @@ public class GlobalManager : MonoBehaviour
         return systemStatus;
     }
 
+    // AR Scene management
     private IEnumerator CleanupXRSubsystems()
     {
         List<UnityEngine.XR.ARSubsystems.XRSessionSubsystem> sessionSubsystems = null;
@@ -661,7 +407,6 @@ public class GlobalManager : MonoBehaviour
     public IEnumerator SafeARCleanupAndExit(string sceneName)
     {
         yield return StartCoroutine(CleanupXRSubsystems());
-
         yield return new WaitForSeconds(0.2f);
 
         UnifiedARManager arManager = FindObjectOfType<UnifiedARManager>();
@@ -706,7 +451,6 @@ public class GlobalManager : MonoBehaviour
         yield return StartCoroutine(RecreateDestroyedManagersCoroutine((success) => managersRecreated = success));
 
         SetSkipFullInitialization(true);
-
         SceneManager.LoadScene(targetScene, LoadSceneMode.Single);
     }
 
@@ -714,12 +458,10 @@ public class GlobalManager : MonoBehaviour
     {
         bool success = true;
         bool shouldRecreateJSON = false;
-        bool shouldRecreateFirestore = false;
 
         try
         {
             shouldRecreateJSON = ARManagerCleanup.ShouldRecreateJSONManager() && JSONFileManager.Instance == null;
-            shouldRecreateFirestore = ARManagerCleanup.ShouldRecreateFirestoreManager() && FirestoreManager.Instance == null;
         }
         catch (System.Exception)
         {
@@ -748,40 +490,12 @@ public class GlobalManager : MonoBehaviour
             }
         }
 
-        if (shouldRecreateFirestore)
-        {
-            try
-            {
-                GameObject firestoreManager;
-                if (firestoreManagerPrefab != null)
-                {
-                    firestoreManager = Instantiate(firestoreManagerPrefab);
-                }
-                else
-                {
-                    firestoreManager = new GameObject("FirestoreManager");
-                    firestoreManager.AddComponent<FirestoreManager>();
-                }
-                DontDestroyOnLoad(firestoreManager);
-            }
-            catch (System.Exception)
-            {
-                success = false;
-            }
-        }
-
         if (shouldRecreateJSON)
         {
             yield return new WaitUntil(() => JSONFileManager.Instance != null);
         }
 
-        if (shouldRecreateFirestore)
-        {
-            yield return new WaitUntil(() => FirestoreManager.Instance != null);
-        }
-
         yield return new WaitForSeconds(0.2f);
-
         onComplete?.Invoke(success);
     }
 
@@ -810,12 +524,10 @@ public class GlobalManager : MonoBehaviour
 
         bool needsManagerCheck = false;
         bool shouldRecreateJSON = false;
-        bool shouldRecreateFirestore = false;
 
         try
         {
             shouldRecreateJSON = ARManagerCleanup.ShouldRecreateJSONManager() && JSONFileManager.Instance == null;
-            shouldRecreateFirestore = ARManagerCleanup.ShouldRecreateFirestoreManager() && FirestoreManager.Instance == null;
         }
         catch (System.Exception)
         {
@@ -843,34 +555,9 @@ public class GlobalManager : MonoBehaviour
             }
         }
 
-        if (shouldRecreateFirestore)
-        {
-            needsManagerCheck = true;
-            try
-            {
-                GameObject firestoreManager;
-                if (firestoreManagerPrefab != null)
-                {
-                    firestoreManager = Instantiate(firestoreManagerPrefab);
-                }
-                else
-                {
-                    firestoreManager = new GameObject("FirestoreManager");
-                    firestoreManager.AddComponent<FirestoreManager>();
-                }
-                DontDestroyOnLoad(firestoreManager);
-            }
-            catch (System.Exception)
-            {
-            }
-        }
-
         if (needsManagerCheck)
         {
-            yield return new WaitUntil(() =>
-                (!shouldRecreateJSON || JSONFileManager.Instance != null) &&
-                (!shouldRecreateFirestore || FirestoreManager.Instance != null));
-
+            yield return new WaitUntil(() => JSONFileManager.Instance != null);
             InitializeDataSystems();
         }
 

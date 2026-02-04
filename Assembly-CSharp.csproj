@@ -309,6 +309,7 @@
     <Compile Include="Assets/Mapbox/Unity/Location/TransformLocationProvider.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/Vector2d/Mathd.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/AStarAlgorithm.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/CrossPlatformFileLoaderNew.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/LayerPerformanceOptions.cs" />
     <Compile Include="Assets/Mapbox/Core/probe-extractor-cs/Probe.cs" />
     <Compile Include="Assets/Mapbox/Examples/4_ReplaceFeatures/Scripts/BlinkLight.cs" />
