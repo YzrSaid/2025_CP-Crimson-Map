@@ -27,6 +27,12 @@ public class InfrastructureSpawner : MonoBehaviour
     [Header("Default Appearance")]
     public Color defaultNodeColor = Color.gray;
 
+    [Header("Label Settings")]
+    public bool enableSmartLabels = true;
+    public float labelDefaultYOffset = 4f;
+    public float labelSeparationDistance = 1.5f;
+    public bool useLeaderLines = true;
+
     private string currentMapId;
     private List<string> currentCampusIds = new List<string>();
 
@@ -210,24 +216,24 @@ public class InfrastructureSpawner : MonoBehaviour
         Node[] nodes = null;
 
         yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
-                                         GetNodesFileName(),
-        (jsonContent) =>
-        {
-            try
+            GetNodesFileName(),
+            (jsonContent) =>
             {
-                nodes = JsonHelper.FromJson<Node>(jsonContent);
+                try
+                {
+                    nodes = JsonHelper.FromJson<Node>(jsonContent);
+                    loadCompleted = true;
+                }
+                catch (System.Exception)
+                {
+                    loadCompleted = true;
+                }
+            },
+            (error) =>
+            {
                 loadCompleted = true;
             }
-            catch (System.Exception)
-            {
-                loadCompleted = true;
-            }
-        },
-        (error) =>
-        {
-            loadCompleted = true;
-        }
-                                     ));
+        ));
 
         yield return new WaitUntil(() => loadCompleted);
         onComplete?.Invoke(nodes);
@@ -239,24 +245,24 @@ public class InfrastructureSpawner : MonoBehaviour
         Infrastructure[] infrastructures = null;
 
         yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
-                                         infrastructureFileName,
-        (jsonContent) =>
-        {
-            try
+            infrastructureFileName,
+            (jsonContent) =>
             {
-                infrastructures = JsonHelper.FromJson<Infrastructure>(jsonContent);
+                try
+                {
+                    infrastructures = JsonHelper.FromJson<Infrastructure>(jsonContent);
+                    loadCompleted = true;
+                }
+                catch (System.Exception)
+                {
+                    loadCompleted = true;
+                }
+            },
+            (error) =>
+            {
                 loadCompleted = true;
             }
-            catch (System.Exception)
-            {
-                loadCompleted = true;
-            }
-        },
-        (error) =>
-        {
-            loadCompleted = true;
-        }
-                                     ));
+        ));
 
         yield return new WaitUntil(() => loadCompleted);
         onComplete?.Invoke(infrastructures);
@@ -268,24 +274,24 @@ public class InfrastructureSpawner : MonoBehaviour
         Category[] categories = null;
 
         yield return StartCoroutine(CrossPlatformFileLoader.LoadJsonFile(
-                                         categoriesFileName,
-        (jsonContent) =>
-        {
-            try
+            categoriesFileName,
+            (jsonContent) =>
             {
-                categories = JsonHelper.FromJson<Category>(jsonContent);
+                try
+                {
+                    categories = JsonHelper.FromJson<Category>(jsonContent);
+                    loadCompleted = true;
+                }
+                catch (System.Exception)
+                {
+                    loadCompleted = true;
+                }
+            },
+            (error) =>
+            {
                 loadCompleted = true;
             }
-            catch (System.Exception)
-            {
-                loadCompleted = true;
-            }
-        },
-        (error) =>
-        {
-            loadCompleted = true;
-        }
-                                     ));
+        ));
 
         yield return new WaitUntil(() => loadCompleted);
         onComplete?.Invoke(categories);
@@ -335,13 +341,13 @@ public class InfrastructureSpawner : MonoBehaviour
         }
 
         var infrastructureNodes = nodes.Where(n =>
-                                               n != null &&
-                                               n.type == "infrastructure" &&
-                                               n.is_active &&
-                                               (campusIds == null || campusIds.Count == 0 || campusIds.Contains(n.campus_id)) &&
-                                               !string.IsNullOrEmpty(n.related_infra_id) &&
-                                               IsValidCoordinate(n.latitude, n.longitude)
-                                             ).ToList();
+            n != null &&
+            n.type == "infrastructure" &&
+            n.is_active &&
+            (campusIds == null || campusIds.Count == 0 || campusIds.Contains(n.campus_id)) &&
+            !string.IsNullOrEmpty(n.related_infra_id) &&
+            IsValidCoordinate(n.latitude, n.longitude)
+        ).ToList();
 
         foreach (var node in infrastructureNodes)
         {
@@ -381,7 +387,16 @@ public class InfrastructureSpawner : MonoBehaviour
                 infraObj.transform.localScale = Vector3.one * infrastructureSize;
 
                 InfrastructureNode infraComponent = infraObj.AddComponent<InfrastructureNode>();
-                infraComponent.Initialize(mapboxMap, data, heightOffset, defaultNodeColor);
+                infraComponent.Initialize(
+                    mapboxMap,
+                    data,
+                    heightOffset,
+                    defaultNodeColor,
+                    enableSmartLabels,
+                    labelDefaultYOffset,
+                    labelSeparationDistance,
+                    useLeaderLines
+                );
 
                 spawnedInfrastructure.Add(infraComponent);
 
@@ -407,6 +422,12 @@ public class InfrastructureSpawner : MonoBehaviour
 
     public void ClearSpawnedInfrastructure()
     {
+        // Clear label manager first
+        if (InfrastructureLabelManager.Instance != null)
+        {
+            InfrastructureLabelManager.Instance.ClearAllLabels();
+        }
+
         foreach (var infrastructure in spawnedInfrastructure)
         {
             if (infrastructure != null && infrastructure.gameObject != null)
@@ -462,11 +483,21 @@ public class InfrastructureNode : MonoBehaviour
     private float heightOffset;
     private Color nodeColor;
     private Renderer circleRenderer;
+    private InfrastructureLabel labelComponent;
 
     public InfrastructureData GetInfrastructureData() => infrastructureData;
     public Vector2d GetGeoLocation() => geoLocation;
 
-    public void Initialize(AbstractMap mapReference, InfrastructureData data, float height, Color color)
+    public void Initialize(
+        AbstractMap mapReference,
+        InfrastructureData data,
+        float height,
+        Color color,
+        bool enableSmartLabels = true,
+        float labelYOffset = 2f,
+        float labelSeparation = 1.5f,
+        bool useLeaderLines = true
+    )
     {
         map = mapReference;
         infrastructureData = data;
@@ -476,6 +507,12 @@ public class InfrastructureNode : MonoBehaviour
 
         SetupInfrastructureDisplay();
         UpdatePosition();
+
+        // Setup smart label component
+        if (enableSmartLabels)
+        {
+            SetupLabelComponent(labelYOffset, labelSeparation, useLeaderLines);
+        }
     }
 
     private void SetupInfrastructureDisplay()
@@ -495,6 +532,62 @@ public class InfrastructureNode : MonoBehaviour
         }
 
         FindAndSetupCircle();
+    }
+
+    private void SetupLabelComponent(float yOffset, float separation, bool useLeaderLines)
+    {
+        TextMeshPro label3D = GetComponentInChildren<TextMeshPro>();
+        if (label3D != null)
+        {
+            // Add label component to the text object
+            InfrastructureLabel labelComp = label3D.gameObject.AddComponent<InfrastructureLabel>();
+            labelComp.textMesh = label3D;
+            labelComp.markerTransform = transform; // The marker itself
+            labelComp.defaultYOffset = yOffset;
+            labelComp.separationDistance = separation;
+            labelComp.markerAvoidanceRadius = 2.0f; // NEW: Set marker avoidance
+            labelComp.useLeaderLine = useLeaderLines;
+
+            // Set priority based on infrastructure importance
+            labelComp.priority = GetInfrastructurePriority();
+
+            labelComponent = labelComp;
+        }
+    }
+
+    private int GetInfrastructurePriority()
+    {
+        // Customize priority based on your infrastructure importance
+        string infraName = infrastructureData.Infrastructure.name.ToLower();
+
+        // High priority buildings (main/important buildings)
+        if (infraName.Contains("main") ||
+            infraName.Contains("admin") ||
+            infraName.Contains("library") ||
+            infraName.Contains("gymnasium") ||
+            infraName.Contains("auditorium"))
+        {
+            return 10;
+        }
+
+        // Medium priority (academic buildings)
+        if (infraName.Contains("building") ||
+            infraName.Contains("hall") ||
+            infraName.Contains("center"))
+        {
+            return 7;
+        }
+
+        // Lower priority (smaller structures)
+        if (infraName.Contains("shed") ||
+            infraName.Contains("kiosk") ||
+            infraName.Contains("toilet"))
+        {
+            return 3;
+        }
+
+        // Default priority
+        return 5;
     }
 
     private void FindAndSetupCircle()

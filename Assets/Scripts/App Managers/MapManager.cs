@@ -61,17 +61,17 @@ public class MapManager : MonoBehaviour
 
     IEnumerator InitializeMapManager()
     {
-        while (FirestoreManager.Instance == null || !FirestoreManager.Instance.IsReady)
+        while (GlobalManager.Instance == null || !GlobalManager.Instance.isDataInitialized)
         {
             yield return new WaitForSeconds(0.1f);
         }
 
-        while (FirestoreManager.Instance.AvailableMaps.Count == 0)
+        while (GlobalManager.Instance.availableMaps.Count == 0)
         {
             yield return new WaitForSeconds(0.1f);
         }
 
-        availableMaps = FirestoreManager.Instance.AvailableMaps;
+        availableMaps = GlobalManager.Instance.GetAvailableMaps();
 
         yield return StartCoroutine(LoadCampusData());
 
@@ -79,7 +79,6 @@ public class MapManager : MonoBehaviour
 
         LoadLastSelectedMap();
     }
-
     private void LoadLastSelectedMap()
     {
         string savedMapId = PlayerPrefs.GetString("ARScene_MapId");

@@ -59,28 +59,9 @@ public static class CrossPlatformFileLoader
     {
         string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
-#if UNITY_ANDROID
-        UnityWebRequest request = UnityWebRequest.Get(filePath);
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            string jsonContent = request.downloadHandler.text;
-
-            if (string.IsNullOrEmpty(jsonContent))
-            {
-                onError?.Invoke($"File is empty: {fileName}");
-            }
-            else
-            {
-                onSuccess?.Invoke(jsonContent);
-            }
-        }
-        else
-        {
-            onError?.Invoke($"Error loading {fileName}: {request.error}");
-        }
-#else
+#if UNITY_EDITOR
+        // UNITY EDITOR: Always use File.ReadAllText (works for all platforms in editor)
+        Debug.Log($"[FileLoader] EDITOR mode - Loading from: {filePath}");
         try
         {
             if (!File.Exists(filePath))
@@ -104,8 +85,61 @@ public static class CrossPlatformFileLoader
         {
             onError?.Invoke($"Error reading {fileName}: {e.Message}");
         }
-        
+
         yield return null;
+
+#elif UNITY_ANDROID
+    // ANDROID BUILD: Use UnityWebRequest (files are inside APK)
+    Debug.Log($"[FileLoader] ANDROID build - Loading from: {filePath}");
+    UnityWebRequest request = UnityWebRequest.Get(filePath);
+    yield return request.SendWebRequest();
+
+    if (request.result == UnityWebRequest.Result.Success)
+    {
+        string jsonContent = request.downloadHandler.text;
+
+        if (string.IsNullOrEmpty(jsonContent))
+        {
+            onError?.Invoke($"File is empty: {fileName}");
+        }
+        else
+        {
+            onSuccess?.Invoke(jsonContent);
+        }
+    }
+    else
+    {
+        onError?.Invoke($"Error loading {fileName}: {request.error}");
+    }
+
+#else
+    // IOS/STANDALONE: Use File.ReadAllText
+    Debug.Log($"[FileLoader] STANDALONE mode - Loading from: {filePath}");
+    try
+    {
+        if (!File.Exists(filePath))
+        {
+            onError?.Invoke($"File not found: {filePath}");
+            yield break;
+        }
+
+        string jsonContent = File.ReadAllText(filePath);
+
+        if (string.IsNullOrEmpty(jsonContent))
+        {
+            onError?.Invoke($"File is empty: {fileName}");
+        }
+        else
+        {
+            onSuccess?.Invoke(jsonContent);
+        }
+    }
+    catch (System.Exception e)
+    {
+        onError?.Invoke($"Error reading {fileName}: {e.Message}");
+    }
+    
+    yield return null;
 #endif
     }
 

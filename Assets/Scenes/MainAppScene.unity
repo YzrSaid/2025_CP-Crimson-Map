@@ -20758,6 +20758,10 @@ PrefabInstance:
       value: mapbox://styles/mapbox/light-v9
       objectReference: {fileID: 0}
     - target: {fileID: 114478715909612932, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 3}
+      propertyPath: _imagery._layerProperty.sourceOptions.layerSource.Name
+      value: Light
+      objectReference: {fileID: 0}
+    - target: {fileID: 114478715909612932, guid: e6b749c6d877f4c19a5a5c3c0783d53b, type: 3}
       propertyPath: _options.extentOptions.defaultExtents.rangeAroundCenterOptions.east
       value: 1
       objectReference: {fileID: 0}
@@ -24044,6 +24048,7 @@ GameObject:
   - component: {fileID: 1465186303}
   - component: {fileID: 1465186304}
   - component: {fileID: 1465186305}
+  - component: {fileID: 1465186306}
   m_Layer: 0
   m_Name: MainAppManager
   m_TagString: Untagged
@@ -24574,6 +24579,18 @@ MonoBehaviour:
   destinationSound: {fileID: 8300000, guid: 94384f62dd186b6e8a64f01771451412, type: 3}
   enableVoiceInstructions: 1
   voiceDelay: 0.5
+--- !u!114 &1465186306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465186272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6273eb6b666f9ab638c1f35832534839, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1475334542
 GameObject:
   m_ObjectHideFlags: 0
@@ -27935,10 +27952,14 @@ MonoBehaviour:
   infrastructurePrefab: {fileID: 384402045527793405, guid: df571a0471cd1e517bc8f83794a26e97, type: 3}
   infrastructureFileName: infrastructure.json
   categoriesFileName: categories.json
-  enableDebugLogs: 1
+  enableDebugLogs: 0
   infrastructureSize: 2.8
-  heightOffset: 3
-  defaultNodeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  heightOffset: 7
+  defaultNodeColor: {r: 1, g: 1, b: 1, a: 1}
+  enableSmartLabels: 1
+  labelDefaultYOffset: 3
+  labelSeparationDistance: 1.5
+  useLeaderLines: 1
 --- !u!114 &1699060741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31406,7 +31427,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1841925423
 RectTransform:
   m_ObjectHideFlags: 0

@@ -142,6 +142,7 @@
     <Compile Include="Assets/Scripts/App Managers/MapManager.cs" />
     <Compile Include="Assets/MobileARTemplateAssets/UI/Scripts/CutoutMaskUI.cs" />
     <Compile Include="Assets/Mapbox/Unity/MeshGeneration/Data/MeshData.cs" />
+    <Compile Include="Assets/Scripts/Main App Scripts/Map/InfrastructureLabel.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/UnifiedMapOptions.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/MapboxEnums.cs" />
     <Compile Include="Assets/Mapbox/Unity/Map/MapVisualizer.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Directions/RoutingProfile.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/RecentDestinationDetailsPanel.cs" />
     <Compile Include="Assets/Mapbox/Examples/Scripts/ReverseGeocodeUserInput.cs" />
+    <Compile Include="Assets/Scripts/App Managers/InfrastructureLabelManager.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Platform/Resource.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/PolylineUtils.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/DropdownInfraItem.cs" />
@@ -309,7 +311,6 @@
     <Compile Include="Assets/Mapbox/Unity/Location/TransformLocationProvider.cs" />
     <Compile Include="Assets/Mapbox/Core/mapbox-sdk-cs/Utils/Vector2d/Mathd.cs" />
     <Compile Include="Assets/Scripts/Main App Scripts/AStarAlgorithm.cs" />
-    <Compile Include="Assets/Scripts/Main App Scripts/ReusableComponents/CrossPlatformFileLoaderNew.cs" />
     <Compile Include="Assets/Mapbox/Unity/DataContainers/LayerPerformanceOptions.cs" />
     <Compile Include="Assets/Mapbox/Core/probe-extractor-cs/Probe.cs" />
     <Compile Include="Assets/Mapbox/Examples/4_ReplaceFeatures/Scripts/BlinkLight.cs" />
