@@ -11,6 +11,8 @@ public class DirectionDisplayManager : MonoBehaviour
     [Header("Direction Panel UI")]
     public GameObject directionPanel;
     public TextMeshProUGUI directionText;
+    public Button startNavigationButton;
+    public GameObject startNavigationButtonObject;
 
     [Header("Turn Icons")]
     public GameObject turnRightImage;
@@ -62,7 +64,11 @@ public class DirectionDisplayManager : MonoBehaviour
     [Tooltip("Delay before speaking (seconds)")]
     public float voiceDelay = 0.5f;
 
+    [Tooltip("Maximum time to wait for TTS initialization (seconds)")]
+    public float ttsInitTimeout = 5f;
+
     private AndroidJavaObject tts;
+    private bool isTTSReady = false;
 
     private bool isOffRoutePanelActive = false;
     private bool isOffRouteConditionActive = false;
@@ -92,11 +98,13 @@ public class DirectionDisplayManager : MonoBehaviour
     private Vector3 successPanelOriginalScale;
 
     private UnifiedARNavigationMarkerSpawner markerSpawner;
+    private ARLoadingManager loadingManager;
 
     void Start()
     {
         arManager = FindObjectOfType<UnifiedARManager>();
         markerSpawner = FindObjectOfType<UnifiedARNavigationMarkerSpawner>();
+        loadingManager = FindObjectOfType<ARLoadingManager>();
 
         if (audioSource == null)
         {
@@ -104,6 +112,7 @@ public class DirectionDisplayManager : MonoBehaviour
             audioSource.playOnAwake = false;
         }
 
+        // Initialize TTS FIRST
         InitializeAndroidTTS();
 
         if (directionPanel != null)
@@ -136,88 +145,211 @@ public class DirectionDisplayManager : MonoBehaviour
             offRouteBackground.SetActive(false);
         }
 
+        // Setup Start Navigation button
+        if (startNavigationButton != null)
+        {
+            startNavigationButton.onClick.AddListener(OnStartNavigationClicked);
+        }
+
+        if (startNavigationButtonObject != null)
+        {
+            startNavigationButtonObject.SetActive(false); // Hidden until loading completes
+        }
+
         LoadDirectionsFromPlayerPrefs();
 
-        if (allDirections.Count > 0)
+        // Wait for loading to complete, then show the start button
+        if (loadingManager != null)
         {
-            StartNavigation();
+            StartCoroutine(WaitForLoadingThenShowButton());
+        }
+        else
+        {
+            // No loading manager, show button immediately
+            if (startNavigationButtonObject != null && allDirections.Count > 0)
+            {
+                startNavigationButtonObject.SetActive(true);
+            }
         }
     }
 
     private void InitializeAndroidTTS()
     {
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            try
-            {
-                AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-                AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        Debug.Log("[TTS] InitializeAndroidTTS called");
 
-                tts = new AndroidJavaObject("android.speech.tts.TextToSpeech", activity, null);
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"[TTS] Failed to initialize Android TTS: {e.Message}");
-            }
+        if (Application.platform != RuntimePlatform.Android)
+        {
+            Debug.Log("[TTS] Not Android — enabling mock TTS");
+            isTTSReady = true;
+            return;
+        }
+
+        try
+        {
+            AndroidJavaClass unityPlayer =
+                new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject activity =
+                unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+
+            tts = new AndroidJavaObject(
+                "android.speech.tts.TextToSpeech",
+                activity,
+                null
+            );
+
+            StartCoroutine(MarkTTSReadyDelayed());
+
+            Debug.Log("[TTS] Android TTS created (no listener)");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[TTS] Init failed: {e}");
+        }
+    }
+
+    private IEnumerator MarkTTSReadyDelayed()
+    {
+        Debug.Log("[TTS] Waiting 0.5s for TTS warm-up...");
+        yield return new WaitForSeconds(0.5f);
+        isTTSReady = true;
+        Debug.Log("[TTS] ✅ TTS READY");
+    }
+
+
+    private IEnumerator WaitForLoadingThenShowButton()
+    {
+        Debug.Log("[DirectionManager] Waiting for loading to complete...");
+
+        // Wait until loading is complete
+        while (loadingManager != null && !loadingManager.IsLoadingComplete())
+        {
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        Debug.Log("[DirectionManager] ✅ Loading complete! Showing start navigation button...");
+
+        // Show the start button
+        if (startNavigationButtonObject != null && allDirections.Count > 0)
+        {
+            startNavigationButtonObject.SetActive(true);
+        }
+        else if (allDirections.Count == 0)
+        {
+            Debug.LogWarning("[DirectionManager] No directions loaded!");
+        }
+    }
+
+    private void OnStartNavigationClicked()
+    {
+        Debug.Log("[DirectionManager] Start Navigation button clicked!");
+
+        // Hide the start button
+        if (startNavigationButtonObject != null)
+        {
+            startNavigationButtonObject.SetActive(false);
+        }
+
+        // Start navigation
+        if (allDirections.Count > 0)
+        {
+            StartNavigation();
         }
         else
         {
-            Debug.Log("[TTS] Not on Android platform - TTS disabled");
+            Debug.LogError("[DirectionManager] Cannot start navigation - no directions loaded!");
         }
     }
 
     private void Speak(string message)
     {
+        Debug.Log($"[TTS] Speak() called | Ready={isTTSReady} | Msg='{message}'");
+
         if (!enableVoiceInstructions) return;
 
-        if (Application.platform == RuntimePlatform.Android && tts != null)
+        if (!isTTSReady || tts == null)
         {
-            try
-            {
-                tts.Call<int>("speak", message, 0, null, null);
-                Debug.Log($"[TTS] Speaking: {message}");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"[TTS] Error speaking: {e.Message}");
-            }
+            Debug.LogWarning("[TTS] Cannot speak — TTS not ready or null");
+            return;
         }
-        else
-        {
-            Debug.Log($"[TTS] Would speak: {message}");
-        }
+
+        SpeakNow(message);
     }
 
+    private void SpeakNow(string message)
+    {
+        Debug.Log($"[TTS] SpeakNow() → {message}");
+
+        try
+        {
+            tts.Call<int>(
+                "speak",
+                message,
+                0,
+                null,
+                "AR_NAV"
+            );
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[TTS] Speak error: {e}");
+        }
+    }
     private void PlayCheckpointReached(string instruction)
     {
+        Debug.Log($"[TTS] PlayCheckpointReached called with: {instruction}");
+
         if (checkpointSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(checkpointSound);
+            Debug.Log("[TTS] ✅ Played checkpoint sound");
+        }
+        else
+        {
+            Debug.LogWarning("[TTS] ⚠️ Checkpoint sound or AudioSource not assigned!");
         }
 
         if (enableVoiceInstructions)
         {
+            Debug.Log($"[TTS] Starting TTS coroutine with {voiceDelay}s delay");
             StartCoroutine(SpeakAfterDelay(instruction, voiceDelay));
+        }
+        else
+        {
+            Debug.Log("[TTS] Voice instructions disabled");
         }
     }
 
     private void PlayDestinationReached(string destinationName)
     {
+        Debug.Log($"[TTS] PlayDestinationReached called for: {destinationName}");
+
         if (destinationSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(destinationSound);
+            Debug.Log("[TTS] ✅ Played destination sound");
+        }
+        else
+        {
+            Debug.LogWarning("[TTS] ⚠️ Destination sound or AudioSource not assigned!");
         }
 
         if (enableVoiceInstructions)
         {
             string message = $"You have reached your destination. Welcome to {destinationName}!";
+            Debug.Log($"[TTS] Starting TTS coroutine for destination: {message}");
             StartCoroutine(SpeakAfterDelay(message, voiceDelay));
+        }
+        else
+        {
+            Debug.Log("[TTS] Voice instructions disabled");
         }
     }
 
     private IEnumerator SpeakAfterDelay(string message, float delay)
     {
+        Debug.Log($"[TTS] Waiting {delay} seconds before speaking...");
         yield return new WaitForSeconds(delay);
+        Debug.Log($"[TTS] Delay complete, calling Speak() - TTS Ready: {isTTSReady}");
         Speak(message);
     }
 
@@ -551,10 +683,7 @@ public class DirectionDisplayManager : MonoBehaviour
 
         PopulateDirectionItems();
 
-        if (allDirections.Count > 0)
-        {
-            StartNavigation();
-        }
+        Debug.Log($"[DirectionManager] Loaded {allDirections.Count} directions. Waiting for user to click Start Navigation button.");
     }
 
     private void PopulateDirectionItems()
@@ -1144,6 +1273,18 @@ public class DirectionDisplayManager : MonoBehaviour
 
     void OnDestroy()
     {
+        // Clean up button listeners
+        if (startNavigationButton != null)
+        {
+            startNavigationButton.onClick.RemoveListener(OnStartNavigationClicked);
+        }
+
+        if (successCloseButton != null)
+        {
+            successCloseButton.onClick.RemoveListener(OnSuccessCloseClicked);
+        }
+
+        // Shutdown TTS
         if (Application.platform == RuntimePlatform.Android && tts != null)
         {
             try
