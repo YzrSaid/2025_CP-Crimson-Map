@@ -52,6 +52,7 @@ sysinfo.txt
 *.apk
 *.aab
 *.ipa
+*.blob
 
 # Firebase config
 google-services.json

@@ -26814,6 +26814,7 @@ GameObject:
   - component: {fileID: 1709089064}
   - component: {fileID: 1709089067}
   - component: {fileID: 1709089068}
+  - component: {fileID: 1709089069}
   m_Layer: 0
   m_Name: ARSceneManager
   m_TagString: Untagged
@@ -27381,6 +27382,18 @@ MonoBehaviour:
   outdoorPanelContent: {fileID: 97322317}
   categoryItemPrefab: {fileID: 5246217756407943387, guid: df0af4a5ed8792cb191809d17e424709, type: 3}
   maxWaitTime: 30
+--- !u!114 &1709089069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709089041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6273eb6b666f9ab638c1f35832534839, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1710405585
 GameObject:
   m_ObjectHideFlags: 0
