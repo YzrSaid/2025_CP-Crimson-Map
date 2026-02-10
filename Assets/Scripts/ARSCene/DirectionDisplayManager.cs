@@ -13,6 +13,7 @@ public class DirectionDisplayManager : MonoBehaviour
     public TextMeshProUGUI directionText;
     public Button startNavigationButton;
     public GameObject startNavigationButtonObject;
+    public GameObject BG;
 
     [Header("Turn Icons")]
     public GameObject turnRightImage;
@@ -112,7 +113,6 @@ public class DirectionDisplayManager : MonoBehaviour
             audioSource.playOnAwake = false;
         }
 
-        // Initialize TTS FIRST
         InitializeAndroidTTS();
 
         if (directionPanel != null)
@@ -145,7 +145,6 @@ public class DirectionDisplayManager : MonoBehaviour
             offRouteBackground.SetActive(false);
         }
 
-        // Setup Start Navigation button
         if (startNavigationButton != null)
         {
             startNavigationButton.onClick.AddListener(OnStartNavigationClicked);
@@ -153,33 +152,38 @@ public class DirectionDisplayManager : MonoBehaviour
 
         if (startNavigationButtonObject != null)
         {
-            startNavigationButtonObject.SetActive(false); // Hidden until loading completes
+            startNavigationButtonObject.SetActive(false);
+        }
+
+        if (BG != null)
+        {
+            BG.SetActive(false);
         }
 
         LoadDirectionsFromPlayerPrefs();
 
-        // Wait for loading to complete, then show the start button
         if (loadingManager != null)
         {
             StartCoroutine(WaitForLoadingThenShowButton());
         }
         else
         {
-            // No loading manager, show button immediately
             if (startNavigationButtonObject != null && allDirections.Count > 0)
             {
                 startNavigationButtonObject.SetActive(true);
+            }
+            if (BG != null && allDirections.Count > 0)
+            {
+                BG.SetActive(true);
             }
         }
     }
 
     private void InitializeAndroidTTS()
     {
-        Debug.Log("[TTS] InitializeAndroidTTS called");
 
         if (Application.platform != RuntimePlatform.Android)
         {
-            Debug.Log("[TTS] Not Android — enabling mock TTS");
             isTTSReady = true;
             return;
         }
@@ -198,8 +202,6 @@ public class DirectionDisplayManager : MonoBehaviour
             );
 
             StartCoroutine(MarkTTSReadyDelayed());
-
-            Debug.Log("[TTS] Android TTS created (no listener)");
         }
         catch (System.Exception e)
         {
@@ -209,66 +211,55 @@ public class DirectionDisplayManager : MonoBehaviour
 
     private IEnumerator MarkTTSReadyDelayed()
     {
-        Debug.Log("[TTS] Waiting 0.5s for TTS warm-up...");
         yield return new WaitForSeconds(0.5f);
         isTTSReady = true;
-        Debug.Log("[TTS] ✅ TTS READY");
     }
 
 
     private IEnumerator WaitForLoadingThenShowButton()
     {
-        Debug.Log("[DirectionManager] Waiting for loading to complete...");
 
-        // Wait until loading is complete
         while (loadingManager != null && !loadingManager.IsLoadingComplete())
         {
             yield return new WaitForSeconds(0.2f);
         }
 
-        Debug.Log("[DirectionManager] ✅ Loading complete! Showing start navigation button...");
-
-        // Show the start button
+        if (BG != null && allDirections.Count > 0)
+        {
+            BG.SetActive(true);
+        }
         if (startNavigationButtonObject != null && allDirections.Count > 0)
         {
             startNavigationButtonObject.SetActive(true);
-        }
-        else if (allDirections.Count == 0)
-        {
-            Debug.LogWarning("[DirectionManager] No directions loaded!");
         }
     }
 
     private void OnStartNavigationClicked()
     {
-        Debug.Log("[DirectionManager] Start Navigation button clicked!");
 
-        // Hide the start button
+        if (BG != null)
+        {
+            BG.SetActive(false);
+        }
+
         if (startNavigationButtonObject != null)
         {
             startNavigationButtonObject.SetActive(false);
         }
 
-        // Start navigation
         if (allDirections.Count > 0)
         {
             StartNavigation();
-        }
-        else
-        {
-            Debug.LogError("[DirectionManager] Cannot start navigation - no directions loaded!");
         }
     }
 
     private void Speak(string message)
     {
-        Debug.Log($"[TTS] Speak() called | Ready={isTTSReady} | Msg='{message}'");
 
         if (!enableVoiceInstructions) return;
 
         if (!isTTSReady || tts == null)
         {
-            Debug.LogWarning("[TTS] Cannot speak — TTS not ready or null");
             return;
         }
 
@@ -277,8 +268,6 @@ public class DirectionDisplayManager : MonoBehaviour
 
     private void SpeakNow(string message)
     {
-        Debug.Log($"[TTS] SpeakNow() → {message}");
-
         try
         {
             tts.Call<int>(
@@ -296,60 +285,34 @@ public class DirectionDisplayManager : MonoBehaviour
     }
     private void PlayCheckpointReached(string instruction)
     {
-        Debug.Log($"[TTS] PlayCheckpointReached called with: {instruction}");
 
         if (checkpointSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(checkpointSound);
-            Debug.Log("[TTS] ✅ Played checkpoint sound");
-        }
-        else
-        {
-            Debug.LogWarning("[TTS] ⚠️ Checkpoint sound or AudioSource not assigned!");
         }
 
         if (enableVoiceInstructions)
         {
-            Debug.Log($"[TTS] Starting TTS coroutine with {voiceDelay}s delay");
             StartCoroutine(SpeakAfterDelay(instruction, voiceDelay));
-        }
-        else
-        {
-            Debug.Log("[TTS] Voice instructions disabled");
         }
     }
 
     private void PlayDestinationReached(string destinationName)
     {
-        Debug.Log($"[TTS] PlayDestinationReached called for: {destinationName}");
-
         if (destinationSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(destinationSound);
-            Debug.Log("[TTS] ✅ Played destination sound");
         }
-        else
-        {
-            Debug.LogWarning("[TTS] ⚠️ Destination sound or AudioSource not assigned!");
-        }
-
         if (enableVoiceInstructions)
         {
             string message = $"You have reached your destination. Welcome to {destinationName}!";
-            Debug.Log($"[TTS] Starting TTS coroutine for destination: {message}");
             StartCoroutine(SpeakAfterDelay(message, voiceDelay));
-        }
-        else
-        {
-            Debug.Log("[TTS] Voice instructions disabled");
         }
     }
 
     private IEnumerator SpeakAfterDelay(string message, float delay)
     {
-        Debug.Log($"[TTS] Waiting {delay} seconds before speaking...");
         yield return new WaitForSeconds(delay);
-        Debug.Log($"[TTS] Delay complete, calling Speak() - TTS Ready: {isTTSReady}");
         Speak(message);
     }
 
@@ -468,11 +431,8 @@ public class DirectionDisplayManager : MonoBehaviour
 
         float distanceFromDestination = CalculateDistanceGPS(userLocation, destinationGPS);
 
-        Debug.Log($"[Destination] Distance from destination {currentDestinationNode.name}: {distanceFromDestination:F1}m (threshold: {destinationOvershootThreshold}m)");
-
         if (distanceFromDestination > destinationOvershootThreshold)
         {
-            Debug.Log($"[Destination] ⚠️ User passed destination by {distanceFromDestination:F1}m!");
             hasPassedDestination = true;
             ShowPassedDestinationPanel(distanceFromDestination);
         }
@@ -481,8 +441,6 @@ public class DirectionDisplayManager : MonoBehaviour
     private void HideSkippedMarkers(int fromIndex, int toIndex)
     {
         if (markerSpawner == null) return;
-
-        Debug.Log($"[DirectionManager] Hiding markers for skipped nodes {fromIndex} to {toIndex}");
 
         for (int i = fromIndex; i < toIndex; i++)
         {
@@ -499,12 +457,6 @@ public class DirectionDisplayManager : MonoBehaviour
 
     private void ShowOffRoutePanel(Node nearestNode, float distance)
     {
-        if (offRoutePanel == null)
-        {
-            CreateSimpleOffRoutePanel(nearestNode, distance);
-            return;
-        }
-
         if (offRouteTitle != null)
             offRouteTitle.text = "You're Off Route";
 
@@ -554,8 +506,6 @@ public class DirectionDisplayManager : MonoBehaviour
             offRouteBackground.SetActive(false);
 
         isOffRoutePanelActive = false;
-
-        Debug.Log("[OffRoute] Panel hidden - starting 40 second cooldown");
         StartCoroutine(OffRouteCooldown());
     }
 
@@ -571,11 +521,6 @@ public class DirectionDisplayManager : MonoBehaviour
         }
 
         isOffRouteConditionActive = false;
-    }
-
-    private void CreateSimpleOffRoutePanel(Node nearestNode, float distance)
-    {
-        Debug.LogWarning($"[DirectionManager] Off-route panel not assigned! User is {distance:F1}m from {nearestNode?.name}");
     }
 
     private void UpdateUserLocation()
@@ -682,8 +627,6 @@ public class DirectionDisplayManager : MonoBehaviour
         }
 
         PopulateDirectionItems();
-
-        Debug.Log($"[DirectionManager] Loaded {allDirections.Count} directions. Waiting for user to click Start Navigation button.");
     }
 
     private void PopulateDirectionItems()
@@ -970,18 +913,13 @@ public class DirectionDisplayManager : MonoBehaviour
 
     public void OnNodeReached(string nodeId)
     {
-        Debug.Log($"[DirectionManager] QR Recalibration triggered for node: {nodeId}");
-
         int targetIndex = FindDirectionIndexByNodeId(nodeId);
 
         if (targetIndex == -1)
         {
-            Debug.Log($"[DirectionManager] Node {nodeId} not in route. Finding closest route node...");
-
             Node scannedNode = LoadNodeById(nodeId);
             if (scannedNode == null)
             {
-                Debug.LogWarning($"[DirectionManager] Could not load node {nodeId}");
                 return;
             }
 
@@ -989,17 +927,13 @@ public class DirectionDisplayManager : MonoBehaviour
             return;
         }
 
-        Debug.Log($"[DirectionManager] Found node at index {targetIndex}, current is {currentDirectionIndex}");
-
         if (targetIndex < currentDirectionIndex)
         {
-            Debug.Log($"[DirectionManager] Node already passed, ignoring");
             return;
         }
 
         if (targetIndex > currentDirectionIndex)
         {
-            Debug.Log($"[DirectionManager] Jumping ahead to direction index {targetIndex}");
             int oldIndex = currentDirectionIndex;
             currentDirectionIndex = targetIndex;
 
@@ -1009,7 +943,6 @@ public class DirectionDisplayManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[DirectionManager] Moving to next direction");
             MoveToNextDirection();
         }
     }
@@ -1038,31 +971,15 @@ public class DirectionDisplayManager : MonoBehaviour
                 closestNode = dir.destinationNode;
             }
         }
-
-        Debug.Log($"[DirectionManager] Scanned node is {minDistance:F1}m from route node {closestNode?.name} at index {closestIndex}");
-
         if (closestIndex != -1)
         {
             if (minDistance <= lookaheadDistanceThreshold)
             {
-                Debug.Log($"[DirectionManager] ✅ Close enough ({minDistance:F1}m), jumping to index {closestIndex}");
                 int oldIndex = currentDirectionIndex;
                 currentDirectionIndex = closestIndex;
                 HideSkippedMarkers(oldIndex, closestIndex);
                 DisplayCurrentDirection();
             }
-            else if (minDistance > offRouteDistanceThreshold)
-            {
-                Debug.Log($"[DirectionManager] ⚠️ Too far ({minDistance:F1}m), showing off-route panel");
-            }
-            else
-            {
-                Debug.Log($"[DirectionManager] Somewhat close ({minDistance:F1}m), staying at current direction");
-            }
-        }
-        else
-        {
-            Debug.Log($"[DirectionManager] No route nodes found!");
         }
     }
 
@@ -1073,8 +990,6 @@ public class DirectionDisplayManager : MonoBehaviour
             if (dir.destinationNode != null && dir.destinationNode.node_id == nodeId)
                 return dir.destinationNode;
         }
-
-        Debug.LogWarning($"[DirectionManager] Could not load node {nodeId} from directions");
         return null;
     }
 
@@ -1273,7 +1188,6 @@ public class DirectionDisplayManager : MonoBehaviour
 
     void OnDestroy()
     {
-        // Clean up button listeners
         if (startNavigationButton != null)
         {
             startNavigationButton.onClick.RemoveListener(OnStartNavigationClicked);
@@ -1284,13 +1198,11 @@ public class DirectionDisplayManager : MonoBehaviour
             successCloseButton.onClick.RemoveListener(OnSuccessCloseClicked);
         }
 
-        // Shutdown TTS
         if (Application.platform == RuntimePlatform.Android && tts != null)
         {
             try
             {
                 tts.Call("shutdown");
-                Debug.Log("[TTS] Android TTS shutdown");
             }
             catch (System.Exception e)
             {

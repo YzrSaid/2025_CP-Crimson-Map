@@ -16,7 +16,6 @@ public static class CrossPlatformFileLoader
     {
         if (fileCache.ContainsKey(fileName))
         {
-            Debug.Log($"[FileLoader] Using CACHED version of {fileName}");
             onSuccess?.Invoke(fileCache[fileName]);
             yield break;
         }
@@ -43,8 +42,6 @@ public static class CrossPlatformFileLoader
             {
                 fileCache[fileName] = content;
                 currentlyLoading.Remove(fileName);
-
-                Debug.Log($"[FileLoader] Cached {fileName} ({content.Length} chars)");
                 onSuccess?.Invoke(content);
             },
             (error) =>
@@ -60,8 +57,6 @@ public static class CrossPlatformFileLoader
         string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
 
 #if UNITY_EDITOR
-        // UNITY EDITOR: Always use File.ReadAllText (works for all platforms in editor)
-        Debug.Log($"[FileLoader] EDITOR mode - Loading from: {filePath}");
         try
         {
             if (!File.Exists(filePath))
@@ -89,8 +84,6 @@ public static class CrossPlatformFileLoader
         yield return null;
 
 #elif UNITY_ANDROID
-    // ANDROID BUILD: Use UnityWebRequest (files are inside APK)
-    Debug.Log($"[FileLoader] ANDROID build - Loading from: {filePath}");
     UnityWebRequest request = UnityWebRequest.Get(filePath);
     yield return request.SendWebRequest();
 
@@ -113,8 +106,6 @@ public static class CrossPlatformFileLoader
     }
 
 #else
-    // IOS/STANDALONE: Use File.ReadAllText
-    Debug.Log($"[FileLoader] STANDALONE mode - Loading from: {filePath}");
     try
     {
         if (!File.Exists(filePath))
@@ -171,7 +162,6 @@ public static class CrossPlatformFileLoader
         try
         {
             File.WriteAllText(persistentPath, jsonContent);
-            Debug.Log($"[FileLoader] Saved user data: {fileName}");
         }
         catch (System.Exception e)
         {
@@ -198,15 +188,12 @@ public static class CrossPlatformFileLoader
         if (fileCache.ContainsKey(fileName))
         {
             fileCache.Remove(fileName);
-            Debug.Log($"[FileLoader] Cleared cache for {fileName}");
         }
     }
 
     public static void ClearAllCache()
     {
-        int count = fileCache.Count;
         fileCache.Clear();
-        Debug.Log($"[FileLoader] Cleared all cache ({count} files)");
     }
 
     public static string GetCacheStats()
@@ -224,7 +211,6 @@ public static class CrossPlatformFileLoader
 
     public static IEnumerator PreloadFiles(string[] fileNames, System.Action onComplete = null)
     {
-        Debug.Log($"[FileLoader] Preloading {fileNames.Length} files...");
 
         int loadedCount = 0;
         int errorCount = 0;
@@ -241,7 +227,6 @@ public static class CrossPlatformFileLoader
                 },
                 (error) =>
                 {
-                    Debug.LogWarning($"[FileLoader] Failed to preload {fileName}: {error}");
                     errorCount++;
                     loaded = true;
                 }
@@ -249,10 +234,6 @@ public static class CrossPlatformFileLoader
 
             yield return new WaitUntil(() => loaded);
         }
-
-        Debug.Log($"[FileLoader] Preload complete! Loaded: {loadedCount}, Errors: {errorCount}");
-        Debug.Log($"[FileLoader] {GetCacheStats()}");
-
         onComplete?.Invoke();
     }
 }
