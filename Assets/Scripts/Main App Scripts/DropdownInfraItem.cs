@@ -100,6 +100,11 @@ public class DropdownInfraItem : MonoBehaviour
             return;
         }
 
+        if (roomItems.Count > 0)
+        {
+            return;
+        }
+
         foreach (var room in rooms)
         {
             GameObject roomItemObj = Instantiate(roomItemPrefab, roomsContent);
@@ -133,6 +138,12 @@ public class DropdownInfraItem : MonoBehaviour
         if (!HasRooms || roomsContainer == null)
         {
             return;
+        }
+
+        // Lazily create room items if SetupRoomItems failed or was skipped at init time
+        if (roomItems.Count == 0)
+        {
+            SetupRoomItems();
         }
 
         isExpanded = true;

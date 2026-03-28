@@ -28,7 +28,6 @@ public class SearchableDropdown : MonoBehaviour
     private Dictionary<string, DropdownInfraItem> infraItems = new Dictionary<string, DropdownInfraItem>();
     private List<GameObject> allInstantiatedItems = new List<GameObject>();
     private bool isOpen = false;
-    private bool isManualOpen = false;
     private bool isARMode = false;
 
     private string selectedId = null;
@@ -144,7 +143,6 @@ public class SearchableDropdown : MonoBehaviour
         }
         else
         {
-            isManualOpen = true;
             OpenDropdown();
         }
     }
@@ -158,22 +156,12 @@ public class SearchableDropdown : MonoBehaviour
 
             UpdateArrowVisibility(true);
 
-            if (isManualOpen)
+            ShowAllItems();
+
+            string currentSearch = searchField != null ? searchField.text : "";
+            if (!string.IsNullOrWhiteSpace(currentSearch))
             {
-                ShowAllItems();
-                isManualOpen = false;
-            }
-            else
-            {
-                string currentSearch = searchField != null ? searchField.text : "";
-                if (string.IsNullOrWhiteSpace(currentSearch))
-                {
-                    ShowAllItems();
-                }
-                else
-                {
-                    OnSearchTextChanged(currentSearch);
-                }
+                OnSearchTextChanged(currentSearch);
             }
         }
     }
@@ -184,7 +172,6 @@ public class SearchableDropdown : MonoBehaviour
         {
             dropdownPanel.SetActive(false);
             isOpen = false;
-            isManualOpen = false;
 
             UpdateArrowVisibility(false);
 
@@ -241,7 +228,7 @@ public class SearchableDropdown : MonoBehaviour
 
                 if (anyRoomMatches && !infraMatches)
                 {
-                    item.ExpandRooms(true);
+                    item.ExpandRooms(false);
                     item.FilterRooms(searchText);
                 }
                 else if (infraMatches)

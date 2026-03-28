@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using System.IO;
+using System.Linq;
 
 public class AccordionItem : MonoBehaviour
 {
@@ -52,6 +53,11 @@ public class AccordionItem : MonoBehaviour
     private GameObject emptyMessageObject;
     private bool isRecentCategory = false;
     private bool isBookmarksCategory = false;
+
+    // Preloaded data for search before items are spawned
+    private List<Infrastructure> cachedInfraData = new List<Infrastructure>();
+    private bool dataPreloaded = false;
+    private string pendingSearchFilter = null;
 
     public bool IsExpanded => isExpanded;
     public bool IsBookmarksCategory => isBookmarksCategory;
@@ -113,6 +119,20 @@ public class AccordionItem : MonoBehaviour
         isRecentCategory = false;
         isBookmarksCategory = false;
     }
+
+    public string GetCategoryId() => categoryId;
+
+    // Called by ExploreSearchManager to give this accordion its pre-loaded infra data
+    public void SetCachedInfraData(List<Infrastructure> data)
+    {
+        cachedInfraData = data ?? new List<Infrastructure>();
+        dataPreloaded = true;
+    }
+
+    public void SetPendingFilter(string searchText)
+    {
+        pendingSearchFilter = searchText;
+    }
     public void SetAsBookmarksCategory()
     {
         isBookmarksCategory = true;
@@ -145,6 +165,16 @@ public class AccordionItem : MonoBehaviour
                 targetHeight = minHeight + emptyMessageHeight;
                 rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
             }
+            yield break;
+        }
+
+        // Use preloaded data if ready — avoids re-reading infrastructure.json
+        if (dataPreloaded && cachedInfraData.Count > 0)
+        {
+            foreach (var infra in cachedInfraData)
+                SpawnInfrastructureItem(infra);
+            infrastructuresLoaded = true;
+            StartCoroutine(FinishExpandAfterLoad());
             yield break;
         }
 
@@ -219,6 +249,9 @@ public class AccordionItem : MonoBehaviour
         }
 
         ForceLayoutUpdate();
+
+        if (!string.IsNullOrEmpty(pendingSearchFilter))
+            ApplyPendingFilter();
     }
 
     void OnInfrastructuresLoadError(string errorMessage)
@@ -487,7 +520,13 @@ public class AccordionItem : MonoBehaviour
 
     public void Expand()
     {
-        if (isExpanded) return;
+        if (isExpanded)
+        {
+            // Already expanded — still apply any pending filter
+            if (!string.IsNullOrEmpty(pendingSearchFilter))
+                ApplyPendingFilter();
+            return;
+        }
 
         isExpanded = true;
 
@@ -517,6 +556,8 @@ public class AccordionItem : MonoBehaviour
                     rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
                 }
                 ForceLayoutUpdate();
+                if (!string.IsNullOrEmpty(pendingSearchFilter))
+                    ApplyPendingFilter();
             }
         }
         else if (isBookmarksCategory)
@@ -540,6 +581,8 @@ public class AccordionItem : MonoBehaviour
                     rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
                 }
                 ForceLayoutUpdate();
+                if (!string.IsNullOrEmpty(pendingSearchFilter))
+                    ApplyPendingFilter();
             }
         }
         else if (infrastructuresLoaded)
@@ -556,8 +599,9 @@ public class AccordionItem : MonoBehaviour
                 targetHeight = minHeight + emptyMessageHeight;
                 rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
             }
-
             ForceLayoutUpdate();
+            if (!string.IsNullOrEmpty(pendingSearchFilter))
+                ApplyPendingFilter();
         }
         else
         {
@@ -568,6 +612,25 @@ public class AccordionItem : MonoBehaviour
 
             StartCoroutine(LoadInfrastructures());
         }
+    }
+
+    private void ApplyPendingFilter()
+    {
+        FilterInfrastructuresBySearch(pendingSearchFilter);
+        int visibleCount = spawnedInfrastructures.Count(i => i != null && i.activeSelf);
+        if (visibleCount > 0)
+        {
+            HideEmptyMessage();
+            targetHeight = minHeight + (itemHeight * visibleCount) + padding;
+        }
+        else
+        {
+            ShowEmptyMessage();
+            targetHeight = minHeight + emptyMessageHeight;
+        }
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, targetHeight);
+        ForceLayoutUpdate();
+        pendingSearchFilter = null;
     }
 
     public void Collapse()
@@ -628,11 +691,21 @@ public class AccordionItem : MonoBehaviour
     public List<string> FilterInfrastructuresBySearch(string searchText)
     {
         List<string> matchingIds = new List<string>();
-
-        if (spawnedInfrastructures == null || spawnedInfrastructures.Count == 0)
-            return matchingIds;
-
         searchText = searchText.ToLower().Trim();
+
+        // If items haven't been spawned yet, search the preloaded data cache
+        if (spawnedInfrastructures == null || spawnedInfrastructures.Count == 0)
+        {
+            if (dataPreloaded && cachedInfraData != null)
+            {
+                foreach (var infra in cachedInfraData)
+                {
+                    if (!string.IsNullOrEmpty(infra.name) && infra.name.ToLower().Trim().Contains(searchText))
+                        matchingIds.Add(infra.infra_id);
+                }
+            }
+            return matchingIds;
+        }
 
         foreach (GameObject infraObj in spawnedInfrastructures)
         {
